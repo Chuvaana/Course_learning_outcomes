@@ -1,28 +1,20 @@
 import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
-import { FormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
-
-import { AppRoutingModule } from './app-routing.module';
-import { AppComponent } from './app.component';
-import { AddTutorialComponent } from './components/add-tutorial/add-tutorial.component';
-import { TutorialDetailsComponent } from './components/tutorial-details/tutorial-details.component';
-import { TutorialsListComponent } from './components/tutorials-list/tutorials-list.component';
+import { TeacherService } from './services/teacherService';
+import { CommonModule } from '@angular/common';
+import { ReactiveFormsModule } from '@angular/forms';
+import { DropdownModule } from 'primeng/dropdown';
+import { InputTextModule } from 'primeng/inputtext';
+import { ButtonModule } from 'primeng/button';
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    AddTutorialComponent,
-    TutorialDetailsComponent,
-    TutorialsListComponent
-  ],
   imports: [
-    BrowserModule,
-    AppRoutingModule,
-    FormsModule,
-    HttpClientModule
+    CommonModule, ReactiveFormsModule, DropdownModule, InputTextModule, ButtonModule
   ],
-  providers: [],
-  bootstrap: [AppComponent]
+  exports: [
+    CommonModule, ReactiveFormsModule, DropdownModule, InputTextModule, ButtonModule
+  ],
+  providers: [
+    TeacherService
+  ]
 })
 export class AppModule { }

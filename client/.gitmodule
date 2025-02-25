@@ -1,0 +1,3 @@
+[submodule "styles/module"]
+    path = styles/module
+    url = Front

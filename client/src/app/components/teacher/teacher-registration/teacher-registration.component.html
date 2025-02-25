@@ -1,0 +1,27 @@
+<form [formGroup]="teacherForm" (ngSubmit)="registerTeacher()">
+    <p-dropdown 
+      formControlName="branch" 
+      [options]="branches" 
+      optionLabel="name" 
+      optionValue="id" 
+      (onChange)="onBranchChange($event.value)" 
+      placeholder="Select Branch">
+    </p-dropdown>
+  
+    <p-dropdown 
+      formControlName="department" 
+      [options]="departments" 
+      optionLabel="name" 
+      optionValue="_id" 
+      placeholder="Select Department">
+    </p-dropdown>
+  
+    <input pInputText formControlName="name" placeholder="Teacher Name" />
+
+    <input pInputText formControlName="code" placeholder="Teacher Code" />
+    
+    <input pInputText formControlName="email" placeholder="Email (must.edu.mn)" />
+  
+    <button pButton type="submit" label="Register" [disabled]="teacherForm.invalid"></button>
+  </form>
+  

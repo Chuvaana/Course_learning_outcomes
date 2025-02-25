@@ -1,9 +1,8 @@
 module.exports = mongoose => {
   var schema = mongoose.Schema(
     {
-      title: String,
-      description: String,
-      published: Boolean
+      name: { type: String, required: true },
+      departments: [{ type: String, required: true }]
     },
     { timestamps: true }
   );
@@ -14,6 +13,6 @@ module.exports = mongoose => {
     return object;
   });
 
-  const Tutorial = mongoose.model("tutorial", schema);
-  return Tutorial;
+  const Branch = mongoose.model("branch", schema);
+  return Branch;
 };
