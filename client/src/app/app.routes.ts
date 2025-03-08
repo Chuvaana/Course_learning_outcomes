@@ -1,19 +1,29 @@
 import { Routes } from '@angular/router';
-import { TeacherRegistrationComponent } from './components/teacher/teacher-registration/teacher-registration.component';
+import { LayoutComponent } from './components/layout/layout.component';
 import { StudentImpoirtCompnent } from'./components/students/student_import/student-import.component';
 import { StudentListCompnent } from './components/students/student_list/student-list.component';
 
 export const routes: Routes = [
     {
-        path: 'register-teacher',
-        component: TeacherRegistrationComponent,
+        path: '',
+        component: LayoutComponent,
+        children: [
+            {
+                path: 'admin',
+                loadChildren: () =>
+                    import('./components/layout/admin/admin.module').then((m) => m.AdminModule),
+            },
+            {
+                path: 'teacher',
+                loadChildren: () =>
+                    import('./components/layout/teacher/teacher.module').then((m) => m.TeacherModule),
+            },
+            {
+                path: 'student',
+                loadChildren: () =>
+                    import('./components/layout/student/student.module').then((m) => m.StudentModule),
+            }
+        ]
     },
-    {
-        path: 'student-import',
-        component: StudentImpoirtCompnent,
-    },
-    {
-        path: 'student-list',
-        component: StudentListCompnent,
-    }
+
 ];
