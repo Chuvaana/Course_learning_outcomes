@@ -1,5 +1,5 @@
 const db = require("../models");
-const Branch = db.branches;
+const Branch = db.branch.branches;
 
 // Create and Save a new Branch
 exports.create = (req, res) => {

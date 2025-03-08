@@ -5,7 +5,6 @@ import { PasswordModule } from 'primeng/password';
 import { TeacherService } from '../../../services/teacherService';
 import { ButtonModule } from 'primeng/button';
 import { CommonModule } from '@angular/common';
-
 @Component({
   selector: 'app-teacher',
   standalone: true,
@@ -38,14 +37,12 @@ export class TeacherComponent {
     this.loadBranches();
   }
 
-  // Load branches from backend
   loadBranches(): void {
     this.teacherService.getBranches().subscribe((data: any[]) => {
       this.branches = data.map(branch => ({ name: branch.name, id: branch.id || branch.name })); 
     });
   }
 
-  // Load departments when branch is selected
   onBranchChange(branchId: string): void {
     this.teacherService.getDepartments(branchId).subscribe((data: any[]) => {
       if(data){
@@ -54,19 +51,35 @@ export class TeacherComponent {
     });
   }
 
-  // Register teacher
   registerTeacher(): void {
     console.log(this.teacherForm.valid);
+  
     if (this.teacherForm.valid) {
-      this.teacherService.registerTeacher(this.teacherForm.value).subscribe((response: String) => {
-        alert('Teacher registered successfully!');
-        this.teacherForm.reset();
-      }, (error: String) => {
-        alert('Error registering teacher');
-      });
+      this.teacherService.registerTeacher(this.teacherForm.value).subscribe(
+        (data: { message: string; teacher: any }) => {
+          if (data.message) {
+            alert(data.message);
+          }
+          if (data.teacher) {
+            console.log("Teacher created:", data.teacher); 
+          }
+          this.teacherForm.reset(); 
+        },
+        (error) => {
+          // Handle error response
+          let errorMessage = 'Error registering teacher';
+  
+          if (error && error.error && error.error.message) {
+            errorMessage = error.error.message; 
+          }
+  
+          alert(errorMessage); 
+          console.error('Error:', error);
+        }
+      );
     }
   }
-
+  
   toggleForm() {
     this.isRegister = !this.isRegister;
   }
