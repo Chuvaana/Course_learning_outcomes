@@ -82,16 +82,15 @@ exports.branchNames = async (req, res) => {
 
 exports.findDepartments = async (req, res) => {
   try {
-    const branchId = req.params.id; // Get branch ID from URL
+    const branchId = req.params.id;
 
-    // Find the branch by ID and retrieve only the 'departments' field
-    const branch = await Branch.findById(branchId).select("departments");
+    const branch = await Branch.findById(branchId).populate("departments");
 
     if (!branch) {
       return res.status(404).json({ message: "Branch not found" });
     }
 
-    res.status(200).json(branch.departments); // Return only the departments array
+    res.status(200).json(branch.departments);
   } catch (error) {
     res.status(500).json({ message: "Error fetching departments", error: error.message });
   }

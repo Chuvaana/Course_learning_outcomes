@@ -1,0 +1,32 @@
+<div class="auth-container">
+
+    <p-card class="auth-card">
+
+        <h2>{{ isRegister ? 'Register' : 'Login' }}</h2>
+        <form [formGroup]="teacherForm" (ngSubmit)="registerTeacher()">
+            <p-dropdown *ngIf="isRegister"  formControlName="branch" [options]="branches" optionLabel="name" optionValue="id" variant="filled"
+                placeholder="Select a Branch"  (onChange)="onBranchChange($event.value)"/>
+            <p-dropdown  *ngIf="isRegister"  formControlName="department" [options]="departments" optionLabel="name" optionValue="id"
+                placeholder="Select a Department"/>
+            <input type="text" pInputText formControlName="name" *ngIf="isRegister" />
+            <input type="text" pInputText formControlName="code" *ngIf="isRegister" />
+            <input type="email" pInputText formControlName="email" />
+            <p-password formControlName="password" [feedback]="false" />
+            <p-button type="submit" label="Submit" />
+        </form>
+        <!-- <form [formGroup]="teacherForm" (ngSubmit)="registerTeacher()">
+        
+        <p-dropdown *ngIf="isRegister" formControlName="branch" [options]="branches" optionLabel="label" placeholder="Select Branch" (onChange)="onBranchChange($event.value)"></p-dropdown>
+        
+        <p-dropdown *ngIf="isRegister" formControlName="department" [options]="departments" optionLabel="label" placeholder="Select Department"></p-dropdown>
+        
+        <p-inputText formControlName="name" placeholder="Teacher Name" *ngIf="isRegister"></p-inputText>
+        <p-inputText formControlName="code" placeholder="Teacher Code" *ngIf="isRegister"></p-inputText>
+        <p-inputText formControlName="email" placeholder="Email"></p-inputText>
+        <p-password formControlName="password" placeholder="Password"></p-password>
+        
+        <p-button type="submit" label="Submit"></p-button>
+      </form>
+      <a (click)="toggleForm()">{{ isRegister ? 'Already have an account? Login' : "Don't have an account? Register" }}</a> -->
+    </p-card>
+</div>

@@ -1,0 +1,19 @@
+.auth-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: #b33636;
+  }
+  
+  .auth-card {
+    width: 400px;
+    padding: 20px;
+    text-align: center;
+  }
+  
+  form p-dropdown, form p-inputText, form p-password {
+    width: 100%;
+    margin-bottom: 15px;
+  }
+  

@@ -1,5 +1,5 @@
 const db = require("../models");
-const Teacher = db.teachers;
+const Teacher = db.teacher;
 
 // Create and Save a new Teacher
 exports.create = async (req, res) => {
@@ -7,14 +7,16 @@ exports.create = async (req, res) => {
     if (!req.body.name || !req.body.email || !req.body.branch || !req.body.department) {
       return res.status(400).send({ message: "Name, email, branch, and department are required!" });
     }
-
+    
     const teacher = new Teacher({
       name: req.body.name,
       email: req.body.email,
       branch: req.body.branch,
       department: req.body.department,
-      courses: req.body.courses || []
+      password: req.body.password,
+      code: req.body.code
     });
+    console.log(teacher);
 
     const savedTeacher = await teacher.save();
     res.status(201).json(savedTeacher);
