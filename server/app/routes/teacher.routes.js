@@ -4,9 +4,11 @@ module.exports = app => {
 
   // Create a new Teacher
   router.post("/", teachers.create);
+  router.post("/login", teachers.login);
 
   // Retrieve all Teachers
   router.get("/", teachers.findAll);
+
 
   // Retrieve a single Teacher with id
   router.get("/:id", teachers.findOne);
@@ -16,9 +18,8 @@ module.exports = app => {
 
   // Delete a Teacher with id
   router.delete("/:id", teachers.delete);
+  router.post('/assign-lesson', teachers.assignLessonToTeacher);
 
-  // Assign courses to a teacher
-  router.put("/:id/assignCourses", teachers.assignCourses);
 
   app.use("/api/teachers", router);
 };

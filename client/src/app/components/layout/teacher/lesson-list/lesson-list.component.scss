@@ -1,0 +1,16 @@
+.lesson-form {
+    padding: 20px;
+    border: 1px solid #ccc;
+    margin-bottom: 20px;
+}
+
+.lesson-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.lesson-cards .p-card {
+    width: 100%;
+    overflow: hidden;
+}

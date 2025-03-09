@@ -25,6 +25,7 @@
     "@progress/kendo-angular-l10n": "^18.1.1",
     "@progress/kendo-theme-default": "^10.3.1",
     "chart.js": "^4.4.8",
+    "bootstrap": "^5.3.3",
     "primeicons": "^7.0.0",
     "primeng": "^19.0.9",
     "quill": "^2.0.3",

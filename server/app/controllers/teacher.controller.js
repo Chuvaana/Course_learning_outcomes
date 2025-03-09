@@ -1,6 +1,9 @@
 const mongoose = require("mongoose");
+const jwt = require('jsonwebtoken');
 const bcrypt = require("bcryptjs");
 const Teacher = require("../models/teacher.model"); // Make sure the path is correct
+
+require('dotenv').config();
 // POST route to save teacher data
 exports.create = async (req, res) => {
   try {
@@ -10,14 +13,14 @@ exports.create = async (req, res) => {
     const existingTeacher = await Teacher.findOne({ email });
 
     if (existingTeacher) {
-      return res.status(400).json({ message: "Teacher with this email already exists" });
+      return res.status(400).json({ message: "Имэйл бүртгэгдсэн байна" });
     }
 
     // Check if the provided branch ID is valid
     console.log(req.body);
     console.log(mongoose.Types.ObjectId.isValid(branch));
     if (!mongoose.Types.ObjectId.isValid(branch)) {
-      return res.status(400).json({ message: "Invalid branch or department ID!" });
+      return res.status(400).json({ message: "Салбар тэнхим буруу байна" });
     }
 
     // Hash the password before saving
@@ -38,11 +41,11 @@ exports.create = async (req, res) => {
 
     // Send a success response with the new teacher data
     res.status(201).json({
-      message: "Teacher created successfully",
+      message: "Амжилттай бүртгэгдлээ",
       teacher: newTeacher, // Optionally send the created teacher data
     });
   } catch (error) {
-    console.error("Error saving teacher:", error);
+    console.error("Багш бүртгэхэд алдаа гарлаа:", error);
     res.status(500).json({ message: "Internal server error", error: error.message });
   }
 };
@@ -88,17 +91,69 @@ exports.delete = async (req, res) => {
   }
 };
 
-// Assign Courses to a Teacher
-exports.assignCourses = async (req, res) => {
+// POST route for teacher login
+exports.login = async (req, res) => {
   try {
-    const teacher = await Teacher.findById(req.params.id);
-    if (!teacher) return res.status(404).send({ message: "Teacher not found" });
+    const { email, password } = req.body;
 
-    teacher.courses = req.body.courses;
+    // Check if the teacher exists by email
+    const teacher = await Teacher.findOne({ email });
+
+    console.log(teacher);
+
+    if (!teacher) {
+      return res.status(404).json({ message: "Бүртгэлтэй имэйл олдсонгүй" });
+    }
+
+    // Compare the provided password with the stored hashed password
+    const isPasswordValid = await bcrypt.compare(password, teacher.password);
+
+    if (!isPasswordValid) {
+      return res.status(401).json({ message: "Нууц үг буруу байна" });
+    }
+
+    // Ensure JWT_SECRET is loaded
+    if (!process.env.JWT_SECRET) {
+      return res.status(500).json({ message: "JWT_SECRET тохируулаагүй байна" });
+    }
+
+    // Generate a JWT token
+    const token = jwt.sign(
+      { id: teacher._id, email: teacher.email },
+      process.env.JWT_SECRET, // Ensure you have a JWT_SECRET environment variable set
+      { expiresIn: '1h' } // Token expiry time (optional)
+    );
+
+    // Send the token as part of the response
+    res.status(200).json({
+      message: "Амжилттай",
+      token, // Send the generated token
+    });
+  } catch (error) {
+    console.error("Нэвтрэхэд алдаа гарлаа:", error);
+    res.status(500).json({ message: "Internal server error", error: error.message });
+  }
+};
+
+exports.assignLessonToTeacher = async (req, res) => {
+  try {
+    const { teacherId, lessonId } = req.body;
+
+    const teacher = await Teacher.findById(teacherId);
+    if (!teacher) return res.status(404).json({ message: 'Teacher not found' });
+
+    const lesson = await Lesson.findById(lessonId);
+    if (!lesson) return res.status(404).json({ message: 'Lesson not found' });
+
+    if (teacher.lessons.includes(lessonId)) {
+      return res.status(400).json({ message: 'Lesson already assigned to this teacher' });
+    }
+
+    teacher.lessons.push(lessonId);
     await teacher.save();
 
-    res.status(200).json({ message: "Courses assigned successfully", teacher });
+    res.status(200).json({ message: 'Lesson assigned successfully', teacher });
   } catch (error) {
-    res.status(500).send({ message: "Error assigning courses", error: error.message });
+    res.status(500).json({ error: error.message });
   }
 };

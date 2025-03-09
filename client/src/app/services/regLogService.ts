@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 @Injectable({
   providedIn: 'root'
 })
-export class TeacherService {
+export class RegLogService {
   private apiUrl = 'http://localhost:3000/api'; // Update with your actual API URL
 
   constructor(private http: HttpClient) {}
@@ -25,7 +25,7 @@ export class TeacherService {
     return this.http.post(`${this.apiUrl}/teachers`, teacherData);
   }
 
-  assignLesson(teacherId: string, lessonId: string): Observable<any> {
-    return this.http.post(`${this.apiUrl}/assign-lesson`, { teacherId, lessonId });
+  loginTeacher(loginData: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/teachers/login`, loginData);
   }
 }

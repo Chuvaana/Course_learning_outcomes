@@ -105,6 +105,8 @@ import { TeacherService } from './services/teacherService';
 import { DropdownModule } from 'primeng/dropdown';
 import { RouterModule } from '@angular/router';
 import { routes } from './app.routes';
+import { MainComponent } from './components/layout/shared/main/main.component';
+import { AppComponent } from './app.component';
 
 @NgModule({
     imports: [
@@ -321,6 +323,7 @@ import { routes } from './app.routes';
         DropdownModule,
         RouterModule
       ],
-  providers: [TeacherService  ]
+  providers: [TeacherService  ],
+  declarations: [MainComponent]
 })
 export class AppModule { }
