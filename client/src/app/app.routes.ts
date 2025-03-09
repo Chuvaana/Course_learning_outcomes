@@ -1,7 +1,5 @@
 import { Routes } from '@angular/router';
 import { LayoutComponent } from './components/layout/layout.component';
-import { StudentImpoirtCompnent } from'./components/students/student_import/student-import.component';
-import { StudentListCompnent } from './components/students/student_list/student-list.component';
 
 export const routes: Routes = [
     {
@@ -22,6 +20,21 @@ export const routes: Routes = [
                 path: 'student',
                 loadChildren: () =>
                     import('./components/layout/student/student.module').then((m) => m.StudentModule),
+            },
+            {
+                path: 'student-import',
+                loadChildren: () =>
+                    import('./components/layout/student/import/student-import.module').then((m) => m.StudentImportModule),
+            },
+            {
+                path: 'exam-import',
+                loadChildren: () =>
+                    import('./components/layout/exam/import/exam-import.module').then((m) => m.ExamImportModule),
+            },
+            {
+                path: 'exam-list',
+                loadChildren: () =>
+                    import('./components/layout/exam/exam-list.module').then((m) => m.ExamListModule),
             }
         ]
     },

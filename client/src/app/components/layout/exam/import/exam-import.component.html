@@ -3,6 +3,12 @@
     <input type="file" (change)="onFileChange($event)" accept=".xls,.xlsx" />
   </div>
   <div>
+    <button mat-raised-button (click)="openPopup()">Open Popup</button>
+  </div>
+  <div>
+    <button mat-raised-button (click)="submit()">Create New Student</button>
+  </div>
+  <div>
     <table *ngIf="tableData.length > 0" border="1" style="text-align-last: center">
       <thead>
         <tr>

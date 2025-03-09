@@ -5,6 +5,11 @@ mongoose.Promise = global.Promise;
 const db = {};
 db.mongoose = mongoose;
 db.url = dbConfig.url;
+db.student = require("./student.model.js")(mongoose);
+
+db.branch = {};
+db.mongoose = mongoose;
+db.url = dbConfig.url;
 db.teacher = require("./teacher.model.js")(mongoose);
 
 db.branch = {};

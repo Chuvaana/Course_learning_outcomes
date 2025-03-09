@@ -39,21 +39,21 @@ export class TeacherComponent {
 
   loadBranches(): void {
     this.teacherService.getBranches().subscribe((data: any[]) => {
-      this.branches = data.map(branch => ({ name: branch.name, id: branch.id || branch.name })); 
+      this.branches = data.map(branch => ({ name: branch.name, id: branch.id || branch.name }));
     });
   }
 
   onBranchChange(branchId: string): void {
     this.teacherService.getDepartments(branchId).subscribe((data: any[]) => {
       if(data){
-        this.departments = data.map(dept => ({ name: dept.name, id: dept.id || dept.name })); 
+        this.departments = data.map(dept => ({ name: dept.name, id: dept.id || dept.name }));
       }
     });
   }
 
   registerTeacher(): void {
     console.log(this.teacherForm.valid);
-  
+
     if (this.teacherForm.valid) {
       this.teacherService.registerTeacher(this.teacherForm.value).subscribe(
         (data: { message: string; teacher: any }) => {
@@ -61,25 +61,25 @@ export class TeacherComponent {
             alert(data.message);
           }
           if (data.teacher) {
-            console.log("Teacher created:", data.teacher); 
+            console.log("Teacher created:", data.teacher);
           }
-          this.teacherForm.reset(); 
+          this.teacherForm.reset();
         },
         (error) => {
           // Handle error response
           let errorMessage = 'Error registering teacher';
-  
+
           if (error && error.error && error.error.message) {
-            errorMessage = error.error.message; 
+            errorMessage = error.error.message;
           }
-  
-          alert(errorMessage); 
+
+          alert(errorMessage);
           console.error('Error:', error);
         }
       );
     }
   }
-  
+
   toggleForm() {
     this.isRegister = !this.isRegister;
   }

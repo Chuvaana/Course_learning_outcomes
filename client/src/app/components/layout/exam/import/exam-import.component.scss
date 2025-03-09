@@ -1,0 +1,28 @@
+table {
+  width: 80%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+th, td {
+  padding: 8px;
+  border: 1px solid #ccc;
+  text-align: left;
+}
+
+th {
+  background-color: #f4f4f4;
+}
+
+.row {
+  display: flex;
+  gap: 10px; /* Spacing between columns */
+}
+
+.col {
+  flex: 1; /* Equal width columns */
+}
+
+.col:nth-child(1) {
+  flex: 2; /* Make the first column wider if needed */
+}

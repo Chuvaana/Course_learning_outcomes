@@ -14,6 +14,8 @@ exports.create = async (req, res) => {
     }
 
     // Check if the provided branch ID is valid
+    console.log(req.body);
+    console.log(mongoose.Types.ObjectId.isValid(branch));
     if (!mongoose.Types.ObjectId.isValid(branch)) {
       return res.status(400).json({ message: "Invalid branch or department ID!" });
     }
