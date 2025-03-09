@@ -8,7 +8,8 @@ var schema = mongoose.Schema(
     email: { type: String, required: true, unique: true, match: /@must\.edu\.mn$/ },
     branch: { type: mongoose.Schema.Types.ObjectId, ref: "Branch", required: true },
     department: { type: String, required: true },
-    password: { type: String, required: true }
+    password: { type: String, required: true },
+    lessons: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Lesson' }]
   },
   { timestamps: true }
 );

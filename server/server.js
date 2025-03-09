@@ -37,6 +37,7 @@ app.get("/", (req, res) => {
 // require("./app/routes/teacher.routes")(app);
 require("./app/routes/branch.routes")(app);
 require("./app/routes/teacher.routes")(app);
+require("./app/routes/lesson.routes")(app);
 
 
 // set port, listen for requests

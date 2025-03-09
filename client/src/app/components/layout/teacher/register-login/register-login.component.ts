@@ -95,7 +95,7 @@ export class RegisterLoginComponent {
             localStorage.setItem('authToken', response.token);
             
             // Optionally, you can navigate the user to a protected route
-            this.router.navigate(['/dashboard']);
+            this.router.navigate(['/main/teacher']);
           }
         },
         (error) => {

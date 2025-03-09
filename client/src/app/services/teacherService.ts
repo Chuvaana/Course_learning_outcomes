@@ -24,4 +24,8 @@ export class TeacherService {
   registerTeacher(teacherData: any): Observable<any> {
     return this.http.post(`${this.apiUrl}/teachers`, teacherData);
   }
+
+  assignLesson(teacherId: string, lessonId: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/assign-lesson`, { teacherId, lessonId });
+  }
 }

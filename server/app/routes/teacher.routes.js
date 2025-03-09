@@ -18,6 +18,8 @@ module.exports = app => {
 
   // Delete a Teacher with id
   router.delete("/:id", teachers.delete);
+  router.post('/assign-lesson', teachers.assignLessonToTeacher);
+
 
   app.use("/api/teachers", router);
 };

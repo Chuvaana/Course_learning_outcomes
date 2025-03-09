@@ -132,3 +132,26 @@ exports.login = async (req, res) => {
     res.status(500).json({ message: "Internal server error", error: error.message });
   }
 };
+
+exports.assignLessonToTeacher = async (req, res) => {
+  try {
+    const { teacherId, lessonId } = req.body;
+
+    const teacher = await Teacher.findById(teacherId);
+    if (!teacher) return res.status(404).json({ message: 'Teacher not found' });
+
+    const lesson = await Lesson.findById(lessonId);
+    if (!lesson) return res.status(404).json({ message: 'Lesson not found' });
+
+    if (teacher.lessons.includes(lessonId)) {
+      return res.status(400).json({ message: 'Lesson already assigned to this teacher' });
+    }
+
+    teacher.lessons.push(lessonId);
+    await teacher.save();
+
+    res.status(200).json({ message: 'Lesson assigned successfully', teacher });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
