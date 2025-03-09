@@ -1,7 +1,7 @@
 <div class="content">
     <p-card class="auth-card">
         <h2 class="auth-title">{{ isRegister ? 'Бүртгүүлэх' : 'Нэвтрэх' }}</h2>
-        <form [formGroup]="teacherForm" (ngSubmit)="registerTeacher()" class="auth-form">
+        <form [formGroup]="teacherForm" class="auth-form">
             <p-dropdown *ngIf="isRegister" formControlName="branch" [options]="branches" optionLabel="name"
                 optionValue="id" variant="filled" placeholder="Select a Branch"
                 (onChange)="onBranchChange($event.value)" class="form-dropdown" />
@@ -11,7 +11,7 @@
             <input type="text" pInputText formControlName="code" *ngIf="isRegister" class="form-input" placeholder="Code" />
             <input type="email" pInputText formControlName="email" class="form-input" placeholder="Email" />
             <p-password formControlName="password" [feedback]="false" class="form-input" placeholder="Password" />
-            <p-button type="submit" label="Submit" class="submit-button" />
+            <p-button label="Submit" class="submit-button" (click)="submitButton()" />
         </form>
         <a (click)="toggleForm()" class="toggle-link">{{ isRegister ? 'Already have an account? Login' : "Don't have an account? Register" }}</a>
     </p-card>

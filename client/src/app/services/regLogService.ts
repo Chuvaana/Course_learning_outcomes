@@ -24,4 +24,8 @@ export class RegLogService {
   registerTeacher(teacherData: any): Observable<any> {
     return this.http.post(`${this.apiUrl}/teachers`, teacherData);
   }
+
+  loginTeacher(loginData: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/teachers/login`, loginData);
+  }
 }

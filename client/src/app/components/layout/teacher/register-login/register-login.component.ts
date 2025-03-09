@@ -6,6 +6,7 @@ import { CardModule } from 'primeng/card';
 import { DropdownModule } from 'primeng/dropdown';
 import { PasswordModule } from 'primeng/password';
 import { RegLogService } from '../../../../services/regLogService';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-register-login',
@@ -26,7 +27,7 @@ export class RegisterLoginComponent {
   selectedBranch: string = '';
   filteredDepartments = [];
 
-  constructor(private fb: FormBuilder, private service: RegLogService) {
+  constructor(private fb: FormBuilder, private service: RegLogService, private router: Router) {
     this.teacherForm = this.fb.group({
       name: ['', Validators.required],
       code: ['', Validators.required],
@@ -55,23 +56,50 @@ export class RegisterLoginComponent {
     });
   }
 
-  registerTeacher(): void {
-    console.log(this.teacherForm.valid);
+  submitButton(): void {
+    console.log(this.isRegister ? "Teacher registering:" : "Teacher logging in:");
 
-    if (this.teacherForm.valid) {
-      this.service.registerTeacher(this.teacherForm.value).subscribe(
-        (data: { message: string; teacher: any }) => {
-          if (data.message) {
-            alert(data.message);
+    if (this.isRegister) {
+      // Registering a teacher
+      if (this.teacherForm.valid) {
+        this.service.registerTeacher(this.teacherForm.value).subscribe(
+          (data: { message: string; teacher: any }) => {
+            if (data.message) {
+              alert(data.message);
+            }
+            if (data.teacher) {
+              console.log("Teacher created:", data.teacher);
+            }
+            this.teacherForm.reset(); // Reset form after successful registration
+          },
+          (error) => {
+            let errorMessage = 'Error registering teacher';
+
+            if (error && error.error && error.error.message) {
+              errorMessage = error.error.message;
+            }
+
+            alert(errorMessage);
+            console.error('Error:', error);
           }
-          if (data.teacher) {
-            console.log("Teacher created:", data.teacher);
+        );
+      }
+    } else {
+
+      this.service.loginTeacher(this.teacherForm.value).subscribe(
+        (response: any) => {
+          if (response && response.token) {
+            console.log("Teacher logged in:", response);
+            
+            // Store the token in localStorage
+            localStorage.setItem('authToken', response.token);
+            
+            // Optionally, you can navigate the user to a protected route
+            this.router.navigate(['/dashboard']);
           }
-          this.teacherForm.reset();
         },
         (error) => {
-          // Handle error response
-          let errorMessage = 'Error registering teacher';
+          let errorMessage = 'Error logging in';
 
           if (error && error.error && error.error.message) {
             errorMessage = error.error.message;
@@ -81,6 +109,7 @@ export class RegisterLoginComponent {
           console.error('Error:', error);
         }
       );
+
     }
   }
 
