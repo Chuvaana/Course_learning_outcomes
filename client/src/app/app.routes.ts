@@ -2,10 +2,15 @@ import { Routes } from '@angular/router';
 import { LayoutComponent } from './components/layout/layout.component';
 import { StudentImpoirtCompnent } from'./components/students/student_import/student-import.component';
 import { StudentListCompnent } from './components/students/student_list/student-list.component';
+import { RegisterLoginComponent } from './components/layout/teacher/register-login/register-login.component';
+import { MainComponent } from './components/layout/shared/main/main.component';
 
 export const routes: Routes = [
+    { path: '', component: MainComponent },
+    { path: 'teacher-login', component: RegisterLoginComponent },
+    // { path: 'student-login', component: StudentLoginComponent },
     {
-        path: '',
+        path: 'main',
         component: LayoutComponent,
         children: [
             {
@@ -25,5 +30,5 @@ export const routes: Routes = [
             }
         ]
     },
-
+    
 ];
