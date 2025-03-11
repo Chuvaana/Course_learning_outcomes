@@ -25,21 +25,6 @@ export const routes: Routes = [
                 path: 'student',
                 loadChildren: () =>
                     import('./components/layout/student/student.module').then((m) => m.StudentModule),
-            },
-            {
-                path: 'student-import',
-                loadChildren: () =>
-                    import('./components/layout/student/import/student-import.module').then((m) => m.StudentImportModule),
-            },
-            {
-                path: 'exam-import',
-                loadChildren: () =>
-                    import('./components/layout/exam/import/exam-import.module').then((m) => m.ExamImportModule),
-            },
-            {
-                path: 'exam-list',
-                loadChildren: () =>
-                    import('./components/layout/exam/exam-list.module').then((m) => m.ExamListModule),
             }
         ]
     },

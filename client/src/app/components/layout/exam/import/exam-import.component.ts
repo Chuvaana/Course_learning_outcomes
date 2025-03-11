@@ -18,7 +18,7 @@ import { ExamService } from '../../../../services/examService';
   templateUrl: './exam-import.component.html',
   styleUrls: ['./exam-import.component.scss']
 })
-export class ExamImpoirtCompnent {
+export class ExamImportComponent {
   studentForm: FormGroup;
   branches: any[] = [];
   departments: any[] = [];

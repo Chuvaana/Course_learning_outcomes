@@ -18,7 +18,7 @@ import { StudentService } from '../../../../services/studentService';
   templateUrl: './student-import.component.html',
   styleUrls: ['./student-import.component.scss']
 })
-export class StudentImpoirtCompnent {
+export class StudentImportComponent {
   studentForm: FormGroup;
   branches: any[] = [];
   departments: any[] = [];
