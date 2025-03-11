@@ -20,6 +20,13 @@
         <span>{{ answer }}</span>
       </div>
     </div>
+    <div *ngIf="question.questionType === 'relatedQuestion'">
+      <!-- Related question (trigger next question) -->
+      <div *ngFor="let answer of question.answers; let j = index" class="answer-item">
+        <span>{{ answer }}</span>
+        <button>{{ answer }}</button>
+      </div>
+    </div>
   </div>
 </div>
 

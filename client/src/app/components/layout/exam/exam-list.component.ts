@@ -38,8 +38,31 @@ export class ExamListComponent {  // Fixed the typo here
       questionType: 'manyCheck',
       answers: ['Хариулт I', 'Хариулт II', 'Хариулт III'],
       selectedAnswers: []
+    },
+    {
+      text: 'What is your favorite color?',
+      questionType: 'relatedQuestion',
+      answers: ['Red', 'Blue', 'Green'],
+      relatedQuestions: [
+        {
+          text: 'Why do you like Red?',
+          questionType: 'onlyOneCheck',
+          answers: ['It looks vibrant', 'It feels powerful'],
+        },
+        {
+          text: 'Why do you like Blue?',
+          questionType: 'onlyOneCheck',
+          answers: ['It is calming', 'It reminds me of the ocean'],
+        },
+        {
+          text: 'Why do you like Green?',
+          questionType: 'onlyOneCheck',
+          answers: ['It represents nature', 'It is soothing'],
+        }
+      ]
     }
   ];
+  shownQuestions = [...this.data]; // Анхны асуултуудыг харуулах
 
   constructor(
     private fb: FormBuilder,

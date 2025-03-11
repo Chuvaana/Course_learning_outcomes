@@ -1,0 +1,10 @@
+.nav-bar-left{
+  text-transform: uppercase;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+}
+
+.nav-bar-left > * {
+  padding: 20px;
+}
