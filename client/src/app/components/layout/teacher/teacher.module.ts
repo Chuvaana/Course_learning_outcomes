@@ -6,6 +6,7 @@ import { LessonListComponent } from './lesson-list/lesson-list.component';
 import { LessonComponent } from './lesson-list/lesson/lesson.component';
 import { TeacherComponent } from './teacher.component';
 import { SharedComponent } from '../shared/shared.component';
+import { CloComponent } from './lesson-list/lesson/clo/clo.component';
 
 const routes: Routes = [
   {
@@ -22,7 +23,16 @@ const routes: Routes = [
           },
         ]
       },
-      { path: 'shared', component: SharedComponent }, // ✅ Fixed path for SharedComponent
+      { 
+        path: 'shared', 
+        component: LessonComponent,
+        children: [
+          {
+            path: 'clo',
+            component: CloComponent, 
+          }
+        ]
+      }, // ✅ Fixed path for SharedComponent
     ]
   },
 ];
