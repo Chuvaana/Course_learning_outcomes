@@ -1,11 +1,11 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule, Routes } from '@angular/router';
-import { TeacherComponent } from './teacher.component';
+import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MenuComponent } from './menu/menu.component';
-import { LessonComponent } from './lesson/lesson.component';
+import { RouterModule, Routes } from '@angular/router';
 import { LessonListComponent } from './lesson-list/lesson-list.component';
+import { LessonComponent } from './lesson-list/lesson/lesson.component';
+import { TeacherComponent } from './teacher.component';
+import { SharedComponent } from '../shared/shared.component';
 
 const routes: Routes = [
   {
@@ -14,33 +14,30 @@ const routes: Routes = [
     children: [
       {
         path: 'lessonList',
-        component: LessonListComponent
-      },
-      {
-        path: 'lesson',
-        component: LessonComponent,
+        component: LessonListComponent,
         children: [
           {
-            path: 'clo',
-            component: LessonComponent
-          }
+            path: 'lesson/:id',
+            component: LessonComponent, // ✅ Should be LessonComponent, not SharedComponent
+          },
         ]
-      }
+      },
+      { path: 'shared', component: SharedComponent }, // ✅ Fixed path for SharedComponent
     ]
   },
-
-]
+];
 
 @NgModule({
-  declarations: [],
   imports: [
     CommonModule,
     RouterModule.forChild(routes),
-    FormsModule, ReactiveFormsModule
+    FormsModule,
+    ReactiveFormsModule,
+    LessonListComponent, // ✅ Explicitly importing standalone components
+    LessonComponent,
+    TeacherComponent,
+    SharedComponent
   ],
-  exports: [
-    RouterModule,
-    FormsModule, ReactiveFormsModule
-  ]
+  exports: [RouterModule, FormsModule, ReactiveFormsModule]
 })
-export class TeacherModule { }
+export class TeacherModule {}

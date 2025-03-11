@@ -1,39 +1,37 @@
 <div class="lesson-list-container">
-    <!-- Button to toggle form visibility -->
-    <button pButton label="Add Lesson" icon="pi pi-plus" (click)="toggleForm()"></button>
-  
-    <!-- Reactive Form for Adding Lesson -->
-    <div *ngIf="isFormVisible" class="lesson-form">
-      <form [formGroup]="lessonForm" >
-        <div class="p-field">
-          <label for="title">Lesson Title</label>
-          <input id="title" type="text" pInputText formControlName="title" placeholder="Enter lesson title" />
-        </div>
-        <div class="p-field">
-          <label for="description">Lesson Description</label>
-          <input id="description" type="text" pInputText formControlName="description" placeholder="Enter lesson description" />
-        </div>
-        <div class="p-field">
-          <button pButton label="Save" icon="pi pi-check" (click)="addLesson()"></button>
-          <button pButton label="Cancel" icon="pi pi-times" class="p-button-secondary" type="button" (click)="toggleForm()"></button>
-        </div>
-      </form>
-    </div>
-  
-    <!-- Display Lessons as Cards -->
-    <div class="lesson-cards">
-      <div *ngFor="let lesson of lessons" class="mb-4 p-8 flex items-center justify-center">
-        <p-card [style]="{ width: '25rem', overflow: 'hidden' }">
-          <ng-template #title>{{ lesson.title }}</ng-template>
-          <ng-template #subtitle>{{ lesson.description }}</ng-template>
-          <ng-template #footer>
-            <div class="flex gap-4 mt-1">
-              <p-button label="Edit" severity="secondary" class="w-full" [outlined]="true"></p-button>
-              <p-button label="Delete" class="w-full"></p-button>
-            </div>
-          </ng-template>
-        </p-card>
+  <!-- Button to toggle form visibility -->
+  <button pButton label="Add Lesson" icon="pi pi-plus" (click)="toggleForm()"></button>
+
+  <!-- Reactive Form for Adding Lesson -->
+  <div *ngIf="isFormVisible" class="lesson-form">
+    <form [formGroup]="lessonForm">
+      <div class="form-group">
+        <label>Select Course</label>
+        <p-dropdown
+          [options]="courses"
+          formControlName="course"
+          optionLabel="title"
+          optionValue="id"
+          placeholder="Select a Course"
+          (onChange)="onCourseChange($event.value)"
+        ></p-dropdown>
       </div>
-    </div>
+      <!-- <div class="p-field">
+        <button pButton label="Save" icon="pi pi-check" type="submit"></button>
+        <button pButton label="Cancel" icon="pi pi-times" class="p-button-secondary" type="button" (click)="toggleForm()"></button>
+      </div> -->
+      <p-button label="Submit" class="submit-button" (click)="addLesson()" />
+
+    </form>
   </div>
-  
+
+  <div class="lesson-cards">
+    <div *ngFor="let lesson of lessons" class="mb-4 p-8 flex items-center justify-center">
+      <p-card [style]="{ width: '25rem', overflow: 'hidden' }" >
+        <ng-template #title>{{ lesson.code }} - {{ lesson.title }}</ng-template>
+        <a [routerLink]="['/main/teacher/lessonList/lesson', lesson.id]">{{ lesson.department }}</a>
+      </p-card>
+    </div>
+  </div>  
+  <!-- , lesson.id -->
+</div>

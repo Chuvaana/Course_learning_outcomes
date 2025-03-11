@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -25,7 +25,17 @@ export class TeacherService {
     return this.http.post(`${this.apiUrl}/teachers`, teacherData);
   }
 
-  assignLesson(teacherId: string, lessonId: string): Observable<any> {
-    return this.http.post(`${this.apiUrl}/assign-lesson`, { teacherId, lessonId });
+  assignLesson(lessonId: string): Observable<any> {
+    const teacherId = localStorage.getItem('teacherId'); // Get token from localStorage
+    return this.http.post(`${this.apiUrl}/teachers/assign-lesson`, {teacherId, lessonId});
+  }
+
+  getLessons(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/lessons`);
+  }
+
+  getTeacher(): Observable<any> {
+    const teacherId = localStorage.getItem('teacherId'); // Get token from localStorage
+    return this.http.get(`${this.apiUrl}/teachers/${teacherId}`);
   }
 }

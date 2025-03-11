@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const jwt = require('jsonwebtoken');
 const bcrypt = require("bcryptjs");
 const Teacher = require("../models/teacher.model"); // Make sure the path is correct
+const Lesson = require("../models/lesson.model"); // Make sure the path is correct
 
 require('dotenv').config();
 // POST route to save teacher data
@@ -59,10 +60,19 @@ exports.findAll = async (req, res) => {
 
 exports.findOne = async (req, res) => {
   try {
-    const teacher = await Teacher.findById(req.params.id).populate("branch", "name").populate("department", "name");
+    // Fetch the teacher by ID and populate the branch, department, and lessons fields
+    const teacher = await Teacher.findById(req.params.id)
+      .populate("branch", "name")       // Populating the branch name
+      .populate("department", "name")   // Populating the department name
+      .populate("lessons");             // Populating the lessons field
+
+    // If the teacher is not found, send a 404 error
     if (!teacher) return res.status(404).send({ message: "Teacher not found" });
+
+    // Return the teacher data with populated fields
     res.status(200).json(teacher);
   } catch (error) {
+    // Handle any errors and send a 500 response
     res.status(500).send({ message: "Error retrieving teacher", error: error.message });
   }
 };
@@ -125,6 +135,7 @@ exports.login = async (req, res) => {
     // Send the token as part of the response
     res.status(200).json({
       message: "Амжилттай",
+      teacher,
       token, // Send the generated token
     });
   } catch (error) {
@@ -135,22 +146,27 @@ exports.login = async (req, res) => {
 
 exports.assignLessonToTeacher = async (req, res) => {
   try {
-    const { teacherId, lessonId } = req.body;
+    const { teacherId, lessonId } = req.body;  // You only need lessonId from the request body
 
+    // Find the teacher using the teacherId
     const teacher = await Teacher.findById(teacherId);
-    if (!teacher) return res.status(404).json({ message: 'Teacher not found' });
+    if (!teacher) return res.status(404).json({ message: 'Багш олдсонгүй' });
 
+    // Find the lesson
     const lesson = await Lesson.findById(lessonId);
-    if (!lesson) return res.status(404).json({ message: 'Lesson not found' });
+    if (!lesson) return res.status(404).json({ message: 'Хичээл олдсонгүй' });
 
+    // Check if the lesson is already assigned to the teacher
     if (teacher.lessons.includes(lessonId)) {
-      return res.status(400).json({ message: 'Lesson already assigned to this teacher' });
+      return res.status(400).json({ message: 'Хичээл бүртгэгдсэн байна' });
     }
 
-    teacher.lessons.push(lessonId);
+    // Assign the lesson to the teacher
+    teacher.lessons.push(lesson);
     await teacher.save();
 
-    res.status(200).json({ message: 'Lesson assigned successfully', teacher });
+    // Return the updated teacher data
+    res.status(200).json({ message: 'success', teacher });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

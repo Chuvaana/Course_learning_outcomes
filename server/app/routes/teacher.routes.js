@@ -1,5 +1,6 @@
 module.exports = app => {
   const teachers = require("../controllers/teacher.controller.js");
+
   var router = require("express").Router();
 
   // Create a new Teacher

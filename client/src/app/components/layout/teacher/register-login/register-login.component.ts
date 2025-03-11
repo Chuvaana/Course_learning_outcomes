@@ -93,6 +93,7 @@ export class RegisterLoginComponent {
             
             // Store the token in localStorage
             localStorage.setItem('authToken', response.token);
+            localStorage.setItem('teacherId', response.teacher.id);
             
             // Optionally, you can navigate the user to a protected route
             this.router.navigate(['/main/teacher']);

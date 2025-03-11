@@ -3,11 +3,11 @@ const cors = require("cors");
 
 const app = express();
 
-var corsOptions = {
-  origin: "http://localhost:4200"
-};
-
-app.use(cors(corsOptions));
+app.use(cors({
+  origin: "http://localhost:4200", // Allow your frontend domain
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Authorization', 'Content-Type']
+}));
 
 // parse requests of content-type - application/json
 app.use(express.json());

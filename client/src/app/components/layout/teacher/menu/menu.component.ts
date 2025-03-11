@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
+import { RouterModule } from '@angular/router';
 import { MenuItem } from 'primeng/api';
 import { AvatarModule } from 'primeng/avatar';
 import { BadgeModule } from 'primeng/badge';
@@ -10,7 +11,7 @@ import { RippleModule } from 'primeng/ripple';
 @Component({
   selector: 'app-menu',
   standalone: true,
-  imports: [MenubarModule, BadgeModule, AvatarModule, InputTextModule, RippleModule, CommonModule],
+  imports: [MenubarModule, BadgeModule, AvatarModule, InputTextModule, RippleModule, CommonModule, RouterModule],
   templateUrl: './menu.component.html',
   styleUrl: './menu.component.scss'
 })
@@ -22,22 +23,22 @@ export class MenuComponent implements OnInit {
       {
         label: 'Home',
         icon: 'pi pi-home',
-        link: '/'
+        url: '/'
       },
       {
         label: 'Хичээл',
         icon: 'pi pi-star',
-        link: '/main/teacher/lessonList'
+        url: '/main/teacher/lessonList'
       },
       {
         label: 'Шалгалт',
         icon: 'pi pi-star',
-        link: '/exam'
+        url: '/exam'
       },
       {
         label: 'Санал асуулга',
         icon: 'pi pi-star',
-        link: '/'
+        url: '/'
       },
       // {
       //   label: 'Шалгалт',
