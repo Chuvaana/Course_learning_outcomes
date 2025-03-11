@@ -1,0 +1,27 @@
+<div>
+  <div>
+    <input type="file" (change)="onFileChange($event)" accept=".xls,.xlsx" />
+  </div>
+  <div>
+    <button mat-raised-button (click)="openPopup()">Open Popup</button>
+  </div>
+  <div>
+    <button mat-raised-button (click)="submit()">Create New Student</button>
+  </div>
+  <div>
+    <table *ngIf="tableData.length > 0" border="1" style="text-align-last: center">
+      <thead>
+        <tr>
+          <th>#</th> <!-- Row count header -->
+          <th *ngFor="let header of tableData[0]">{{ header }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let row of tableData.slice(1); let i = index">
+          <td>{{ i + 1 }}</td> <!-- Row count -->
+          <td *ngFor="let cell of row">{{ cell }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
