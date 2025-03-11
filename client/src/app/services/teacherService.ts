@@ -38,4 +38,8 @@ export class TeacherService {
     const teacherId = localStorage.getItem('teacherId'); // Get token from localStorage
     return this.http.get(`${this.apiUrl}/teachers/${teacherId}`);
   }
+
+  getCloList(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/clos`);
+  }
 }

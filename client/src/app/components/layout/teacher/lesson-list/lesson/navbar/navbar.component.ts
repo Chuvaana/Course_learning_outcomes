@@ -17,7 +17,8 @@ export class NavbarComponent {
     this.items = [
       {
         label: 'CLO',
-        icon: 'pi pi-plus'
+        icon: 'pi pi-plus',
+        url: '/main/teacher/shared/clo'
       },
       {
         label: 'Хичээлийн хөтөлбөр',
