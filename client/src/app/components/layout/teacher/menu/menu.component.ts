@@ -33,7 +33,7 @@ export class MenuComponent implements OnInit {
       {
         label: 'Шалгалт',
         icon: 'pi pi-star',
-        url: '/exam'
+        url: '/main/student/exam-list'
       },
       {
         label: 'Санал асуулга',

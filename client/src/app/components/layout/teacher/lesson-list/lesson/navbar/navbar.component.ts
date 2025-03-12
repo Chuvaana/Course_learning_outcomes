@@ -18,7 +18,7 @@ export class NavbarComponent {
       {
         label: 'CLO',
         icon: 'pi pi-plus',
-        url: '/main/teacher/shared/clo'
+        url: '/main/teacher/lesson/clo'
       },
       {
         label: 'Хичээлийн хөтөлбөр',
@@ -34,7 +34,13 @@ export class NavbarComponent {
       },
       {
         label: 'Оюутан',
-        icon: 'pi pi-plus'
+        icon: 'pi pi-plus',
+        url: '/main/teacher/lesson/student'
+      },
+      {
+        label: 'Ирц',
+        icon: 'pi pi-plus',
+        url: '/main/teacher/lesson/student'
       },
       // {
       //   label: 'CLO',
