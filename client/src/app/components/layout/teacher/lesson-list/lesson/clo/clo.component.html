@@ -1,5 +1,7 @@
 <div class="card">
     <p-toast />
+    <p-button label="Нэмэх" class="submit-button" (click)="addClo()" />
+
     <p-table [value]="clos" dataKey="id" editMode="row" [tableStyle]="{'min-width': '50rem'}">
         <ng-template #header>
             <tr>
@@ -14,46 +16,38 @@
                 <td>
                     <p-cellEditor>
                         <ng-template #input>
-                            <input pInputText type="text" [(ngModel)]="clo.id" />
+                            <input pInputText type="text" [(ngModel)]="index" disabled/>
                         </ng-template>
                         <ng-template #output>
-                            {{clo.id}}
+                            {{ ri + 1 }}
                         </ng-template>
                     </p-cellEditor>
                 </td>
                 <td>
                     <p-cellEditor>
                         <ng-template #input>
-                            <input pInputText type="text" [(ngModel)]="clo.type" required />
+                            <p-select [options]="types" appendTo="body" [(ngModel)]="clo.type"
+                                [style]="{'width':'100%'}" />
                         </ng-template>
                         <ng-template #output>
-                            {{clo.type}}
+                            <p-tag [value]="clo.type" />
                         </ng-template>
                     </p-cellEditor>
                 </td>
                 <td>
                     <p-cellEditor>
-
                         <ng-template #input>
                             <input pInputText type="text" [(ngModel)]="clo.cloName" required />
                         </ng-template>
                         <ng-template #output>
-                            {{clo.type}}
-                        </ng-template>
-
-                        <!-- <ng-template #input>
-                            <p-select [options]="statuses" appendTo="body" [(ngModel)]="clo.cloName"
-                                [style]="{'width':'100%'}" />
-                        </ng-template> -->
-                        <!-- <ng-template #output>
-                            <p-tag [value]="clo.clo" />
-                        </ng-template> -->
+                            {{clo.cloName}}
+                        </ng-template>                        
                     </p-cellEditor>
                 </td>
                 <td>
                     <div class="flex items-center justify-center gap-2">
                         <button *ngIf="!editing" pButton pRipple type="button" pInitEditableRow icon="pi pi-pencil"
-                            (click)="onRowEditInit(clo)" text rounded severity="secondary"></button>
+                            (click)="onRowEditInit(clo, ri)" text rounded severity="secondary"></button>
                         <button *ngIf="editing" pButton pRipple type="button" pSaveEditableRow icon="pi pi-check"
                             (click)="onRowEditSave(clo)" text rounded severity="secondary"></button>
                         <button *ngIf="editing" pButton pRipple type="button" pCancelEditableRow icon="pi pi-times"

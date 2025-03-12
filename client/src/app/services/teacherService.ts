@@ -42,4 +42,12 @@ export class TeacherService {
   getCloList(): Observable<any> {
     return this.http.get(`${this.apiUrl}/clos`);
   }
+
+  registerClo(cloData: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/clos`, cloData);
+  }
+
+  updateClo(cloData: any): Observable<any> {
+    return this.http.put(`${this.apiUrl}/clos/${cloData.id}`, cloData);
+  }
 }

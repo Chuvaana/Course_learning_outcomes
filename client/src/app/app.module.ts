@@ -107,9 +107,8 @@ import { routes } from './app.routes';
 import { AuthInterceptor } from './auth.interceptor';
 import { MainComponent } from './components/layout/shared/main/main.component';
 import { LessonListComponent } from './components/layout/teacher/lesson-list/lesson-list.component';
-import { TeacherService } from './services/teacherService';
 import { MenuComponent } from './components/layout/teacher/menu/menu.component';
-import { MessageService } from 'primeng/api';
+import { TeacherService } from './services/teacherService';
 
 @NgModule({
   imports: [

@@ -1,0 +1,18 @@
+const mongoose = require('mongoose');
+
+const CloSchema = new mongoose.Schema(
+    {
+        type: { type: String, required: true },
+        cloName: { type: String, required: true }
+    },
+    { timestamps: true }
+);
+
+// Convert _id to id in JSON responses
+CloSchema.method("toJSON", function () {
+    const { __v, _id, ...object } = this.toObject();
+    object.id = _id.toString(); // Convert _id to string
+    return object;
+});
+
+module.exports = mongoose.model('Clo', CloSchema);
