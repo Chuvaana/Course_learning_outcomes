@@ -21,6 +21,11 @@ export class NavbarComponent {
         url: '/main/teacher/lesson/clo'
       },
       {
+        label: 'CLO-point',
+        icon: 'pi pi-plus',
+        url: '/main/teacher/lesson/clo-point'
+      },
+      {
         label: 'Хичээлийн хөтөлбөр',
         icon: 'pi pi-plus'
       },

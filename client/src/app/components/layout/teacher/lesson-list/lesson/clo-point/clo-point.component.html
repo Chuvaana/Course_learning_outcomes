@@ -1,0 +1,31 @@
+<h3>Assessment Points Distribution</h3>
+<div class="points-grid">
+    <div *ngFor="let point of headerPoints; let i = index">
+        <label>{{ point.name }}</label>
+        <p-inputNumber [(ngModel)]="point.value" [min]="0" [max]="20" [step]="1"></p-inputNumber>
+    </div>
+</div>
+
+<button pButton type="button" label="Save Points" (click)="savePoints()"></button>
+
+<h3>CLO Assessment Table</h3>
+<p-table [value]="cloData" class="custom-table">
+    <ng-template pTemplate="header">
+        <tr>
+            <th>#</th>
+            <th>CLOs</th>
+            <th *ngFor="let category of categories">{{ category.name }}</th>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-row let-i="rowIndex">
+        <tr>
+            <td>{{ i + 1 }}</td>
+            <td>{{ row.CLOs }}</td>
+            <td *ngFor="let category of categories">
+                <p-inputNumber [(ngModel)]="row[category.key]" [min]="0" [max]="15" [step]="1"></p-inputNumber>
+            </td>
+        </tr>
+    </ng-template>
+</p-table>
+
+<button pButton type="button" label="Save CLO Scores" (click)="saveCloScores()"></button>

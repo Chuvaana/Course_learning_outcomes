@@ -1,0 +1,10 @@
+.points-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+:host ::ng-deep .p-inputnumber {
+    width: 80px;
+}

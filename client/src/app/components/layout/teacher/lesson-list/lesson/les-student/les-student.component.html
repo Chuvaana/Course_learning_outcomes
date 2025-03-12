@@ -1,1 +1,62 @@
-<p>les-student works!</p>
+<p-table [value]="cloData" [paginator]="true" [rows]="5" [sortMode]="'multiple'" class="custom-table">
+    <ng-template pTemplate="header">
+      <tr>
+        <th rowspan="2" pSortableColumn="ID">#<p-sortIcon field="ID"></p-sortIcon></th>
+        <th rowspan="2" pSortableColumn="CLOs">CLOs<p-sortIcon field="CLOs"></p-sortIcon></th>
+        <th colspan="2">Хичээлийн идэвхи, оролцоо</th>
+        <th colspan="2">Явцын сорил 1</th>
+        <th colspan="2">Явцын сорил 2</th>
+        <th colspan="2">Лабораторийн ажил, туршилт</th>
+        <th colspan="4">Даалгавар</th>
+        <th rowspan="2" pSortableColumn="sumPoint">Явцын үнэлгээний харгалзах нийлбэр оноо<p-sortIcon field="sumPoint"></p-sortIcon></th>
+        <th colspan="3">Улирлын шалгалт</th>
+        <th rowspan="2" pSortableColumn="sumPointExam">Шалгалтын үнэлгээний харгалзах нийлбэр оноо<p-sortIcon field="sumPointExam"></p-sortIcon></th>
+        <th rowspan="2" pSortableColumn="Letter Grade">Нийлбэр оноо<p-sortIcon field="Letter Grade"></p-sortIcon></th>
+        <th rowspan="2" pSortableColumn="Final Score (100%)">Хувьд шилжүүлсэн оноо<p-sortIcon field="Final Score (100%)"></p-sortIcon></th>
+        <th rowspan="2" pSortableColumn="Letter Grade">Үсгэн үнэлгээ<p-sortIcon field="Letter Grade"></p-sortIcon></th>
+      </tr>
+      <tr>
+        <th pSortableColumn="Time Management">Цаг төлөвлөлт, хариуцлага<p-sortIcon field="Time Management"></p-sortIcon></th>
+        <th pSortableColumn="Engagement">Суралцах хүсэл эрмэлзэл, өөрийгээ илэрхийлэх<p-sortIcon field="Engagement"></p-sortIcon></th>
+        <th pSortableColumn="Recall">Мэдлэгээ сэргээн санах, тайлбарлах<p-sortIcon field="Recall"></p-sortIcon></th>
+        <th pSortableColumn="Problem Solving">Асуудал шийдвэрлэхэд мэдлэгээ хэрэглэх, задлан шинжлэх<p-sortIcon field="Problem Solving"></p-sortIcon></th>
+        <th pSortableColumn="Recall 2">Мэдлэгээ сэргээн санах, тайлбарлах<p-sortIcon field="Recall 2"></p-sortIcon></th>
+        <th pSortableColumn="Problem Solving 2">Асуудал шийдвэрлэхэд мэдлэгээ хэрэглэх, задлан шинжлэх<p-sortIcon field="Problem Solving 2"></p-sortIcon></th>
+        <th pSortableColumn="Decision Making">Лабораторийн хэмжилт, туршилт, даалгавар гүйцэтгэх<p-sortIcon field="Decision Making"></p-sortIcon></th>
+        <th pSortableColumn="Communication">Үр дүнг тохирох аргаар өгөгдсөн форматын дагуу  боловсруулж, тайлагнах<p-sortIcon field="Communication"></p-sortIcon></th>
+        <th pSortableColumn="1">Өгөгдсөн даалгаварын хүрээнд шийдвэрлэх асуудлаа тодорхойлж томъёолох<p-sortIcon field="1"></p-sortIcon></th>
+        <th pSortableColumn="1">Шийдвэрлэх асуудлын хүрээнд тодорхой шийдэл дэвшүүлэх, дүн шинжилгээ хийх<p-sortIcon field="1"></p-sortIcon></th>
+        <th pSortableColumn="1">Мэдлэг, ур чадвараа ашиглан сонгосон шийдлын дагуу асуудлыг шийдвэрлэх<p-sortIcon field="1"></p-sortIcon></th>
+        <th pSortableColumn="1">Бичгийн болон харилцах ур чадвараа ашиглан үр дүнг өгөгдсөн форматын дагуу тайлагнах, илтгэх<p-sortIcon field="1"></p-sortIcon></th>
+        <th pSortableColumn="2">Сэргээн санах/ойлгох түвшин<p-sortIcon field="2"></p-sortIcon></th>
+        <th pSortableColumn="2">Хэрэглэх /дүн шинжилгээ хийх түвшин<p-sortIcon field="2"></p-sortIcon></th>
+        <th pSortableColumn="2">Үнэлэх/ бүтээх түвшин<p-sortIcon field="2"></p-sortIcon></th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-row>
+      <tr>
+        <td>{{ row.ID }}</td>
+        <td>{{ row.CLOs }}</td>
+        <td>{{ row['Time Management'] }}</td>
+        <td>{{ row.Engagement }}</td>
+        <td>{{ row.Recall }}</td>
+        <td>{{ row['Problem Solving'] }}</td>
+        <td>{{ row['Recall 2'] }}</td>
+        <td>{{ row['Problem Solving 2'] }}</td>
+        <td>{{ row['Decision Making'] }}</td>
+        <td>{{ row.Communication }}</td>
+        <td>{{ row['Final Score (100%)'] }}</td>
+        <td>{{ row['Letter Grade'] }}</td>
+        <td>{{ row['Letter Grade'] }}</td>
+        <td>{{ row['Letter Grade'] }}</td>
+        <td>{{ row['Letter Grade'] }}</td>
+        <td>{{ row['Letter Grade'] }}</td>
+        <td>{{ row['Letter Grade'] }}</td>
+        <td>{{ row['Letter Grade'] }}</td>
+        <td>{{ row['Letter Grade'] }}</td>
+        <td>{{ row['Letter Grade'] }}</td>
+        <td>{{ row['Letter Grade'] }}</td>
+        <td>{{ row['Letter Grade'] }}</td>
+      </tr>
+    </ng-template>
+  </p-table>

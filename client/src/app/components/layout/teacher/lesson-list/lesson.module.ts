@@ -4,6 +4,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule, Routes } from '@angular/router';
 import { LessonComponent } from './lesson/lesson.component';
 import { LesStudentComponent } from './lesson/les-student/les-student.component';
+import { CloPointComponent } from './lesson/clo-point/clo-point.component';
 
 const routes: Routes = [
   {
@@ -17,6 +18,10 @@ const routes: Routes = [
       {
         path: 'student',
         component: LesStudentComponent
+      },
+      {
+        path: 'clo-point',
+        component: CloPointComponent
       }
     ]
   }

@@ -8,6 +8,7 @@ import { CloComponent } from './lesson-list/lesson/clo/clo.component';
 import { LessonComponent } from './lesson-list/lesson/lesson.component';
 import { TeacherComponent } from './teacher.component';
 import { LesStudentComponent } from './lesson-list/lesson/les-student/les-student.component';
+import { CloPointComponent } from './lesson-list/lesson/clo-point/clo-point.component';
 
 const routes: Routes = [
   {
@@ -24,17 +25,21 @@ const routes: Routes = [
           },
         ]
       },
-      { 
-        path: 'lesson', 
+      {
+        path: 'lesson',
         component: LessonComponent,
         children: [
           {
             path: 'clo',
-            component: CloComponent, 
+            component: CloComponent,
           },
           {
             path: 'student',
-            component: LesStudentComponent, 
+            component: LesStudentComponent,
+          },
+          {
+            path: 'clo-point',
+            component: CloPointComponent
           }
         ]
       }, // ✅ Fixed path for SharedComponent
@@ -56,4 +61,4 @@ const routes: Routes = [
   exports: [RouterModule, FormsModule, ReactiveFormsModule],
   declarations: []
 })
-export class TeacherModule {}
+export class TeacherModule { }
