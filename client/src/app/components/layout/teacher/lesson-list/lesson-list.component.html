@@ -7,19 +7,9 @@
     <form [formGroup]="lessonForm">
       <div class="form-group">
         <label>Select Course</label>
-        <p-dropdown
-          [options]="courses"
-          formControlName="course"
-          optionLabel="title"
-          optionValue="id"
-          placeholder="Select a Course"
-          (onChange)="onCourseChange($event.value)"
-        ></p-dropdown>
+        <p-dropdown [options]="courses" formControlName="course" optionLabel="title" optionValue="id"
+          placeholder="Select a Course" (onChange)="onCourseChange($event.value)"></p-dropdown>
       </div>
-      <!-- <div class="p-field">
-        <button pButton label="Save" icon="pi pi-check" type="submit"></button>
-        <button pButton label="Cancel" icon="pi pi-times" class="p-button-secondary" type="button" (click)="toggleForm()"></button>
-      </div> -->
       <p-button label="Submit" class="submit-button" (click)="addLesson()" />
 
     </form>
@@ -27,11 +17,11 @@
 
   <div class="lesson-cards">
     <div *ngFor="let lesson of lessons" class="mb-4 p-8 flex items-center justify-center">
-      <p-card [style]="{ width: '25rem', overflow: 'hidden' }" >
+      <p-card [style]="{ width: '25rem', overflow: 'hidden' }">
         <ng-template #title>{{ lesson.code }} - {{ lesson.title }}</ng-template>
         <a [routerLink]="['/main/teacher/lesson']">{{ lesson.department }}</a>
       </p-card>
     </div>
-  </div>  
+  </div>
   <!-- , lesson.id -->
 </div>

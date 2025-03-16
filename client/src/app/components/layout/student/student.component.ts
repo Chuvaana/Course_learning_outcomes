@@ -1,14 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { RouterModule } from '@angular/router';
-import { MenubarModule } from 'primeng/menubar';
-import { MenuItem, MessageService } from 'primeng/api';
+import { Router, RouterModule } from '@angular/router';
+import { MenuItem } from 'primeng/api';
 import { Menubar } from 'primeng/menubar';
 import { ToastModule } from 'primeng/toast';
-import { Router } from '@angular/router';
+import { NavbarComponent } from '../teacher/lesson-list/lesson/navbar/navbar.component';
 @Component({
   selector: 'app-student',
-  imports: [CommonModule, RouterModule, Menubar, ToastModule],
+  imports: [CommonModule, RouterModule, Menubar, ToastModule , NavbarComponent],
   templateUrl: './student.component.html',
   styleUrl: './student.component.scss'
 })

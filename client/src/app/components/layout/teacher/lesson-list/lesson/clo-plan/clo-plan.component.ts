@@ -243,60 +243,6 @@ export class CloPlanComponent {
     return isValid;
   }
 
-
-  // validateColumnTotals(): boolean {
-  //   const columnKeys = [
-  //     'timeManagement',
-  //     'engagement',
-  //     'recall',
-  //     'problemSolving',
-  //     'recall2',
-  //     'problemSolving2',
-  //     'toExp',
-  //     'processing',
-  //     'decisionMaking',
-  //     'formulation',
-  //     'analysis',
-  //     'implementation',
-  //     'understandingLevel',
-  //     'analysisLevel',
-  //     'creationLevel'
-  //   ];
-
-  //   let isValid = true; // Track if all columns are valid
-
-  //   columnKeys.forEach(column => {
-  //     const expectedTotal = this.pointPlan[column] || 5; // Default value if missing
-  //     let actualTotal = 0;
-
-  //     // Calculate sum for each column
-  //     this.cloRows.controls.forEach(row => {
-  //       actualTotal += row.get(column)?.value || 0;
-  //     });
-
-  //     // Show warnings if values are incorrect
-  //     if (actualTotal > expectedTotal) {
-  //       this.msgService.add({
-  //         severity: 'warn',
-  //         summary: 'Warning',
-  //         detail: `${column} баганын нийт оноо (${actualTotal}) хэтэрсэн!`
-  //       });
-  //       isValid = false; // Mark as invalid
-  //     } else if (actualTotal < expectedTotal) {
-  //       this.msgService.add({
-  //         severity: 'warn',
-  //         summary: 'Warning',
-  //         detail: `${column} баганын нийт оноо (${actualTotal}) хүрэлцэхгүй байна!`
-  //       });
-  //       isValid = false; // Mark as invalid
-  //     }
-  //   });
-
-  //   return isValid; // Return validation result
-  // }
-
-
-
   onSubmit(): void {
 
     if (this.validateColumnTotals()) {

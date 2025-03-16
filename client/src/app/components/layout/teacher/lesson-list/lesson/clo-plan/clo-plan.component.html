@@ -3,7 +3,7 @@
     <form [formGroup]="cloForm" (ngSubmit)="onSubmit()">
       <p-button type="submit" label="Хадгалах" />
       <p-table [value]="cloRows.controls" [paginator]="true" [rows]="10" [sortMode]="'multiple'" rowGroupMode="subheader"
-        groupRowsBy="cloRows.controls.cloType" class="custom-table">
+        groupRowsBy="cloType" class="custom-table">
         <ng-template pTemplate="header">
           <tr>
             <th rowspan="3">#</th>

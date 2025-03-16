@@ -57,6 +57,11 @@ export class NavbarComponent {
         label: 'Ирц',
         icon: 'pi pi-plus',
         url: '/main/teacher/lesson/student'
+      },
+      {
+        label: 'ХИЧЭЭЛИЙН АГУУЛГА, ЦАГИЙН ХУВААРИЛАЛТ',
+        icon: 'pi pi-plus',
+        url: '/main/teacher/lesson/syllabus/schedule'
       }
     ];
   }
