@@ -159,3 +159,19 @@ input[type="radio"]:hover {
 .non-act-btn {
   background-color: red;
 }
+
+
+button{
+  color: white;
+  border-radius: 30px;
+  width: 200px;
+  height: 40px;
+  background: #0A0065;
+  border: 0px;
+  font-size: 16px;
+}
+button:hover{
+  background-color: #6e5ff5; /* Hover effect */
+  border: solid 1px #0A0065;
+  transition: 500ms;
+}

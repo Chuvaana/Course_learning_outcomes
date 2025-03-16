@@ -1,0 +1,20 @@
+<div class="card flex flex-direction-row">
+  <div style="width: 30%;">
+    <p-menu [model]="items">
+      <ng-template #item let-item>
+        <ng-container>
+          <a (click)="value(item.title)" class="p-menu-item-link">
+            <span [class]="item.icon"></span>
+            <span class="ml-2">{{ item.label }}</span>
+          </a>
+        </ng-container>
+      </ng-template>
+    </p-menu>
+  </div>
+
+  <div style="width: 70%;">
+    <div [hidden]="active">
+      <span>{{ this.valueTitle }}</span>
+    </div>
+  </div>
+</div>

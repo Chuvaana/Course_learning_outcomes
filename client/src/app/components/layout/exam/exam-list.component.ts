@@ -20,6 +20,7 @@ export class ExamListComponent {  // Fixed the typo here
   branches: any[] = [];
   departments: any[] = [];
   error = 'ERROR';
+  fillData: any[] = [];
   data = [
     {
       text: 'Асуулт 1',
@@ -35,12 +36,6 @@ export class ExamListComponent {  // Fixed the typo here
     },
     {
       text: 'Асуулт 3',
-      questionType: 'manyCheck',
-      answers: ['Хариулт I', 'Хариулт II', 'Хариулт III'],
-      selectedAnswers: []
-    },
-    {
-      text: 'What is your favorite color?',
       questionType: 'relatedQuestion',
       answers: ['Red', 'Blue', 'Green'],
       relatedQuestions: [
@@ -105,14 +100,26 @@ export class ExamListComponent {  // Fixed the typo here
     return this.studentForm.get('questions') as FormArray;
   }
 
-  // Handle the change in checkbox selection for each answer
-  selectQuestionAnswer(questionIndex: number, answerIndex: number, checked: boolean) {
-    const selectedAnswers = this.questions.at(questionIndex).get('selectedAnswers') as FormArray;
+  selectQuestionAnswer(questionIndex: number, answerIndex: number, checked: Event) {
+    const selectedAnswers = this.data[questionIndex].answers[answerIndex];
+
     if (checked) {
-      selectedAnswers.push(this.fb.control(this.data[questionIndex].answers[answerIndex]));
+      this.fillData.map((e) =>{
+        if(e[0] == questionIndex){
+          const index = this.fillData.findIndex((i) => i[0] === questionIndex);
+          if (index !== -1) {
+            this.fillData.splice(index, 1);
+          }
+        }
+      })
+      const data = [questionIndex, checked, answerIndex];
+      this.fillData.push(data);
+      console.log(this.fillData);
     } else {
-      const index = selectedAnswers.controls.findIndex(control => control.value === this.data[questionIndex].answers[answerIndex]);
-      selectedAnswers.removeAt(index);
+      const index = this.fillData.findIndex((i) => i[0] === questionIndex);
+      if (index !== -1) {
+        this.fillData.splice(index, 1);
+      }
     }
   }
 
@@ -121,6 +128,10 @@ export class ExamListComponent {  // Fixed the typo here
     this.questions.controls.forEach((questionGroup, index) => {
       console.log(`Асуулт ${index + 1}:`, questionGroup.get('selectedAnswers')?.value);
     });
+  }
+
+  onQuestionSelect(e : any){
+    console.log(e);
   }
 
   openPopup() {

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import * as XLSX from 'xlsx';
 import { AppModule } from '../../../../app.module';
@@ -14,11 +14,11 @@ import { StudentService } from '../../../../services/studentService';
 @Component({
   selector: 'app-student-import',
   standalone: true,
-  imports: [ReactiveFormsModule, DropdownModule, PasswordModule, ButtonModule, CommonModule, FormsModule],
+  imports: [ReactiveFormsModule, DropdownModule, PasswordModule, ButtonModule, CommonModule],
   templateUrl: './student-import.component.html',
   styleUrls: ['./student-import.component.scss']
 })
-export class StudentImportComponent {
+export class AdminStudentImportComponent {
   studentForm: FormGroup;
   branches: any[] = [];
   departments: any[] = [];
@@ -26,44 +26,32 @@ export class StudentImportComponent {
   error = 'ERROR';
   active = true;
   firstType = true;
-  studentCount : any;
   selectedBranch: string = '';
   filteredDepartments = [];
   onlyName: string[] = []; // Define the type explicitly
   onlyId: string[] = [];
+  onlyUserName: string[] = [];
+  onlyPassword: string[] = [];
+  onlyEmail: string[] = [];
   onlyBranch: string[] = [];
-  onlyDepartment: string[] = [];
   tableData: any[][] = [];
-
 
   constructor(
     private fb: FormBuilder,
-    private service: StudentService,
+    private studentService: StudentService,
     private dialog: MatDialog
   ) {
     this.studentForm = this.fb.group({
       name: ['', Validators.required],
       id: ['', Validators.required],
       branch: ['', Validators.required],
-      department: ['', Validators.required]
+      email: ['', [Validators.required, Validators.email, Validators.pattern(/^[a-zA-Z0-9._%+-]+@must\.edu\.mn$/)]],
+      userName: ['', Validators.required],
+      password: ['', Validators.required]
     });
   }
 
   ngOnInit(): void {
-    this.loadBranches();
-  }
-
-  loadBranches(): void {
-    this.service.getBranches().subscribe((data: any[]) => {
-      this.branches = data.map(branch => ({ name: branch.name, id: branch.id || branch.name }));
-    });
-  }
-  onBranchChange(branchId: string): void {
-    this.service.getDepartments(branchId).subscribe((data: any[]) => {
-      if (data) {
-        this.departments = data.map(dept => ({ name: dept.name, id: dept.id || dept.name }));
-      }
-    });
   }
 
   onFileChange(event: any) {
@@ -87,17 +75,26 @@ export class StudentImportComponent {
       // Convert sheet to JSON array of arrays
       this.tableData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
 
-      this.studentCount = this.tableData.length - 1;
+      console.log(this.tableData); // Output data to console
+
       this.tableData
         .filter((e: string[]) => e.length >= 4) // Ensure at least 4 elements are present
         .forEach((e: string[]) => {
-          const [name, id, branch, department] = e;
+          const [name, id, userName, password, email, branch] = e;
 
           if (name) this.onlyName.push(name);
           if (id) this.onlyId.push(id);
+          if (userName) this.onlyUserName.push(userName);
+          if (password) this.onlyPassword.push(password);
+          if (email) this.onlyEmail.push(email);
           if (branch) this.onlyBranch.push(branch);
-          if (department) this.onlyDepartment.push(department);
         });
+
+
+      console.log(this.onlyName);
+      console.log(this.onlyId);
+      console.log(this.onlyUserName);
+      console.log(this.onlyPassword);
     };
 
     reader.readAsBinaryString(file);
@@ -114,14 +111,18 @@ export class StudentImportComponent {
     for (let i = 1; i <= this.onlyName.length; i++) {
       this.studentForm.value.name = this.onlyName[i];
       this.studentForm.value.id = this.onlyId[i];
+      this.studentForm.value.userName = this.onlyName[i];
+      this.studentForm.value.email = this.onlyEmail[i];
+      this.studentForm.value.branch = this.onlyBranch[i];
+      this.studentForm.value.password = this.onlyPassword[i];
       // if (this.studentForm.valid) {
-      this.service.registerStudent(this.studentForm.value).subscribe(
+      this.studentService.registerStudent(this.studentForm.value).subscribe(
         (data: { message: string; student: any }) => {
           if (data.message) {
             alert(data.message);
           }
           if (data.student) {
-            console.log(" created:", data.student);
+            console.log("Teacher created:", data.student);
           }
         },
         (error) => {

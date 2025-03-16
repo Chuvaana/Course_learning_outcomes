@@ -1,0 +1,27 @@
+<div style="margin: 0px 100px;">
+  <div style="padding: 20px 0px;">
+    <button mat-raised-button (click)="createBtn()">Шинэ асуулт оруулах</button>
+  </div>
+  <div>
+    <p-table [value]="products" [paginator]="true" [rows]="5" [tableStyle]="{ 'min-width': '50rem' }"
+      [rowsPerPageOptions]="[5, 10, 20]">
+      <ng-template pTemplate="header">
+        <tr>
+          <th style="width:25%">Асуултын нэр</th>
+          <th style="width:25%">Төлөв</th>
+          <th style="width:25%">Хариулсан хүний тоо</th>
+          <th style="width:25%">Оруулсан</th>
+          <th style="width:25%">Зассан</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-product>
+        <tr>
+          <td>{{ product.id }}</td>
+          <td>{{ product.code }}</td>
+          <td>{{ product.name }}</td>
+          <td>{{ product.description }}</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</div>

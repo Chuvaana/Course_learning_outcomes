@@ -1,34 +1,51 @@
-<div class="question-box" *ngFor="let question of data; let i = index">
-  <div class="question-header">
-    <span>{{ question.text }}</span>
+<div>
+  <div class="exam-main">
+
+    <div class="question-box" *ngFor="let question of data; let i = index">
+      <div class="question-header">
+        <span>{{ question.text }}</span>
+      </div>
+      <div class="answers">
+        <div *ngIf="question.questionType === 'manyCheck'">
+          <!-- Multiple selections (checkboxes) -->
+          <div *ngFor="let answer of question.answers; let j = index" class="answer-item">
+            <input type="checkbox" (change)="selectQuestionAnswer(i, j, $event.target.checked)" />
+            <span>{{ answer }}</span>
+          </div>
+        </div>
+        <div *ngIf="question.questionType === 'onlyOneCheck'">
+          <!-- Single selection (radio buttons) -->
+          <div *ngFor="let answer of question.answers; let j = index" class="answer-item">
+            <input type="radio" name="question{{i}}" (change)="selectQuestionAnswer(i, j, $event.target.checked)" />
+            <span>{{ answer }}</span>
+          </div>
+        </div>
+        <div *ngIf="question.questionType === 'relatedQuestion'">
+          <!-- Related question (trigger next question) -->
+          <div *ngFor="let answer of question.answers; let j = index" class="answer-item">
+            <span>{{ answer }}</span>
+            <button>{{ answer }}</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Button to display selected answers -->
+    <button (click)="getSelectedAnswers()">Show Selected Answers</button>
+
   </div>
-  <div class="answers">
-    <div *ngIf="question.questionType === 'manyCheck'">
-      <!-- Multiple selections (checkboxes) -->
-      <div *ngFor="let answer of question.answers; let j = index" class="answer-item">
-        <input type="checkbox"
-               (change)="selectQuestionAnswer(i, j, $event.target.checked)" />
-        <span>{{ answer }}</span>
-      </div>
+  <div class="right-menu">
+    <div class="pagination">
+      <button *ngFor="let item of data; let i = index" (click)="onQuestionSelect(i)" class="page-btn"
+        [ngClass]="{ 'act-btn': fillData[i]?.[1] && fillData[i]?.[0] == i, 'non-act-btn': !fillData[i]?.[1] && fillData[i]?.[0] == i}">
+        {{ i + 1 }}
+      </button>
+
     </div>
-    <div *ngIf="question.questionType === 'onlyOneCheck'">
-      <!-- Single selection (radio buttons) -->
-      <div *ngFor="let answer of question.answers; let j = index" class="answer-item">
-        <input type="radio"
-               name="question{{i}}"
-               (change)="selectQuestionAnswer(i, j, $event.target.checked)" />
-        <span>{{ answer }}</span>
-      </div>
-    </div>
-    <div *ngIf="question.questionType === 'relatedQuestion'">
-      <!-- Related question (trigger next question) -->
-      <div *ngFor="let answer of question.answers; let j = index" class="answer-item">
-        <span>{{ answer }}</span>
-        <button>{{ answer }}</button>
-      </div>
+    <div class="pagination">
+      <button (click)="onQuestionSelect(i)" class="end-btn">
+        Шалгалт дуусгах
+      </button>
     </div>
   </div>
 </div>
-
-<!-- Button to display selected answers -->
-<button (click)="getSelectedAnswers()">Show Selected Answers</button>

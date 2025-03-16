@@ -69,7 +69,7 @@ button{
   height: 40px;
   background: #0A0065;
   border: 0px;
-  font-size: 16px;
+  font-size: medium;
 }
 
 button:hover{
@@ -83,17 +83,4 @@ button:hover{
   align-content: center;
   width: 200px;
   height: 40px;
-}
-
-.drop-btn{
-  text-align: center;
-  align-content: center;
-  width: 350px;
-  height: 40px;
-}
-.form-dropdown, .form-input {
-  width: 200px;
-  margin-left: 30px;
-  border-radius: 4px; /* Rounded corners */
-  font-size: 16px; /* Larger font size */
 }
