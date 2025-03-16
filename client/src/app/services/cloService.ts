@@ -15,6 +15,14 @@ export class CLOService {
     return this.http.post(`${this.apiUrl}/pointPlans`, data);
   }
 
+  saveCloPlan(data: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/cloPlans`, data);
+  }
+  
+  updateCloPlan(data: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/cloPlans/edit`, data);
+  }
+
   getPointPlan(): Observable<any> {
     return this.http.get(`${this.apiUrl}/pointPlans`);
   }

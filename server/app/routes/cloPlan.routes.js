@@ -7,7 +7,7 @@ module.exports = app => {
 
     router.get("/", clos.getCloPlan);
 
-    router.put("/:id", clos.updateCloPlan);
+    router.post("/edit", clos.updateCloPlan);
 
     router.delete("/:id", clos.deleteCloPlan);
 

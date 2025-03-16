@@ -15,24 +15,46 @@ exports.getAllCLOs = async (req, res) => {
 // Add a CloPlan
 exports.addCloPlan = async (req, res) => {
     try {
-        const newCloPlan = new CloPlan(req.body);
-        await newCloPlan.save();
-        res.status(201).json(newCloPlan);
+        console.log(req.body);
+        if (!Array.isArray(req.body)) {
+            return res.status(400).json({ message: "Input should be an array of CLO plans" });
+        }
+        req.body.forEach(async (item, index) => {
+            const newCloPlan = new CloPlan(item);
+            await newCloPlan.save();
+        });
+        res.status(201).json("success");
+    } catch (err) {
+        res.status(400).json({ message: err.message });
+    }
+};
+exports.updateCloPlan = async (req, res) => {
+    try {
+        if (!Array.isArray(req.body)) {
+            return res.status(400).json({ message: "Input should be an array of CLO plans" });
+        }
+
+        console.log(req.body);
+
+        const updatedCloPlans = [];
+
+        for (const item of req.body) {
+            console.log("Updating:", item);
+            const updatedCloPlan = await CloPlan.findByIdAndUpdate(item.id, item, { new: true });
+
+            if (!updatedCloPlan) {
+                return res.status(404).json({ message: `CloPlan with ID ${item.id} not found` });
+            }
+
+            updatedCloPlans.push(updatedCloPlan);
+        }
+
+        res.json(updatedCloPlans); // ✅ Send response only once, after all updates are done
     } catch (err) {
         res.status(400).json({ message: err.message });
     }
 };
 
-// Update a CloPlan by ID
-exports.updateCloPlan = async (req, res) => {
-    try {
-        const updatedCloPlan = await CloPlan.findByIdAndUpdate(req.params.id, req.body, { new: true });
-        if (!updatedCloPlan) return res.status(404).json({ message: "CloPlan not found" });
-        res.json(updatedCloPlan);
-    } catch (err) {
-        res.status(400).json({ message: err.message });
-    }
-};
 
 // Delete a CloPlan by ID
 exports.deleteCloPlan = async (req, res) => {
@@ -48,15 +70,14 @@ exports.deleteCloPlan = async (req, res) => {
 exports.getCloPlan = async (req, res) => {
     try {
         const pointPlan = await PointPlan.find();
-        console.log("pointPlan" + pointPlan);
-        const cloPlans = await CloPlan.find();
 
-        console.log("cloPlans" + cloPlans);
+        const cloPlans = await CloPlan.find().populate("cloId");
 
         // Format response
         const cloPlanData = cloPlans.map(plan => ({
-            cloName: plan.clo ? plan.clo.cloName : null,
-            cloType: plan.clo ? plan.clo.cloType : null,
+            cloId: plan.cloId ? plan.cloId._id : null,
+            cloName: plan.cloId ? plan.cloId.cloName : null,
+            cloType: plan.cloId ? plan.cloId.type : null,
             timeManagement: plan.timeManagement,
             engagement: plan.engagement,
             recall: plan.recall,
@@ -71,14 +92,11 @@ exports.getCloPlan = async (req, res) => {
             implementation: plan.implementation,
             understandingLevel: plan.understandingLevel,
             analysisLevel: plan.analysisLevel,
-            creationLevel: plan.creationLevel
+            creationLevel: plan.creationLevel,
+            id: plan.id
         }));
 
-        console.log("cloPlanData" + cloPlanData);
-
         const responseData = [pointPlan, cloPlanData];
-        console.log("responseData" + responseData);
-
         res.json(responseData);
     } catch (error) {
         console.error(error);

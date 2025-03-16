@@ -1,7 +1,8 @@
 <div class="cloTable">
+  <p-toast />
   <form [formGroup]="cloForm" (ngSubmit)="onSubmit()">
     <p-table [value]="cloRows.controls" [paginator]="true" [rows]="10" [sortMode]="'multiple'" rowGroupMode="subheader"
-      groupRowsBy="cloType" class="custom-table">
+      groupRowsBy="cloRows.controls.cloType" class="custom-table">
       <ng-template pTemplate="header">
         <tr>
           <th rowspan="3">#</th>
@@ -57,19 +58,7 @@
 
       <ng-template pTemplate="groupheader" let-row>
         <tr class="clo-subheader">
-          <td colspan="16">
-            <strong>
-              {{ row.value.cloType == 'LEC_SEM' ? 'Лекц, семинарын хичээлээр эзэмшсэн суралцахуйн үр дүнгүүд'
-              : row.value.cloType == 'LAB' ? 'Лабораторийн хичээлээр эзэмшсэн суралцахуйн үр дүнгүүд'
-              : row.value.cloType }}
-            </strong>
-          </td>
-        </tr>
-      </ng-template>
-
-      <ng-template #groupheader let-row>
-        <tr pRowGroupHeader>
-          <td colspan="16">
+          <td colspan="22">
             <strong>
               {{ row.value.cloType == 'LEC_SEM' ? 'Лекц, семинарын хичээлээр эзэмшсэн суралцахуйн үр дүнгүүд'
               : row.value.cloType == 'LAB' ? 'Лабораторийн хичээлээр эзэмшсэн суралцахуйн үр дүнгүүд'
@@ -82,7 +71,7 @@
       <ng-template pTemplate="body" let-row let-ri="rowIndex">
         <tr [formGroup]="getRowGroup(ri)">
           <td> {{ ri + 1 }} </td>
-          <td> {{ row.value.clos }} </td>
+          <td> {{ row.value.cloName }} </td>
           <td pEditableColumn>
             <p-cellEditor>
               <ng-template pTemplate="input">
@@ -216,7 +205,7 @@
             (row.value.decisionMaking || 0) +
             (row.value.formulation || 0) +
             (row.value.analysis || 0)
-            }} hjhj
+            }}
           </td>
           <td pEditableColumn>
             <p-cellEditor>

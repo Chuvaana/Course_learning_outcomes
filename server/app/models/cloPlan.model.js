@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const CloPlanSchema = new mongoose.Schema(
     {
-        clo: { type: mongoose.Schema.Types.ObjectId, ref: 'Clo', required: true }, // Changed from "clos" to "clo" (singular)
+        cloId: { type: mongoose.Schema.Types.ObjectId, ref: 'Clo', required: true }, // Changed from "clos" to "clo" (singular)
         timeManagement: { type: Number, default: 0 },
         engagement: { type: Number, default: 0 },
         recall: { type: Number, default: 0 },
