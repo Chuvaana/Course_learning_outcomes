@@ -1,12 +1,13 @@
 import { Component } from '@angular/core';
 import { MenuItem } from 'primeng/api';
 import { Menu } from 'primeng/menu';
+import { PanelMenu } from 'primeng/panelmenu';
 import { ToastModule } from 'primeng/toast';
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [Menu, ToastModule],
+  imports: [PanelMenu, ToastModule],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.scss'
 })
@@ -19,18 +20,28 @@ export class NavbarComponent {
         label: 'CLO',
         icon: 'pi pi-plus',
         url: '/main/teacher/lesson/clo'
-      },
+      },      
       {
-        label: 'CLO-point',
-        icon: 'pi pi-plus',
-        url: '/main/teacher/lesson/clo-point'
+        label: 'Үнэлгээний төлөвлөлт',
+        items: [
+          {
+            label: 'Ерөнхий',
+            icon: 'pi pi-plus',
+            url: '/main/teacher/lesson/clo-point'
+          },
+          {
+            label: 'Суралцахуйн үнэлгээ',
+            icon: 'pi pi-stop',
+            url: '/main/teacher/lesson/clo-plan'
+          },
+          {
+            label: 'Сэдэв',
+            icon: 'pi pi-check-circle'
+          }
+        ],
       },
       {
         label: 'Хичээлийн хөтөлбөр',
-        icon: 'pi pi-plus'
-      },
-      {
-        label: 'Төлөвлөгөө',
         icon: 'pi pi-plus'
       },
       {
@@ -46,33 +57,7 @@ export class NavbarComponent {
         label: 'Ирц',
         icon: 'pi pi-plus',
         url: '/main/teacher/lesson/student'
-      },
-      // {
-      //   label: 'CLO',
-      //   items: [
-      //     {
-      //       label: 'New',
-      //       icon: 'pi pi-plus'
-      //     },
-      //     {
-      //       label: 'Search',
-      //       icon: 'pi pi-search'
-      //     }
-      //   ]
-      // },
-      // {
-      //   label: 'Profile',
-      //   items: [
-      //     {
-      //       label: 'Settings',
-      //       icon: 'pi pi-cog'
-      //     },
-      //     {
-      //       label: 'Logout',
-      //       icon: 'pi pi-sign-out'
-      //     }
-      //   ]
-      // }
+      }
     ];
   }
 }

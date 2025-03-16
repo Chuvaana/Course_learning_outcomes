@@ -1,31 +1,59 @@
-<h3>Assessment Points Distribution</h3>
-<div class="points-grid">
-    <div *ngFor="let point of headerPoints; let i = index">
-        <label>{{ point.name }}</label>
-        <p-inputNumber [(ngModel)]="point.value" [min]="0" [max]="20" [step]="1"></p-inputNumber>
-    </div>
+<div class="form-container">
+  <p-toast />
+  <form [formGroup]="myForm" (ngSubmit)="onSubmit()">
+    <h3>Хичээлийн идэвхи, оролцоо</h3>
+    <label for="timeManagement">Цаг төлөвлөлт, хариуцлага:</label>
+    <p-inputNumber formControlName="timeManagement" [min]="0"></p-inputNumber>
+
+    <label for="engagement">Суралцах хүсэл эрмэлзэл, өөрийгөө илэрхийлэх:</label>
+    <p-inputNumber formControlName="engagement" [min]="0"></p-inputNumber>
+
+    <h3>Явцын сорил 1</h3>
+    <label for="recall1">Мэдлэгээ сэргээн санах, тайлбарлах:</label>
+    <p-inputNumber formControlName="recall" [min]="0"></p-inputNumber>
+
+    <label for="problemSolving1">Асуудал шийдвэрлэхэд мэдлэгээ хэрэглэх, задлан шинжлэх:</label>
+    <p-inputNumber formControlName="problemSolving" [min]="0"></p-inputNumber>
+
+    <h3>Явцын сорил 2</h3>
+    <label for="recall2">Мэдлэгээ сэргээн санах, тайлбарлах:</label>
+    <p-inputNumber formControlName="recall2" [min]="0"></p-inputNumber>
+
+    <label for="problemSolving2">Асуудал шийдвэрлэхэд мэдлэгээ хэрэглэх, задлан шинжлэх:</label>
+    <p-inputNumber formControlName="problemSolving2" [min]="0"></p-inputNumber>
+
+    <h3>Лабораторийн ажил, туршилт</h3>
+    <label for="toExp">Лабораторийн хэмжилт, туршилт, даалгавар гүйцэтгэх:</label>
+    <p-inputNumber formControlName="toExp" [min]="0"></p-inputNumber>
+
+    <label for="processing">Үр дүнг тохирох аргаар өгөгдсөн форматын дагуу боловсруулж, тайлагнах:</label>
+    <p-inputNumber formControlName="processing" [min]="0"></p-inputNumber>
+
+    <h3>Даалгавар</h3>
+    <label for="decisionMaking">Өгөгдсөн даалгаварын хүрээнд шийдвэрлэх асуудлаа тодорхойлж томъёолох:</label>
+    <p-inputNumber formControlName="decisionMaking" [min]="0"></p-inputNumber>
+
+    <label for="formulation">Шийдвэрлэх асуудлын хүрээнд тодорхой шийдэл дэвшүүлэх, дүн шинжилгээ хийх:</label>
+    <p-inputNumber formControlName="formulation" [min]="0"></p-inputNumber>
+
+    <label for="analysis">Мэдлэг, ур чадвараа ашиглан сонгосон шийдлийн дагуу асуудлыг шийдвэрлэх:</label>
+    <p-inputNumber formControlName="analysis" [min]="0"></p-inputNumber>
+
+    <label for="implementation">Бичгийн болон харилцах ур чадвараа ашиглан үр дүнг өгөгдсөн форматын дагуу
+      тайлагнах, илтгэх:</label>
+    <p-inputNumber formControlName="implementation" [min]="0"></p-inputNumber>
+
+    <h3>Улирлын шалгалт</h3>
+
+    <label for="understandingLevel">Сэргээн санах/ойлгох түвшин:</label>
+    <p-inputNumber formControlName="understandingLevel" [min]="0"></p-inputNumber>
+
+    <label for="analysisLevel">Хэрэглэх /дүн шинжилгээ хийх түвшин:</label>
+    <p-inputNumber formControlName="analysisLevel" [min]="0"></p-inputNumber>
+
+    <label for="creationLevel">Үнэлэх/ бүтээх түвшин:</label>
+    <p-inputNumber formControlName="creationLevel" [min]="0"></p-inputNumber>
+
+    <p-button type="submit" label="Submit"></p-button>
+  </form>
 </div>
-
-<button pButton type="button" label="Save Points" (click)="savePoints()"></button>
-
-<h3>CLO Assessment Table</h3>
-<p-table [value]="cloData" class="custom-table">
-    <ng-template pTemplate="header">
-        <tr>
-            <th>#</th>
-            <th>CLOs</th>
-            <th *ngFor="let category of categories">{{ category.name }}</th>
-        </tr>
-    </ng-template>
-    <ng-template pTemplate="body" let-row let-i="rowIndex">
-        <tr>
-            <td>{{ i + 1 }}</td>
-            <td>{{ row.CLOs }}</td>
-            <td *ngFor="let category of categories">
-                <p-inputNumber [(ngModel)]="row[category.key]" [min]="0" [max]="15" [step]="1"></p-inputNumber>
-            </td>
-        </tr>
-    </ng-template>
-</p-table>
-
-<button pButton type="button" label="Save CLO Scores" (click)="saveCloScores()"></button>

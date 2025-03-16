@@ -9,6 +9,7 @@ import { LessonComponent } from './lesson-list/lesson/lesson.component';
 import { TeacherComponent } from './teacher.component';
 import { LesStudentComponent } from './lesson-list/lesson/les-student/les-student.component';
 import { CloPointComponent } from './lesson-list/lesson/clo-point/clo-point.component';
+import { CloPlanComponent } from './lesson-list/lesson/clo-plan/clo-plan.component';
 
 const routes: Routes = [
   {
@@ -40,6 +41,10 @@ const routes: Routes = [
           {
             path: 'clo-point',
             component: CloPointComponent
+          },
+          {
+            path: 'clo-plan',
+            component: CloPlanComponent
           }
         ]
       }, // ✅ Fixed path for SharedComponent
