@@ -1,17 +1,59 @@
-<div class="card">
-    <h2>CLO Assessment Form</h2>
+<div class="form-container">
+  <p-toast />
+  <form [formGroup]="myForm" (ngSubmit)="onSubmit()">
+    <h3>Хичээлийн идэвхи, оролцоо</h3>
+    <label for="timeManagement">Цаг төлөвлөлт, хариуцлага:</label>
+    <p-inputNumber formControlName="timeManagement" [min]="0"></p-inputNumber>
 
-    <form [formGroup]="cloForm" (ngSubmit)="onSubmit()">
-        <div class="p-fluid grid">
-            <div class="col-6" *ngFor="let field of cloForm.controls | keyvalue">
-                <label [for]="field.key" class="block">{{ field.key }}</label>
-                <p-inputNumber [id]="field.key" [formControlName]="field.key" [min]="0" mode="decimal"
-                    class="w-full"></p-inputNumber>
-            </div>
-        </div>
+    <label for="engagement">Суралцах хүсэл эрмэлзэл, өөрийгөө илэрхийлэх:</label>
+    <p-inputNumber formControlName="engagement" [min]="0"></p-inputNumber>
 
-        <div class="mt-3">
-            <button pButton type="submit" label="Submit" class="p-button-primary"></button>
-        </div>
-    </form>
+    <h3>Явцын сорил 1</h3>
+    <label for="recall1">Мэдлэгээ сэргээн санах, тайлбарлах:</label>
+    <p-inputNumber formControlName="recall" [min]="0"></p-inputNumber>
+
+    <label for="problemSolving1">Асуудал шийдвэрлэхэд мэдлэгээ хэрэглэх, задлан шинжлэх:</label>
+    <p-inputNumber formControlName="problemSolving" [min]="0"></p-inputNumber>
+
+    <h3>Явцын сорил 2</h3>
+    <label for="recall2">Мэдлэгээ сэргээн санах, тайлбарлах:</label>
+    <p-inputNumber formControlName="recall2" [min]="0"></p-inputNumber>
+
+    <label for="problemSolving2">Асуудал шийдвэрлэхэд мэдлэгээ хэрэглэх, задлан шинжлэх:</label>
+    <p-inputNumber formControlName="problemSolving2" [min]="0"></p-inputNumber>
+
+    <h3>Лабораторийн ажил, туршилт</h3>
+    <label for="toExp">Лабораторийн хэмжилт, туршилт, даалгавар гүйцэтгэх:</label>
+    <p-inputNumber formControlName="toExp" [min]="0"></p-inputNumber>
+
+    <label for="processing">Үр дүнг тохирох аргаар өгөгдсөн форматын дагуу боловсруулж, тайлагнах:</label>
+    <p-inputNumber formControlName="processing" [min]="0"></p-inputNumber>
+
+    <h3>Даалгавар</h3>
+    <label for="decisionMaking">Өгөгдсөн даалгаварын хүрээнд шийдвэрлэх асуудлаа тодорхойлж томъёолох:</label>
+    <p-inputNumber formControlName="decisionMaking" [min]="0"></p-inputNumber>
+
+    <label for="formulation">Шийдвэрлэх асуудлын хүрээнд тодорхой шийдэл дэвшүүлэх, дүн шинжилгээ хийх:</label>
+    <p-inputNumber formControlName="formulation" [min]="0"></p-inputNumber>
+
+    <label for="analysis">Мэдлэг, ур чадвараа ашиглан сонгосон шийдлийн дагуу асуудлыг шийдвэрлэх:</label>
+    <p-inputNumber formControlName="analysis" [min]="0"></p-inputNumber>
+
+    <label for="implementation">Бичгийн болон харилцах ур чадвараа ашиглан үр дүнг өгөгдсөн форматын дагуу
+      тайлагнах, илтгэх:</label>
+    <p-inputNumber formControlName="implementation" [min]="0"></p-inputNumber>
+
+    <h3>Улирлын шалгалт</h3>
+
+    <label for="understandingLevel">Сэргээн санах/ойлгох түвшин:</label>
+    <p-inputNumber formControlName="understandingLevel" [min]="0"></p-inputNumber>
+
+    <label for="analysisLevel">Хэрэглэх /дүн шинжилгээ хийх түвшин:</label>
+    <p-inputNumber formControlName="analysisLevel" [min]="0"></p-inputNumber>
+
+    <label for="creationLevel">Үнэлэх/ бүтээх түвшин:</label>
+    <p-inputNumber formControlName="creationLevel" [min]="0"></p-inputNumber>
+
+    <p-button type="submit" label="Submit"></p-button>
+  </form>
 </div>

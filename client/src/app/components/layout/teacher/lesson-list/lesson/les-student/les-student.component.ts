@@ -190,30 +190,139 @@ export class LesStudentComponent {
     });
   }
 
-  onSubmit(): void {
-    const formData = this.cloForm.value.cloRows;
+  validateColumnTotals(): boolean {
+    const columnNames:  Record<string, string> = {
+      timeManagement: "Цаг төлөвлөлт, хариуцлага",
+      engagement: "Суралцах хүсэл эрмэлзэл, өөрийгээ илэрхийлэх",
+      recall: "Сорил 1: Мэдлэгээ сэргээн санах, тайлбарлах",
+      problemSolving: "Сорил 1: Асуудал шийдвэрлэхэд мэдлэгээ хэрэглэх, задлан шинжлэх",
+      recall2: "Сорил 2: Мэдлэгээ сэргээн санах, тайлбарлах",
+      problemSolving2: "Сорил 2: Асуудал шийдвэрлэхэд мэдлэгээ хэрэглэх, задлан шинжлэх",
+      toExp: "Лабораторийн хэмжилт, туршилт, даалгавар гүйцэтгэх",
+      processing: "Үр дүнг тохирох аргаар өгөгдсөн форматын дагуу боловсруулж, тайлагнах",
+      decisionMaking: "Өгөгдсөн даалгаварын хүрээнд шийдвэрлэх асуудлаа тодорхойлж томъёолох",
+      formulation: "Шийдвэрлэх асуудлын хүрээнд тодорхой шийдэл дэвшүүлэх, дүн шинжилгээ хийх",
+      analysis: "Мэдлэг, ур чадвараа ашиглан сонгосон шийдлын дагуу асуудлыг шийдвэрлэх",
+      implementation: "Бичгийн болон харилцах ур чадвараа ашиглан үр дүнг өгөгдсөн форматын дагуу тайлагнах, илтгэх",
+      understandingLevel: "Сэргээн санах/ойлгох түвшин",
+      analysisLevel: "Хэрэглэх /дүн шинжилгээ хийх түвшин",
+      creationLevel: "Үнэлэх/ бүтээх түвшин",
+    };
+  
+    let isValid = true;
+  
+    Object.keys(columnNames).forEach(column => {
+      const expectedTotal = (this.pointPlan && this.pointPlan[0][column] !== undefined) 
+      ? this.pointPlan[0][column] 
+      : 0;
+      let actualTotal = 0;
+  
+      this.cloRows.controls.forEach(row => {
+        actualTotal += row.get(column)?.value || 0;
+      });
+  
+      const columnName = columnNames[column]; // Монгол нэрийг авах
+  
+      if (actualTotal > expectedTotal) {
+        this.msgService.add({
+          severity: 'warn',
+          summary: 'Анхааруулга',
+          detail: `${columnName} баганын нийт оноо (${actualTotal}) хэтэрсэн!`
+        });
+        isValid = false;
+      } else if (actualTotal < expectedTotal) {
+        this.msgService.add({
+          severity: 'warn',
+          summary: 'Анхааруулга',
+          detail: `${columnName} баганын нийт оноо (${actualTotal}) хүрэлцэхгүй байна!`
+        });
+        isValid = false;
+      }
+    });
+  
+    return isValid;
+  }
+  
 
-    // Check if we are updating or creating
-    if (this.isUpdate) {
-      this.updateCloPlan(formData);
-    } else {
-      this.cloService.saveCloPlan(formData).subscribe(
-        (res) => {
-          this.msgService.add({
-            severity: 'success',
-            summary: 'Success',
-            detail: 'Амжилттай хадгалагдлаа',
-          });
-          this.populateCLOForm();
-        },
-        (err) => {
-          this.msgService.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: 'Алдаа гарлаа: ' + err.message,
-          });
-        }
-      );
+  // validateColumnTotals(): boolean {
+  //   const columnKeys = [
+  //     'timeManagement',
+  //     'engagement',
+  //     'recall',
+  //     'problemSolving',
+  //     'recall2',
+  //     'problemSolving2',
+  //     'toExp',
+  //     'processing',
+  //     'decisionMaking',
+  //     'formulation',
+  //     'analysis',
+  //     'implementation',
+  //     'understandingLevel',
+  //     'analysisLevel',
+  //     'creationLevel'
+  //   ];
+
+  //   let isValid = true; // Track if all columns are valid
+
+  //   columnKeys.forEach(column => {
+  //     const expectedTotal = this.pointPlan[column] || 5; // Default value if missing
+  //     let actualTotal = 0;
+
+  //     // Calculate sum for each column
+  //     this.cloRows.controls.forEach(row => {
+  //       actualTotal += row.get(column)?.value || 0;
+  //     });
+
+  //     // Show warnings if values are incorrect
+  //     if (actualTotal > expectedTotal) {
+  //       this.msgService.add({
+  //         severity: 'warn',
+  //         summary: 'Warning',
+  //         detail: `${column} баганын нийт оноо (${actualTotal}) хэтэрсэн!`
+  //       });
+  //       isValid = false; // Mark as invalid
+  //     } else if (actualTotal < expectedTotal) {
+  //       this.msgService.add({
+  //         severity: 'warn',
+  //         summary: 'Warning',
+  //         detail: `${column} баганын нийт оноо (${actualTotal}) хүрэлцэхгүй байна!`
+  //       });
+  //       isValid = false; // Mark as invalid
+  //     }
+  //   });
+
+  //   return isValid; // Return validation result
+  // }
+
+
+
+  onSubmit(): void {
+
+    if (this.validateColumnTotals()) {
+      const formData = this.cloForm.value.cloRows;
+      // Check if we are updating or creating
+      if (this.isUpdate) {
+        this.updateCloPlan(formData);
+      } else {
+        this.cloService.saveCloPlan(formData).subscribe(
+          (res) => {
+            this.msgService.add({
+              severity: 'success',
+              summary: 'Success',
+              detail: 'Амжилттай хадгалагдлаа',
+            });
+            this.populateCLOForm();
+          },
+          (err) => {
+            this.msgService.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: 'Алдаа гарлаа: ' + err.message,
+            });
+          }
+        );
+      }
     }
   }
 

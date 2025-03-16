@@ -11,8 +11,12 @@ export class CLOService {
 
   constructor(private http: HttpClient) { }
 
-  savePointPlan(data: any): Observable<any> {
+  createPointPlan(data: any): Observable<any> {
     return this.http.post(`${this.apiUrl}/pointPlans`, data);
+  }
+
+  updatePointPlan(data: any): Observable<any> {
+    return this.http.put(`${this.apiUrl}/pointPlans/${data.id}`, data);
   }
 
   saveCloPlan(data: any): Observable<any> {
