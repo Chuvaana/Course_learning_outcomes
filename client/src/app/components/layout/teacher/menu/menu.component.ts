@@ -28,7 +28,42 @@ export class MenuComponent implements OnInit {
       {
         label: 'Хичээл',
         icon: 'pi pi-star',
-        url: '/main/teacher/lessonList'
+        // url: '/main/teacher/lessonList'
+        items: [
+          {
+            label: 'CLO',
+            // icon: 'pi pi-plus',
+            url: '/main/teacher/lesson/clo'
+          },  {
+            label: 'Үнэлгээний төлөвлөлт',
+            items: [
+              {
+                label: 'Ерөнхий',
+                // icon: 'pi pi-plus',
+                url: '/main/teacher/lesson/clo-point'
+              },
+              {
+                label: 'Суралцахуйн үнэлгээ',
+                // icon: 'pi pi-stop',
+                url: '/main/teacher/lesson/clo-plan'
+              },
+              {
+                label: 'Сэдэв',
+                // icon: 'pi pi-check-circle'
+              }
+            ],
+          },
+          {
+            label: 'ХИЧЭЭЛИЙН АГУУЛГА, ЦАГИЙН ХУВААРИЛАЛТ',
+            // icon: 'pi pi-plus',
+            url: '/main/teacher/lesson/syllabus/schedule'
+          },
+          {
+            label: 'Хичээлийн хөтөлбөр',
+            // icon: 'pi pi-plus'
+            url: '/main/teacher/curriculum'
+          },
+        ]
       },
       {
         label: 'Шалгалт',

@@ -42,6 +42,8 @@ require("./app/routes/lesson.routes")(app);
 require("./app/routes/clo.routes")(app);
 require("./app/routes/cloPlan.routes")(app);
 require("./app/routes/pointPlan.routes")(app);
+require("./app/routes/material.routes")(app);
+require("./app/routes/schedule.routes")(app);
 
 
 // set port, listen for requests

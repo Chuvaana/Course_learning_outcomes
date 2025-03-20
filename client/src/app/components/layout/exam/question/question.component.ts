@@ -31,7 +31,7 @@ import { AccordionModule } from 'primeng/accordion';
   templateUrl: './question.component.html',
   styleUrls: ['./question.component.scss']
 })
-export class QuestionComponent {  // Fixed the typo here
+export class QuestionComponent {
   questionForm: FormGroup;
   value: string | undefined;
   text: string = 'Always bet on Prime!';

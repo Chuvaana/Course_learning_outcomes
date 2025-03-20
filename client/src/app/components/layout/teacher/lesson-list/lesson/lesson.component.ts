@@ -1,10 +1,9 @@
 import { Component } from '@angular/core';
-import { NavbarComponent } from './navbar/navbar.component';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-lesson',
-  imports: [NavbarComponent, RouterModule],
+  imports: [RouterModule],
   templateUrl: './lesson.component.html',
   styleUrl: './lesson.component.scss'
 })

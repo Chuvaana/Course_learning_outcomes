@@ -130,8 +130,8 @@ export class ExamListComponent {  // Fixed the typo here
     });
   }
 
-  onQuestionSelect(e : any){
-    console.log(e);
+  onQuestionSelect(){
+    // console.log(e);
   }
 
   openPopup() {
