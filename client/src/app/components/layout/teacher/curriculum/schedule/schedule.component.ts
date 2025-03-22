@@ -10,11 +10,12 @@ import { TagModule } from 'primeng/tag';
 import { ToastModule } from 'primeng/toast';
 import { ScheduleService } from '../../../../../services/schedule.service';
 import { MessageService } from 'primeng/api';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 
 @Component({
   selector: 'app-schedule',
   standalone: true,
-  imports: [TableModule, ToastModule, CommonModule, TagModule, SelectModule, ButtonModule, InputTextModule, FormsModule, ReactiveFormsModule, InputNumber],
+  imports: [TableModule, ToastModule, CommonModule, TagModule, SelectModule, ButtonModule, InputTextModule, FormsModule, ReactiveFormsModule, InputNumber, ProgressSpinnerModule],
   providers: [MessageService],
   templateUrl: './schedule.component.html',
   styleUrl: './schedule.component.scss'
@@ -23,23 +24,33 @@ export class ScheduleComponent {
   @Input() lessonId: string = '';
   scheduleForm!: FormGroup;
   isNew = false;
+  isLoading = true;
 
   constructor(private fb: FormBuilder, private service: ScheduleService, private msgService: MessageService) { }
 
-  ngOnInit() {
+  async ngOnInit() {
     this.scheduleForm = this.fb.group({
       schedules: this.fb.array([]) // This will hold the schedules data
     });
-    this.readData();
 
-    console.log('Lesson Controls:');
-    this.lessonControls.forEach(res => {
-      console.log(`Lesson ${res}:`);
-    });
+    if (this.lessonId) {
+      await this.readData();
+    } else {
+      this.setDefaultSchedules();
+      this.isNew = true;
+      this.isLoading = false;
+    }
+    console.log(this.lessonControls);
+
   }
 
-  readData() {
-    this.service.getSchedules(this.lessonId).subscribe((res: any[]) => {
+  async readData() {
+    this.isLoading = true; // 👈 Ачаалж эхэлж байгаа тул true болгоно
+    try {
+      const res = await this.service.getSchedules(this.lessonId).toPromise();
+      const scheduleArray = this.scheduleForm.get('schedules') as FormArray;
+      scheduleArray.clear();
+
       if (res && res.length > 0) {
         this.setSchedules(res);
         this.isNew = false;
@@ -47,13 +58,16 @@ export class ScheduleComponent {
         this.setDefaultSchedules();
         this.isNew = true;
       }
-    });
+    } catch (error) {
+      console.error('Алдаа:', error);
+    } finally {
+      this.isLoading = false; // 👈 Дата ирсний дараа false болгоно
+    }
   }
 
   setSchedules(res: any[]): void {
     const scheduleArray = this.scheduleForm.get('schedules') as FormArray; // Type cast to FormArray
     res.forEach(schedule => {
-      // Add new form group for each schedule
       scheduleArray.push(this.fb.group({
         id: [schedule._id],
         lessonId: [schedule.lessonId],
@@ -120,9 +134,10 @@ export class ScheduleComponent {
       type: [lesson.type]
     });
   }
-
+  
   get lessonControls() {
-    return (this.scheduleForm.get('schedules') as FormArray).controls;
+    const schedules = this.scheduleForm.get('schedules') as FormArray;
+    return schedules.controls; // Return the controls directly, which are FormGroups
   }
 
   submitButton() {

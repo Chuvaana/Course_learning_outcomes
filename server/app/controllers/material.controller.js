@@ -24,11 +24,13 @@ exports.addMaterial = async (req, res) => {
 // ✅ Get Materials by Lesson Code (Read)
 exports.getMaterialsByLessonCode = async (req, res) => {
     try {
-        const { id } = req.params;
-        const material = await Material.findOne({ id });
+        const { lessonCode } = req.params;
+        const material = await Material.findOne({ lessonId: lessonCode });
+        console.log(material);
 
         if (!material) {
-            return res.status(404).json({ message: 'No materials found for this lesson' });
+            return res.json([]);
+            // return res.status(404).json({ message: 'No materials found for this lesson' });
         }
 
         res.json(material);

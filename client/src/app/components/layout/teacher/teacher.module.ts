@@ -47,6 +47,10 @@ const routes: Routes = [
       {
         path: 'curriculum/:id',
         component: CurriculumComponent
+      },
+      {
+        path: 'curriculum',
+        component: CurriculumComponent
       }
     ]
   },

@@ -23,7 +23,7 @@ import { MessageService } from 'primeng/api';
     InputTextModule,
     InputNumberModule,
     ToastModule],
-    providers: [MessageService],
+  providers: [MessageService],
   templateUrl: './main-info.component.html',
   styleUrl: './main-info.component.scss'
 })
@@ -98,7 +98,9 @@ export class MainInfoComponent {
       { label: 'Өвлийн улирал', value: 'LAB' },
       { label: 'Зуны улирал', value: 'LAB' },
     ];
-    this.readData();
+    if (this.lessonId) {
+      this.readData();
+    }
   }
 
   readData() {
@@ -114,10 +116,10 @@ export class MainInfoComponent {
           department: response.department,
           prerequisite: response.prerequisite,
 
-          assistantTeacherName: response.assistantTeacher.name,
-          assistantTeacherRoom: response.assistantTeacher.room,
-          assistantTeacherEmail: response.assistantTeacher.email,
-          assistantTeacherPhone: response.assistantTeacher.phone,
+          assistantTeacherName: response.assistantTeacher.name ? response.assistantTeacher.name : '',
+          assistantTeacherRoom: response.assistantTeacher.room ? response.assistantTeacher.room : '',
+          assistantTeacherEmail: response.assistantTeacher.email ? response.assistantTeacher.email : '',
+          assistantTeacherPhone: response.assistantTeacher.phone ? response.assistantTeacher.phone : '',
 
           teacherName: response.teacher.name,
           teacherRoom: response.teacher.room,

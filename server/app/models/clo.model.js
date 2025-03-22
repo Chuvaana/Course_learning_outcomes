@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 
 const CloSchema = new mongoose.Schema(
     {
+        lessonId: { type: String, required: true },
         type: { type: String, required: true },
         cloName: { type: String, required: true }
     },

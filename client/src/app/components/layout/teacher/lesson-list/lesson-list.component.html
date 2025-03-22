@@ -1,25 +1,11 @@
 <div class="lesson-list-container">
-  <!-- Button to toggle form visibility -->
-  <button pButton label="Add Lesson" icon="pi pi-plus" (click)="toggleForm()"></button>
-
-  <!-- Reactive Form for Adding Lesson -->
-  <div *ngIf="isFormVisible" class="lesson-form">
-    <form [formGroup]="lessonForm">
-      <div class="form-group">
-        <label>Хичээл</label>
-        <p-dropdown [options]="courses" formControlName="course" optionLabel="title" optionValue="id"
-          placeholder="Select a Course" (onChange)="onCourseChange($event.value)"></p-dropdown>
-      </div>
-      <p-button label="Хадгалах" class="submit-button" (click)="addLesson()" />
-
-    </form>
-  </div>
+  <button pButton label="Add Lesson" icon="pi pi-plus" (click)="addLesson()"></button>
 
   <div class="lesson-cards">
-    <div *ngFor="let lesson of lessons" class="mb-4 p-8 flex items-center justify-center">
+    <div *ngFor="let lesson of courses" class="mb-4 p-8 flex items-center justify-center">
       <p-card [style]="{ width: '25rem', overflow: 'hidden' }">
-        <ng-template #title>{{ lesson.code }} - {{ lesson.title }}</ng-template>
-        <a [routerLink]="['/main/teacher/lesson', lesson.id]">{{ lesson.department }}</a>
+        <ng-template #title> {{ lesson.department }}</ng-template>
+        <a [routerLink]="['/main/teacher/lesson', lesson.id]"> {{ lesson.lessonCode }} - {{ lesson.lessonName }}</a>
       </p-card>
     </div>
   </div>

@@ -15,7 +15,6 @@ exports.getAllCLOs = async (req, res) => {
 // Add a CloPlan
 exports.addCloPlan = async (req, res) => {
     try {
-        console.log(req.body);
         if (!Array.isArray(req.body)) {
             return res.status(400).json({ message: "Input should be an array of CLO plans" });
         }
@@ -34,12 +33,9 @@ exports.updateCloPlan = async (req, res) => {
             return res.status(400).json({ message: "Input should be an array of CLO plans" });
         }
 
-        console.log(req.body);
-
         const updatedCloPlans = [];
 
         for (const item of req.body) {
-            console.log("Updating:", item);
             const updatedCloPlan = await CloPlan.findByIdAndUpdate(item.id, item, { new: true });
 
             if (!updatedCloPlan) {

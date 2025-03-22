@@ -5,8 +5,6 @@ exports.getSchedules = async (req, res) => {
     try {
         const { id } = req.params;
 
-        console.log(id);
-
         // Fetch and sort the schedules by the 'week' field in ascending order
         const schedules = await Schedule.find({lessonId: id });
 
@@ -52,13 +50,9 @@ exports.updateSchedule = async (req, res) => {
             return res.status(400).json({ message: "Input should be an array of Schedule" });
         }
 
-        console.log("Received Schedule:", schedules);
-
         // Use Promise.all for parallel execution of updates
         const updatePromises = schedules.map(async (item) => {
             try {
-                console.log("Updating schedule:", item);
-
                 const updatedSchedule = await Schedule.findByIdAndUpdate(item.id, item, { new: true });
 
                 if (!updatedSchedule) {

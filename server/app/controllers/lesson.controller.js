@@ -5,8 +5,6 @@ exports.createLesson = async (req, res) => {
   try {
     const data = req.body;
 
-    console.log("data" + data);
-    
     const cleanData = {
       ...data,
       lessonCredit: Number(data.lessonCredit) || 0,
@@ -45,7 +43,6 @@ exports.createLesson = async (req, res) => {
       }
     };
 
-    console.log(cleanData);
     const lesson = new Lesson(cleanData);
     await lesson.save();
     res.status(201).json({ message: 'Lesson saved successfully', lesson });
@@ -80,11 +77,6 @@ exports.updateLesson = async (req, res) => {
   try {
     const { id } = req.params; // Assuming lessonId is passed in the URL parameters
     const data = req.body;
-    console.log(id);
-
-    // Log the raw input data for debugging (could be removed later in production)
-    console.log("Received Data:", data);
-
     // Find the existing lesson by its ID
     const lesson = await Lesson.findById(id);
     if (!lesson) {
@@ -137,12 +129,8 @@ exports.updateLesson = async (req, res) => {
       }
     };
 
-    console.log("Updated Data:", updatedData);
-
-    // Update the lesson in the database
     const updatedLesson = await Lesson.findByIdAndUpdate(id, updatedData, { new: true });
 
-    // Respond with the updated lesson data
     res.status(200).json({ message: 'Lesson updated successfully', updatedLesson });
   } catch (error) {
     console.error("Error while updating lesson:", error);

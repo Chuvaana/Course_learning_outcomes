@@ -41,7 +41,7 @@ export class MaterialsComponent {
 
   readData(id: string) {
     this.service.getMaterials(id).subscribe((res: any) => {
-      if (res) {
+      if (res != null && res.length != 0) {
         this.isNew = false;
         // Patch values to the form
         this.materialsForm.patchValue({
@@ -79,7 +79,13 @@ export class MaterialsComponent {
   }
 
   ngOnInit() {
-    this.readData(this.lessonId);
+    if (this.lessonId) {
+      this.readData(this.lessonId);
+    } else{
+      this.addMainBook();
+      this.addExtraMaterial();
+      this.addSoftwareTool();
+    }
   }
 
   get mainBooks() {
@@ -152,7 +158,7 @@ export class MaterialsComponent {
             detail: 'Failed to create CLO: ' + err.message,
           });
         });
-    } else{
+    } else {
       this.service.updateMaterials(this.lessonId, formData).subscribe(
         (res: any) => {
           this.msgService.add({

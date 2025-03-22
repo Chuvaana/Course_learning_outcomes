@@ -44,7 +44,7 @@ export class CloComponent {
   constructor(private service: CLOService, private msgService: MessageService) { }
 
   ngOnInit() {
-    this.service.getCloList().subscribe((data: any) => {
+    this.service.getCloList(this.lessonId).subscribe((data: any) => {
       this.clos = data.map((item: any) => ({
         id: item.id,
         type: item.type,
@@ -57,7 +57,7 @@ export class CloComponent {
       { label: 'Лаборатори', value: 'LAB' }
     ];
 
-    this.newRowData = { type: '', cloName: '' };
+    this.newRowData = { lessonId: this.lessonId, type: '', cloName: '' };
   }
 
   onRowEditInit(clo: Clo, index: number) {
@@ -67,11 +67,13 @@ export class CloComponent {
   }
 
   newRow() {
-    return { type: '', cloName: '' };
+    return { lessonId: this.lessonId, type: '', cloName: '' };
   }
 
   onRowEditSave(clo: Clo) {
-    const { id, ...cloData } = clo;
+    // const { id, ...cloData } = clo;
+    const cloData = { ...clo, lessonId: this.lessonId };
+
     if (clo.id === null || clo.id === undefined) {
       this.service.registerClo(cloData).subscribe(
         (res: Clo) => {
