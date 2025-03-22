@@ -3,13 +3,16 @@ const Schedule = require('../models/schedule.model');
 // Get all Schedules
 exports.getSchedules = async (req, res) => {
     try {
-        const { lessonCode } = req.params;
+        const { id } = req.params;
+
+        console.log(id);
 
         // Fetch and sort the schedules by the 'week' field in ascending order
-        const schedules = await Schedule.find(lessonCode).sort({ week: 1 });
+        const schedules = await Schedule.find({lessonId: id });
 
         if (!schedules || schedules.length === 0) {
-            return res.status(404).json({ message: "No schedules found for the given lessonCode" });
+            return res.json([]);
+            // return res.status(404).json({ message: "No schedules found for the given lessonCode" });
         }
 
         res.json(schedules);

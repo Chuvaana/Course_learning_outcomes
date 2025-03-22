@@ -8,7 +8,7 @@ import { Observable } from 'rxjs';
 export class CurriculumService {
   private apiUrl = 'http://localhost:3000/api'; // Update with your actual API URL
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   getBranches(): Observable<any> {
     return this.http.get(`${this.apiUrl}/branches`);
@@ -27,19 +27,19 @@ export class CurriculumService {
   }
 
   getLessons() {
-    return this.http.get(`${this.apiUrl}/lessons`);
-  }
-
-  getLessonById(id: string) {
-    return this.http.get(`${this.apiUrl}/lessons/${id}`);
+    return this.http.get(`${this.apiUrl}/lesson`);
   }
 
   updateLesson(id: string, data: any) {
-    return this.http.put(`${this.apiUrl}/lessons/${id}`, data);
+    return this.http.put(`${this.apiUrl}/lesson/${id}`, data);
   }
 
   deleteLesson(id: string) {
-    return this.http.delete(`${this.apiUrl}/lessons/${id}`);
+    return this.http.delete(`${this.apiUrl}/lesson/${id}`);
+  }
+
+  getMainInfo(id: string) {
+    return this.http.get(`${this.apiUrl}/lesson/${id}`)
   }
 
 }

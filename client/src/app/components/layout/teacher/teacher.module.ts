@@ -10,7 +10,6 @@ import { CloPointComponent } from './lesson-list/lesson/clo-point/clo-point.comp
 import { CloComponent } from './lesson-list/lesson/clo/clo.component';
 import { LesStudentComponent } from './lesson-list/lesson/les-student/les-student.component';
 import { LessonComponent } from './lesson-list/lesson/lesson.component';
-import { ScheduleComponent } from './lesson-list/lesson/syllabus/schedule/schedule.component';
 import { TeacherComponent } from './teacher.component';
 
 const routes: Routes = [
@@ -20,16 +19,10 @@ const routes: Routes = [
     children: [
       {
         path: 'lessonList',
-        component: LessonListComponent,
-        children: [
-          {
-            path: 'lesson/:id',
-            component: LessonComponent, // ✅ Should be LessonComponent, not SharedComponent
-          },
-        ]
+        component: LessonListComponent
       },
       {
-        path: 'lesson',
+        path: 'lesson/:id',
         component: LessonComponent,
         children: [
           {
@@ -48,11 +41,11 @@ const routes: Routes = [
             path: 'clo-plan',
             component: CloPlanComponent
           },
-          
+
         ]
       },
       {
-        path: 'curriculum',
+        path: 'curriculum/:id',
         component: CurriculumComponent
       }
     ]

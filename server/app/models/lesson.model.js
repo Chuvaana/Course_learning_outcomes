@@ -33,13 +33,15 @@ const LessonSchema = new mongoose.Schema({
     lecture: { type: Number },
     seminar: { type: Number },
     lab: { type: Number },
-    assignment: { type: Number }
+    assignment: { type: Number },
+    practice: { type: Number },
   },
   selfStudyHours: {
     lecture: { type: Number },
     seminar: { type: Number },
     lab: { type: Number },
-    assignment: { type: Number }
+    assignment: { type: Number },
+    practice: { type: Number },
   }
 }, { timestamps: true });
 

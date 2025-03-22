@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const MaterialSchema = new mongoose.Schema({
-    lessonCode: { type: String, required: true, unique: false },
+    lessonId: { type: String, required: true },
     mainBooks: [{ type: String }],
     extraMaterials: [{ type: String }],
     webLinks: { type: String },

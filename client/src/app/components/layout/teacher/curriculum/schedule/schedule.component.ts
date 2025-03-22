@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { InputNumber } from 'primeng/inputnumber';
@@ -9,34 +9,42 @@ import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { ToastModule } from 'primeng/toast';
 import { ScheduleService } from '../../../../../services/schedule.service';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-schedule',
+  standalone: true,
   imports: [TableModule, ToastModule, CommonModule, TagModule, SelectModule, ButtonModule, InputTextModule, FormsModule, ReactiveFormsModule, InputNumber],
+  providers: [MessageService],
   templateUrl: './schedule.component.html',
   styleUrl: './schedule.component.scss'
 })
 export class ScheduleComponent {
+  @Input() lessonId: string = '';
   scheduleForm!: FormGroup;
-  lessonCode: string = 'kjsa';
   isNew = false;
 
-  constructor(private fb: FormBuilder, private service: ScheduleService) { }
+  constructor(private fb: FormBuilder, private service: ScheduleService, private msgService: MessageService) { }
 
   ngOnInit() {
     this.scheduleForm = this.fb.group({
       schedules: this.fb.array([]) // This will hold the schedules data
     });
     this.readData();
+
+    console.log('Lesson Controls:');
+    this.lessonControls.forEach(res => {
+      console.log(`Lesson ${res}:`);
+    });
   }
 
-  readData(){
-    this.service.getSchedules(this.lessonCode).subscribe((res: any[]) => {
+  readData() {
+    this.service.getSchedules(this.lessonId).subscribe((res: any[]) => {
       if (res && res.length > 0) {
-        this.setSchedules(res); // Set schedules from response
+        this.setSchedules(res);
         this.isNew = false;
       } else {
-        this.setDefaultSchedules(); // Set default schedules if response is empty
+        this.setDefaultSchedules();
         this.isNew = true;
       }
     });
@@ -48,7 +56,7 @@ export class ScheduleComponent {
       // Add new form group for each schedule
       scheduleArray.push(this.fb.group({
         id: [schedule._id],
-        lessonCode: [schedule.lessonCode],
+        lessonId: [schedule.lessonId],
         week: [schedule.week],
         title: [schedule.title],
         time: [schedule.time],
@@ -97,8 +105,7 @@ export class ScheduleComponent {
       { week: 11, title: 'test', time: 0, type: 'LAB' },
       { week: 12, title: 'test', time: 0, type: 'LAB' }
     ];
-  
-    // Push default lessons into the form array
+
     defaultLessons.forEach(lesson => {
       scheduleArray.push(this.createLesson(lesson));
     });
@@ -106,7 +113,7 @@ export class ScheduleComponent {
 
   createLesson(lesson: any) {
     return this.fb.group({
-      lessonCode: this.lessonCode,
+      lessonId: this.lessonId,
       week: [lesson.week],
       title: [lesson.title],
       time: [lesson.time],
@@ -119,16 +126,38 @@ export class ScheduleComponent {
   }
 
   submitButton() {
-    console.log(this.scheduleForm.value);
-    if(this.isNew){
-      this.service.addSchedules(this.scheduleForm.value).subscribe(response => {
-        console.log('Data saved successfully', response);
-      });
-    } else { 
-      this.service.updateSchedules(this.lessonCode, this.scheduleForm.value).subscribe(response => {
-      console.log('Data update successfully', response);
-    });
-
+    if (this.isNew) {
+      this.service.addSchedules(this.scheduleForm.value).subscribe((res: any) => {
+        this.readData();
+        this.msgService.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: 'Амжилттай хадгалагдлаа!',
+        });
+      },
+        (err) => {
+          this.msgService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Алдаа гарлаа: ' + err.message,
+          });
+        });
+    } else {
+      this.service.updateSchedules(this.lessonId, this.scheduleForm.value).subscribe((res: any) => {
+        this.readData();
+        this.msgService.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: 'Амжилттай шинэчлэгдлээ!',
+        });
+      },
+        (err) => {
+          this.msgService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Алдаа гарлаа: ' + err.message,
+          });
+        });
     }
   }
 }

@@ -1,5 +1,5 @@
 <div class="card">
-    <p-tabs value="0">
+    <p-tabs value="0" scrollable>
         <p-tablist>
             <p-tab value="0">ҮНДСЭН МЭДЭЭЛЭЛ</p-tab>
             <p-tab value="1">АШИГЛАХ МАТЕРИАЛУУД</p-tab>
@@ -10,22 +10,22 @@
         </p-tablist>
         <p-tabpanels>
             <p-tabpanel value="0">
-                <app-main-info></app-main-info>
+                <app-main-info [lessonId]="lessonId"></app-main-info>
             </p-tabpanel>
             <p-tabpanel value="1">
-                <app-materials></app-materials>
+                <app-materials [lessonId]="lessonId"></app-materials>
             </p-tabpanel>
             <p-tabpanel value="2">
-                <app-schedule></app-schedule>
+                <app-schedule [lessonId]="lessonId"></app-schedule>
             </p-tabpanel>
             <p-tabpanel value="3">
-                <app-clos></app-clos>
+                <app-clo [lessonId]="lessonId"></app-clo>
             </p-tabpanel>
             <p-tabpanel value="4">
-                <app-assessment></app-assessment>
+                <app-assessment [lessonId]="lessonId"></app-assessment>
             </p-tabpanel>
             <p-tabpanel value="5">
-                <app-additional></app-additional>
+                <app-additional [lessonId]="lessonId"></app-additional>
             </p-tabpanel>
         </p-tabpanels>
     </p-tabs>

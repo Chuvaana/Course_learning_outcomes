@@ -3,10 +3,10 @@ const Material = require('../models/material.model');
 // ✅ Add Materials (Create)
 exports.addMaterial = async (req, res) => {
     try {
-        const { lessonCode, mainBooks, extraMaterials, webLinks, libraryLink, softwareTools } = req.body;
+        const { lessonId, mainBooks, extraMaterials, webLinks, libraryLink, softwareTools } = req.body;
 
         const newMaterial = new Material({
-            lessonCode,
+            lessonId,
             mainBooks,
             extraMaterials,
             webLinks,
@@ -24,8 +24,8 @@ exports.addMaterial = async (req, res) => {
 // ✅ Get Materials by Lesson Code (Read)
 exports.getMaterialsByLessonCode = async (req, res) => {
     try {
-        const { lessonCode } = req.params;
-        const material = await Material.findOne({ lessonCode });
+        const { id } = req.params;
+        const material = await Material.findOne({ id });
 
         if (!material) {
             return res.status(404).json({ message: 'No materials found for this lesson' });
@@ -40,10 +40,10 @@ exports.getMaterialsByLessonCode = async (req, res) => {
 // ✅ Update Materials (Update)
 exports.updateMaterial = async (req, res) => {
     try {
-        const { lessonCode } = req.params;
+        const { id } = req.params;
         const updatedData = req.body;
 
-        const updatedMaterial = await Material.findOneAndUpdate({ lessonCode }, updatedData, { new: true });
+        const updatedMaterial = await Material.findOneAndUpdate({ id }, updatedData, { new: true });
 
         if (!updatedMaterial) {
             return res.status(404).json({ message: 'Materials not found' });
@@ -58,8 +58,8 @@ exports.updateMaterial = async (req, res) => {
 // ✅ Delete Materials (Delete)
 exports.deleteMaterial = async (req, res) => {
     try {
-        const { lessonCode } = req.params;
-        const deletedMaterial = await Material.findOneAndDelete({ lessonCode });
+        const { lessonId } = req.params;
+        const deletedMaterial = await Material.findOneAndDelete({ lessonId });
 
         if (!deletedMaterial) {
             return res.status(404).json({ message: 'Materials not found' });

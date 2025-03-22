@@ -14,6 +14,7 @@ export class MaterialService {
   }
 
   getMaterials(lessonCode: string) {
+    console.log(lessonCode + "fff");
     return this.http.get(`${this.apiUrl}/${lessonCode}`);
   }
 
