@@ -10,16 +10,30 @@ exports.getClos = async (req, res) => {
     }
 };
 
+exports.getCloById = async (req, res) => {
+    try {
+        const id = req.params.id;
+        const clos = await Clo.find({ lessonId: id });
+
+        if (!clos) {
+            return res.json([]);
+        }
+        res.status(200).json(clos);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+};
 // Add a new CLO
 exports.addClo = async (req, res) => {
     try {
-        const { type, cloName } = req.body;
+        console.log(req.body);
+        const { lessonId, type, cloName } = req.body;
 
-        if (!type || !cloName) {
+        if (!lessonId || !type || !cloName) {
             return res.status(400).json({ message: 'Type and CLO Name are required' });
         }
 
-        const newClo = new Clo({ type, cloName });
+        const newClo = new Clo({ lessonId, type, cloName });
         await newClo.save();
         res.status(201).json(newClo);
     } catch (err) {
@@ -30,10 +44,10 @@ exports.addClo = async (req, res) => {
 // Update CLO by ID
 exports.updateClo = async (req, res) => {
     try {
-        const { type, cloName } = req.body;
+        const { id, type, cloName } = req.body;
 
         const updatedClo = await Clo.findByIdAndUpdate(
-            req.params.id,
+            id,
             { type, cloName },
             { new: true, runValidators: true }
         );

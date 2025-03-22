@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule, Routes } from '@angular/router';
 import { SharedComponent } from '../shared/shared.component';
+import { CurriculumComponent } from './curriculum/curriculum.component';
 import { LessonListComponent } from './lesson-list/lesson-list.component';
 import { CloPlanComponent } from './lesson-list/lesson/clo-plan/clo-plan.component';
 import { CloPointComponent } from './lesson-list/lesson/clo-point/clo-point.component';
@@ -10,8 +11,6 @@ import { CloComponent } from './lesson-list/lesson/clo/clo.component';
 import { LesStudentComponent } from './lesson-list/lesson/les-student/les-student.component';
 import { LessonComponent } from './lesson-list/lesson/lesson.component';
 import { TeacherComponent } from './teacher.component';
-import { SyllabusComponent } from './lesson-list/lesson/syllabus/syllabus.component';
-import { ScheduleComponent } from './lesson-list/lesson/syllabus/schedule/schedule.component';
 
 const routes: Routes = [
   {
@@ -20,16 +19,10 @@ const routes: Routes = [
     children: [
       {
         path: 'lessonList',
-        component: LessonListComponent,
-        children: [
-          {
-            path: 'lesson/:id',
-            component: LessonComponent, // ✅ Should be LessonComponent, not SharedComponent
-          },
-        ]
+        component: LessonListComponent
       },
       {
-        path: 'lesson',
+        path: 'lesson/:id',
         component: LessonComponent,
         children: [
           {
@@ -48,18 +41,17 @@ const routes: Routes = [
             path: 'clo-plan',
             component: CloPlanComponent
           },
-          {
-            path: 'syllabus',
-            component: SyllabusComponent,
-            children: [
-              {
-                path: 'schedule',
-                component: ScheduleComponent
-              }
-            ]
-          }
+
         ]
       },
+      {
+        path: 'curriculum/:id',
+        component: CurriculumComponent
+      },
+      {
+        path: 'curriculum',
+        component: CurriculumComponent
+      }
     ]
   },
 ];

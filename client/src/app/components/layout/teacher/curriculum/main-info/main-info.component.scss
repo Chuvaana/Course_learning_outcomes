@@ -1,0 +1,33 @@
+.container {
+    display: flex;
+    gap: 20px;
+    align-items: baseline;
+
+    .col {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+
+        .col2 {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+
+            // Set a fixed width for all input fields and dropdowns
+            p-floatlabel {
+                width: 100%; // Make sure it takes full width of the parent
+            }
+
+            .p-float-label p-inputnumber:-webkit-autofill + label {
+                top: -0.75rem;
+                font-size: 12px;
+              }
+            // input, 
+            // p-dropdown, 
+            // p-inputnumber {
+            //     width: 100%; // Ensure all inputs and dropdowns take full width
+            //     max-width: 400px; // Set a maximum width if needed
+            // }
+        }
+    }
+}

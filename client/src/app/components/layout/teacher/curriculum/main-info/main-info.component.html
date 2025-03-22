@@ -1,0 +1,218 @@
+<div class="card max-w-3xl mx-auto">
+    <p-toast />
+    <form [formGroup]="mainInfoForm" class="space-y-6">
+        <div class="container">
+            <div class="col">
+                <h3 class="text-lg font-semibold text-gray-800 border-b pb-2 mt-6">Ерөнхий мэдээлэл</h3>
+                <div class="col2">
+                    <p-floatlabel variant="on" class="w-full">
+                        <input pInputText formControlName="lessonName" id="lessonName" autocomplete="off"
+                            class="w-full p-3 border border-gray-300 rounded-lg focus:border-blue-500" />
+                        <label for="lessonName">Хичээлийн нэр</label>
+                    </p-floatlabel>
+
+                    <p-floatlabel variant="on" class="w-full">
+                        <input pInputText formControlName="lessonCode" id="lessonCode" autocomplete="off"
+                            class="w-full p-3 border border-gray-300 rounded-lg focus:border-blue-500" />
+                        <label for="lessonCode">Хичээлийн код</label>
+                    </p-floatlabel>
+
+                    <p-floatlabel variant="on" class="w-full">
+                        <input pInputText formControlName="lessonCredit" id="lessonCredit" autocomplete="off"
+                            class="w-full p-3 border border-gray-300 rounded-lg focus:border-blue-500" />
+                        <label for="lessonCredit">Кредит</label>
+                    </p-floatlabel>
+
+                    <p-floatlabel variant="on" class="w-full">
+                        <p-dropdown formControlName="school" id="school" [options]="branches" optionLabel="name"
+                            optionValue="id" (onChange)="onBranchChange($event.value)" autocomplete="off"
+                            class="w-full p-3 border border-gray-300 rounded-lg focus:border-blue-500">
+                        </p-dropdown>
+                        <label for="school">Сургууль</label>
+                    </p-floatlabel>
+
+                    <p-floatlabel variant="on" class="w-full">
+                        <p-dropdown formControlName="department" id="department" [options]="departments"
+                            optionLabel="name" optionValue="id" autocomplete="off"
+                            class="w-full p-3 border border-gray-300 rounded-lg focus:border-blue-500">
+                        </p-dropdown>
+                        <label for="department">Салбар/Тэнхим</label>
+                    </p-floatlabel>
+                </div>
+
+                <h3 class="text-lg font-semibold text-gray-800 border-b pb-2 mt-6">Үндсэн багш</h3>
+                <div class="col2">
+                    <p-floatlabel variant="on" class="w-full">
+                        <input pInputText formControlName="teacherName" id="teacherName" autocomplete="off"
+                            class="w-full p-3 border border-gray-300 rounded-lg focus:border-blue-500" />
+                        <label for="teacherName">Нэр</label>
+                    </p-floatlabel>
+
+                    <p-floatlabel variant="on" class="w-full">
+                        <input pInputText formControlName="teacherRoom" id="teacherRoom" autocomplete="off"
+                            class="w-full p-3 border border-gray-300 rounded-lg focus:border-blue-500" />
+                        <label for="teacherRoom">Өрөөний дугаар</label>
+                    </p-floatlabel>
+
+                    <p-floatlabel variant="on" class="w-full">
+                        <input pInputText formControlName="teacherEmail" id="teacherEmail" autocomplete="off"
+                            class="w-full p-3 border border-gray-300 rounded-lg focus:border-blue-500" />
+                        <label for="teacherEmail">И-мэйл</label>
+                    </p-floatlabel>
+
+                    <p-floatlabel variant="on" class="w-full">
+                        <input pInputText formControlName="teacherPhone" id="teacherPhone" autocomplete="off"
+                            class="w-full p-3 border border-gray-300 rounded-lg focus:border-blue-500" />
+                        <label for="teacherPhone">Утас</label>
+                    </p-floatlabel>
+                </div>
+
+                <h3 class="text-lg font-semibold text-gray-800 border-b pb-2 mt-6">Туслах багш</h3>
+                <div class="col2">
+                    <p-floatlabel variant="on" class="w-full">
+                        <input pInputText formControlName="assistantTeacherName" id="assistantTeacherName"
+                            autocomplete="off"
+                            class="w-full p-3 border border-gray-300 rounded-lg focus:border-blue-500" />
+                        <label for="assistantTeacherName">Нэр</label>
+                    </p-floatlabel>
+
+                    <p-floatlabel variant="on" class="w-full">
+                        <input pInputText formControlName="assistantTeacherRoom" id="assistantTeacherRoom"
+                            autocomplete="off"
+                            class="w-full p-3 border border-gray-300 rounded-lg focus:border-blue-500" />
+                        <label for="assistantTeacherRoom">Өрөөний дугаар</label>
+                    </p-floatlabel>
+
+                    <p-floatlabel variant="on" class="w-full">
+                        <input pInputText formControlName="assistantTeacherEmail" id="assistantTeacherEmail"
+                            autocomplete="off"
+                            class="w-full p-3 border border-gray-300 rounded-lg focus:border-blue-500" />
+                        <label for="assistantTeacherEmail">И-мэйл</label>
+                    </p-floatlabel>
+
+                    <p-floatlabel variant="on" class="w-full">
+                        <input pInputText formControlName="assistantTeacherPhone" id="assistantTeacherPhone"
+                            autocomplete="off"
+                            class="w-full p-3 border border-gray-300 rounded-lg focus:border-blue-500" />
+                        <label for="assistantTeacherPhone">Утас</label>
+                    </p-floatlabel>
+                </div>
+
+                
+
+                <h3 class="text-lg font-semibold text-gray-800 border-b pb-2 mt-6">Нэмэлт мэдээлэл</h3>
+                <div class="col2">
+                    <p-floatlabel variant="on" class="w-full">
+                        <p-dropdown formControlName="lessonLevel" id="lessonLevel" [options]="lessonLevel"
+                            class="w-full p-3 border border-gray-300 rounded-lg focus:border-blue-500" />
+                        <label for="lessonLevel">Түвшин</label>
+                    </p-floatlabel>
+                    <p-floatlabel variant="on" class="w-full">
+                        <p-dropdown formControlName="lessonType" id="lessonType" [options]="lessonType"
+                            class="w-full p-3 border border-gray-300 rounded-lg focus:border-blue-500" />
+                        <label for="lessonType">Төрөл</label>
+                    </p-floatlabel>
+                    <p-floatlabel variant="on" class="w-full">
+                        <p-dropdown formControlName="recommendedSemester" id="recommendedSemester"
+                            [options]="recommendedSemester"
+                            class="w-full p-3 border border-gray-300 rounded-lg focus:border-blue-500" />
+                        <label for="recommendedSemester">Санал болгох улирал</label>
+                    </p-floatlabel>
+                </div>
+
+            </div>
+            <div class="col">
+                <h3 class="text-lg font-semibold text-gray-800 border-b pb-2 mt-6">7 хоногт ногдох сургалтын цаг</h3>
+                <div class="col2">
+                    <p-floatlabel class="w-full">
+                        <p-inputnumber formControlName="weeklyLecture" id="weeklyLecture"
+                            class="w-full p-3 border border-gray-300 rounded-lg focus:border-blue-500" />
+                        <label for="weeklyLecture">Лекц (7 хоногт)</label>
+                    </p-floatlabel>
+                    <p-floatlabel class="w-full">
+                        <p-inputnumber formControlName="weeklySeminar" id="weeklySeminar"
+                            class="w-full p-3 border border-gray-300 rounded-lg focus:border-blue-500" />
+                        <label for="weeklySeminar">Семинар</label>
+                    </p-floatlabel>
+                    <p-floatlabel class="w-full">
+                        <p-inputnumber formControlName="weeklyLab" id="weeklyLab"
+                            class="w-full p-3 border border-gray-300 rounded-lg focus:border-blue-500" />
+                        <label for="weeklyLab">Лаборатори</label>
+                    </p-floatlabel>
+                    <p-floatlabel class="w-full">
+                        <p-inputnumber formControlName="weeklyAssignment" id="weeklyAssignment"
+                            class="w-full p-3 border border-gray-300 rounded-lg focus:border-blue-500" />
+                        <label for="weeklyAssignment">Бие даалт</label>
+                    </p-floatlabel>
+                    <p-floatlabel class="w-full">
+                        <p-inputnumber formControlName="weeklyPractice" id="weeklyPractice"
+                            class="w-full p-3 border border-gray-300 rounded-lg focus:border-blue-500" />
+                        <label for="weeklyPractice">Практик</label>
+                    </p-floatlabel>
+                </div>
+
+                <h3 class="text-lg font-semibold text-gray-800 border-b pb-2 mt-6">Нийт танхимын цаг</h3>
+                <div class="col2">
+                    <p-floatlabel class="w-full">
+                        <p-inputnumber formControlName="totalLecture" id="totalLecture"
+                            class="w-full p-3 border border-gray-300 rounded-lg focus:border-blue-500" />
+                        <label for="totalLecture">Лекц</label>
+                    </p-floatlabel>
+                    <p-floatlabel class="w-full">
+                        <p-inputnumber formControlName="totalSeminar" id="totalSeminar"
+                            class="w-full p-3 border border-gray-300 rounded-lg focus:border-blue-500" />
+                        <label for="totalSeminar">Семинар</label>
+                    </p-floatlabel>
+                    <p-floatlabel class="w-full">
+                        <p-inputnumber formControlName="totalLab" id="totalLab"
+                            class="w-full p-3 border border-gray-300 rounded-lg focus:border-blue-500" />
+                        <label for="totalLab">Лаборатори</label>
+                    </p-floatlabel>
+                    <p-floatlabel class="w-full">
+                        <p-inputnumber formControlName="totalAssignment" id="totalAssignment"
+                            class="w-full p-3 border border-gray-300 rounded-lg focus:border-blue-500" />
+                        <label for="totalAssignment">Бие даалт</label>
+                    </p-floatlabel>
+                    <p-floatlabel class="w-full">
+                        <p-inputnumber formControlName="totalPractice" id="totalPractice"
+                            class="w-full p-3 border border-gray-300 rounded-lg focus:border-blue-500" />
+                        <label for="totalPractice">Практик</label>
+                    </p-floatlabel>
+                </div>
+
+                <h3 class="text-lg font-semibold text-gray-800 border-b pb-2 mt-6">Бие даан суралцах цаг</h3>
+                <div class="col2">
+                    <p-floatlabel class="w-full">
+                        <p-inputnumber formControlName="selfStudyLecture" id="selfStudyLecture"
+                            class="w-full p-3 border border-gray-300 rounded-lg focus:border-blue-500" />
+                        <label for="selfStudyLecture">Лекц</label>
+                    </p-floatlabel>
+                    <p-floatlabel class="w-full">
+                        <p-inputnumber formControlName="selfStudySeminar" id="selfStudySeminar"
+                            class="w-full p-3 border border-gray-300 rounded-lg focus:border-blue-500" />
+                        <label for="selfStudySeminar">Семинар</label>
+                    </p-floatlabel>
+                    <p-floatlabel class="w-full">
+                        <p-inputnumber formControlName="selfStudyLab" id="selfStudyLab"
+                            class="w-full p-3 border border-gray-300 rounded-lg focus:border-blue-500" />
+                        <label for="selfStudyLab">Лаборатори</label>
+                    </p-floatlabel>
+                    <p-floatlabel class="w-full">
+                        <p-inputnumber formControlName="selfStudyAssignment" id="selfStudyAssignment"
+                            class="w-full p-3 border border-gray-300 rounded-lg focus:border-blue-500" />
+                        <label for="selfStudyAssignment">Бие даалт</label>
+                    </p-floatlabel>
+                    <p-floatlabel class="w-full">
+                        <p-inputnumber formControlName="weeklyPractice" id="weeklyPractice"
+                            class="w-full p-3 border border-gray-300 rounded-lg focus:border-blue-500" />
+                        <label for="weeklyPractice">Практик</label>
+                    </p-floatlabel>
+                </div>
+                
+            </div>
+        </div>
+        <div class="flex justify-end mt-6">
+            <p-button label="Хадгалах" class="p-button-lg p-button-primary" (click)="submitButton()" />
+        </div>
+    </form>
+</div>

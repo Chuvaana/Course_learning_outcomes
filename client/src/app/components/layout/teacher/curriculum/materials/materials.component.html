@@ -1,0 +1,63 @@
+<p-toast />
+<form [formGroup]="materialsForm" (ngSubmit)="onSubmit()">
+    <h3>ХИЧЭЭЛД АШИГЛАХ МАТЕРИАЛУУД</h3>
+
+    <div class="first">
+        <div class="sub" formArrayName="mainBooks">
+            <label>Үндсэн сурах бичиг:</label>
+            <div *ngFor="let book of mainBooks.controls; let i = index" class="line">
+                <p-floatlabel variant="on" class="w-full">
+                    <input pInputText [formControlName]="i" [id]="'mainBook' + i" autocomplete="off"
+                        class="w-full p-3 border border-gray-300 rounded-lg focus:border-blue-500" />
+                    <label [for]="'mainBook' + i">Сурах бичиг {{i + 1}}</label>
+                </p-floatlabel>
+                <p-button icon="pi pi-trash" [rounded]="true" [text]="true" severity="danger"
+                    (click)="removeMainBook(i)" />
+            </div>
+            <p-button label="Нэмэх" icon="pi pi-plus" iconPos="right" (click)="addMainBook()" />
+        </div>
+        <div class="sub" formArrayName="extraMaterials">
+            <label>Нэмэлт ном, материалууд:</label>
+            <div *ngFor="let material of extraMaterials.controls; let i = index" class="line">
+                <p-floatlabel variant="on" class="w-full">
+                    <input pInputText [formControlName]="i" [id]="'extraMaterial' + i" autocomplete="off"
+                        class="w-full p-3 border border-gray-300 rounded-lg focus:border-blue-500" />
+                    <label [for]="'extraMaterial' + i">Нэмэлт материал {{i + 1}}</label>
+                </p-floatlabel>
+                <p-button icon="pi pi-trash" [rounded]="true" [text]="true" severity="danger"
+                    (click)="removeExtraMaterial(i)" />
+            </div>
+            <p-button label="Нэмэх" icon="pi pi-plus" iconPos="right" (click)="addExtraMaterial()" />
+        </div>
+    </div>
+    <div class="first">
+        <div class="sub">
+            <p-floatlabel variant="on" class="w-full">
+                <input pInputText formControlName="webLinks" id="webLinks" autocomplete="off"
+                    class="w-full p-3 border border-gray-300 rounded-lg focus:border-blue-500" />
+                <label for="webLinks">Цахим сургалтын веб холбоос</label>
+            </p-floatlabel>
+        </div>
+        <div class="sub">
+            <p-floatlabel variant="on" class="w-full">
+                <input pInputText formControlName="libraryLink" id="libraryLink" autocomplete="off"
+                    class="w-full p-3 border border-gray-300 rounded-lg focus:border-blue-500" />
+                <label for="libraryLink">Цахим номын сангийн холбоос</label>
+            </p-floatlabel>
+        </div>
+    </div>
+    <div class="sub" formArrayName="softwareTools">
+        <label>Хичээлд ашиглах програм хангамж, хэрэгслүүд:</label>
+        <div *ngFor="let software of softwareTools.controls; let i = index" class="line">
+            <p-floatlabel variant="on" class="w-full">
+                <input pInputText [formControlName]="i" [id]="'softwareTool' + i" autocomplete="off"
+                    class="w-full p-3 border border-gray-300 rounded-lg focus:border-blue-500" />
+                <label [for]="'softwareTool' + i">Програм хангамж {{i + 1}}</label>
+            </p-floatlabel>
+            <p-button icon="pi pi-trash" [rounded]="true" [text]="true" severity="danger"
+                (click)="removeSoftwareTool(i)" />
+        </div>
+        <p-button label="Нэмэх" icon="pi pi-plus" iconPos="right" (click)="addSoftwareTool()" />
+    </div>
+    <p-button label="Хадгалах" icon="pi pi-check" iconPos="right" type="submit" />
+</form>

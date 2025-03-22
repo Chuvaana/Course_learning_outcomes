@@ -6,6 +6,7 @@ import { ButtonModule } from 'primeng/button';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { ToastModule } from 'primeng/toast';
 import { CLOService } from '../../../../../../services/cloService';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-clo-point',
@@ -24,14 +25,17 @@ import { CLOService } from '../../../../../../services/cloService';
 export class CloPointComponent implements OnInit {
   myForm!: FormGroup;
   isNew = true;
+  lessonId: string = '';
 
   constructor(
     private fb: FormBuilder,
     private msgService: MessageService,
-    private cloService: CLOService
+    private cloService: CLOService,
+    private route: ActivatedRoute
   ) { }
 
   ngOnInit() {
+    this.lessonId = this.route.snapshot.paramMap.get('id') || '';
     this.myForm = this.fb.group({
       id: [null], // Include ID but don't use it in sum calculation
       timeManagement: [0],
@@ -105,8 +109,6 @@ export class CloPointComponent implements OnInit {
 
     if (sum === 100) {
       const formData = { ...this.myForm.value };
-      console.log(formData)
-
       if (this.isNew) {
         // Create new entry (without ID)
         this.cloService.createPointPlan(formData).subscribe(res => {

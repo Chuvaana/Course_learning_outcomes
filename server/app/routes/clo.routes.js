@@ -10,7 +10,7 @@ module.exports = app => {
     router.get("/", clos.getClos);
 
     // Retrieve a single CLO by ID
-    // router.get("/:id", clos.findOne);
+    router.get("/:id", clos.getCloById);
 
     // Update a CLO by ID
     router.put("/:id", clos.updateClo);

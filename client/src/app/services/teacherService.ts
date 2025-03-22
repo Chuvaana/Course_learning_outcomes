@@ -31,7 +31,7 @@ export class TeacherService {
   }
 
   getLessons(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/lessons`);
+    return this.http.get(`${this.apiUrl}/lesson`);
   }
 
   getTeacher(): Observable<any> {

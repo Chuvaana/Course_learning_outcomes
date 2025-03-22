@@ -1,15 +1,13 @@
+import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import * as XLSX from 'xlsx';
-import { AppModule } from '../../../../app.module';
-import { TeacherService } from '../../../../services/teacherService';
-import { TeacherComponent } from '../../teacher/teacher.component';
+import { ButtonModule } from 'primeng/button';
 import { DropdownModule } from 'primeng/dropdown';
 import { PasswordModule } from 'primeng/password';
-import { ButtonModule } from 'primeng/button';
-import { CommonModule } from '@angular/common';
+import * as XLSX from 'xlsx';
 import { StudentService } from '../../../../services/studentService';
+import { TeacherComponent } from '../../teacher/teacher.component';
 
 @Component({
   selector: 'app-student-import',
