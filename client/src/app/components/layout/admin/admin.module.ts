@@ -10,6 +10,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { LessonListComponent } from '../teacher/lesson-list/lesson-list.component';
 import { LessonComponent } from '../teacher/lesson-list/lesson/lesson.component';
 import { AdminComponent } from './admin.component';
+import { PdfComponent } from './pdf-convert/pdf.component';
 
 const routes: Routes = [
   {
@@ -23,6 +24,10 @@ const routes: Routes = [
       {
         path: 'exam-import',
         component: ExamImportComponent,
+      },
+      {
+        path: 'pdf',
+        component: PdfComponent,
       }
     ]
   },

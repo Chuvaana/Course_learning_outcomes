@@ -82,9 +82,9 @@ export class CloPointComponent implements OnInit {
     const understanding = this.myForm.get("understandingLevel")?.value || 0;
     const analysis = this.myForm.get("analysisLevel")?.value || 0;
     const creation = this.myForm.get("creationLevel")?.value || 0;
-  
+
     const total = understanding + analysis + creation;
-  
+
     return total === 30;
   }
 
@@ -93,7 +93,7 @@ export class CloPointComponent implements OnInit {
     const { id, ...formValues } = this.myForm.value;
     console.log(formValues)
     const sum = Object.values(formValues).reduce((acc, val) => (acc as number) + (val as number), 0);
-    
+
     if (!this.validateFinalExamTotal()) {
       this.msgService.add({
         severity: "warn",
@@ -102,7 +102,7 @@ export class CloPointComponent implements OnInit {
       });
       return; // Датаг илгээхгүй
     }
-    
+
     if (sum === 100) {
       const formData = { ...this.myForm.value };
       console.log(formData)

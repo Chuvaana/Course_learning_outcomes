@@ -11,6 +11,11 @@ import { ToastModule } from 'primeng/toast';
 import { TeacherService } from '../../../../../../services/teacherService';
 import { CLOService } from '../../../../../../services/cloService';
 import { MessageService } from 'primeng/api';
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver'; // file-saver сан
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
+import { PdfGeneratorService } from '../../../../../../services/pdf-generator.service';
 
 @Component({
   selector: 'app-clo-plan',
@@ -43,6 +48,7 @@ export class CloPlanComponent {
     private fb: FormBuilder,
     private service: TeacherService,
     private cloService: CLOService,
+    private pdfService: PdfGeneratorService,
     private msgService: MessageService) { }
 
   ngOnInit() {
@@ -290,5 +296,80 @@ export class CloPlanComponent {
         });
       }
     );
+  }
+
+  exportToExcel() {
+    // Дата-г worksheet болгон хөрвүүлэх
+    let excelData = [];
+    let conver: any;
+    let count
+    for (let i = 0; i < this.sampleData.length; i++) {
+      if (i == 0) {
+        conver = this.sampleData[i][0];
+        console.log(conver[0]);
+        excelData.push(conver[0]);
+      } else if (i == 1) {
+        this.sampleData[1].map((e: any) => {
+          excelData.push(e);
+        })
+      }
+    }
+    console.log(excelData);
+    // if(this.sampleData){
+    // Массивийн эхний талбар үндсэн оноо
+
+    // Массивийн 2 дахь талбар CLO буюу дүнгийн задаргаа оноо байна
+
+    // }
+    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(excelData);
+
+    // Workbook үүсгэх
+    const workbook: XLSX.WorkBook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1');
+
+    // Excel файлыг binary болгон хөрвүүлэх
+    const excelBuffer: any = XLSX.write(workbook, {
+      bookType: 'xlsx',
+      type: 'array',
+    });
+
+    // Файлыг хадгалах
+    this.saveAsExcelFile(excelBuffer, 'table-data');
+  }
+
+  private saveAsExcelFile(buffer: any, fileName: string): void {
+    const data: Blob = new Blob([buffer], {
+      type: 'application/octet-stream',
+    });
+    saveAs(data, `${fileName}_${new Date().getTime()}.xlsx`);
+  }
+  generate() {
+
+    let excelData: any[] = [];
+    let conver: any;
+    let count
+    // const header = Object.keys(this.sampleData[0][0][0]);
+    // excelData.push(header);
+    // console.log(excelData);
+    for (let i = 0; i < this.sampleData.length; i++) {
+      if (i == 1) {
+        this.sampleData[1].map((e: any) => {
+          excelData.push(Object.keys(e));
+        })
+      }
+      //   if (i == 0) {
+      //     const header = Object.keys(this.sampleData[0][0][0]);
+      //     excelData.push(header);
+      //     // conver = this.sampleData[i][0];
+      //     // console.log(conver[0]);
+      //     // excelData.push(Object.keys(conver[0]));
+      //   } else if (i == 1) {
+      //     this.sampleData[1].map((e: any) => {
+      //       excelData.push(Object.keys(e));
+      //     })
+      //   }
+    }
+    console.log(excelData);
+    this.pdfService.generatePdf(excelData);
   }
 }

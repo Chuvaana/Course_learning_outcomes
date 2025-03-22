@@ -9,6 +9,8 @@ import { ButtonModule } from 'primeng/button';
 import { CommonModule } from '@angular/common';
 import { TableModule } from 'primeng/table';
 import { QuestionTypeListComponent } from '../question-type-list/question-type-list.component';
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver'; // file-saver сан
 
 @Component({
   selector: 'app-list',
@@ -89,5 +91,30 @@ export class ListComponent {  // Fixed the typo here
       height: '50vh', // 50% of the viewport height,
       maxWidth: 'none'
     });
+  }
+
+  exportToExcel(){
+    // Дата-г worksheet болгон хөрвүүлэх
+    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(this.products);
+
+    // Workbook үүсгэх
+    const workbook: XLSX.WorkBook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1');
+
+    // Excel файлыг binary болгон хөрвүүлэх
+    const excelBuffer: any = XLSX.write(workbook, {
+      bookType: 'xlsx',
+      type: 'array',
+    });
+
+    // Файлыг хадгалах
+    this.saveAsExcelFile(excelBuffer, 'table-data');
+
+  }
+  private saveAsExcelFile(buffer: any, fileName: string): void {
+    const data: Blob = new Blob([buffer], {
+      type: 'application/octet-stream',
+    });
+    saveAs(data, `${fileName}_${new Date().getTime()}.xlsx`);
   }
 }
