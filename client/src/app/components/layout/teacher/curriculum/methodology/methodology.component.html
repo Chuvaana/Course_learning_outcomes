@@ -22,11 +22,12 @@
                 <td>
                     <p-cellEditor>
                         <ng-template #input>
-                            <p-dropdown [options]="pedagogyOptions" [(ngModel)]="method.pedagogy"
-                                [style]="{'width':'100%'}" appendTo="body"></p-dropdown>
+                            <p-dropdown [options]="pedagogyOptions" [(ngModel)]="method.pedagogy" optionLabel="label"
+                                optionValue="value" />
                         </ng-template>
+
                         <ng-template #output>
-                            <p-tag [value]="method.pedagogy"></p-tag>
+                            {{ getPedagogyName(method.pedagogy) }}
                         </ng-template>
                     </p-cellEditor>
                 </td>
@@ -34,26 +35,32 @@
                 <td>
                     <p-cellEditor>
                         <ng-template #input>
-                            <p-dropdown [options]="deliveryModes" [(ngModel)]="method.deliveryMode"
-                                [style]="{'width':'100%'}" appendTo="body"></p-dropdown>
+                            <p-dropdown [options]="deliveryModes" [(ngModel)]="method.deliveryMode" optionLabel="label"
+                                optionValue="value" />
                         </ng-template>
+
                         <ng-template #output>
-                            <p-tag [value]="method.deliveryMode"></p-tag>
+                            {{ getDeliveryModeName(method.deliveryMode) }}
                         </ng-template>
                     </p-cellEditor>
                 </td>
+
 
                 <td>
                     <p-cellEditor>
                         <ng-template #input>
                             <p-multiselect [options]="clos" [(ngModel)]="method.cloRelevance" optionLabel="cloName"
-                                optionValue="id" [maxSelectedLabels]="3" styleClass="w-full md:w-80" appendTo="body" />
+                                optionValue="id" [maxSelectedLabels]="3" styleClass="w-full md:w-80" appendTo="body">
+                            </p-multiselect>
                         </ng-template>
+
                         <ng-template #output>
-                            <p-tag *ngFor="let clo of method.cloRelevance" [value]="clo"></p-tag>
+                            <p-tag *ngFor="let cloId of method.cloRelevance" [value]="getCloName(cloId)">
+                            </p-tag>
                         </ng-template>
                     </p-cellEditor>
                 </td>
+
 
                 <td>
                     <div class="flex items-center justify-center gap-2">

@@ -68,17 +68,15 @@ export class AdminStudentImportComponent {
       const binaryString: string = e.target.result;
       const workbook: XLSX.WorkBook = XLSX.read(binaryString, { type: 'binary' });
 
-      // Get the first sheet
       const sheetName: string = workbook.SheetNames[0];
       const worksheet: XLSX.WorkSheet = workbook.Sheets[sheetName];
 
-      // Convert sheet to JSON array of arrays
       this.tableData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
 
-      console.log(this.tableData); // Output data to console
+      console.log(this.tableData);
 
       this.tableData
-        .filter((e: string[]) => e.length >= 4) // Ensure at least 4 elements are present
+        .filter((e: string[]) => e.length >= 4)
         .forEach((e: string[]) => {
           const [name, id, userName, password, email, branch] = e;
 

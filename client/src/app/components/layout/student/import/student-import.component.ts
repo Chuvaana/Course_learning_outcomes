@@ -7,7 +7,6 @@ import { DropdownModule } from 'primeng/dropdown';
 import { PasswordModule } from 'primeng/password';
 import * as XLSX from 'xlsx';
 import { StudentService } from '../../../../services/studentService';
-import { TeacherComponent } from '../../teacher/teacher.component';
 
 @Component({
   selector: 'app-student-import',
@@ -24,10 +23,10 @@ export class StudentImportComponent {
   error = 'ERROR';
   active = true;
   firstType = true;
-  studentCount : any;
+  studentCount: any;
   selectedBranch: string = '';
   filteredDepartments = [];
-  onlyName: string[] = []; // Define the type explicitly
+  onlyName: string[] = [];
   onlyId: string[] = [];
   onlyBranch: string[] = [];
   onlyDepartment: string[] = [];
@@ -78,16 +77,14 @@ export class StudentImportComponent {
       const binaryString: string = e.target.result;
       const workbook: XLSX.WorkBook = XLSX.read(binaryString, { type: 'binary' });
 
-      // Get the first sheet
       const sheetName: string = workbook.SheetNames[0];
       const worksheet: XLSX.WorkSheet = workbook.Sheets[sheetName];
 
-      // Convert sheet to JSON array of arrays
       this.tableData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
 
       this.studentCount = this.tableData.length - 1;
       this.tableData
-        .filter((e: string[]) => e.length >= 4) // Ensure at least 4 elements are present
+        .filter((e: string[]) => e.length >= 4)
         .forEach((e: string[]) => {
           const [name, id, branch, department] = e;
 
@@ -124,7 +121,6 @@ export class StudentImportComponent {
           }
         },
         (error) => {
-          // Handle error response
           let errorMessage = 'Error registering teacher';
 
           if (error && error.error && error.error.message) {

@@ -11,11 +11,26 @@ import { ToastModule } from 'primeng/toast';
 import { ScheduleService } from '../../../../../services/schedule.service';
 import { MessageService } from 'primeng/api';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { MultiSelectModule } from 'primeng/multiselect';
+import { AccordionModule } from 'primeng/accordion';
 
 @Component({
   selector: 'app-schedule',
   standalone: true,
-  imports: [TableModule, ToastModule, CommonModule, TagModule, SelectModule, ButtonModule, InputTextModule, FormsModule, ReactiveFormsModule, InputNumber, ProgressSpinnerModule],
+  imports: [
+    TableModule,
+    ToastModule,
+    CommonModule,
+    TagModule,
+    SelectModule,
+    ButtonModule,
+    InputTextModule,
+    FormsModule,
+    ReactiveFormsModule,
+    InputNumber,
+    ProgressSpinnerModule,
+    MultiSelectModule,
+    AccordionModule],
   providers: [MessageService],
   templateUrl: './schedule.component.html',
   styleUrl: './schedule.component.scss'
@@ -23,14 +38,31 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
 export class ScheduleComponent {
   @Input() lessonId: string = '';
   scheduleForm!: FormGroup;
+  scheduleLabForm!: FormGroup;
+  scheduleBdForm!: FormGroup;
   isNew = false;
+  isNewLab = false;
+  isNewBd = false;
   isLoading = true;
+  clos: any;
 
   constructor(private fb: FormBuilder, private service: ScheduleService, private msgService: MessageService) { }
 
   async ngOnInit() {
+    this.service.getCloList(this.lessonId).subscribe(res => {
+      this.clos = res;
+    });
+
     this.scheduleForm = this.fb.group({
       schedules: this.fb.array([]) // This will hold the schedules data
+    });
+
+    this.scheduleLabForm = this.fb.group({
+      scheduleLabs: this.fb.array([]) // This will hold the schedules data
+    });
+
+    this.scheduleBdForm = this.fb.group({
+      scheduleBds: this.fb.array([]) // This will hold the schedules data
     });
 
     if (this.lessonId) {
@@ -43,11 +75,17 @@ export class ScheduleComponent {
   }
 
   async readData() {
-    this.isLoading = true; // 👈 Ачаалж эхэлж байгаа тул true болгоно
+    this.isLoading = true;
     try {
       const res = await this.service.getSchedules(this.lessonId).toPromise();
+      const resLab = await this.service.getScheduleLabs(this.lessonId).toPromise();
+      const resBd = await this.service.getScheduleBds(this.lessonId).toPromise();
       const scheduleArray = this.scheduleForm.get('schedules') as FormArray;
+      const scheduleLabArray = this.scheduleLabForm.get('scheduleLabs') as FormArray;
+      const scheduleBdArray = this.scheduleBdForm.get('scheduleBds') as FormArray;
       scheduleArray.clear();
+      scheduleLabArray.clear();
+      scheduleBdArray.clear();
 
       if (res && res.length > 0) {
         this.setSchedules(res);
@@ -55,6 +93,20 @@ export class ScheduleComponent {
       } else {
         this.setDefaultSchedules();
         this.isNew = true;
+      }
+      if (resLab && resLab.length > 0) {
+        this.setScheduleLabs(resLab);
+        this.isNewLab = false;
+      } else {
+        this.setDefaultLabSchedules();
+        this.isNewLab = true;
+      }
+      if (resBd && resBd.length > 0) {
+        this.setScheduleBds(resBd);
+        this.isNewBd = false;
+      } else {
+        this.setDefaultBdSchedules();
+        this.isNewBd = true;
       }
     } catch (error) {
       console.error('Алдаа:', error);
@@ -64,63 +116,129 @@ export class ScheduleComponent {
   }
 
   setSchedules(res: any[]): void {
-    const scheduleArray = this.scheduleForm.get('schedules') as FormArray; // Type cast to FormArray
+    const scheduleArray = this.scheduleForm.get('schedules') as FormArray;
     res.forEach(schedule => {
-      scheduleArray.push(this.fb.group({
+      const lessonGroup = this.fb.group({
         id: [schedule._id],
         lessonId: [schedule.lessonId],
+        cloRelevance: [schedule.cloRelevance.map((clo: any) => clo.id) || []], // Ensure it is always an array
         week: [schedule.week],
         title: [schedule.title],
-        time: [schedule.time],
-        type: [schedule.type]
-      }));
+        time: [schedule.time]
+      });
+      scheduleArray.push(lessonGroup);
+    });
+
+  }
+
+  setScheduleLabs(res: any[]): void {
+    const scheduleLabArray = this.scheduleLabForm.get('scheduleLabs') as FormArray;
+    res.forEach(schedule => {
+      const lessonGroup = this.fb.group({
+        id: [schedule._id],
+        lessonId: [schedule.lessonId],
+        cloRelevance: [schedule.cloRelevance.map((clo: any) => clo.id) || []], // Ensure it is always an array
+        week: [schedule.week],
+        title: [schedule.title],
+        time: [schedule.time]
+      });
+      scheduleLabArray.push(lessonGroup);
+    });
+  }
+
+  setScheduleBds(res: any[]): void {
+    const scheduleBdArray = this.scheduleBdForm.get('scheduleBds') as FormArray;
+    res.forEach(schedule => {
+      const lessonGroup = this.fb.group({
+        id: [schedule._id],
+        lessonId: [schedule.lessonId],
+        cloRelevance: [schedule.cloRelevance.map((clo: any) => clo.id) || []], // Ensure it is always an array
+        week: [schedule.week],
+        title: [schedule.title],
+        adviceTime: [schedule.adviceTime],
+        time: [schedule.time]
+      });
+      scheduleBdArray.push(lessonGroup);
     });
   }
 
   setDefaultSchedules(): void {
     const scheduleArray = this.scheduleForm.get('schedules') as FormArray;
     const defaultLessons = [
-      { week: 1, title: 'test', time: 0, type: 'LEC' },
-      { week: 2, title: 'test', time: 0, type: 'LEC' },
-      { week: 3, title: 'test', time: 0, type: 'LEC' },
-      { week: 4, title: 'test', time: 0, type: 'LEC' },
-      { week: 5, title: 'test', time: 0, type: 'LEC' },
-      { week: 6, title: 'test', time: 0, type: 'LEC' },
-      { week: 7, title: 'test', time: 0, type: 'LEC' },
-      { week: 8, title: 'test', time: 0, type: 'LEC' },
-      { week: 9, title: 'test', time: 0, type: 'LEC' },
-      { week: 10, title: 'test', time: 0, type: 'LEC' },
-      { week: 11, title: 'test', time: 0, type: 'LEC' },
-      { week: 12, title: 'test', time: 0, type: 'LEC' },
-      { week: 1, title: 'test', time: 0, type: 'SEM' },
-      { week: 2, title: 'test', time: 0, type: 'SEM' },
-      { week: 3, title: 'test', time: 0, type: 'SEM' },
-      { week: 4, title: 'test', time: 0, type: 'SEM' },
-      { week: 5, title: 'test', time: 0, type: 'SEM' },
-      { week: 6, title: 'test', time: 0, type: 'SEM' },
-      { week: 7, title: 'test', time: 0, type: 'SEM' },
-      { week: 8, title: 'test', time: 0, type: 'SEM' },
-      { week: 9, title: 'test', time: 0, type: 'SEM' },
-      { week: 10, title: 'test', time: 0, type: 'SEM' },
-      { week: 11, title: 'test', time: 0, type: 'SEM' },
-      { week: 12, title: 'test', time: 0, type: 'SEM' },
-      { week: 1, title: 'test', time: 0, type: 'LAB' },
-      { week: 2, title: 'test', time: 0, type: 'LAB' },
-      { week: 3, title: 'test', time: 0, type: 'LAB' },
-      { week: 4, title: 'test', time: 0, type: 'LAB' },
-      { week: 5, title: 'test', time: 0, type: 'LAB' },
-      { week: 6, title: 'test', time: 0, type: 'LAB' },
-      { week: 7, title: 'test', time: 0, type: 'LAB' },
-      { week: 8, title: 'test', time: 0, type: 'LAB' },
-      { week: 9, title: 'test', time: 0, type: 'LAB' },
-      { week: 10, title: 'test', time: 0, type: 'LAB' },
-      { week: 11, title: 'test', time: 0, type: 'LAB' },
-      { week: 12, title: 'test', time: 0, type: 'LAB' }
+      { week: 'I', title: '', time: 0, cloRelevance: [] },
+      { week: 'II', title: '', time: 0, cloRelevance: [] },
+      { week: 'III', title: '', time: 0, cloRelevance: [] },
+      { week: 'IV', title: '', time: 0, cloRelevance: [] },
+      { week: 'V', title: '', time: 0, cloRelevance: [] },
+      { week: 'VI', title: '', time: 0, cloRelevance: [] },
+      { week: 'VII', title: '', time: 0, cloRelevance: [] },
+      { week: 'VIII', title: '', time: 0, cloRelevance: [] },
+      { week: 'IX', title: '', time: 0, cloRelevance: [] },
+      { week: 'X', title: '', time: 0, cloRelevance: [] },
+      { week: 'XI', title: '', time: 0, cloRelevance: [] },
+      { week: 'XII', title: '', time: 0, cloRelevance: [] },
+      { week: 'XIII', title: '', time: 0, cloRelevance: [] },
+      { week: 'XIV', title: '', time: 0, cloRelevance: [] },
+      { week: 'XV', title: '', time: 0, cloRelevance: [] },
+      { week: 'XVI', title: '', time: 0, cloRelevance: [] }
     ];
-
     defaultLessons.forEach(lesson => {
       scheduleArray.push(this.createLesson(lesson));
     });
+  }
+
+  setDefaultLabSchedules(): void {
+    const scheduleLabArray = this.scheduleLabForm.get('scheduleLabs') as FormArray;
+    const defaultLessons = [
+      { week: 'I', title: '', time: 0, cloRelevance: [] },
+      { week: 'II', title: '', time: 0, cloRelevance: [] },
+      { week: 'III', title: '', time: 0, cloRelevance: [] },
+      { week: 'IV', title: '', time: 0, cloRelevance: [] },
+      { week: 'V', title: '', time: 0, cloRelevance: [] },
+      { week: 'VI', title: '', time: 0, cloRelevance: [] },
+      { week: 'VII', title: '', time: 0, cloRelevance: [] },
+      { week: 'VIII', title: '', time: 0, cloRelevance: [] },
+      { week: 'IX', title: '', time: 0, cloRelevance: [] },
+      { week: 'X', title: '', time: 0, cloRelevance: [] },
+      { week: 'XI', title: '', time: 0, cloRelevance: [] },
+      { week: 'XII', title: '', time: 0, cloRelevance: [] },
+      { week: 'XIII', title: '', time: 0, cloRelevance: [] },
+      { week: 'XIV', title: '', time: 0, cloRelevance: [] },
+      { week: 'XV', title: '', time: 0, cloRelevance: [] },
+      { week: 'XVI', title: '', time: 0, cloRelevance: [] }
+    ];
+    defaultLessons.forEach(lesson => {
+      scheduleLabArray.push(this.createLesson(lesson));
+    });
+  }
+  setDefaultBdSchedules(): void {
+    const scheduleBdArray = this.scheduleBdForm.get('scheduleBds') as FormArray;
+    const defaultBdLessons = [
+      { week: 'I', title: '', adviceTime: 0, time: 0, cloRelevance: [] },
+      { week: 'II', title: '', adviceTime: 0, time: 0, cloRelevance: [] },
+      { week: 'III', title: '', adviceTime: 0, time: 0, cloRelevance: [] },
+      { week: 'IV', title: '', adviceTime: 0, time: 0, cloRelevance: [] },
+      { week: 'V', title: '', adviceTime: 0, time: 0, cloRelevance: [] },
+      { week: 'VI', title: '', adviceTime: 0, time: 0, cloRelevance: [] },
+      { week: 'VII', title: '', adviceTime: 0, time: 0, cloRelevance: [] },
+      { week: 'VIII', title: '', adviceTime: 0, time: 0, cloRelevance: [] },
+      { week: 'IX', title: '', adviceTime: 0, time: 0, cloRelevance: [] },
+      { week: 'X', title: '', adviceTime: 0, time: 0, cloRelevance: [] },
+      { week: 'XI', title: '', adviceTime: 0, time: 0, cloRelevance: [] },
+      { week: 'XII', title: '', adviceTime: 0, time: 0, cloRelevance: [] },
+      { week: 'XIII', title: '', adviceTime: 0, time: 0, cloRelevance: [] },
+      { week: 'XIV', title: '', adviceTime: 0, time: 0, cloRelevance: [] },
+      { week: 'XV', title: '', adviceTime: 0, time: 0, cloRelevance: [] },
+      { week: 'XVI', title: '', adviceTime: 0, time: 0, cloRelevance: [] }
+    ];
+    defaultBdLessons.forEach(lesson => {
+      scheduleBdArray.push(this.createBdLesson(lesson));
+    });
+  }
+
+  getCloName(cloId: string): string {
+    const clo = this.clos.find((c: { id: string; }) => c.id === cloId);
+    return clo ? clo.cloName : 'Unknown';
   }
 
   createLesson(lesson: any) {
@@ -129,16 +247,37 @@ export class ScheduleComponent {
       week: [lesson.week],
       title: [lesson.title],
       time: [lesson.time],
-      type: [lesson.type]
+      cloRelevance: [lesson.cloRelevance]
     });
   }
-  
-  get lessonControls() {
-    const schedules = this.scheduleForm.get('schedules') as FormArray;
-    return schedules.controls; // Return the controls directly, which are FormGroups
+
+  createBdLesson(lesson: any) {
+    return this.fb.group({
+      lessonId: this.lessonId,
+      week: [lesson.week],
+      title: [lesson.title],
+      adviceTime: [lesson.adviceTime],
+      time: [lesson.time],
+      cloRelevance: [lesson.cloRelevance]
+    });
   }
 
-  submitButton() {
+  get lessonControls() {
+    const schedules = this.scheduleForm.get('schedules') as FormArray;
+    return schedules.controls;
+  }
+
+  get lessonLabControls() {
+    const schedules = this.scheduleLabForm.get('scheduleLabs') as FormArray;
+    return schedules.controls;
+  }
+
+  get lessonBdControls() {
+    const schedules = this.scheduleBdForm.get('scheduleBds') as FormArray;
+    return schedules.controls;
+  }
+
+  saveLecSemSchedule() {
     if (this.isNew) {
       this.service.addSchedules(this.scheduleForm.value).subscribe((res: any) => {
         this.readData();
@@ -155,6 +294,7 @@ export class ScheduleComponent {
             detail: 'Алдаа гарлаа: ' + err.message,
           });
         });
+
     } else {
       this.service.updateSchedules(this.lessonId, this.scheduleForm.value).subscribe((res: any) => {
         this.readData();
@@ -171,6 +311,84 @@ export class ScheduleComponent {
             detail: 'Алдаа гарлаа: ' + err.message,
           });
         });
+
+    }
+  }
+
+
+  saveLabSchedule() {
+    if (this.isNewLab) {
+      this.service.addScheduleLabs(this.scheduleLabForm.value).subscribe((res: any) => {
+        this.readData();
+        this.msgService.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: 'Амжилттай хадгалагдлаа!',
+        });
+      },
+        (err) => {
+          this.msgService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Алдаа гарлаа: ' + err.message,
+          });
+        });
+
+    } else {
+      this.service.updateScheduleLabs(this.lessonId, this.scheduleLabForm.value).subscribe((res: any) => {
+        this.readData();
+        this.msgService.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: 'Амжилттай шинэчлэгдлээ!',
+        });
+      },
+        (err) => {
+          this.msgService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Алдаа гарлаа: ' + err.message,
+          });
+        });
+
+    }
+  }
+
+  saveBdSchedule() {
+    if (this.isNewBd) {
+      this.service.addScheduleBds(this.scheduleBdForm.value).subscribe((res: any) => {
+        this.readData();
+        this.msgService.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: 'Амжилттай хадгалагдлаа!',
+        });
+      },
+        (err) => {
+          this.msgService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Алдаа гарлаа: ' + err.message,
+          });
+        });
+
+    } else {
+      this.service.updateScheduleBds(this.lessonId, this.scheduleBdForm.value).subscribe((res: any) => {
+        this.readData();
+        this.msgService.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: 'Амжилттай шинэчлэгдлээ!',
+        });
+      },
+        (err) => {
+          this.msgService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Алдаа гарлаа: ' + err.message,
+          });
+        });
+
     }
   }
 }

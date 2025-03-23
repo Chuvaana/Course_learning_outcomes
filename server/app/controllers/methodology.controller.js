@@ -1,41 +1,47 @@
+const mongoose = require('mongoose');
 const Methodology = require('../models/methodology.model');
 
-// Get all methodologies
-exports.getAllMethodologies = async (req, res) => {
+exports.getMethodologies = async (req, res) => {
     try {
-        const methodologies = await Methodology.find().populate('cloRelevance'); // Populate CLO details
+        const methodologies = await Methodology.find()
+            .populate('cloRelevance', 'cloName')
+            .exec();
+
         res.status(200).json(methodologies);
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        res.status(400).json({ message: error.message });
     }
 };
 
-// Get methodology by ID
 exports.getMethodologyById = async (req, res) => {
     try {
-        const methodology = await Methodology.findById(req.params.id).populate('cloRelevance');
-        if (!methodology) return res.status(404).json({ message: 'Methodology not found' });
+        const methodology = await Methodology.find({ lessonId: req.params.id })
+            .populate('cloRelevance', 'cloName')
+            .exec();
+
+        if (!methodology) {
+            return res.json([]);
+        }
+
         res.status(200).json(methodology);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
 };
 
-// Create a new methodology
 exports.createMethodology = async (req, res) => {
     try {
         const { lessonId, pedagogy, deliveryMode, cloRelevance } = req.body;
 
-        // Ensure cloRelevance is an array of strings
-        if (!Array.isArray(cloRelevance) || cloRelevance.some(item => typeof item !== 'string')) {
-            return res.status(400).json({ message: "Invalid cloRelevance format. It must be an array of strings." });
+        if (cloRelevance && (!Array.isArray(cloRelevance) || cloRelevance.some(id => !mongoose.Types.ObjectId.isValid(id)))) {
+            return res.status(400).json({ message: "Invalid CLO IDs." });
         }
 
         const newMethodology = new Methodology({
             lessonId,
             pedagogy,
             deliveryMode,
-            cloRelevance // Storing as an array of strings
+            cloRelevance: cloRelevance || []
         });
 
         await newMethodology.save();
@@ -45,17 +51,29 @@ exports.createMethodology = async (req, res) => {
     }
 };
 
-
-// Update a methodology
 exports.updateMethodology = async (req, res) => {
     try {
         const { lessonId, pedagogy, deliveryMode, cloRelevance } = req.body;
+
+        if (cloRelevance && (!Array.isArray(cloRelevance) || cloRelevance.some(id => !mongoose.Types.ObjectId.isValid(id)))) {
+            return res.status(400).json({ message: "Invalid CLO IDs." });
+        }
+
         const updatedMethodology = await Methodology.findByIdAndUpdate(
             req.params.id,
-            { lessonId, pedagogy, deliveryMode, cloRelevance },
+            {
+                lessonId,
+                pedagogy,
+                deliveryMode,
+                cloRelevance: cloRelevance || []
+            },
             { new: true, runValidators: true }
         );
-        if (!updatedMethodology) return res.status(404).json({ message: 'Methodology not found' });
+
+        if (!updatedMethodology) {
+            return res.status(404).json({ message: 'Methodology not found' });
+        }
+
         res.status(200).json(updatedMethodology);
     } catch (error) {
         res.status(400).json({ message: error.message });

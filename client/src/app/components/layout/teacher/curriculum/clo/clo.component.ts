@@ -63,7 +63,7 @@ export class CloComponent {
   onRowEditInit(clo: Clo, index: number) {
     this.index = index + 1;
     this.clonedClos[clo.id] = { ...clo };
-    this.editingRowId = clo.id; // Set the current editing row
+    this.editingRowId = clo.id;
   }
 
   newRow() {

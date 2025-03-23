@@ -4,7 +4,7 @@ const MethodologySchema = new mongoose.Schema({
     lessonId: { type: mongoose.Schema.Types.ObjectId, ref: 'Lesson', required: true },
     pedagogy: { type: String, required: true },
     deliveryMode: { type: String, required: true },
-    cloRelevance: [{ type: String }]
+    cloRelevance: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Clo' }]
 }, { timestamps: true });
 
 module.exports = mongoose.model('Methodology', MethodologySchema);

@@ -1,55 +1,223 @@
-<p-table *ngIf="!isLoading" [value]="lessonControls" rowGroupMode="subheader" groupRowsBy="type" class="custom-table">
-    <ng-template pTemplate="header">
-        <tr>
-            <th>7 хоног</th>
-            <th>Сэдэв</th>
-            <th>Цаг</th>
-        </tr>
-    </ng-template>
+<div class="card flex justify-center">
+    <p-accordion value="0">
+        <p-accordion-panel value="0">
+            <p-accordion-header>Лекц, семинарын агуулга</p-accordion-header>
+            <p-accordion-content>
+                <p-toast></p-toast>
+                <p-button label="Хадгалах" class="submit-button" (click)="saveLecSemSchedule()" />
 
-    <ng-template pTemplate="groupheader" let-lesson>
-        <tr pRowGroupHeader>
-            <td colspan="3">
-                <div class="flex items-center gap-2">
-                    <span class="font-bold">{{ lesson.get('type').value }}</span>
-                </div>
-            </td>
-        </tr>
-    </ng-template>
+                <p-table *ngIf="!isLoading" [value]="lessonControls" class="custom-table">
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th>7 хоног</th>
+                            <th>Лекцийн сэдэв</th>
+                            <th>Лекцийн цаг</th>
+                            <th>CLOs хамаарал</th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-lesson>
+                        <tr [formGroup]="lesson">
+                            <td [pEditableColumn]>
+                                <p-cellEditor>
+                                    <ng-template pTemplate="input">
+                                        <p-inputNumber formControlName="week"></p-inputNumber>
+                                    </ng-template>
+                                    <ng-template pTemplate="output">
+                                        {{ lesson.get('week').value }}
+                                    </ng-template>
+                                </p-cellEditor>
+                            </td>
+                            <td [pEditableColumn]>
+                                <p-cellEditor>
+                                    <ng-template pTemplate="input">
+                                        <input pInputText formControlName="title" type="text" />
+                                    </ng-template>
+                                    <ng-template pTemplate="output">
+                                        {{ lesson.get('title').value }}
+                                    </ng-template>
+                                </p-cellEditor>
+                            </td>
+                            <td [pEditableColumn]>
+                                <p-cellEditor>
+                                    <ng-template pTemplate="input">
+                                        <p-inputNumber formControlName="time"></p-inputNumber>
+                                    </ng-template>
+                                    <ng-template pTemplate="output">
+                                        {{ lesson.get('time').value }}
+                                    </ng-template>
+                                </p-cellEditor>
+                            </td>
+                            <td [pEditableColumn]>
+                                <p-cellEditor>
+                                    <ng-template pTemplate="input">
+                                        <p-multiselect [options]="clos" formControlName="cloRelevance"
+                                            optionLabel="cloName" optionValue="id" [maxSelectedLabels]="3"
+                                            styleClass="w-full md:w-80" appendTo="body">
+                                        </p-multiselect>
+                                    </ng-template>
+                                    <ng-template pTemplate="output">
+                                        <p-tag *ngFor="let cloId of lesson.get('cloRelevance')?.value"
+                                            [value]="getCloName(cloId)">
+                                        </p-tag>
+                                    </ng-template>
+                                </p-cellEditor>
+                            </td>
 
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </p-accordion-content>
+        </p-accordion-panel>
 
-    <ng-template pTemplate="body" let-lesson>
-        <tr [formGroup]="lesson">
-            <td [pEditableColumn]>
-                <p-cellEditor>
-                    <ng-template pTemplate="input">
-                        <p-inputNumber formControlName="week"></p-inputNumber>
+        <p-accordion-panel value="1">
+            <p-accordion-header>Лаборатори/практикийн хичээлийн агуулга:</p-accordion-header>
+            <p-accordion-content>
+                <p-toast></p-toast>
+                <p-button label="Хадгалах" class="submit-button" (click)="saveLabSchedule()" />
+
+                <p-table *ngIf="!isLoading" [value]="lessonLabControls" class="custom-table">
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th>7 хоног</th>
+                            <th>Лаборатори/практикийн сэдэв</th>
+                            <th>Цаг</th>
+                            <th>CLOs хамаарал</th>
+                        </tr>
                     </ng-template>
-                    <ng-template pTemplate="output">
-                        {{ lesson.get('week').value }}
+
+                    <ng-template pTemplate="body" let-lesson>
+                        <tr [formGroup]="lesson">
+                            <td [pEditableColumn]>
+                                <p-cellEditor>
+                                    <ng-template pTemplate="input">
+                                        <p-inputNumber formControlName="week"></p-inputNumber>
+                                    </ng-template>
+                                    <ng-template pTemplate="output">
+                                        {{ lesson.get('week').value }}
+                                    </ng-template>
+                                </p-cellEditor>
+                            </td>
+                            <td [pEditableColumn]>
+                                <p-cellEditor>
+                                    <ng-template pTemplate="input">
+                                        <input pInputText formControlName="title" type="text" />
+                                    </ng-template>
+                                    <ng-template pTemplate="output">
+                                        {{ lesson.get('title').value }}
+                                    </ng-template>
+                                </p-cellEditor>
+                            </td>
+                            <td [pEditableColumn]>
+                                <p-cellEditor>
+                                    <ng-template pTemplate="input">
+                                        <p-inputNumber formControlName="time"></p-inputNumber>
+                                    </ng-template>
+                                    <ng-template pTemplate="output">
+                                        {{ lesson.get('time').value }}
+                                    </ng-template>
+                                </p-cellEditor>
+                            </td>
+                            <td [pEditableColumn]>
+                                <p-cellEditor>
+                                    <ng-template pTemplate="input">
+                                        <p-multiselect [options]="clos" formControlName="cloRelevance"
+                                            optionLabel="cloName" optionValue="id" [maxSelectedLabels]="3"
+                                            styleClass="w-full md:w-80" appendTo="body">
+                                        </p-multiselect>
+                                    </ng-template>
+                                    <ng-template pTemplate="output">
+                                        <p-tag *ngFor="let cloId of lesson.get('cloRelevance')?.value"
+                                            [value]="getCloName(cloId)">
+                                        </p-tag>
+                                    </ng-template>
+                                </p-cellEditor>
+                            </td>
+
+                        </tr>
                     </ng-template>
-                </p-cellEditor>
-            </td>
-            <td [pEditableColumn]>
-                <p-cellEditor>
-                    <ng-template pTemplate="input">
-                        <input pInputText formControlName="title" type="text" />
+                </p-table>
+            </p-accordion-content>
+        </p-accordion-panel>
+
+        <p-accordion-panel value="2">
+            <p-accordion-header>Бие даан судлах агуулга:</p-accordion-header>
+            <p-accordion-content>
+                <p-toast></p-toast>
+                <p-button label="Хадгалах" class="submit-button" (click)="saveBdSchedule()" />
+
+                <p-table *ngIf="!isLoading" [value]="lessonBdControls" class="custom-table">
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th>7 хоног</th>
+                            <th>Бие даалтын сэдэв</th>
+                            <th>Танхимд зөвлөгөө авах, үнэлүүлэх цаг</th>
+                            <th>Бие даан суралцах цаг</th>
+                            <th>CLOs хамаарал</th>
+                        </tr>
                     </ng-template>
-                    <ng-template pTemplate="output">
-                        {{ lesson.get('title').value }}
+
+                    <ng-template pTemplate="body" let-lesson>
+                        <tr [formGroup]="lesson">
+                            <td [pEditableColumn]>
+                                <p-cellEditor>
+                                    <ng-template pTemplate="input">
+                                        <p-inputNumber formControlName="week"></p-inputNumber>
+                                    </ng-template>
+                                    <ng-template pTemplate="output">
+                                        {{ lesson.get('week').value }}
+                                    </ng-template>
+                                </p-cellEditor>
+                            </td>
+                            <td [pEditableColumn]>
+                                <p-cellEditor>
+                                    <ng-template pTemplate="input">
+                                        <input pInputText formControlName="title" type="text" />
+                                    </ng-template>
+                                    <ng-template pTemplate="output">
+                                        {{ lesson.get('title').value }}
+                                    </ng-template>
+                                </p-cellEditor>
+                            </td>
+                            <td [pEditableColumn]>
+                                <p-cellEditor>
+                                    <ng-template pTemplate="input">
+                                        <p-inputNumber formControlName="time"></p-inputNumber>
+                                    </ng-template>
+                                    <ng-template pTemplate="output">
+                                        {{ lesson.get('time').value }}
+                                    </ng-template>
+                                </p-cellEditor>
+                            </td>
+                            <td [pEditableColumn]>
+                                <p-cellEditor>
+                                    <ng-template pTemplate="input">
+                                        <p-inputNumber formControlName="time"></p-inputNumber>
+                                    </ng-template>
+                                    <ng-template pTemplate="output">
+                                        {{ lesson.get('time').value }}
+                                    </ng-template>
+                                </p-cellEditor>
+                            </td>
+                            <td [pEditableColumn]>
+                                <p-cellEditor>
+                                    <ng-template pTemplate="input">
+                                        <p-multiselect [options]="clos" formControlName="cloRelevance"
+                                            optionLabel="cloName" optionValue="id" [maxSelectedLabels]="3"
+                                            styleClass="w-full md:w-80" appendTo="body">
+                                        </p-multiselect>
+                                    </ng-template>
+                                    <ng-template pTemplate="output">
+                                        <p-tag *ngFor="let cloId of lesson.get('cloRelevance')?.value"
+                                            [value]="getCloName(cloId)">
+                                        </p-tag>
+                                    </ng-template>
+                                </p-cellEditor>
+                            </td>
+
+                        </tr>
                     </ng-template>
-                </p-cellEditor>
-            </td>
-            <td [pEditableColumn]>
-                <p-cellEditor>
-                    <ng-template pTemplate="input">
-                        <p-inputNumber formControlName="time"></p-inputNumber>
-                    </ng-template>
-                    <ng-template pTemplate="output">
-                        {{ lesson.get('time').value }}
-                    </ng-template>
-                </p-cellEditor>
-            </td>
-        </tr>
-    </ng-template>
-</p-table>
+                </p-table>
+            </p-accordion-content>
+        </p-accordion-panel>
+    </p-accordion>
+</div>

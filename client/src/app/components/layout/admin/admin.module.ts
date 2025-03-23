@@ -1,15 +1,14 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
-import { ExamListComponent } from '../exam/exam-list.component';
-import { ExamImportComponent } from '../exam/import/exam-import.component';
-import { TeacherComponent } from '../teacher/teacher.component';
-import { SharedComponent } from '../shared/shared.component';
-import { AdminStudentImportComponent } from './import/student-import.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule, Routes } from '@angular/router';
+import { ExamImportComponent } from '../exam/import/exam-import.component';
+import { SharedComponent } from '../shared/shared.component';
 import { LessonListComponent } from '../teacher/lesson-list/lesson-list.component';
 import { LessonComponent } from '../teacher/lesson-list/lesson/lesson.component';
+import { TeacherComponent } from '../teacher/teacher.component';
 import { AdminComponent } from './admin.component';
+import { AdminStudentImportComponent } from './import/student-import.component';
 import { PdfComponent } from './pdf-convert/pdf.component';
 
 const routes: Routes = [
@@ -37,15 +36,15 @@ const routes: Routes = [
 @NgModule({
   declarations: [],
   imports: [
-      CommonModule,
-      RouterModule.forChild(routes),
-      FormsModule,
-      ReactiveFormsModule,
-      LessonListComponent, // ✅ Explicitly importing standalone components
-      LessonComponent,
-      TeacherComponent,
-      SharedComponent
+    CommonModule,
+    RouterModule.forChild(routes),
+    FormsModule,
+    ReactiveFormsModule,
+    LessonListComponent,
+    LessonComponent,
+    TeacherComponent,
+    SharedComponent
   ],
-    exports: [RouterModule, FormsModule, ReactiveFormsModule]
+  exports: [RouterModule, FormsModule, ReactiveFormsModule]
 })
 export class AdminModule { }

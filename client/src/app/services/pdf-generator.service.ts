@@ -10,7 +10,7 @@ import { vfs } from 'pdfmake/build/vfs_fonts';
 export class PdfGeneratorService {
 
   constructor() {
-    (pdfMake as any).vfs = vfs; // ✅ Fixes the type error!
+    (pdfMake as any).vfs = vfs;
   }
   generatePdfTest(data: any[][]) {
     const dataType = [

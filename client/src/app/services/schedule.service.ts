@@ -6,23 +6,61 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class ScheduleService {
-  private apiUrl = 'http://localhost:3000/api/schedules';
+  private apiUrl = 'http://localhost:3000/api';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   addSchedules(data: any) {
-    return this.http.post(`${this.apiUrl}`, data);
+    return this.http.post(`${this.apiUrl}/schedules`, data);
   }
 
   getSchedules(lessonCode: string): Observable<any> {
-    return this.http.get(`${this.apiUrl}/${lessonCode}`);
+    return this.http.get(`${this.apiUrl}/schedules/${lessonCode}`);
   }
 
   updateSchedules(lessonCode: string, data: any) {
-    return this.http.put(`${this.apiUrl}/${lessonCode}`, data);
+    return this.http.put(`${this.apiUrl}/schedules/${lessonCode}`, data);
   }
 
   deleteSchedules(lessonCode: string) {
-    return this.http.delete(`${this.apiUrl}/${lessonCode}`);
+    return this.http.delete(`${this.apiUrl}/schedules/${lessonCode}`);
+  }
+
+
+  addScheduleLabs(data: any) {
+    return this.http.post(`${this.apiUrl}/scheduleLabs`, data);
+  }
+
+  getScheduleLabs(lessonCode: string): Observable<any> {
+    return this.http.get(`${this.apiUrl}/scheduleLabs/${lessonCode}`);
+  }
+
+  updateScheduleLabs(lessonCode: string, data: any) {
+    return this.http.put(`${this.apiUrl}/scheduleLabs/${lessonCode}`, data);
+  }
+
+  deleteScheduleLabs(lessonCode: string) {
+    return this.http.delete(`${this.apiUrl}/scheduleLabs/${lessonCode}`);
+  }
+
+  addScheduleBds(data: any) {
+    return this.http.post(`${this.apiUrl}/scheduleBds`, data);
+  }
+
+  getScheduleBds(lessonCode: string): Observable<any> {
+    return this.http.get(`${this.apiUrl}/scheduleBds/${lessonCode}`);
+  }
+
+  updateScheduleBds(lessonCode: string, data: any) {
+    return this.http.put(`${this.apiUrl}/scheduleBds/${lessonCode}`, data);
+  }
+
+  deleteScheduleBds(lessonCode: string) {
+    return this.http.delete(`${this.apiUrl}/scheduleBds/${lessonCode}`);
+  }
+
+
+  getCloList(id: string): Observable<any> {
+    return this.http.get(`${this.apiUrl}/clos/${id}`);
   }
 }

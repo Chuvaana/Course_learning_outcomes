@@ -1,10 +1,10 @@
+import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { ButtonModule } from 'primeng/button';
 import { DropdownModule } from 'primeng/dropdown';
 import { PasswordModule } from 'primeng/password';
-import { ButtonModule } from 'primeng/button';
-import { CommonModule } from '@angular/common';
 import { ExamService } from '../../../services/examService';
 import { TeacherComponent } from '../teacher/teacher.component';
 
@@ -15,7 +15,7 @@ import { TeacherComponent } from '../teacher/teacher.component';
   templateUrl: './exam-list.component.html',
   styleUrls: ['./exam-list.component.scss']
 })
-export class ExamListComponent {  // Fixed the typo here
+export class ExamListComponent {
   studentForm: FormGroup;
   branches: any[] = [];
   departments: any[] = [];
@@ -24,13 +24,13 @@ export class ExamListComponent {  // Fixed the typo here
   data = [
     {
       text: 'Асуулт 1',
-      questionType: 'manyCheck', // multiple choice (checkbox)
+      questionType: 'manyCheck',
       answers: ['Хариулт 1', 'Хариулт 2', 'Хариулт 3'],
       selectedAnswers: []
     },
     {
       text: 'Асуулт 2',
-      questionType: 'onlyOneCheck', // single choice (radio)
+      questionType: 'onlyOneCheck',
       answers: ['Хариулт A', 'Хариулт B', 'Хариулт C'],
       selectedAnswers: []
     },
@@ -57,7 +57,7 @@ export class ExamListComponent {  // Fixed the typo here
       ]
     }
   ];
-  shownQuestions = [...this.data]; // Анхны асуултуудыг харуулах
+  shownQuestions = [...this.data];
 
   constructor(
     private fb: FormBuilder,
@@ -83,19 +83,17 @@ export class ExamListComponent {  // Fixed the typo here
       createdBy: ['', Validators.required]
     });
   }
-  onRefreshData(){
+  onRefreshData() {
 
   }
-   // Create FormArray controls for each question and its answers
   createQuestions() {
     return this.data.map(question => this.fb.group({
       questionText: [question.text, Validators.required],
       answers: this.fb.array(question.answers.map(answer => this.fb.control(false))),
-      selectedAnswers: [[]] // Store selected answers
+      selectedAnswers: [[]]
     }));
   }
 
-  // Get the FormArray of questions
   get questions(): FormArray {
     return this.studentForm.get('questions') as FormArray;
   }
@@ -104,8 +102,8 @@ export class ExamListComponent {  // Fixed the typo here
     const selectedAnswers = this.data[questionIndex].answers[answerIndex];
 
     if (checked) {
-      this.fillData.map((e) =>{
-        if(e[0] == questionIndex){
+      this.fillData.map((e) => {
+        if (e[0] == questionIndex) {
           const index = this.fillData.findIndex((i) => i[0] === questionIndex);
           if (index !== -1) {
             this.fillData.splice(index, 1);
@@ -123,14 +121,13 @@ export class ExamListComponent {  // Fixed the typo here
     }
   }
 
-  // Get the selected answers for each question
   getSelectedAnswers() {
     this.questions.controls.forEach((questionGroup, index) => {
       console.log(`Асуулт ${index + 1}:`, questionGroup.get('selectedAnswers')?.value);
     });
   }
 
-  onQuestionSelect(){
+  onQuestionSelect() {
     // console.log(e);
   }
 

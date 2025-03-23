@@ -65,13 +65,13 @@ export class MethodologyComponent {
       this.clos = res;
     });
     this.service.getMethod(this.lessonId).subscribe((data: any) => {
-      if (data != null && data.length != 0) {
+      if (data && data.length) {
         this.isNew = false;
         this.methodologys = data.map((item: any) => ({
-          id: item.id,
+          id: item._id,
           pedagogy: item.pedagogy,
           deliveryMode: item.deliveryMode,
-          cloRelevance: item.cloRelevance
+          cloRelevance: item.cloRelevance.map((clo: any) => clo.id) // Extract only CLO IDs
         }));
       }
     });
@@ -83,8 +83,7 @@ export class MethodologyComponent {
 
   onRowEditSave(method: Method) {
     method.cloRelevance = method.cloRelevance.map(id => {
-      const clo = this.clos.find((c: { id: string; }) => c.id === id);
-      return clo ? clo.cloName : id;
+      return this.clos.find((c: { id: string }) => c.id === id)?.id || id;
     });
 
     if (this.isNew) {
@@ -115,7 +114,24 @@ export class MethodologyComponent {
     delete this.clonedMethods[method.id];
   }
 
+  getCloName(cloId: string): string {
+    const clo = this.clos.find((c: { id: string; }) => c.id === cloId);
+    return clo ? clo.cloName : 'Unknown';
+  }
+
+  getPedagogyName(pedagogyId: string): string {
+    const pedagogy = this.pedagogyOptions.find(p => p.value === pedagogyId);
+    return pedagogy ? pedagogy.label : "Unknown";
+  }
+
+  getDeliveryModeName(deliveryModeId: string): string {
+    const mode = this.deliveryModes.find((m: { value: string; }) => m.value === deliveryModeId);
+    return mode ? mode.label : "Unknown";
+  }
+
+
   addMethod() {
+
     const newMethod: Method = {
       id: this.methodologys.length + 1,
       lessonId: this.lessonId,
