@@ -1,0 +1,26 @@
+.form-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 2%;
+  width: 80%;
+}
+
+.card {
+  width: 100%;
+}
+
+.row {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 16px;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.form-dropdown {
+  width: 100%;
+}

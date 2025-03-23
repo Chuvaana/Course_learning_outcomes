@@ -48,22 +48,41 @@
     <p-accordion-panel value="0">
       <p-accordion-header>Хариултууд</p-accordion-header>
       <p-accordion-content>
-        <div style="display: flex; justify-content: space-around; margin-top: 2%; place-self: center;  width: 80%;">
-          <div class="card flex justify-center">
-            <div class="flex flex-col gap-2 " style="flex-direction: column;">
-              <label for="answerId">Хариулт 1</label>
-              <input pInputText id="answerId" aria-describedby="answerId-help" [(ngModel)]="answerId"
-                placeholder="123.." />
-              <small id="answerId-help">Enter your username to reset your password.</small>
-            </div>
-            <div class="flex flex-col gap-2 " style="flex-direction: column;">
-              <label for="answerRate">Үнэлгээ</label>
-              <input pInputText id="answerRate" aria-describedby="answerRate-help" [(ngModel)]="answerRate"
-                placeholder="123.." />
-              <small id="answerRate-help">Enter your username to reset your password.</small>
+        <div class="form-container">
+          <div class="card">
+            <div *ngFor="let answer of answers; let i = index" class="row">
+              <!-- Хариулт 1 -->
+              <div class="input-group">
+                <label [for]="'answerId-' + i">Хариулт {{ i * 2 + 1 }}</label>
+                <input pInputText [id]="'answerId-' + i" aria-describedby="'answerId-help-' + i"
+                  [(ngModel)]="answer.answerId1" placeholder="123.." />
+                <small [id]="'answerId-help-' + i">Enter your answer.</small>
+              </div>
+              <!-- Төлөв 1 -->
+              <div class="input-group">
+                <label [for]="'answerRate-' + i">Үнэлгээ</label>
+                <p-dropdown [formControlName]="'answerRate1-' + i" [options]="answerRates"
+                  optionLabel="name" optionValue="id" placeholder="Төлөв" class="form-dropdown">
+                </p-dropdown>
+              </div>
+              <!-- Хариулт 2 -->
+              <div class="input-group">
+                <label [for]="'answerId2-' + i">Хариулт {{ i * 2 + 2 }}</label>
+                <input pInputText [id]="'answerId2-' + i" aria-describedby="'answerId-help2-' + i"
+                  [(ngModel)]="answer.answerId2" placeholder="456.." />
+                <small [id]="'answerId-help2-' + i">Enter your answer.</small>
+              </div>
+              <!-- Төлөв 2 -->
+              <div class="input-group">
+                <label [for]="'answerRate2-' + i">Үнэлгээ</label>
+                <p-dropdown [formControlName]="'answerRate2-' + i" [options]="answerRates"
+                  optionLabel="name" optionValue="id" placeholder="Төлөв" class="form-dropdown">
+                </p-dropdown>
+              </div>
             </div>
           </div>
         </div>
+
       </p-accordion-content>
     </p-accordion-panel>
     <p-accordion-panel value="1">

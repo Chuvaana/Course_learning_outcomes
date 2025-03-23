@@ -102,10 +102,11 @@ export class StudentImportComponent {
   }
 
   openPopup() {
-    this.dialog.open(TeacherComponent, {
-      width: '800px',
-      height: '600px'
-    });
+    // this.dialog.open(TeacherComponent, {
+    //   width: '800px',
+    //   height: '600px'
+    // });
+
   }
 
   submit() {

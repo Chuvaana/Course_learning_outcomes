@@ -2,6 +2,9 @@
   <div style="padding: 20px 0px;">
     <button mat-raised-button (click)="createBtn()">Шинэ асуулт оруулах</button>
   </div>
+  <div style="padding: 20px 0px;">
+  <button mat-raised-button (click)="exportToExcel()">Excel рүү хөрвүүлэх</button>
+  </div>
   <div>
     <p-table [value]="products" [paginator]="true" [rows]="5" [tableStyle]="{ 'min-width': '50rem' }"
       [rowsPerPageOptions]="[5, 10, 20]">

@@ -2,6 +2,9 @@
     <p-toast />
     <form [formGroup]="cloForm" (ngSubmit)="onSubmit()">
       <p-button type="submit" label="Хадгалах" />
+      <button mat-raised-button (click)="exportToExcel()">Excel рүү хөрвүүлэх</button>
+      <button (click)="generate()">PDF үүсгэх</button>
+      <div id="pdf-content">
       <p-table [value]="cloRows.controls" [paginator]="true" [rows]="10" [sortMode]="'multiple'" rowGroupMode="subheader"
         groupRowsBy="cloType" class="custom-table">
         <ng-template pTemplate="header">
@@ -37,7 +40,7 @@
             <th>Хэрэглэх /дүн шинжилгээ хийх түвшин</th>
             <th>Үнэлэх/ бүтээх түвшин</th>
           </tr>
-  
+
           <tr *ngFor="let col of sampleData?.[0] || []">
             <td> {{ col.timeManagement}} </td>
             <td> {{ col.engagement}} </td>
@@ -56,7 +59,7 @@
             <td> {{ col.creationLevel}} </td>
           </tr>
         </ng-template>
-  
+
         <ng-template pTemplate="groupheader" let-row>
           <tr class="clo-subheader">
             <td colspan="22">
@@ -68,7 +71,7 @@
             </td>
           </tr>
         </ng-template>
-  
+
         <ng-template pTemplate="body" let-row let-ri="rowIndex">
           <tr [formGroup]="getRowGroup(ri)">
             <td> {{ ri + 1 }} </td>
@@ -270,5 +273,6 @@
           </tr>
         </ng-template>
       </p-table>
+    </div>
     </form>
   </div>

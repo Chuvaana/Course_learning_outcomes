@@ -49,7 +49,57 @@ export class QuestionComponent {
       name: 'Ашиглахаа больсон'
     }
   ];
-
+  answerRates = [
+    {
+      id: '1',
+      name: '100%'
+    },
+    {
+      id: '2',
+      name: '75%'
+    },
+    {
+      id: '3',
+      name: '66%'
+    },
+    {
+      id: '4',
+      name: '50%'
+    },
+    {
+      id: '5',
+      name: '33%'
+    },
+    {
+      id: '6',
+      name: '25%'
+    },
+    {
+      id: '7',
+      name: '20%'
+    },
+    {
+      id: '8',
+      name: '15%'
+    },
+    {
+      id: '9',
+      name: '10%'
+    },
+    {
+      id: '10',
+      name: '5%'
+    },
+    {
+      id: '11',
+      name: '0%'
+    }
+  ];
+  answers = [
+    { answerId1: '', answerRate1: null},
+    { answerId2: '', answerRate2: null},
+    { answerId3: '', answerRate3: null}
+  ];
 
   questionId: any;
   questionName: any;
@@ -73,7 +123,8 @@ export class QuestionComponent {
       blumLvl: ['', Validators.required],
       cloLvl: ['', Validators.required],
       correctAnswer: ['', Validators.required],
-      answer: ['', Validators.required]
+      answer: ['', Validators.required],
+      answerRate: ['', Validators.required]
     });
   }
   ngOnInit(): void {
