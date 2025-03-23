@@ -49,7 +49,8 @@ require("./app/routes/scheduleLab.routes")(app);
 require("./app/routes/scheduleBd.routes")(app);
 require("./app/routes/definition.routes")(app);
 require("./app/routes/methodology.routes")(app);
-require("./app/routes//assessment.routes")(app);
+require("./app/routes/assessment.routes")(app);
+require("./app/routes/additional.routes")(app);
 
 
 // set port, listen for requests

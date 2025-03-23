@@ -139,8 +139,8 @@ export class MaterialsComponent {
         (res: any) => {
           this.msgService.add({
             severity: 'success',
-            summary: 'Success',
-            detail: 'New CLO created successfully!',
+            summary: 'Амжилттай',
+            detail: 'Амжилттай хадгалагдлаа!',
           });
           this.materialsForm.patchValue({
             lessonId: res.material.lessonId,
@@ -154,8 +154,8 @@ export class MaterialsComponent {
         (err) => {
           this.msgService.add({
             severity: 'error',
-            summary: 'Error',
-            detail: 'Failed to create CLO: ' + err.message,
+            summary: 'Алдаа',
+            detail: 'Алдаа гарлаа: ' + err.message,
           });
         });
     } else {
@@ -163,8 +163,8 @@ export class MaterialsComponent {
         (res: any) => {
           this.msgService.add({
             severity: 'success',
-            summary: 'Success',
-            detail: 'New CLO updated successfully!',
+            summary: 'Амжилттай',
+            detail: 'Амжилттай хадгалагдлаа!',
           });
           this.materialsForm.patchValue({
             lessonId: res.material.lessonId,
@@ -178,8 +178,8 @@ export class MaterialsComponent {
         (err) => {
           this.msgService.add({
             severity: 'error',
-            summary: 'Error',
-            detail: 'Failed to create CLO: ' + err.message,
+            summary: 'Алдаа',
+            detail: 'Алдаа гарлаа: ' + err.message,
           });
         })
     }
