@@ -1,4 +1,4 @@
-const Schedule = require('../models/schedule.model');
+const ScheduleLab = require('../models/scheduleLab.model');
 
 // Get all Schedules
 exports.getSchedules = async (req, res) => {
@@ -6,7 +6,7 @@ exports.getSchedules = async (req, res) => {
         const { id } = req.params;
 
         // Fetch and sort the schedules by the 'week' field in ascending order
-        const schedules = await Schedule.find({ lessonId: id }).populate('cloRelevance', 'cloName')
+        const schedules = await ScheduleLab.find({ lessonId: id }).populate('cloRelevance', 'cloName')
             .exec();
 
         if (!schedules || schedules.length === 0) {
@@ -48,7 +48,7 @@ exports.createSchedules = async (req, res) => {
         }
 
         // Create and save schedules in the database
-        const createdSchedules = await Schedule.insertMany(validSchedules);
+        const createdSchedules = await ScheduleLab.insertMany(validSchedules);
 
         res.status(201).json({ message: "Schedules saved successfully", schedules: createdSchedules });
     } catch (error) {
@@ -56,43 +56,21 @@ exports.createSchedules = async (req, res) => {
         res.status(500).json({ message: "Server error", error: error.message });
     }
 };
-
-
-// exports.createSchedules = async (req, res) => {
-//     try {
-//         const { schedules } = req.body; // Extract array from request
-
-//         if (!schedules || !Array.isArray(schedules)) {
-
-//             return res.status(400).json({ message: "Invalid data format" });
-//         }
-
-//         schedules.forEach(async (item, index) => {
-//             const schedule = new Schedule(item);
-//             await schedule.save();
-//         });
-//         res.status(201).json({ message: "Schedule saved successfully" });
-//     } catch (error) {
-//         console.error("Error saving schedule:", error);
-//         res.status(500).json({ message: "Server error", error });
-//     }
-// };
-
-// Update Schedule
+// Update ScheduleLab
 exports.updateSchedule = async (req, res) => {
     try {
         const { schedules } = req.body;
         if (!Array.isArray(schedules)) {
-            return res.status(400).json({ message: "Input should be an array of Schedule" });
+            return res.status(400).json({ message: "Input should be an array of ScheduleLab" });
         }
 
         // Use Promise.all for parallel execution of updates
         const updatePromises = schedules.map(async (item) => {
             try {
-                const updatedSchedule = await Schedule.findByIdAndUpdate(item.id, item, { new: true });
+                const updatedSchedule = await ScheduleLab.findByIdAndUpdate(item.id, item, { new: true });
 
                 if (!updatedSchedule) {
-                    throw new Error(`Schedule with ID ${item.id} not found`);
+                    throw new Error(`ScheduleLab with ID ${item.id} not found`);
                 }
 
                 return { success: true, updatedSchedule };

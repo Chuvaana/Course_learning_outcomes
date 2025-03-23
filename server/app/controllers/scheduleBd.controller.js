@@ -1,4 +1,4 @@
-const Schedule = require('../models/schedule.model');
+const ScheduleBd = require('../models/scheduleBd.model');
 
 // Get all Schedules
 exports.getSchedules = async (req, res) => {
@@ -6,7 +6,7 @@ exports.getSchedules = async (req, res) => {
         const { id } = req.params;
 
         // Fetch and sort the schedules by the 'week' field in ascending order
-        const schedules = await Schedule.find({ lessonId: id }).populate('cloRelevance', 'cloName')
+        const schedules = await ScheduleBd.find({ lessonId: id }).populate('cloRelevance', 'cloName')
             .exec();
 
         if (!schedules || schedules.length === 0) {
@@ -22,17 +22,17 @@ exports.getSchedules = async (req, res) => {
 
 exports.createSchedules = async (req, res) => {
     try {
-        const { schedules } = req.body; // Extract array of schedules from request body
+        const { scheduleBds } = req.body; // Extract array of schedules from request body
 
         // Validate if schedules is an array and not empty
-        if (!Array.isArray(schedules) || schedules.length === 0) {
+        if (!Array.isArray(scheduleBds) || scheduleBds.length === 0) {
             return res.status(400).json({ message: "Schedules data must be a non-empty array" });
         }
 
         // Validate each schedule item
         const validSchedules = [];
 
-        for (const schedule of schedules) {
+        for (const schedule of scheduleBds) {
             // Check if each schedule has necessary fields
             if (!schedule.lessonId || !schedule.week) {
                 return res.status(400).json({ message: `Missing required fields in schedule item for week ${schedule.week}` });
@@ -48,7 +48,7 @@ exports.createSchedules = async (req, res) => {
         }
 
         // Create and save schedules in the database
-        const createdSchedules = await Schedule.insertMany(validSchedules);
+        const createdSchedules = await ScheduleBd.insertMany(validSchedules);
 
         res.status(201).json({ message: "Schedules saved successfully", schedules: createdSchedules });
     } catch (error) {
@@ -56,43 +56,21 @@ exports.createSchedules = async (req, res) => {
         res.status(500).json({ message: "Server error", error: error.message });
     }
 };
-
-
-// exports.createSchedules = async (req, res) => {
-//     try {
-//         const { schedules } = req.body; // Extract array from request
-
-//         if (!schedules || !Array.isArray(schedules)) {
-
-//             return res.status(400).json({ message: "Invalid data format" });
-//         }
-
-//         schedules.forEach(async (item, index) => {
-//             const schedule = new Schedule(item);
-//             await schedule.save();
-//         });
-//         res.status(201).json({ message: "Schedule saved successfully" });
-//     } catch (error) {
-//         console.error("Error saving schedule:", error);
-//         res.status(500).json({ message: "Server error", error });
-//     }
-// };
-
-// Update Schedule
+// Update ScheduleBd
 exports.updateSchedule = async (req, res) => {
     try {
-        const { schedules } = req.body;
-        if (!Array.isArray(schedules)) {
-            return res.status(400).json({ message: "Input should be an array of Schedule" });
+        const { scheduleBds } = req.body;
+        if (!Array.isArray(scheduleBds)) {
+            return res.status(400).json({ message: "Input should be an array of ScheduleBd" });
         }
 
         // Use Promise.all for parallel execution of updates
-        const updatePromises = schedules.map(async (item) => {
+        const updatePromises = scheduleBds.map(async (item) => {
             try {
-                const updatedSchedule = await Schedule.findByIdAndUpdate(item.id, item, { new: true });
+                const updatedSchedule = await ScheduleBd.findByIdAndUpdate(item.id, item, { new: true });
 
                 if (!updatedSchedule) {
-                    throw new Error(`Schedule with ID ${item.id} not found`);
+                    throw new Error(`ScheduleBd with ID ${item.id} not found`);
                 }
 
                 return { success: true, updatedSchedule };
