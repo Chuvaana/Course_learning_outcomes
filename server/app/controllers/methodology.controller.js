@@ -31,7 +31,7 @@ exports.getMethodologyById = async (req, res) => {
 
 exports.createMethodology = async (req, res) => {
     try {
-        const { lessonId, pedagogy, deliveryMode, cloRelevance } = req.body;
+        const { lessonId, pedagogy, deliveryMode, cloRelevance, classroom, electronic, combined } = req.body;
 
         if (cloRelevance && (!Array.isArray(cloRelevance) || cloRelevance.some(id => !mongoose.Types.ObjectId.isValid(id)))) {
             return res.status(400).json({ message: "Invalid CLO IDs." });
@@ -41,7 +41,10 @@ exports.createMethodology = async (req, res) => {
             lessonId,
             pedagogy,
             deliveryMode,
-            cloRelevance: cloRelevance || []
+            cloRelevance: cloRelevance || [],
+            classroom,
+            electronic,
+            combined
         });
 
         await newMethodology.save();
@@ -53,7 +56,7 @@ exports.createMethodology = async (req, res) => {
 
 exports.updateMethodology = async (req, res) => {
     try {
-        const { lessonId, pedagogy, deliveryMode, cloRelevance } = req.body;
+        const { lessonId, pedagogy, deliveryMode, cloRelevance, classroom, electronic, combined } = req.body;
 
         if (cloRelevance && (!Array.isArray(cloRelevance) || cloRelevance.some(id => !mongoose.Types.ObjectId.isValid(id)))) {
             return res.status(400).json({ message: "Invalid CLO IDs." });
@@ -65,7 +68,10 @@ exports.updateMethodology = async (req, res) => {
                 lessonId,
                 pedagogy,
                 deliveryMode,
-                cloRelevance: cloRelevance || []
+                cloRelevance: cloRelevance || [],
+                classroom,
+                electronic,
+                combined
             },
             { new: true, runValidators: true }
         );

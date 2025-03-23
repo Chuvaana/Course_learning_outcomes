@@ -7,7 +7,7 @@
             <p-tab value="3">АГУУЛГА, ЦАГИЙН ХУВААРИЛАЛТ </p-tab>
             <p-tab value="4">СУРАЛЦАХУЙН ҮР ДҮНГҮҮД</p-tab>
             <p-tab value="5">СУРГАХ, СУРАЛЦАХ АРГА ЗҮЙ</p-tab>
-            <p-tab value="6">ҮНЭЛГЭЭ</p-tab>
+            <p-tab value="6">ХИЧЭЭЛИЙН ҮНЭЛГЭЭ</p-tab>
             <p-tab value="7">ТАВИГДАХ НЭМЭЛТ ШААРДЛАГУУД</p-tab>
         </p-tablist>
         <p-tabpanels>
@@ -32,6 +32,9 @@
             <p-tabpanel value="6">
                 <app-assessment [lessonId]="lessonId"></app-assessment>
             </p-tabpanel>
+            <!-- <p-tabpanel value="6">
+                <app-clo-plan [lessonId]="lessonId"></app-clo-plan>
+            </p-tabpanel> -->
             <p-tabpanel value="7">
                 <app-additional [lessonId]="lessonId"></app-additional>
             </p-tabpanel>

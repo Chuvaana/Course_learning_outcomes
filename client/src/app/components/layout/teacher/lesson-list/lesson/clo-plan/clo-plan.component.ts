@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { InputNumber } from 'primeng/inputnumber';
@@ -37,6 +37,7 @@ import { PdfGeneratorService } from '../../../../../../services/pdf-generator.se
 })
 export class CloPlanComponent {
 
+  @Input() lessonId: string = ''
   cloForm!: FormGroup;
   sampleData!: any;
   cloList!: any;

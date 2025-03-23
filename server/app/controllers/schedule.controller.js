@@ -57,27 +57,6 @@ exports.createSchedules = async (req, res) => {
     }
 };
 
-
-// exports.createSchedules = async (req, res) => {
-//     try {
-//         const { schedules } = req.body; // Extract array from request
-
-//         if (!schedules || !Array.isArray(schedules)) {
-
-//             return res.status(400).json({ message: "Invalid data format" });
-//         }
-
-//         schedules.forEach(async (item, index) => {
-//             const schedule = new Schedule(item);
-//             await schedule.save();
-//         });
-//         res.status(201).json({ message: "Schedule saved successfully" });
-//     } catch (error) {
-//         console.error("Error saving schedule:", error);
-//         res.status(500).json({ message: "Server error", error });
-//     }
-// };
-
 // Update Schedule
 exports.updateSchedule = async (req, res) => {
     try {

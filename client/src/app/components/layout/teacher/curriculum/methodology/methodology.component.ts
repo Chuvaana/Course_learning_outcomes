@@ -9,13 +9,26 @@ import { DropdownModule } from 'primeng/dropdown';
 import { ButtonModule } from 'primeng/button';
 import { MethodService } from '../../../../../services/methodService';
 import { MultiSelectModule } from 'primeng/multiselect';
+import { CheckboxModule } from 'primeng/checkbox';
 
 interface Method {
   id: number;
   lessonId: string,
   pedagogy: string;
   deliveryMode: string;
-  cloRelevance: string[]
+  cloRelevance: string[],
+  classroom: boolean,
+  electronic: boolean,
+  combined: boolean
+}
+interface Method1 {
+  lessonId: string,
+  pedagogy: string;
+  deliveryMode: string;
+  cloRelevance: string[],
+  classroom: boolean,
+  electronic: boolean,
+  combined: boolean
 }
 
 @Component({
@@ -29,7 +42,8 @@ interface Method {
     TagModule,
     DropdownModule,
     ButtonModule,
-    MultiSelectModule
+    MultiSelectModule,
+    CheckboxModule
   ],
   providers: [MessageService],
   templateUrl: './methodology.component.html',
@@ -40,24 +54,40 @@ export class MethodologyComponent {
   methodologys: Method[] = [];
   clonedMethods: { [s: string]: Method } = {};
   clos: any;
-
+  editingRowId: number | null = null;
+  newRowData: any;
+  index!: number;
   isNew = true;
 
-  deliveryModes = [
-    { label: 'Лекц', value: 'lec' },
-    { label: 'Лаборатори', value: 'lab' },
-    { label: 'Семинар', value: 'sem' }
-  ];
+  deliveryModes =
+    [
+      { label: 'Тонгоруу анги', value: 'CLASS' },
+      { label: 'Төсөлд суурилсан сургалт', value: 'PROJECT' },
+      { label: 'Туршилтад суурилсан сургалт', value: 'EXPERIMENT' },
+      { label: 'Асуудалд суурилсан сургалт', value: 'PROBLEM' }
+    ];
 
   pedagogyOptions = [
-    { label: 'Асуудалд суурилсан сургалт', value: 'Lecture' },
-    { label: 'Туршилтад суурилсан сургалт ', value: 'Discussion' }
+    { label: 'Лекц', value: 'Lecture' },
+    { label: 'Хэлэлцүүлэг, семинар', value: 'Discussion' },
+    { label: 'Лаборатори, туршилт', value: 'Laboratory' },
+    { label: 'Практик', value: 'Practice' }
   ];
 
   constructor(private msgService: MessageService, private service: MethodService) { }
 
   ngOnInit() {
     this.loadData();
+    this.newRowData = {
+      lessonId: this.lessonId,
+      pedagogy: '',
+      deliveryMode: '',
+      cloRelevance: [],
+      classroom: false,
+      electronic: false,
+      combined: false
+    };
+
   }
 
   loadData() {
@@ -71,6 +101,9 @@ export class MethodologyComponent {
           id: item._id,
           pedagogy: item.pedagogy,
           deliveryMode: item.deliveryMode,
+          classroom: item.classroom,
+          electronic: item.electronic,
+          combined: item.combined,
           cloRelevance: item.cloRelevance.map((clo: any) => clo.id) // Extract only CLO IDs
         }));
       }
@@ -78,15 +111,54 @@ export class MethodologyComponent {
   }
 
   onRowEditInit(method: Method, index: number) {
+    this.index = index + 1;
     this.clonedMethods[method.id] = { ...method };
+    this.editingRowId = method.id;
   }
 
-  onRowEditSave(method: Method) {
-    method.cloRelevance = method.cloRelevance.map(id => {
-      return this.clos.find((c: { id: string }) => c.id === id)?.id || id;
-    });
+  newRow() {
+    return {
+      lessonId: this.lessonId,
+      pedagogy: '',
+      deliveryMode: '',
+      cloRelevance: [],
+      classroom: false,
+      electronic: false,
+      combined: false
+    };
+  }
 
-    if (this.isNew) {
+  // onRowEditSave(method: Method) {
+  //   method.cloRelevance = method.cloRelevance.map(id => {
+  //     return this.clos.find((c: { id: string }) => c.id === id)?.id || id;
+  //   });
+
+  //   if (this.isNew) {
+  //     this.service.createMethod(method).subscribe((res: any) => {
+  //       this.msgService.add({
+  //         severity: 'success',
+  //         summary: 'Success',
+  //         detail: 'New CLO created successfully!',
+  //       });
+  //     },
+  //       (err) => {
+  //         this.msgService.add({
+  //           severity: 'error',
+  //           summary: 'Error',
+  //           detail: 'Failed to create CLO: ' + err.message,
+  //         });
+  //       })
+  //   } else {
+  //     this.service.updateMethod(method).subscribe((res: any) => { })
+
+  //   }
+
+  // }
+
+  onRowEditSave(method: Method) {
+    const methodData = { ...method, lessonId: this.lessonId };
+
+    if (method.id === null || method.id === undefined) {
       this.service.createMethod(method).subscribe((res: any) => {
         this.msgService.add({
           severity: 'success',
@@ -105,13 +177,14 @@ export class MethodologyComponent {
       this.service.updateMethod(method).subscribe((res: any) => { })
 
     }
-
+    this.editingRowId = null;
   }
 
 
   onRowEditCancel(method: Method, index: number) {
     this.methodologys[index] = { ...this.clonedMethods[method.id] };
     delete this.clonedMethods[method.id];
+    this.editingRowId = null;
   }
 
   getCloName(cloId: string): string {
@@ -132,18 +205,20 @@ export class MethodologyComponent {
 
   addMethod() {
 
-    const newMethod: Method = {
-      id: this.methodologys.length + 1,
+    const newMethod: Method1 = {
       lessonId: this.lessonId,
       pedagogy: '',
       deliveryMode: '',
-      cloRelevance: []
+      cloRelevance: [],
+      classroom: false,
+      electronic: false,
+      combined: false
     };
 
-    this.methodologys = [...this.methodologys, newMethod];
+    this.methodologys = [...this.methodologys, newMethod as Method];
 
     setTimeout(() => {
-      this.onRowEditInit(newMethod, this.methodologys.length - 1);
+      this.onRowEditInit(newMethod as Method, this.methodologys.length - 1);
     });
   }
 }

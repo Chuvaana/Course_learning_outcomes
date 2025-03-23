@@ -5,11 +5,17 @@
     <p-table [value]="methodologys" dataKey="id" editMode="row" [tableStyle]="{'min-width': '50rem'}">
         <ng-template pTemplate="header">
             <tr>
-                <th style="width:10%">№</th>
-                <th style="width:25%">Хичээлд ашиглах заах арга зүй /Pedagogy/</th>
-                <th style="width:25%">Сургалтын хүргэх хэлбэрүүд /Танхим, цахим, хосолсон/</th>
-                <th style="width:25%">CLOs хамаарал</th>
-                <th style="width:15%">Үйлдэл</th>
+                <th rowspan="2" style="width:5%">№</th>
+                <th rowspan="2" style="width:15%">Хичээлийн хэлбэр</th>
+                <th rowspan="2" style="width:16%">Сургалтын арга зүй</th>
+                <th colspan="3" style="width:24%">Сургалтын хүргэх хэлбэр</th>
+                <th rowspan="2" style="width:30%">CLOs хамаарал</th>
+                <th rowspan="2" style="width:10%">Үйлдэл</th>
+            </tr>
+            <tr>
+                <th style="width:8%">Танхим</th>
+                <th style="width:8%">Цахим</th>
+                <th style="width:8%">Хосолсон</th>
             </tr>
         </ng-template>
 
@@ -23,7 +29,7 @@
                     <p-cellEditor>
                         <ng-template #input>
                             <p-dropdown [options]="pedagogyOptions" [(ngModel)]="method.pedagogy" optionLabel="label"
-                                optionValue="value"appendTo="body" />
+                                optionValue="value" appendTo="body" />
                         </ng-template>
 
                         <ng-template #output>
@@ -36,7 +42,7 @@
                     <p-cellEditor>
                         <ng-template #input>
                             <p-dropdown [options]="deliveryModes" [(ngModel)]="method.deliveryMode" optionLabel="label"
-                                optionValue="value" appendTo="body"/>
+                                optionValue="value" appendTo="body" />
                         </ng-template>
 
                         <ng-template #output>
@@ -44,7 +50,38 @@
                         </ng-template>
                     </p-cellEditor>
                 </td>
+                <td>
+                    <p-cellEditor>
+                        <ng-template #input>
+                            <p-checkbox [(ngModel)]="method.classroom" binary="true"></p-checkbox>
+                        </ng-template>
+                        <ng-template #output>
+                            <p-checkbox [(ngModel)]="method.classroom" binary="true" [disabled]="true"></p-checkbox>
+                        </ng-template>
+                    </p-cellEditor>
+                </td>
 
+                <td>
+                    <p-cellEditor>
+                        <ng-template #input>
+                            <p-checkbox [(ngModel)]="method.electronic" binary="true"></p-checkbox>
+                        </ng-template>
+                        <ng-template #output>
+                            <p-checkbox [(ngModel)]="method.electronic" binary="true" [disabled]="true"></p-checkbox>
+                        </ng-template>
+                    </p-cellEditor>
+                </td>
+
+                <td>
+                    <p-cellEditor>
+                        <ng-template #input>
+                            <p-checkbox [(ngModel)]="method.combined" binary="true"></p-checkbox>
+                        </ng-template>
+                        <ng-template #output>
+                            <p-checkbox [(ngModel)]="method.combined" binary="true" [disabled]="true"></p-checkbox>
+                        </ng-template>
+                    </p-cellEditor>
+                </td>
 
                 <td>
                     <p-cellEditor>
