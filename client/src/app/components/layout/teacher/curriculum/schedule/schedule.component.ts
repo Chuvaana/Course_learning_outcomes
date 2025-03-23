@@ -38,9 +38,11 @@ import { AccordionModule } from 'primeng/accordion';
 export class ScheduleComponent {
   @Input() lessonId: string = '';
   scheduleForm!: FormGroup;
+  scheduleSemForm!: FormGroup;
   scheduleLabForm!: FormGroup;
   scheduleBdForm!: FormGroup;
   isNew = false;
+  isNewSem = false;
   isNewLab = false;
   isNewBd = false;
   isLoading = true;
@@ -57,6 +59,10 @@ export class ScheduleComponent {
       schedules: this.fb.array([]) // This will hold the schedules data
     });
 
+    this.scheduleSemForm = this.fb.group({
+      scheduleSems: this.fb.array([]) // This will hold the schedules data
+    });
+
     this.scheduleLabForm = this.fb.group({
       scheduleLabs: this.fb.array([]) // This will hold the schedules data
     });
@@ -69,7 +75,13 @@ export class ScheduleComponent {
       await this.readData();
     } else {
       this.setDefaultSchedules();
+      this.setDefaultSemSchedules();
+      this.setDefaultLabSchedules();
+      this.setDefaultBdSchedules();
       this.isNew = true;
+      this.isNewSem = true;
+      this.isNewLab = true;
+      this.isNewBd = true;
       this.isLoading = false;
     }
   }
@@ -78,12 +90,15 @@ export class ScheduleComponent {
     this.isLoading = true;
     try {
       const res = await this.service.getSchedules(this.lessonId).toPromise();
+      const resSem = await this.service.getScheduleSems(this.lessonId).toPromise();
       const resLab = await this.service.getScheduleLabs(this.lessonId).toPromise();
       const resBd = await this.service.getScheduleBds(this.lessonId).toPromise();
       const scheduleArray = this.scheduleForm.get('schedules') as FormArray;
+      const scheduleSemArray = this.scheduleSemForm.get('scheduleSems') as FormArray;
       const scheduleLabArray = this.scheduleLabForm.get('scheduleLabs') as FormArray;
       const scheduleBdArray = this.scheduleBdForm.get('scheduleBds') as FormArray;
       scheduleArray.clear();
+      scheduleSemArray.clear();
       scheduleLabArray.clear();
       scheduleBdArray.clear();
 
@@ -93,6 +108,13 @@ export class ScheduleComponent {
       } else {
         this.setDefaultSchedules();
         this.isNew = true;
+      }
+      if (resSem && resSem.length > 0) {
+        this.setScheduleSems(resSem);
+        this.isNewSem = false;
+      } else {
+        this.setDefaultSemSchedules();
+        this.isNewSem = true;
       }
       if (resLab && resLab.length > 0) {
         this.setScheduleLabs(resLab);
@@ -122,11 +144,27 @@ export class ScheduleComponent {
         id: [schedule._id],
         lessonId: [schedule.lessonId],
         cloRelevance: [schedule.cloRelevance.map((clo: any) => clo.id) || []], // Ensure it is always an array
-        week: [schedule.week],
+        week: [{ value: schedule.week, disabled: true }],
         title: [schedule.title],
         time: [schedule.time]
       });
       scheduleArray.push(lessonGroup);
+    });
+
+  }
+
+  setScheduleSems(res: any[]): void {
+    const scheduleSemArray = this.scheduleSemForm.get('scheduleSems') as FormArray;
+    res.forEach(schedule => {
+      const lessonGroup = this.fb.group({
+        id: [schedule._id],
+        lessonId: [schedule.lessonId],
+        cloRelevance: [schedule.cloRelevance.map((clo: any) => clo.id) || []], // Ensure it is always an array
+        week: [{ value: schedule.week, disabled: true }],
+        title: [schedule.title],
+        time: [schedule.time]
+      });
+      scheduleSemArray.push(lessonGroup);
     });
 
   }
@@ -184,6 +222,30 @@ export class ScheduleComponent {
     ];
     defaultLessons.forEach(lesson => {
       scheduleArray.push(this.createLesson(lesson));
+    });
+  }
+  setDefaultSemSchedules(): void {
+    const scheduleSemArray = this.scheduleSemForm.get('scheduleSems') as FormArray;
+    const defaultSemLessons = [
+      { week: 'I', title: '', time: 0, cloRelevance: [] },
+      { week: 'II', title: '', time: 0, cloRelevance: [] },
+      { week: 'III', title: '', time: 0, cloRelevance: [] },
+      { week: 'IV', title: '', time: 0, cloRelevance: [] },
+      { week: 'V', title: '', time: 0, cloRelevance: [] },
+      { week: 'VI', title: '', time: 0, cloRelevance: [] },
+      { week: 'VII', title: '', time: 0, cloRelevance: [] },
+      { week: 'VIII', title: '', time: 0, cloRelevance: [] },
+      { week: 'IX', title: '', time: 0, cloRelevance: [] },
+      { week: 'X', title: '', time: 0, cloRelevance: [] },
+      { week: 'XI', title: '', time: 0, cloRelevance: [] },
+      { week: 'XII', title: '', time: 0, cloRelevance: [] },
+      { week: 'XIII', title: '', time: 0, cloRelevance: [] },
+      { week: 'XIV', title: '', time: 0, cloRelevance: [] },
+      { week: 'XV', title: '', time: 0, cloRelevance: [] },
+      { week: 'XVI', title: '', time: 0, cloRelevance: [] }
+    ];
+    defaultSemLessons.forEach(lesson => {
+      scheduleSemArray.push(this.createLesson(lesson));
     });
   }
 
@@ -267,6 +329,11 @@ export class ScheduleComponent {
     return schedules.controls;
   }
 
+  get lessonSemControls() {
+    const schedules = this.scheduleSemForm.get('scheduleSems') as FormArray;
+    return schedules.controls;
+  }
+
   get lessonLabControls() {
     const schedules = this.scheduleLabForm.get('scheduleLabs') as FormArray;
     return schedules.controls;
@@ -277,7 +344,7 @@ export class ScheduleComponent {
     return schedules.controls;
   }
 
-  saveLecSemSchedule() {
+  saveLecSchedule() {
     if (this.isNew) {
       this.service.addSchedules(this.scheduleForm.value).subscribe((res: any) => {
         this.readData();
@@ -297,6 +364,43 @@ export class ScheduleComponent {
 
     } else {
       this.service.updateSchedules(this.lessonId, this.scheduleForm.value).subscribe((res: any) => {
+        this.readData();
+        this.msgService.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: 'Амжилттай шинэчлэгдлээ!',
+        });
+      },
+        (err) => {
+          this.msgService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Алдаа гарлаа: ' + err.message,
+          });
+        });
+
+    }
+  }
+  saveSemSchedule() {
+    if (this.isNewSem) {
+      this.service.addScheduleSems(this.scheduleSemForm.value).subscribe((res: any) => {
+        this.readData();
+        this.msgService.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: 'Амжилттай хадгалагдлаа!',
+        });
+      },
+        (err) => {
+          this.msgService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Алдаа гарлаа: ' + err.message,
+          });
+        });
+
+    } else {
+      this.service.updateScheduleSems(this.lessonId, this.scheduleSemForm.value).subscribe((res: any) => {
         this.readData();
         this.msgService.add({
           severity: 'success',

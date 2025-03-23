@@ -4,7 +4,10 @@ const CloSchema = new mongoose.Schema(
     {
         lessonId: { type: String, required: true },
         type: { type: String, required: true },
-        cloName: { type: String, required: true }
+        cloName: { type: String, required: true },
+        knowledge: { type: Boolean },
+        skill: { type: Boolean },
+        attitude: { type: Boolean },
     },
     { timestamps: true }
 );

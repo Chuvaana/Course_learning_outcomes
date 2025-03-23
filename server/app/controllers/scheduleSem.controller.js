@@ -1,4 +1,4 @@
-const ScheduleLab = require('../models/scheduleLab.model');
+const ScheduleSem = require('../models/scheduleSem.model');
 
 // Get all Schedules
 exports.getSchedules = async (req, res) => {
@@ -6,7 +6,7 @@ exports.getSchedules = async (req, res) => {
         const { id } = req.params;
 
         // Fetch and sort the schedules by the 'week' field in ascending order
-        const schedules = await ScheduleLab.find({ lessonId: id }).populate('cloRelevance', 'cloName')
+        const schedules = await ScheduleSem.find({ lessonId: id }).populate('cloRelevance', 'cloName')
             .exec();
 
         if (!schedules || schedules.length === 0) {
@@ -22,17 +22,17 @@ exports.getSchedules = async (req, res) => {
 
 exports.createSchedules = async (req, res) => {
     try {
-        const { scheduleLabs } = req.body; // Extract array of schedules from request body
+        const { scheduleSems } = req.body; // Extract array of schedules from request body
 
         // Validate if schedules is an array and not empty
-        if (!Array.isArray(scheduleLabs) || scheduleLabs.length === 0) {
+        if (!Array.isArray(scheduleSems) || scheduleSems.length === 0) {
             return res.status(400).json({ message: "Schedules data must be a non-empty array" });
         }
 
         // Validate each schedule item
         const validSchedules = [];
 
-        for (const schedule of scheduleLabs) {
+        for (const schedule of scheduleSems) {
             // Check if each schedule has necessary fields
             if (!schedule.lessonId || !schedule.week) {
                 return res.status(400).json({ message: `Missing required fields in schedule item for week ${schedule.week}` });
@@ -48,7 +48,7 @@ exports.createSchedules = async (req, res) => {
         }
 
         // Create and save schedules in the database
-        const createdSchedules = await ScheduleLab.insertMany(validSchedules);
+        const createdSchedules = await ScheduleSem.insertMany(validSchedules);
 
         res.status(201).json({ message: "Schedules saved successfully", schedules: createdSchedules });
     } catch (error) {
@@ -56,21 +56,22 @@ exports.createSchedules = async (req, res) => {
         res.status(500).json({ message: "Server error", error: error.message });
     }
 };
-// Update ScheduleLab
+
+// Update ScheduleSem
 exports.updateSchedule = async (req, res) => {
     try {
         const { schedules } = req.body;
         if (!Array.isArray(schedules)) {
-            return res.status(400).json({ message: "Input should be an array of ScheduleLab" });
+            return res.status(400).json({ message: "Input should be an array of ScheduleSem" });
         }
 
         // Use Promise.all for parallel execution of updates
         const updatePromises = schedules.map(async (item) => {
             try {
-                const updatedSchedule = await ScheduleLab.findByIdAndUpdate(item.id, item, { new: true });
+                const updatedSchedule = await ScheduleSem.findByIdAndUpdate(item.id, item, { new: true });
 
                 if (!updatedSchedule) {
-                    throw new Error(`ScheduleLab with ID ${item.id} not found`);
+                    throw new Error(`ScheduleSem with ID ${item.id} not found`);
                 }
 
                 return { success: true, updatedSchedule };

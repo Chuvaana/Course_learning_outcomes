@@ -26,6 +26,22 @@ export class ScheduleService {
     return this.http.delete(`${this.apiUrl}/schedules/${lessonCode}`);
   }
 
+  addScheduleSems(data: any) {
+    return this.http.post(`${this.apiUrl}/scheduleSems`, data);
+  }
+
+  getScheduleSems(lessonCode: string): Observable<any> {
+    return this.http.get(`${this.apiUrl}/scheduleSems/${lessonCode}`);
+  }
+
+  updateScheduleSems(lessonCode: string, data: any) {
+    return this.http.put(`${this.apiUrl}/scheduleSems/${lessonCode}`, data);
+  }
+
+  deleteScheduleSems(lessonCode: string) {
+    return this.http.delete(`${this.apiUrl}/scheduleSems/${lessonCode}`);
+  }
+
 
   addScheduleLabs(data: any) {
     return this.http.post(`${this.apiUrl}/scheduleLabs`, data);

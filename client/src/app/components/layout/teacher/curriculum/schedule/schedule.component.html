@@ -1,10 +1,10 @@
 <div class="card flex justify-center">
     <p-accordion value="0">
         <p-accordion-panel value="0">
-            <p-accordion-header>Лекц, семинарын агуулга</p-accordion-header>
+            <p-accordion-header>Лекцийн агуулга</p-accordion-header>
             <p-accordion-content>
                 <p-toast></p-toast>
-                <p-button label="Хадгалах" class="submit-button" (click)="saveLecSemSchedule()" />
+                <p-button label="Хадгалах" class="submit-button" (click)="saveLecSchedule()" />
 
                 <p-table *ngIf="!isLoading" [value]="lessonControls" class="custom-table">
                     <ng-template pTemplate="header">
@@ -20,7 +20,7 @@
                             <td [pEditableColumn]>
                                 <p-cellEditor>
                                     <ng-template pTemplate="input">
-                                        <p-inputNumber formControlName="week"></p-inputNumber>
+                                        <input pInputText formControlName="week" [readonly]="true" [disabled]="true" />
                                     </ng-template>
                                     <ng-template pTemplate="output">
                                         {{ lesson.get('week').value }}
@@ -70,27 +70,26 @@
         </p-accordion-panel>
 
         <p-accordion-panel value="1">
-            <p-accordion-header>Лаборатори/практикийн хичээлийн агуулга:</p-accordion-header>
+            <p-accordion-header>Семинарын агуулга</p-accordion-header>
             <p-accordion-content>
                 <p-toast></p-toast>
-                <p-button label="Хадгалах" class="submit-button" (click)="saveLabSchedule()" />
+                <p-button label="Хадгалах" class="submit-button" (click)="saveSemSchedule()" />
 
-                <p-table *ngIf="!isLoading" [value]="lessonLabControls" class="custom-table">
+                <p-table *ngIf="!isLoading" [value]="lessonSemControls" class="custom-table">
                     <ng-template pTemplate="header">
                         <tr>
                             <th>7 хоног</th>
-                            <th>Лаборатори/практикийн сэдэв</th>
-                            <th>Цаг</th>
+                            <th>Семинарын сэдэв</th>
+                            <th>Семинарын цаг</th>
                             <th>CLOs хамаарал</th>
                         </tr>
                     </ng-template>
-
                     <ng-template pTemplate="body" let-lesson>
                         <tr [formGroup]="lesson">
                             <td [pEditableColumn]>
                                 <p-cellEditor>
                                     <ng-template pTemplate="input">
-                                        <p-inputNumber formControlName="week"></p-inputNumber>
+                                        <input pInputText formControlName="week" [readonly]="true" [disabled]="true" />
                                     </ng-template>
                                     <ng-template pTemplate="output">
                                         {{ lesson.get('week').value }}
@@ -140,7 +139,77 @@
         </p-accordion-panel>
 
         <p-accordion-panel value="2">
-            <p-accordion-header>Бие даан судлах агуулга:</p-accordion-header>
+            <p-accordion-header>Лаборатори/практикийн хичээлийн агуулга</p-accordion-header>
+            <p-accordion-content>
+                <p-toast></p-toast>
+                <p-button label="Хадгалах" class="submit-button" (click)="saveLabSchedule()" />
+
+                <p-table *ngIf="!isLoading" [value]="lessonLabControls" class="custom-table">
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th>7 хоног</th>
+                            <th>Лаборатори/практикийн сэдэв</th>
+                            <th>Цаг</th>
+                            <th>CLOs хамаарал</th>
+                        </tr>
+                    </ng-template>
+
+                    <ng-template pTemplate="body" let-lesson>
+                        <tr [formGroup]="lesson">
+                            <td [pEditableColumn]>
+                                <p-cellEditor>
+                                    <ng-template pTemplate="input">
+                                        <input pInputText formControlName="week" [readonly]="true" [disabled]="true" />
+                                    </ng-template>
+                                    <ng-template pTemplate="output">
+                                        {{ lesson.get('week').value }}
+                                    </ng-template>
+                                </p-cellEditor>
+                            </td>
+                            <td [pEditableColumn]>
+                                <p-cellEditor>
+                                    <ng-template pTemplate="input">
+                                        <input pInputText formControlName="title" type="text" />
+                                    </ng-template>
+                                    <ng-template pTemplate="output">
+                                        {{ lesson.get('title').value }}
+                                    </ng-template>
+                                </p-cellEditor>
+                            </td>
+                            <td [pEditableColumn]>
+                                <p-cellEditor>
+                                    <ng-template pTemplate="input">
+                                        <p-inputNumber formControlName="time"></p-inputNumber>
+                                    </ng-template>
+                                    <ng-template pTemplate="output">
+                                        {{ lesson.get('time').value }}
+                                    </ng-template>
+                                </p-cellEditor>
+                            </td>
+                            <td [pEditableColumn]>
+                                <p-cellEditor>
+                                    <ng-template pTemplate="input">
+                                        <p-multiselect [options]="clos" formControlName="cloRelevance"
+                                            optionLabel="cloName" optionValue="id" [maxSelectedLabels]="3"
+                                            styleClass="w-full md:w-80" appendTo="body">
+                                        </p-multiselect>
+                                    </ng-template>
+                                    <ng-template pTemplate="output">
+                                        <p-tag *ngFor="let cloId of lesson.get('cloRelevance')?.value"
+                                            [value]="getCloName(cloId)">
+                                        </p-tag>
+                                    </ng-template>
+                                </p-cellEditor>
+                            </td>
+
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </p-accordion-content>
+        </p-accordion-panel>
+
+        <p-accordion-panel value="3">
+            <p-accordion-header>Бие даан судлах агуулга</p-accordion-header>
             <p-accordion-content>
                 <p-toast></p-toast>
                 <p-button label="Хадгалах" class="submit-button" (click)="saveBdSchedule()" />
@@ -161,7 +230,7 @@
                             <td [pEditableColumn]>
                                 <p-cellEditor>
                                     <ng-template pTemplate="input">
-                                        <p-inputNumber formControlName="week"></p-inputNumber>
+                                        <input pInputText formControlName="week" [readonly]="true" [disabled]="true" />
                                     </ng-template>
                                     <ng-template pTemplate="output">
                                         {{ lesson.get('week').value }}

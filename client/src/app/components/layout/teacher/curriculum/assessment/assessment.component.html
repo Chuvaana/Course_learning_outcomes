@@ -1,1 +1,91 @@
-<p>assessment works!</p>
+<div class="card">
+    <p-toast></p-toast>
+    <p-button label="Нэмэх" class="submit-button" (click)="addMethod()" />
+
+    <p-table [value]="methodologys" dataKey="id" editMode="row" [tableStyle]="{'min-width': '50rem'}">
+        <ng-template pTemplate="header">
+            <tr>
+                <th style="width:5%">№</th>
+                <th style="width:25%">Үнэлгээний аргууд</th>
+                <th style="width:25%">Үнэлгээ хийх давтамж</th>
+                <th style="width:5%">Үнэлгээний эзлэх хувь</th>
+                <th style="width:25%">CLOs хамаарал</th>
+                <th style="width:15%">Үйлдэл</th>
+            </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-method let-editing="editing" let-ri="rowIndex">
+            <tr [pEditableRow]="method">
+                <td>
+                    {{ ri + 1 }}
+                </td>
+
+                <td>
+                    <p-cellEditor>
+                        <ng-template #input>
+                            <p-dropdown [options]="asMethod" [(ngModel)]="method.pedagogy" optionLabel="label"
+                                optionValue="value" appendTo="body"/>
+                        </ng-template>
+
+                        <ng-template #output>
+                            {{ getPedagogyName(method.pedagogy) }}
+                        </ng-template>
+                    </p-cellEditor>
+                </td>
+                <td>
+                    <p-cellEditor>
+                        <ng-template #input>
+                            <p-dropdown [options]="pedagogyOptions" [(ngModel)]="method.pedagogy" optionLabel="label"
+                                optionValue="value" appendTo="body"/>
+                        </ng-template>
+
+                        <ng-template #output>
+                            {{ getPedagogyName(method.pedagogy) }}
+                        </ng-template>
+                    </p-cellEditor>
+                </td>
+
+                <td>
+                    <p-cellEditor>
+                        <ng-template #input>
+                            <p-dropdown [options]="deliveryModes" [(ngModel)]="method.deliveryMode" optionLabel="label"
+                                optionValue="value" appendTo="body"/>
+                        </ng-template>
+
+                        <ng-template #output>
+                            {{ getDeliveryModeName(method.deliveryMode) }}
+                        </ng-template>
+                    </p-cellEditor>
+                </td>
+
+
+                <td>
+                    <p-cellEditor>
+                        <ng-template #input>
+                            <p-multiselect [options]="clos" [(ngModel)]="method.cloRelevance" optionLabel="cloName"
+                                optionValue="id" [maxSelectedLabels]="3" styleClass="w-full md:w-80" appendTo="body">
+                            </p-multiselect>
+                        </ng-template>
+
+                        <ng-template #output>
+                            <p-tag *ngFor="let cloId of method.cloRelevance" [value]="getCloName(cloId)">
+                            </p-tag>
+                        </ng-template>
+                    </p-cellEditor>
+                </td>
+
+
+                <td>
+                    <div class="flex items-center justify-center gap-2">
+                        <button *ngIf="!editing" pButton pRipple type="button" pInitEditableRow icon="pi pi-pencil"
+                            (click)="onRowEditInit(method, ri)" text rounded severity="secondary"></button>
+                        <button *ngIf="editing" pButton pRipple type="button" pSaveEditableRow icon="pi pi-check"
+                            (click)="onRowEditSave(method)" text rounded severity="success"></button>
+                        <button *ngIf="editing" pButton pRipple type="button" pCancelEditableRow icon="pi pi-times"
+                            (click)="onRowEditCancel(method, ri)" text rounded severity="danger"></button>
+                    </div>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>

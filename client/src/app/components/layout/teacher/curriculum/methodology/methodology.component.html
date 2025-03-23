@@ -23,7 +23,7 @@
                     <p-cellEditor>
                         <ng-template #input>
                             <p-dropdown [options]="pedagogyOptions" [(ngModel)]="method.pedagogy" optionLabel="label"
-                                optionValue="value" />
+                                optionValue="value"appendTo="body" />
                         </ng-template>
 
                         <ng-template #output>
@@ -36,7 +36,7 @@
                     <p-cellEditor>
                         <ng-template #input>
                             <p-dropdown [options]="deliveryModes" [(ngModel)]="method.deliveryMode" optionLabel="label"
-                                optionValue="value" />
+                                optionValue="value" appendTo="body"/>
                         </ng-template>
 
                         <ng-template #output>
