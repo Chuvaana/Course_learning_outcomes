@@ -6,11 +6,11 @@ exports.getSchedules = async (req, res) => {
         const { id } = req.params;
 
         // Fetch and sort the schedules by the 'week' field in ascending order
-        const schedules = await Schedule.find({lessonId: id });
+        const schedules = await Schedule.find({ lessonId: id }).populate('cloRelevance', 'cloName')
+            .exec();
 
         if (!schedules || schedules.length === 0) {
             return res.json([]);
-            // return res.status(404).json({ message: "No schedules found for the given lessonCode" });
         }
 
         res.json(schedules);
@@ -20,25 +20,40 @@ exports.getSchedules = async (req, res) => {
     }
 };
 
-
-
-// Create new Schedules
 exports.createSchedules = async (req, res) => {
     try {
-        const { schedules } = req.body; // Extract array from request
+        const { schedules } = req.body; // Extract array of schedules from request body
 
-        if (!schedules || !Array.isArray(schedules)) {
-            return res.status(400).json({ message: "Invalid data format" });
+        // Validate if schedules is an array and not empty
+        if (!Array.isArray(schedules) || schedules.length === 0) {
+            return res.status(400).json({ message: "Schedules data must be a non-empty array" });
         }
 
-        schedules.forEach(async (item, index) => {
-            const schedule = new Schedule(item);
-            await schedule.save();
-        });
-        res.status(201).json({ message: "Schedule saved successfully" });
+        // Validate each schedule item
+        const validSchedules = [];
+
+        for (const schedule of schedules) {
+            // Check if each schedule has necessary fields
+            if (!schedule.lessonId || !schedule.week) {
+                return res.status(400).json({ message: `Missing required fields in schedule item for week ${schedule.week}` });
+            }
+
+            // Validate cloRelevance is an array (it can be empty, that's fine)
+            if (schedule.cloRelevance && !Array.isArray(schedule.cloRelevance)) {
+                return res.status(400).json({ message: `Invalid cloRelevance format for week ${schedule.week}` });
+            }
+
+            // Push valid schedule item to the list
+            validSchedules.push(schedule);
+        }
+
+        // Create and save schedules in the database
+        const createdSchedules = await Schedule.insertMany(validSchedules);
+
+        res.status(201).json({ message: "Schedules saved successfully", schedules: createdSchedules });
     } catch (error) {
-        console.error("Error saving schedule:", error);
-        res.status(500).json({ message: "Server error", error });
+        console.error("Error saving schedules:", error);
+        res.status(500).json({ message: "Server error", error: error.message });
     }
 };
 

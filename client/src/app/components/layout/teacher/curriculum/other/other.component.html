@@ -1,0 +1,15 @@
+<p-toast />
+<div class="other">
+    <form [formGroup]="otherForm" (ngSubmit)="onSubmit()">
+        <p-floatlabel variant="on" class="w-full">
+            <textarea pTextarea id="description" formControlName="description" rows="5" cols="80"></textarea>
+            <label for="description">Хичээлийн тодорхойлолт</label>
+        </p-floatlabel>
+
+        <p-floatlabel variant="on" class="w-full">
+            <textarea pTextarea id="goal" formControlName="goal" rows="5" cols="80"></textarea>
+            <label for="goal">Хичээлийн зорилго</label>
+        </p-floatlabel>
+        <button pButton type="submit" label="Хадгалах" [disabled]="otherForm.invalid"></button>
+    </form>
+</div>

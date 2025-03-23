@@ -9,24 +9,32 @@ import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { ToastModule } from 'primeng/toast';
 import { CLOService } from '../../../../../services/cloService';
+import { CheckboxModule } from 'primeng/checkbox';
 
 interface Clo {
   id: number;
   type: string;
   cloName: string;
+  knowledge: boolean;
+  skill: boolean;
+  attitude: boolean;
 }
+
 interface Clo1 {
   type: string;
   cloName: string;
+  knowledge: boolean;
+  skill: boolean;
+  attitude: boolean;
 }
 
 @Component({
   selector: 'app-clo',
   standalone: true,
-  imports: [TableModule, ToastModule, CommonModule, TagModule, SelectModule, ButtonModule, InputTextModule, FormsModule],
+  imports: [TableModule, ToastModule, CommonModule, TagModule, SelectModule, ButtonModule, InputTextModule, FormsModule, CheckboxModule],
   providers: [MessageService],
   templateUrl: './clo.component.html',
-  styleUrl: './clo.component.scss'
+  styleUrls: ['./clo.component.scss']
 })
 export class CloComponent {
   @Input() lessonId: string = '';
@@ -39,45 +47,58 @@ export class CloComponent {
   newRowData: any;
 
   clonedClos: { [s: string]: Clo } = {};
-  editingRowId: number | null = null; // 
+  editingRowId: number | null = null;
 
   constructor(private service: CLOService, private msgService: MessageService) { }
 
   ngOnInit() {
-    this.service.getCloList(this.lessonId).subscribe((data: any) => {
-      this.clos = data.map((item: any) => ({
-        id: item.id,
-        type: item.type,
-        cloName: item.cloName
-      }));
-    });
 
+    this.readData();
     this.types = [
       { label: 'Лекц семинар', value: 'LEC_SEM' },
       { label: 'Лаборатори', value: 'LAB' }
     ];
 
-    this.newRowData = { lessonId: this.lessonId, type: '', cloName: '' };
+    this.newRowData = { lessonId: this.lessonId, type: '', cloName: '', knowledge: false, skill: false, attitude: false };
   }
+
+  readData() {
+    this.service.getCloList(this.lessonId).subscribe((data: any) => {
+      this.clos = data.map((item: any) => {
+        // Find the label corresponding to item.type
+        const typeLabel = this.types.find(type => type.value === item.type)?.label;
+
+        return {
+          id: item.id,
+          type: typeLabel,  // keep the value as it is
+          cloName: item.cloName,
+          knowledge: item.knowledge || false,
+          skill: item.skill || false,
+          attitude: item.attitude || false,
+        };
+      });
+    });
+  }
+
 
   onRowEditInit(clo: Clo, index: number) {
     this.index = index + 1;
     this.clonedClos[clo.id] = { ...clo };
-    this.editingRowId = clo.id; // Set the current editing row
+    this.editingRowId = clo.id;
   }
 
   newRow() {
-    return { lessonId: this.lessonId, type: '', cloName: '' };
+    return { lessonId: this.lessonId, type: '', cloName: '', knowledge: false, skill: false, attitude: false };
   }
 
   onRowEditSave(clo: Clo) {
-    // const { id, ...cloData } = clo;
     const cloData = { ...clo, lessonId: this.lessonId };
 
     if (clo.id === null || clo.id === undefined) {
       this.service.registerClo(cloData).subscribe(
         (res: Clo) => {
           clo.id = res.id;
+          this.readData();
           this.msgService.add({
             severity: 'success',
             summary: 'Success',
@@ -95,6 +116,7 @@ export class CloComponent {
     } else {
       this.service.updateClo(clo).subscribe(
         (res) => {
+          this.readData();
           this.msgService.add({
             severity: 'success',
             summary: 'Success',
@@ -119,10 +141,25 @@ export class CloComponent {
     this.editingRowId = null;
   }
 
+  getGroupHeaderLabel(cloType: string): string {
+    switch (cloType) {
+      case 'Лаборатори':
+        return 'Лекц, семинарын хичээлээр эзэмшсэн суралцахуйн үр дүнгүүд';
+      case 'Лекц семинар':
+        return 'Лабораторийн хичээлээр эзэмшсэн суралцахуйн үр дүнгүүд';
+      default:
+        return cloType;
+    }
+  }
+  
+
   addClo() {
     const newClo: Clo1 = {
       type: '',
-      cloName: ''
+      cloName: '',
+      knowledge: false,
+      skill: false,
+      attitude: false,
     };
 
     this.clos = [...this.clos, newClo as Clo];

@@ -26,14 +26,13 @@ exports.getCloById = async (req, res) => {
 // Add a new CLO
 exports.addClo = async (req, res) => {
     try {
-        console.log(req.body);
-        const { lessonId, type, cloName } = req.body;
+        const { lessonId, type, cloName, knowledge, skill, attitude } = req.body;
 
         if (!lessonId || !type || !cloName) {
             return res.status(400).json({ message: 'Type and CLO Name are required' });
         }
 
-        const newClo = new Clo({ lessonId, type, cloName });
+        const newClo = new Clo({ lessonId, type, cloName, knowledge, skill, attitude });
         await newClo.save();
         res.status(201).json(newClo);
     } catch (err) {
@@ -44,11 +43,11 @@ exports.addClo = async (req, res) => {
 // Update CLO by ID
 exports.updateClo = async (req, res) => {
     try {
-        const { id, type, cloName } = req.body;
+        const { id, type, cloName, knowledge, skill, attitude } = req.body;
 
         const updatedClo = await Clo.findByIdAndUpdate(
             id,
-            { type, cloName },
+            { type, cloName, knowledge, skill, attitude },
             { new: true, runValidators: true }
         );
 

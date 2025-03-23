@@ -26,8 +26,6 @@ exports.getMaterialsByLessonCode = async (req, res) => {
     try {
         const { lessonCode } = req.params;
         const material = await Material.findOne({ lessonId: lessonCode });
-        console.log(material);
-
         if (!material) {
             return res.json([]);
             // return res.status(404).json({ message: 'No materials found for this lesson' });

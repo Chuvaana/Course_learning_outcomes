@@ -1,13 +1,13 @@
+import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { ExamService } from '../../../../services/examService';
-import { ButtonModule } from 'primeng/button';
-import { CommonModule } from '@angular/common';
-import { TableModule } from 'primeng/table';
 import { Router } from '@angular/router';
-import { Menu } from 'primeng/menu';
 import { MenuItem } from 'primeng/api';
+import { ButtonModule } from 'primeng/button';
+import { Menu } from 'primeng/menu';
+import { TableModule } from 'primeng/table';
+import { ExamService } from '../../../../services/examService';
 
 @Component({
   selector: 'app-question-type-list',
@@ -22,11 +22,11 @@ import { MenuItem } from 'primeng/api';
   templateUrl: './question-type-list.component.html',
   styleUrls: ['./question-type-list.component.scss']
 })
-export class QuestionTypeListComponent {  // Fixed the typo here
+export class QuestionTypeListComponent {
   studentForm: FormGroup;
   products: any[] = [];
   active = true;
-  valueTitle : any;
+  valueTitle: any;
 
   constructor(
     private fb: FormBuilder,
@@ -130,7 +130,7 @@ export class QuestionTypeListComponent {  // Fixed the typo here
       }
     ];
   }
-  value(e : any){
+  value(e: any) {
     this.valueTitle = e;
     this.active = false;
     console.log('asdfasdf');

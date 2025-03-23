@@ -1,16 +1,15 @@
+import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { saveAs } from 'file-saver';
+import { ButtonModule } from 'primeng/button';
 import { DropdownModule } from 'primeng/dropdown';
 import { PasswordModule } from 'primeng/password';
-import { ExamService } from '../../../../services/examService';
-import { TeacherComponent } from '../../teacher/teacher.component';
-import { ButtonModule } from 'primeng/button';
-import { CommonModule } from '@angular/common';
 import { TableModule } from 'primeng/table';
-import { QuestionTypeListComponent } from '../question-type-list/question-type-list.component';
 import * as XLSX from 'xlsx';
-import { saveAs } from 'file-saver'; // file-saver сан
+import { ExamService } from '../../../../services/examService';
+import { QuestionTypeListComponent } from '../question-type-list/question-type-list.component';
 
 @Component({
   selector: 'app-list',
@@ -26,7 +25,7 @@ import { saveAs } from 'file-saver'; // file-saver сан
   templateUrl: './list.component.html',
   styleUrls: ['./list.component.scss']
 })
-export class ListComponent {  // Fixed the typo here
+export class ListComponent {
   studentForm: FormGroup;
   products: any[] = [];
 
@@ -87,27 +86,23 @@ export class ListComponent {  // Fixed the typo here
 
   createBtn() {
     this.dialog.open(QuestionTypeListComponent, {
-      width: '60vw', // 80% of the viewport width
-      height: '50vh', // 50% of the viewport height,
+      width: '60vw',
+      height: '50vh',
       maxWidth: 'none'
     });
   }
 
-  exportToExcel(){
-    // Дата-г worksheet болгон хөрвүүлэх
+  exportToExcel() {
     const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(this.products);
 
-    // Workbook үүсгэх
     const workbook: XLSX.WorkBook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1');
 
-    // Excel файлыг binary болгон хөрвүүлэх
     const excelBuffer: any = XLSX.write(workbook, {
       bookType: 'xlsx',
       type: 'array',
     });
 
-    // Файлыг хадгалах
     this.saveAsExcelFile(excelBuffer, 'table-data');
 
   }

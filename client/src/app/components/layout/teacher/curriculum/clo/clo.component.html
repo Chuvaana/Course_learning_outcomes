@@ -2,13 +2,28 @@
     <p-toast />
     <p-button label="Нэмэх" class="submit-button" (click)="addClo()" />
 
-    <p-table [value]="clos" dataKey="id" editMode="row" [tableStyle]="{'min-width': '50rem'}">
+    <p-table [value]="clos" dataKey="id" editMode="row" rowGroupMode="subheader" groupRowsBy="type"
+        [tableStyle]="{'min-width': '50rem'}">
         <ng-template #header>
             <tr>
-                <th style="width:20%">№</th>
+                <th style="width:10%">№</th>
                 <th style="width:20%">Төрөл</th>
                 <th style="width:20%">Суралцахуйн үр дүн</th>
-                <th style="width:20%"></th>
+                <th style="width:10%">Мэдлэг</th>
+                <th style="width:10%">Чадвар</th>
+                <th style="width:10%">Хандлага төлөвшил</th>
+                <th style="width:10%"></th>
+            </tr>
+        </ng-template>
+        <ng-template #groupheader let-clo>
+            <tr pRowGroupHeader>
+                <td colspan="6">
+                    <div class="flex items-center gap-2">
+                        <strong>
+                            {{ getGroupHeaderLabel(clo.type) }}
+                        </strong>
+                    </div>
+                </td>
             </tr>
         </ng-template>
         <ng-template #body let-clo let-editing="editing" let-ri="rowIndex">
@@ -16,7 +31,7 @@
                 <td>
                     <p-cellEditor>
                         <ng-template #input>
-                            <input pInputText type="text" [(ngModel)]="index" disabled/>
+                            <input pInputText type="text" [(ngModel)]="index" disabled />
                         </ng-template>
                         <ng-template #output>
                             {{ ri + 1 }}
@@ -26,8 +41,8 @@
                 <td>
                     <p-cellEditor>
                         <ng-template #input>
-                            <p-select [options]="types" appendTo="body" [(ngModel)]="clo.type"
-                                [style]="{'width':'100%'}" />
+                            <p-select [options]="types" optionLabel="label" optionValue="value" appendTo="body"
+                                [(ngModel)]="clo.type" [style]="{'width':'100%'}" />
                         </ng-template>
                         <ng-template #output>
                             <p-tag [value]="clo.type" />
@@ -40,10 +55,45 @@
                             <input pInputText type="text" [(ngModel)]="clo.cloName" required />
                         </ng-template>
                         <ng-template #output>
-                            {{clo.cloName}}
-                        </ng-template>                        
+                            {{ clo.cloName }}
+                        </ng-template>
                     </p-cellEditor>
                 </td>
+
+                <!-- New Checkbox Columns -->
+                <td>
+                    <p-cellEditor>
+                        <ng-template #input>
+                            <p-checkbox [(ngModel)]="clo.knowledge" binary="true"></p-checkbox>
+                        </ng-template>
+                        <ng-template #output>
+                            <p-checkbox [(ngModel)]="clo.knowledge" binary="true" [disabled]="true"></p-checkbox>
+                        </ng-template>
+                    </p-cellEditor>
+                </td>
+
+                <td>
+                    <p-cellEditor>
+                        <ng-template #input>
+                            <p-checkbox [(ngModel)]="clo.skill" binary="true"></p-checkbox>
+                        </ng-template>
+                        <ng-template #output>
+                            <p-checkbox [(ngModel)]="clo.skill" binary="true" [disabled]="true"></p-checkbox>
+                        </ng-template>
+                    </p-cellEditor>
+                </td>
+
+                <td>
+                    <p-cellEditor>
+                        <ng-template #input>
+                            <p-checkbox [(ngModel)]="clo.attitude" binary="true"></p-checkbox>
+                        </ng-template>
+                        <ng-template #output>
+                            <p-checkbox [(ngModel)]="clo.attitude" binary="true" [disabled]="true"></p-checkbox>
+                        </ng-template>
+                    </p-cellEditor>
+                </td>
+
                 <td>
                     <div class="flex items-center justify-center gap-2">
                         <button *ngIf="!editing" pButton pRipple type="button" pInitEditableRow icon="pi pi-pencil"
