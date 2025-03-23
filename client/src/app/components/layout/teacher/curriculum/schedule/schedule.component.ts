@@ -40,8 +40,6 @@ export class ScheduleComponent {
       this.isNew = true;
       this.isLoading = false;
     }
-    console.log(this.lessonControls);
-
   }
 
   async readData() {

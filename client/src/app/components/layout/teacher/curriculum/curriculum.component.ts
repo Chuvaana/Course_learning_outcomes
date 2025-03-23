@@ -8,11 +8,23 @@ import { CloComponent } from './clo/clo.component';
 import { MainInfoComponent } from './main-info/main-info.component';
 import { MaterialsComponent } from './materials/materials.component';
 import { ScheduleComponent } from './schedule/schedule.component';
+import { OtherComponent } from './other/other.component';
+import { MethodologyComponent } from './methodology/methodology.component';
 
 @Component({
   selector: 'app-curriculum',
   standalone: true,
-  imports: [CommonModule, TabsModule, MainInfoComponent, MaterialsComponent, CloComponent, ScheduleComponent, AssessmentComponent, AdditionalComponent],
+  imports: [
+    CommonModule,
+    TabsModule,
+    MainInfoComponent,
+    OtherComponent,
+    MaterialsComponent,
+    CloComponent,
+    ScheduleComponent,
+    AssessmentComponent,
+    AdditionalComponent,
+    MethodologyComponent],
   templateUrl: './curriculum.component.html',
   styleUrl: './curriculum.component.scss'
 })

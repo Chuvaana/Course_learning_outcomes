@@ -14,7 +14,6 @@ exports.create = async (req, res) => {
 
     // Check if the student already exists by email
     const existingStudent = await Student.findOne({ id });
-    console.log(existingStudent);
     if (existingStudent) {
       return res.status(400).json({ message: "Student with this id already exists" });
     }

@@ -26,7 +26,6 @@ exports.getCloById = async (req, res) => {
 // Add a new CLO
 exports.addClo = async (req, res) => {
     try {
-        console.log(req.body);
         const { lessonId, type, cloName } = req.body;
 
         if (!lessonId || !type || !cloName) {
