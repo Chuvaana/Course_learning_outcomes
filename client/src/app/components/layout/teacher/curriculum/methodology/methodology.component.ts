@@ -129,7 +129,7 @@ export class MethodologyComponent {
   }
 
   onRowEditSave(method: Method) {
-    const methodData = { ...method, lessonId: this.lessonId };
+    // const methodData = { ...method, lessonId: this.lessonId };
 
     if (method.id === null || method.id === undefined) {
       this.service.createMethod(method).subscribe((res: any) => {

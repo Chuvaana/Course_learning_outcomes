@@ -42,7 +42,7 @@ export class LessonComponent {
           {
             label: 'Жагсаалт',
             icon: 'pi pi-graduation-cap',
-            routerLink: ['/main/teacher/lesson', this.lessonId, 'student']
+            routerLink: ['/main/teacher/lesson', this.lessonId, 'studentList']
           },
           {
             label: 'Бүртгэх',

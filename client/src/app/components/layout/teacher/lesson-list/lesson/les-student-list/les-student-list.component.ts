@@ -1,0 +1,114 @@
+import { CommonModule } from '@angular/common';
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { ButtonModule } from 'primeng/button';
+import { DropdownModule } from 'primeng/dropdown';
+import { InputTextModule } from 'primeng/inputtext';
+import { TableModule } from 'primeng/table';
+import { StudentService } from '../../../../../../services/studentService';
+import { ActivatedRoute } from '@angular/router';
+
+interface Student {
+  lessonId: string;
+  studentCode: string;
+  studentName: string;
+  lec?: { day?: string; time?: string };
+  sem?: { day?: string; time?: string };
+  lab?: { day?: string; time?: string };
+}
+
+@Component({
+  selector: 'app-les-student-list',
+  standalone: true,
+  imports: [CommonModule, TableModule, DropdownModule, InputTextModule, ButtonModule, FormsModule],
+  templateUrl: './les-student-list.component.html',
+  styleUrl: './les-student-list.component.scss'
+})
+export class LesStudentListComponent {
+  students: Student[] = [];
+  filteredStudents: Student[] = [];
+  searchQuery: string = '';
+  selectedLessonType: string = '';
+  selectedTime: number | null = null;
+  lessonId!: string;
+
+  lessonTypes = [
+    { id: 'LEC', name: 'Лекц' },
+    { id: 'SEM', name: 'Семинар' },
+    { id: 'LAB', name: 'Лаборатори' },
+  ];
+  weeks = [
+    { id: 'Monday', name: 'Даваа' },
+    { id: 'Tuesday', name: 'Мягмар' },
+    { id: 'Wednesday', name: 'Лхагва' },
+    { id: 'Thursday', name: 'Пүрэв' },
+    { id: 'Friday', name: 'Баасан' }
+  ]
+
+  timeSlots = Array.from({ length: 8 }, (_, i) => ({ value: i + 1, label: `Цаг ${i + 1}` }));
+
+  constructor(private studentService: StudentService, private route: ActivatedRoute) { }
+
+  ngOnInit(): void {
+    this.route.parent?.paramMap.subscribe(params => {
+      this.lessonId = params.get('id')!;
+    });
+    this.loadStudents();
+  }
+
+  loadStudents(): void {
+    this.studentService.getStudents(this.lessonId).subscribe((data: Student[]) => {
+      this.students = data;
+      this.filteredStudents = data;
+    });
+    this.searchQuery = '';
+    this.selectedTime = null,
+    this.selectedLessonType = '';
+  }
+
+  filterStudents(): void {
+    this.filteredStudents = this.students.filter((student) => {
+      const matchesLessonType =
+        !this.selectedLessonType || this.hasLessonType(student, this.selectedLessonType);
+
+      const matchesSearch =
+        !this.searchQuery ||
+        student.studentName.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+        student.studentCode.toLowerCase().includes(this.searchQuery.toLowerCase());
+
+
+      const matchesTime = this.selectedTime ? this.hasSelectedTime(student) : true;
+
+      return matchesLessonType && matchesSearch && matchesTime;
+    });
+  }
+
+  hasLessonType(student: Student, lessonType: string): boolean {
+    switch (lessonType) {
+      case 'LEC':
+        return !!student.lec?.day;
+      case 'SEM':
+        return !!student.sem?.day;
+      case 'LAB':
+        return !!student.lab?.day;
+      default:
+        return false;
+    }
+  }
+
+  hasSelectedTime(student: Student): boolean {
+    const selected = this.selectedTime;
+    return (
+      selected !== null &&
+      (Number(student.lec?.time) === selected ||
+        Number(student.sem?.time) === selected ||
+        Number(student.lab?.time) === selected)
+    );
+  }
+
+  getDayInMongolian(day: string): string {
+    const found = this.weeks.find(w => w.id === day);
+    return found ? found.name : day; // Return the Mongolian name if found, otherwise return the original day
+  }
+  
+}

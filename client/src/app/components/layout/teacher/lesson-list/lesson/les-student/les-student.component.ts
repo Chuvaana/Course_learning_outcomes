@@ -13,8 +13,8 @@ import { ToastModule } from 'primeng/toast';
 
 interface Student {
   lessonId: string,
-  id: string,
-  name: string,
+  studentCode: string,
+  studentName: string,
   lecDay?: string,
   lecTime?: string,
   semDay?: string,
@@ -85,7 +85,6 @@ export class LesStudentComponent {
   ngOnInit(): void {
     this.route.parent?.paramMap.subscribe(params => {
       this.lessonId = params.get('id')!;
-      console.log('Lesson ID:', this.lessonId);
     });
   }
 
@@ -127,8 +126,8 @@ export class LesStudentComponent {
     for (let i = 1; i <= this.onlyName.length - 1; i++) {
       this.studentList.push({
         lessonId: this.lessonId,
-        id: this.onlyId[i],
-        name: this.onlyName[i],
+        studentCode: this.onlyId[i],
+        studentName: this.onlyName[i],
         lecDay: this.studentForm.get('lessonType')?.value == 'LEC' ? day : '',
         lecTime: this.studentForm.get('lessonType')?.value == 'LEC' ? time : '',
         labDay: this.studentForm.get('lessonType')?.value == 'LAB' ? day : '',

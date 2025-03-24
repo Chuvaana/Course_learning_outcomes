@@ -24,4 +24,8 @@ export class StudentService {
   registerStudent(studentData: any): Observable<any> {
     return this.http.post(`${this.apiUrl}/lesStudents/upload`, studentData);
   }
+
+  getStudents(lessonCode: string): Observable<any> {
+    return this.http.get(`${this.apiUrl}/lesStudents/${lessonCode}`);
+  }
 }

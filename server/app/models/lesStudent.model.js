@@ -2,8 +2,8 @@ const mongoose = require("mongoose");
 var studentSchema = mongoose.Schema(
     {
         lessonId: { type: mongoose.Schema.Types.ObjectId, ref: 'Lesson', required: true },
-        id: { type: String, required: true, unique: true },
-        name: { type: String, required: true },
+        studentCode: { type: String, required: true, unique: true },
+        studentName: { type: String, required: true },
         lec: {
             day: { type: String },
             time: { type: String },

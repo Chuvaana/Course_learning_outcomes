@@ -8,6 +8,7 @@ import { LessonListComponent } from './lesson-list/lesson-list.component';
 import { CloPlanComponent } from './lesson-list/lesson/clo-plan/clo-plan.component';
 import { CloPointComponent } from './lesson-list/lesson/clo-point/clo-point.component';
 // import { CloComponent } from './lesson-list/lesson/clo/clo.component';
+import { LesStudentListComponent } from './lesson-list/lesson/les-student-list/les-student-list.component';
 import { LesStudentComponent } from './lesson-list/lesson/les-student/les-student.component';
 import { LessonComponent } from './lesson-list/lesson/lesson.component';
 import { TeacherComponent } from './teacher.component';
@@ -32,6 +33,10 @@ const routes: Routes = [
           {
             path: 'student',
             component: LesStudentComponent,
+          },
+          {
+            path: 'studentList',
+            component: LesStudentListComponent,
           },
           {
             path: 'clo-point',

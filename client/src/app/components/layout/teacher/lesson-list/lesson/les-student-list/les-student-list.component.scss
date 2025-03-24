@@ -1,0 +1,21 @@
+.student-list-container {
+    width: 90%;
+    margin: auto;
+    padding: 20px;
+}
+
+.filter-section {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+    align-items: center;
+}
+
+.search-input,
+.dropdown-filter {
+    flex-grow: 1;
+}
+
+.refresh-btn {
+    margin-left: auto;
+}

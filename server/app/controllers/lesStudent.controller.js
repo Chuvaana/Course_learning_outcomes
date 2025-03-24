@@ -25,7 +25,7 @@ exports.getAllStudents = async (req, res) => {
 // Get student by ID
 exports.getStudentById = async (req, res) => {
     try {
-        const student = await Student.findById(req.params.id); // Find student by ID
+        const student = await Student.find({ lessonId: req.params.id }); // Find student by ID
         if (!student) {
             return res.status(404).json({ message: "Student not found" });
         }
@@ -63,31 +63,24 @@ exports.deleteStudent = async (req, res) => {
 
 exports.uploadStudents = async (req, res) => {
     try {
-        // 1. Extract student data from the request body
-        const studentData = req.body; // Expecting an array of students
-        console.log(req.body);
-        console.log(studentData);
+        const studentData = req.body;
         if (!studentData || !Array.isArray(studentData)) {
             return res.status(400).json({ message: 'Invalid student data' });
         }
 
         const updatedStudents = [];
 
-        // 2. Process each student and save or update
         for (const student of studentData) {
-            const { lessonId, id, name, lecDay, lecTime, semDay, semTime, labDay, labTime, } = student;
+            const { lessonId, studentCode, studentName, lecDay, lecTime, semDay, semTime, labDay, labTime, } = student;
 
-            // Find the lesson by its name
-            const lesson = await Lesson.findOne({ id: lessonId });
+            const lesson = await Lesson.findById(lessonId);
             if (!lesson) {
                 return res.status(400).json({ message: `Lesson ${lessonId} not found` });
             }
 
-            // Check if the student already exists
-            let existingStudent = await Student.findOne({ id: id, lessonId: lessonId });
+            let existingStudent = await Student.findOne({ studentCode: studentCode, lessonId: lessonId });
 
             if (existingStudent) {
-                // Update the seminar day and time if student already exists
                 existingStudent.lab = {
                     day: labDay,
                     time: labTime,
@@ -103,14 +96,13 @@ exports.uploadStudents = async (req, res) => {
                 await existingStudent.save();
                 updatedStudents.push(existingStudent);
             } else {
-                // Create new student record
                 const newStudent = new Student({
-                    lessonId: lesson._id,
-                    id: id,
-                    name: name,
+                    lessonId: lessonId,
+                    studentCode: studentCode,
+                    studentName: studentName,
                     lec: {
-                        day: lecDay,  // Assuming it's fixed for lectures or adjust accordingly
-                        time: lecTime,      // Assuming it's fixed or adjust accordingly
+                        day: lecDay,
+                        time: lecTime,
                     },
                     sem: {
                         day: semDay,
@@ -127,7 +119,6 @@ exports.uploadStudents = async (req, res) => {
             }
         }
 
-        // 3. Return the result
         return res.status(200).json({ message: 'Students processed successfully', data: updatedStudents });
     } catch (error) {
         console.error('Error processing students:', error);
