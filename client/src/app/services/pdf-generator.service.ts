@@ -1369,46 +1369,4 @@ export class PdfGeneratorService {
 
     pdfMake.createPdf(documentDefinition).open();
   }
-
-
-  generatePdf(data: string[][]) {
-    if (data.length === 0) return;
-
-    // Dynamically generate widths based on number of columns
-    const documentDefinition = {
-      content: [
-        {
-          table: {
-            headerRows: 1,
-            widths: ['10%','5%','5%','5%','5%','5%','5%','5%','5%','5%','5%','5%','5%','5%','5%','5%','5%','5%','5%'],
-            body: data.map((row, rowIndex) =>
-              row.map(cell => ({
-                text: cell,
-                fontSize: 5, // ✅ Set font size here
-                alignment: 'center'
-              }))
-            )
-          },
-          // layout: {
-          //   fillColor: (rowIndex: number) => {
-          //     return rowIndex === 0 ? '#CCCCCC' : null; // ✅ Gray background for header row
-          //   }
-          // }
-        }
-      ],
-      styles: {
-        header: {
-          fontSize: 14,
-          bold: true,
-          margin: [0, 0, 0, 0] as [number, number, number, number] // ✅ Force it to be a tuple
-        },
-        body: {
-          fontSize: 10,
-          margin: [0, 0, 0, 0] as [number, number, number, number] // ✅ Force it to be a tuple
-        }
-      }
-    };
-
-    pdfMake.createPdf(documentDefinition).open(); // ✅ No more TypeScript errors!
-  }
 }

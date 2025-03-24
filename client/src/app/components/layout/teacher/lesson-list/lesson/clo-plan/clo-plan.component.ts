@@ -1,22 +1,24 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { saveAs } from 'file-saver'; // file-saver сан
 import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { InputNumber } from 'primeng/inputnumber';
 import { InputTextModule } from 'primeng/inputtext';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { SelectModule } from 'primeng/select';
 import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { ToastModule } from 'primeng/toast';
+import { forkJoin } from 'rxjs';
 import * as XLSX from 'xlsx';
 import { CLOService } from '../../../../../../services/cloService';
+import { PdfCloGeneratorService } from '../../../../../../services/pdf-clo-generator.service';
 import { PdfGeneratorService } from '../../../../../../services/pdf-generator.service';
 import { TeacherService } from '../../../../../../services/teacherService';
-import { ActivatedRoute } from '@angular/router';
-import { forkJoin } from 'rxjs';
-import { ProgressSpinnerModule } from 'primeng/progressspinner';
+
 @Component({
   selector: 'app-clo-plan',
   standalone: true,
@@ -54,13 +56,15 @@ export class CloPlanComponent {
     private cloService: CLOService,
     private pdfService: PdfGeneratorService,
     private msgService: MessageService,
-    private route: ActivatedRoute) { }
+    private route: ActivatedRoute,
+    private pdfCloService: PdfCloGeneratorService) { }
 
   async ngOnInit() {
     this.route.parent?.paramMap.subscribe(params => {
       this.lessonId = params.get('id')!;
       console.log('Lesson ID:', this.lessonId);
     });
+    
 
     this.cloForm = this.fb.group({
       cloRows: this.fb.array([]),
@@ -379,6 +383,6 @@ export class CloPlanComponent {
       //   }
     }
     console.log(excelData);
-    this.pdfService.generatePdf(excelData);
+    this.pdfCloService.generatePdf(excelData);
   }
 }
