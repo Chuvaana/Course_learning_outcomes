@@ -27,12 +27,12 @@ export class CLOService {
     return this.http.post(`${this.apiUrl}/cloPlans/edit`, data);
   }
 
-  getPointPlan(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/pointPlans`);
+  getPointPlan(id: string): Observable<any> {
+    return this.http.get(`${this.apiUrl}/pointPlans/${id}`);
   }
-
-  getCloPlan(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/cloPlans`);
+ 
+  getCloPlan(id: string): Observable<any> {
+    return this.http.get(`${this.apiUrl}/cloPlans/${id}`);
   }
 
   getCloList(id: string): Observable<any> {

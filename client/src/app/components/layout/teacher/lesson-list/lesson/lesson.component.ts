@@ -1,19 +1,56 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, RouterModule } from '@angular/router';
+import { MenuItem } from 'primeng/api';
+import { TieredMenuModule } from 'primeng/tieredmenu';
+import { ToastModule } from 'primeng/toast';
 import { NavbarComponent } from './navbar/navbar.component';
-
 @Component({
   selector: 'app-lesson',
-  imports: [RouterModule, NavbarComponent],
+  imports: [RouterModule, TieredMenuModule, ToastModule, NavbarComponent],
   templateUrl: './lesson.component.html',
   styleUrl: './lesson.component.scss'
 })
 export class LessonComponent {
   lessonId: string = '';
+  items: MenuItem[] | undefined;
 
-  constructor(private route: ActivatedRoute) {}
+  constructor(private route: ActivatedRoute) { }
 
   ngOnInit(): void {
     this.lessonId = this.route.snapshot.paramMap.get('id') || '';
+
+    this.items = [
+      {
+        label: 'Хичээлийн хөтөлбөр',
+        icon: 'pi pi-book',
+        // url: '/main/teacher/curriculum'
+        routerLink: ['/main/teacher/curriculum', this.lessonId]
+      },
+      {
+        label: 'Дүнгийн төлөвлөлт',
+        icon: 'pi pi-check',
+        routerLink: ['/main/teacher/lesson', this.lessonId, 'clo-plan']
+      },
+      {
+        label: 'Дүнгийн төлөвлөлт2',
+        icon: 'pi pi-check',
+        routerLink: ['/main/teacher/lesson', this.lessonId, 'clo-point']
+      },
+      {
+        label: 'Оюутан',
+        icon: 'pi pi-plus',
+        url: '/main/teacher/lesson/student'
+      },
+      {
+        label: 'Ирц',
+        icon: 'pi pi-plus',
+        url: '/main/teacher/lesson/student'
+      },
+      {
+        label: 'ХИЧЭЭЛИЙН АГУУЛГА, ЦАГИЙН ХУВААРИЛАЛТ',
+        icon: 'pi pi-plus',
+        url: '/main/teacher/lesson/syllabus/schedule'
+      }
+    ];
   }
 }

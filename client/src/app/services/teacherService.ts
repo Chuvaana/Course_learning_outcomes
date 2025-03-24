@@ -39,8 +39,8 @@ export class TeacherService {
     return this.http.get(`${this.apiUrl}/teachers/${teacherId}`);
   }
 
-  getCloList(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/clos`);
+  getCloList(id: string): Observable<any> {
+    return this.http.get(`${this.apiUrl}/clos/${id}`);
   }
 
   registerClo(cloData: any): Observable<any> {

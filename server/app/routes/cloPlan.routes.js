@@ -6,6 +6,7 @@ module.exports = app => {
     router.post("/", clos.addCloPlan);
 
     router.get("/", clos.getCloPlan);
+    router.get("/:id", clos.getCloByLessonId);
 
     router.post("/edit", clos.updateCloPlan);
 

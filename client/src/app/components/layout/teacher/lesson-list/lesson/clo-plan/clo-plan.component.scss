@@ -18,6 +18,13 @@
     background-color: #f1f1f1;
 }
 
+:host ::ng-deep  .p-frozen-column {
+    font-weight: bold;
+}
+:host ::ng-deep .p-datatable-frozen-tbody {
+    font-weight: bold;
+}
+
 // .cloTable{
 //     width: calc(100vw - 216px);
 //     padding: 10px;

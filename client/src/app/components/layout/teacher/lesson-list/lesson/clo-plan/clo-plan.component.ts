@@ -1,6 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { saveAs } from 'file-saver'; // file-saver сан
+import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { InputNumber } from 'primeng/inputnumber';
 import { InputTextModule } from 'primeng/inputtext';
@@ -8,15 +10,13 @@ import { SelectModule } from 'primeng/select';
 import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { ToastModule } from 'primeng/toast';
-import { TeacherService } from '../../../../../../services/teacherService';
-import { CLOService } from '../../../../../../services/cloService';
-import { MessageService } from 'primeng/api';
 import * as XLSX from 'xlsx';
-import { saveAs } from 'file-saver'; // file-saver сан
-import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
+import { CLOService } from '../../../../../../services/cloService';
 import { PdfGeneratorService } from '../../../../../../services/pdf-generator.service';
-
+import { TeacherService } from '../../../../../../services/teacherService';
+import { ActivatedRoute } from '@angular/router';
+import { forkJoin } from 'rxjs';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 @Component({
   selector: 'app-clo-plan',
   standalone: true,
@@ -30,77 +30,71 @@ import { PdfGeneratorService } from '../../../../../../services/pdf-generator.se
     InputTextModule,
     FormsModule,
     ReactiveFormsModule,
-    InputNumber],
+    InputNumber,
+    ProgressSpinnerModule
+  ],
   providers: [MessageService],
   templateUrl: './clo-plan.component.html',
   styleUrl: './clo-plan.component.scss'
 })
 export class CloPlanComponent {
 
-  @Input() lessonId: string = ''
   cloForm!: FormGroup;
   sampleData!: any;
   cloList!: any;
   pointPlan!: any;
   cloPlan!: any;
   isUpdate: boolean = false;
+  lessonId!: string;
+  isLoading: boolean = false;
 
   constructor(
     private fb: FormBuilder,
     private service: TeacherService,
     private cloService: CLOService,
     private pdfService: PdfGeneratorService,
-    private msgService: MessageService) { }
+    private msgService: MessageService,
+    private route: ActivatedRoute) { }
 
-  ngOnInit() {
+  async ngOnInit() {
+    this.route.parent?.paramMap.subscribe(params => {
+      this.lessonId = params.get('id')!;
+      console.log('Lesson ID:', this.lessonId);
+    });
+
     this.cloForm = this.fb.group({
       cloRows: this.fb.array([]),
     });
 
-    this.service.getCloList().subscribe((res) => {
-      if (res) {
-        this.cloList = res;
-      }
-    });
+    await this.readData();
+  }
 
-    this.cloService.getPointPlan().subscribe((res) => {
-      if (res === null || (Array.isArray(res) && res.length === 0)) {
-        // If res is null or an empty array
-        this.pointPlan = {
-          timeManagement: 5,
-          engagement: 5,
-          recall: 5,
-          problemSolving: 5,
-          recall2: 5,
-          problemSolving2: 5,
-          toExp: 15,
-          processing: 5,
-          decisionMaking: 5,
-          formulation: 5,
-          analysis: 5,
-          implementation: 5,
-          understandingLevel: 5,
-          analysisLevel: 10,
-          creationLevel: 15
-        };
+  async readData() {
+    this.isLoading = true;
+
+    await forkJoin([this.service.getCloList(this.lessonId),
+    this.cloService.getPointPlan(this.lessonId),
+    this.cloService.getCloPlan(this.lessonId)]).subscribe(([cloList, pointPlan, cloPlan]) => {
+      this.cloList = cloList;
+      this.pointPlan = pointPlan || {
+        timeManagement: 5, engagement: 5, recall: 5, problemSolving: 5,
+        recall2: 5, problemSolving2: 5, toExp: 15, processing: 5,
+        decisionMaking: 5, formulation: 5, analysis: 5,
+        implementation: 5, understandingLevel: 5,
+        analysisLevel: 10, creationLevel: 15
+      };
+
+      this.cloPlan = cloPlan;
+      if ((Array.isArray(this.cloPlan[0]) && this.cloPlan[0].length === 0)) {
+        this.cloPlan[0] = [this.pointPlan];
+      }
+      if ((Array.isArray(this.cloPlan[1]) && this.cloPlan[1].length === 0)) {
+        this.createRows();
+        this.isLoading = false;
       } else {
-        // If res is not null and not an empty array
-        this.pointPlan = res;
-      }
-    });
-
-    this.cloService.getCloPlan().subscribe((res) => {
-      if (res) {
-        this.cloPlan = res;
-        if ((Array.isArray(this.cloPlan[0]) && this.cloPlan[0].length === 0)) {
-          this.cloPlan[0] = [this.pointPlan];
-        }
-        if ((Array.isArray(this.cloPlan[1]) && this.cloPlan[1].length === 0)) {
-          this.createRows();
-        } else {
-          this.isUpdate = true;
-          this.populateCLOForm();
-        }
+        this.isUpdate = true;
+        this.populateCLOForm();
+        this.isLoading = false;
       }
     });
   }
@@ -123,6 +117,7 @@ export class CloPlanComponent {
         cloId: clo.id,
         cloName: clo.cloName,
         cloType: clo.type,
+        lessonId: this.lessonId,
         timeManagement: 0,
         engagement: 0,
         recall: 0,
@@ -144,6 +139,7 @@ export class CloPlanComponent {
       this.cloRows.push(
         this.fb.group({
           id: [data.id],
+          lessonId: [data.lessonId],
           cloId: [data.cloId],
           cloName: [data.cloName],
           cloType: [data.cloType],
@@ -165,15 +161,16 @@ export class CloPlanComponent {
         })
       );
     });
-    console.log(this.sampleData);
   }
+
   populateCLOForm() {
-    this.sampleData = this.cloPlan;
+    this.sampleData = [[this.pointPlan], this.cloPlan];
 
     this.sampleData[1].forEach((data: any) => {
       this.cloRows.push(
         this.fb.group({
           id: [data.id],
+          lessonId: [data.lessonId],
           cloId: [data.cloId],
           cloName: [data.cloName],
           cloType: [data.cloType],
@@ -219,9 +216,10 @@ export class CloPlanComponent {
     let isValid = true;
 
     Object.keys(columnNames).forEach(column => {
-      const expectedTotal = (this.pointPlan && this.pointPlan[0][column] !== undefined)
-        ? this.pointPlan[0][column]
+      const expectedTotal = (this.pointPlan && this.pointPlan && this.pointPlan[column] !== undefined)
+        ? this.pointPlan[column]
         : 0;
+
       let actualTotal = 0;
 
       this.cloRows.controls.forEach(row => {
@@ -250,54 +248,64 @@ export class CloPlanComponent {
     return isValid;
   }
 
-  onSubmit(): void {
-
+  onSubmit() {
     if (this.validateColumnTotals()) {
       const formData = this.cloForm.value.cloRows;
-      // Check if we are updating or creating
-      if (this.isUpdate) {
-        this.updateCloPlan(formData);
-      } else {
-        this.cloService.saveCloPlan(formData).subscribe(
-          (res) => {
-            this.msgService.add({
-              severity: 'success',
-              summary: 'Success',
-              detail: 'Амжилттай хадгалагдлаа',
-            });
-            this.populateCLOForm();
-          },
-          (err) => {
-            this.msgService.add({
-              severity: 'error',
-              summary: 'Error',
-              detail: 'Алдаа гарлаа: ' + err.message,
-            });
-          }
-        );
-      }
+      const request = this.isUpdate ? this.cloService.updateCloPlan(formData) : this.cloService.saveCloPlan(formData);
+      request.subscribe(
+        () => this.msgService.add({ severity: 'success', summary: 'Success', detail: 'Амжилттай хадгалагдлаа' }),
+        err => this.msgService.add({ severity: 'error', summary: 'Error', detail: `Алдаа гарлаа: ${err.message}` })
+      );
     }
   }
 
-  updateCloPlan(updatedData: any): void {
-    this.cloService.updateCloPlan(updatedData).subscribe(
-      (res) => {
-        this.msgService.add({
-          severity: 'success',
-          summary: 'Success',
-          detail: 'Амжилттай шинэчэгдлээ',
-        });
-        // Optionally, refresh the data or navigate away
-      },
-      (err) => {
-        this.msgService.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: 'Алдаа гарлаа: ' + err.message,
-        });
-      }
-    );
-  }
+  // onSubmit(): void {
+  //   if (this.validateColumnTotals()) {
+  //     const formData = this.cloForm.value.cloRows;
+  //     // Check if we are updating or creating
+  //     if (this.isUpdate) {
+  //       this.updateCloPlan(formData);
+  //     } else {
+  //       this.cloService.saveCloPlan(formData).subscribe(
+  //         (res) => {
+  //           this.msgService.add({
+  //             severity: 'success',
+  //             summary: 'Success',
+  //             detail: 'Амжилттай хадгалагдлаа',
+  //           });
+  //           this.populateCLOForm();
+  //         },
+  //         (err) => {
+  //           this.msgService.add({
+  //             severity: 'error',
+  //             summary: 'Error',
+  //             detail: 'Алдаа гарлаа: ' + err.message,
+  //           });
+  //         }
+  //       );
+  //     }
+  //   }
+  // }
+
+  // updateCloPlan(updatedData: any): void {
+  //   this.cloService.updateCloPlan(updatedData).subscribe(
+  //     (res) => {
+  //       this.msgService.add({
+  //         severity: 'success',
+  //         summary: 'Success',
+  //         detail: 'Амжилттай шинэчэгдлээ',
+  //       });
+  //       // Optionally, refresh the data or navigate away
+  //     },
+  //     (err) => {
+  //       this.msgService.add({
+  //         severity: 'error',
+  //         summary: 'Error',
+  //         detail: 'Алдаа гарлаа: ' + err.message,
+  //       });
+  //     }
+  //   );
+  // }
 
   exportToExcel() {
     // Дата-г worksheet болгон хөрвүүлэх

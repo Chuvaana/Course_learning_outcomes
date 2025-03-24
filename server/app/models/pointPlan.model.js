@@ -2,6 +2,7 @@
 const mongoose = require('mongoose');
 
 const PointPlanSchema = new mongoose.Schema({
+    lessonId: { type: mongoose.Schema.Types.ObjectId, ref: 'Lesson', required: true },
     timeManagement: { type: Number, default: 0 },
     engagement: { type: Number, default: 0 },
     recall: { type: Number, default: 0 },

@@ -1,17 +1,49 @@
-// .lesson-form {
-//     padding: 20px;
-//     border: 1px solid #ccc;
-//     margin-bottom: 20px;
-// }
-
-// .lesson-cards {
-//     display: grid;
-//     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-//     gap: 20px;
-//     background-color: beige;
-// }
-
-// .lesson-cards .p-card {
-//     width: 100%;
-//     overflow: hidden;
-// }
+.lesson-list-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem; /* Space between elements */
+    padding: 2rem;
+  
+    button {
+      width: 12rem;
+      font-size: 1rem;
+      padding: 0.75rem;
+      border-radius: 0.5rem;
+    }
+  }
+  
+  .lesson-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* Responsive grid */
+    gap: 1.5rem; /* Space between cards */
+    width: 100%;
+    max-width: 1200px; /* Limit width for better layout */
+  }
+  
+  .lesson-card {
+    background: white;
+    border-radius: 0.75rem;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  
+    a {
+      font-weight: bold;
+      font-size: 1.1rem;
+      text-decoration: none;
+      color: #007bff;
+      transition: color 0.3s ease;
+  
+      &:hover {
+        color: #0056b3;
+      }
+    }
+  
+    &:hover {
+      transform: translateY(-5px);
+      box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.15);
+    }
+  }
+  

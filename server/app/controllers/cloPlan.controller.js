@@ -12,6 +12,42 @@ exports.getAllCLOs = async (req, res) => {
     }
 };
 
+// Get all cloPlans
+exports.getCloByLessonId = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const cloPlans = await CloPlan.find({ lessonId: id }).populate("cloId");
+
+        const cloPlanData = cloPlans.map(plan => ({
+            cloId: plan.cloId ? plan.cloId._id : null,
+            cloName: plan.cloId ? plan.cloId.cloName : null,
+            cloType: plan.cloId ? plan.cloId.type : null,
+            timeManagement: plan.timeManagement,
+            engagement: plan.engagement,
+            recall: plan.recall,
+            problemSolving: plan.problemSolving,
+            recall2: plan.recall2,
+            problemSolving2: plan.problemSolving2,
+            toExp: plan.toExp,
+            processing: plan.processing,
+            decisionMaking: plan.decisionMaking,
+            formulation: plan.formulation,
+            analysis: plan.analysis,
+            implementation: plan.implementation,
+            understandingLevel: plan.understandingLevel,
+            analysisLevel: plan.analysisLevel,
+            creationLevel: plan.creationLevel,
+            id: plan.id
+        }));
+
+
+        console.log(id, cloPlans);
+        res.json(cloPlanData);
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+};
+
 // Add a CloPlan
 exports.addCloPlan = async (req, res) => {
     try {

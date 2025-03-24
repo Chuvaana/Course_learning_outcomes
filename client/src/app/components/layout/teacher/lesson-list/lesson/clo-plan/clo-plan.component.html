@@ -1,16 +1,22 @@
 <div class="cloTable">
-    <p-toast />
-    <form [formGroup]="cloForm" (ngSubmit)="onSubmit()">
-      <p-button type="submit" label="Хадгалах" />
-      <button mat-raised-button (click)="exportToExcel()">Excel рүү хөрвүүлэх</button>
-      <button (click)="generate()">PDF үүсгэх</button>
-      <div id="pdf-content">
-      <p-table [value]="cloRows.controls" [paginator]="true" [rows]="10" [sortMode]="'multiple'" rowGroupMode="subheader"
-        groupRowsBy="cloType" class="custom-table">
+  <p-toast />
+  <form [formGroup]="cloForm" (ngSubmit)="onSubmit()">
+    <div style="display: flex; justify-content:flex-start; gap: 10px;">
+      <p-button severity="info" icon="pi pi-save" type="submit" label="Хадгалах" />
+      <p-button severity="success" icon="pi pi-file-excel" label="Excel үүсгэх" (click)="exportToExcel()" />
+      <p-button severity="success" icon="pi pi-file-pdf" label="PDF үүсгэх" (click)="generate()" />
+    </div>
+    <!-- <button (click)="generate()">PDF үүсгэх</button> -->
+    <div id="pdf-content">
+
+      <p-progressSpinner *ngIf="isLoading" aria-label="Loading"></p-progressSpinner>
+
+      <p-table *ngIf="!isLoading" [value]="cloRows.controls " [paginator]="true" [rows]="10" [sortMode]="'multiple'"
+        rowGroupMode="subheader" class="custom-table">
         <ng-template pTemplate="header">
           <tr>
             <th rowspan="3">#</th>
-            <th rowspan="4">CLOs</th>
+            <th pFrozenColumn rowspan="4">CLOs</th>
             <th colspan="2">Хичээлийн идэвхи, оролцоо</th>
             <th colspan="2">Явцын сорил 1</th>
             <th colspan="2">Явцын сорил 2</th>
@@ -75,7 +81,7 @@
         <ng-template pTemplate="body" let-row let-ri="rowIndex">
           <tr [formGroup]="getRowGroup(ri)">
             <td> {{ ri + 1 }} </td>
-            <td> {{ row.value.cloName }} </td>
+            <td pFrozenColumn> {{ row.value.cloName }} </td>
             <td pEditableColumn>
               <p-cellEditor>
                 <ng-template pTemplate="input">
@@ -274,5 +280,5 @@
         </ng-template>
       </p-table>
     </div>
-    </form>
-  </div>
+  </form>
+</div>

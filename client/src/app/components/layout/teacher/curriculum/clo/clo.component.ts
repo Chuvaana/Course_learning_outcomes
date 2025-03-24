@@ -143,9 +143,9 @@ export class CloComponent {
 
   getGroupHeaderLabel(cloType: string): string {
     switch (cloType) {
-      case 'Лаборатори':
-        return 'Лекц, семинарын хичээлээр эзэмшсэн суралцахуйн үр дүнгүүд';
       case 'Лекц семинар':
+        return 'Лекц, семинарын хичээлээр эзэмшсэн суралцахуйн үр дүнгүүд';
+      case 'Лаборатори':
         return 'Лабораторийн хичээлээр эзэмшсэн суралцахуйн үр дүнгүүд';
       default:
         return cloType;

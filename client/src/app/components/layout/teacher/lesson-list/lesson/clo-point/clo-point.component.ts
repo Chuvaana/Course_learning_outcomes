@@ -1,12 +1,13 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
+import { FloatLabelModule } from 'primeng/floatlabel';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { ToastModule } from 'primeng/toast';
 import { CLOService } from '../../../../../../services/cloService';
-import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-clo-point',
@@ -16,7 +17,8 @@ import { ActivatedRoute } from '@angular/router';
     ReactiveFormsModule, // Required for reactive forms
     InputNumberModule,   // PrimeNG number input
     ButtonModule,
-    ToastModule
+    ToastModule,
+    FloatLabelModule
   ],
   providers: [MessageService],
   templateUrl: './clo-point.component.html',
@@ -25,7 +27,7 @@ import { ActivatedRoute } from '@angular/router';
 export class CloPointComponent implements OnInit {
   myForm!: FormGroup;
   isNew = true;
-  lessonId: string = '';
+  @Input() lessonId: string = '';
 
   constructor(
     private fb: FormBuilder,
@@ -35,7 +37,11 @@ export class CloPointComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.lessonId = this.route.snapshot.paramMap.get('id') || '';
+    this.route.parent?.paramMap.subscribe(params => {
+      this.lessonId = params.get('id')!;
+      console.log('Lesson ID:', this.lessonId);
+    });
+
     this.myForm = this.fb.group({
       id: [null], // Include ID but don't use it in sum calculation
       timeManagement: [0],
@@ -54,10 +60,14 @@ export class CloPointComponent implements OnInit {
       analysisLevel: [0],
       creationLevel: [0]
     });
+    this.readData();
+  }
 
-    this.cloService.getPointPlan().subscribe((res) => {
-      if (res && res.length > 0) {
-        const data = res[0]; // Assuming you want the first item
+  readData() {
+
+    this.cloService.getPointPlan(this.lessonId).subscribe((res) => {
+      if (res) {
+        const data = res; // Assuming you want the first item
         this.isNew = false;
 
         this.myForm.patchValue({
@@ -108,19 +118,23 @@ export class CloPointComponent implements OnInit {
     }
 
     if (sum === 100) {
-      const formData = { ...this.myForm.value };
+      const formData = { ...this.myForm.value, lessonId: this.lessonId };
       if (this.isNew) {
         // Create new entry (without ID)
         this.cloService.createPointPlan(formData).subscribe(res => {
-          this.msgService.add({
-            severity: 'success',
-            summary: 'Success',
-            detail: 'Амжилттай хадгалагдлаа',
-          });
+          if (res) {
+            this.readData();
+            this.msgService.add({
+              severity: 'success',
+              summary: 'Success',
+              detail: 'Амжилттай хадгалагдлаа',
+            });
+          }
         });
       } else {
         // Update existing entry (with ID)
         this.cloService.updatePointPlan(formData).subscribe(res => {
+          this.readData();
           this.msgService.add({
             severity: 'success',
             summary: 'Success',

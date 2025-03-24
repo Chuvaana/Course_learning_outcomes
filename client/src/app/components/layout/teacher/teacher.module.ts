@@ -7,7 +7,7 @@ import { CurriculumComponent } from './curriculum/curriculum.component';
 import { LessonListComponent } from './lesson-list/lesson-list.component';
 import { CloPlanComponent } from './lesson-list/lesson/clo-plan/clo-plan.component';
 import { CloPointComponent } from './lesson-list/lesson/clo-point/clo-point.component';
-import { CloComponent } from './lesson-list/lesson/clo/clo.component';
+// import { CloComponent } from './lesson-list/lesson/clo/clo.component';
 import { LesStudentComponent } from './lesson-list/lesson/les-student/les-student.component';
 import { LessonComponent } from './lesson-list/lesson/lesson.component';
 import { TeacherComponent } from './teacher.component';
@@ -25,10 +25,10 @@ const routes: Routes = [
         path: 'lesson/:id',
         component: LessonComponent,
         children: [
-          {
-            path: 'clo',
-            component: CloComponent,
-          },
+          // {
+          //   path: 'clo',
+          //   component: CloComponent,
+          // },
           {
             path: 'student',
             component: LesStudentComponent,

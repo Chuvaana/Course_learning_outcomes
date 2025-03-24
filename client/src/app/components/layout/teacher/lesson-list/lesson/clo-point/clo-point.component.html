@@ -2,58 +2,105 @@
   <p-toast />
   <form [formGroup]="myForm" (ngSubmit)="onSubmit()">
     <h3>Хичээлийн идэвхи, оролцоо</h3>
-    <label for="timeManagement">Цаг төлөвлөлт, хариуцлага:</label>
-    <p-inputNumber formControlName="timeManagement" [min]="0"></p-inputNumber>
 
-    <label for="engagement">Суралцах хүсэл эрмэлзэл, өөрийгөө илэрхийлэх:</label>
-    <p-inputNumber formControlName="engagement" [min]="0"></p-inputNumber>
-
+    <p-floatlabel variant="on" class="w-full">
+      <p-inputNumber formControlName="timeManagement" id="timeManagement" autocomplete="off"
+        class="w-full p-3 border border-gray-300 rounded-lg focus:border-blue-500"></p-inputNumber>
+      <label for="timeManagement" style="padding-left: 20px;">Цаг төлөвлөлт, хариуцлага</label>
+    </p-floatlabel>
+    
+    <p-floatlabel variant="on" class="w-full">
+      <p-inputNumber formControlName="engagement" id="engagement" autocomplete="off"
+        class="w-full p-3 border border-gray-300 rounded-lg focus:border-blue-500"></p-inputNumber>
+      <label for="engagement" style="padding-left: 20px;">Суралцах хүсэл эрмэлзэл, өөрийгөө илэрхийлэх</label>
+    </p-floatlabel>
     <h3>Явцын сорил 1</h3>
-    <label for="recall1">Мэдлэгээ сэргээн санах, тайлбарлах:</label>
-    <p-inputNumber formControlName="recall" [min]="0"></p-inputNumber>
 
-    <label for="problemSolving1">Асуудал шийдвэрлэхэд мэдлэгээ хэрэглэх, задлан шинжлэх:</label>
-    <p-inputNumber formControlName="problemSolving" [min]="0"></p-inputNumber>
+    <p-floatlabel variant="on" class="w-full">
+      <p-inputNumber formControlName="recall" id="recall" autocomplete="off"
+        class="w-full p-3 border border-gray-300 rounded-lg focus:border-blue-500"></p-inputNumber>
+      <label for="recall" style="padding-left: 20px;">Мэдлэгээ сэргээн санах, тайлбарлах</label>
+    </p-floatlabel>
+
+    <p-floatlabel variant="on" class="w-full">
+      <p-inputNumber formControlName="problemSolving" id="problemSolving" autocomplete="off"
+        class="w-full p-3 border border-gray-300 rounded-lg focus:border-blue-500"></p-inputNumber>
+      <label for="problemSolving" style="padding-left: 20px;">Асуудал шийдвэрлэхэд мэдлэгээ хэрэглэх, задлан шинжлэх</label>
+    </p-floatlabel>
 
     <h3>Явцын сорил 2</h3>
-    <label for="recall2">Мэдлэгээ сэргээн санах, тайлбарлах:</label>
-    <p-inputNumber formControlName="recall2" [min]="0"></p-inputNumber>
 
-    <label for="problemSolving2">Асуудал шийдвэрлэхэд мэдлэгээ хэрэглэх, задлан шинжлэх:</label>
-    <p-inputNumber formControlName="problemSolving2" [min]="0"></p-inputNumber>
+    <p-floatlabel variant="on" class="w-full">
+      <p-inputNumber formControlName="recall2" id="recall2" autocomplete="off"
+        class="w-full p-3 border border-gray-300 rounded-lg focus:border-blue-500"></p-inputNumber>
+      <label for="recall2" style="padding-left: 20px;">Мэдлэгээ сэргээн санах, тайлбарлах</label>
+    </p-floatlabel>
+
+    <p-floatlabel variant="on" class="w-full">
+      <p-inputNumber formControlName="problemSolving2" id="problemSolving2" autocomplete="off"
+        class="w-full p-3 border border-gray-300 rounded-lg focus:border-blue-500"></p-inputNumber>
+      <label for="problemSolving2" style="padding-left: 20px;">Асуудал шийдвэрлэхэд мэдлэгээ хэрэглэх, задлан шинжлэх</label>
+    </p-floatlabel>
 
     <h3>Лабораторийн ажил, туршилт</h3>
-    <label for="toExp">Лабораторийн хэмжилт, туршилт, даалгавар гүйцэтгэх:</label>
-    <p-inputNumber formControlName="toExp" [min]="0"></p-inputNumber>
 
-    <label for="processing">Үр дүнг тохирох аргаар өгөгдсөн форматын дагуу боловсруулж, тайлагнах:</label>
-    <p-inputNumber formControlName="processing" [min]="0"></p-inputNumber>
-
+    <p-floatlabel variant="on" class="w-full">
+      <p-inputNumber formControlName="toExp" id="toExp" autocomplete="off"
+        class="w-full p-3 border border-gray-300 rounded-lg focus:border-blue-500"></p-inputNumber>
+      <label for="toExp" style="padding-left: 20px;">Лабораторийн хэмжилт, туршилт, даалгавар гүйцэтгэх</label>
+    </p-floatlabel>
+    
+    <p-floatlabel variant="on" class="w-full">
+      <p-inputNumber formControlName="processing" id="processing" autocomplete="off"
+        class="w-full p-3 border border-gray-300 rounded-lg focus:border-blue-500"></p-inputNumber>
+      <label for="processing" style="padding-left: 20px;">Үр дүнг тохирох аргаар өгөгдсөн форматын дагуу боловсруулж, тайлагнах</label>
+    </p-floatlabel>
     <h3>Даалгавар</h3>
-    <label for="decisionMaking">Өгөгдсөн даалгаварын хүрээнд шийдвэрлэх асуудлаа тодорхойлж томъёолох:</label>
-    <p-inputNumber formControlName="decisionMaking" [min]="0"></p-inputNumber>
 
-    <label for="formulation">Шийдвэрлэх асуудлын хүрээнд тодорхой шийдэл дэвшүүлэх, дүн шинжилгээ хийх:</label>
-    <p-inputNumber formControlName="formulation" [min]="0"></p-inputNumber>
+    <p-floatlabel variant="on" class="w-full">
+      <p-inputNumber formControlName="decisionMaking" id="decisionMaking" autocomplete="off"
+        class="w-full p-3 border border-gray-300 rounded-lg focus:border-blue-500"></p-inputNumber>
+      <label for="decisionMaking" style="padding-left: 20px;">Өгөгдсөн даалгаварын хүрээнд шийдвэрлэх асуудлаа тодорхойлж томъёолох</label>
+    </p-floatlabel>
 
-    <label for="analysis">Мэдлэг, ур чадвараа ашиглан сонгосон шийдлийн дагуу асуудлыг шийдвэрлэх:</label>
-    <p-inputNumber formControlName="analysis" [min]="0"></p-inputNumber>
+    <p-floatlabel variant="on" class="w-full">
+      <p-inputNumber formControlName="formulation" id="formulation" autocomplete="off"
+        class="w-full p-3 border border-gray-300 rounded-lg focus:border-blue-500"></p-inputNumber>
+      <label for="formulation" style="padding-left: 20px;">Шийдвэрлэх асуудлын хүрээнд тодорхой шийдэл дэвшүүлэх, дүн шинжилгээ хийх</label>
+    </p-floatlabel>
 
-    <label for="implementation">Бичгийн болон харилцах ур чадвараа ашиглан үр дүнг өгөгдсөн форматын дагуу
-      тайлагнах, илтгэх:</label>
-    <p-inputNumber formControlName="implementation" [min]="0"></p-inputNumber>
+    <p-floatlabel variant="on" class="w-full">
+      <p-inputNumber formControlName="analysis" id="analysis" autocomplete="off"
+        class="w-full p-3 border border-gray-300 rounded-lg focus:border-blue-500"></p-inputNumber>
+      <label for="analysis" style="padding-left: 20px;">Мэдлэг, ур чадвараа ашиглан сонгосон шийдлийн дагуу асуудлыг шийдвэрлэх</label>
+    </p-floatlabel>
+
+    <p-floatlabel variant="on" class="w-full">
+      <p-inputNumber formControlName="implementation" id="implementation" autocomplete="off"
+        class="w-full p-3 border border-gray-300 rounded-lg focus:border-blue-500"></p-inputNumber>
+      <label for="implementation" style="padding-left: 20px;">Бичгийн болон харилцах ур чадвараа ашиглан үр дүнг өгөгдсөн форматын дагуу
+        тайлагнах, илтгэх</label>
+    </p-floatlabel>
 
     <h3>Улирлын шалгалт</h3>
 
-    <label for="understandingLevel">Сэргээн санах/ойлгох түвшин:</label>
-    <p-inputNumber formControlName="understandingLevel" [min]="0"></p-inputNumber>
-
-    <label for="analysisLevel">Хэрэглэх /дүн шинжилгээ хийх түвшин:</label>
-    <p-inputNumber formControlName="analysisLevel" [min]="0"></p-inputNumber>
-
-    <label for="creationLevel">Үнэлэх/ бүтээх түвшин:</label>
-    <p-inputNumber formControlName="creationLevel" [min]="0"></p-inputNumber>
-
-    <p-button type="submit" label="Submit"></p-button>
+    <p-floatlabel variant="on" class="w-full">
+      <p-inputNumber formControlName="understandingLevel" id="understandingLevel" autocomplete="off"
+        class="w-full p-3 border border-gray-300 rounded-lg focus:border-blue-500"></p-inputNumber>
+      <label for="understandingLevel" style="padding-left: 20px;">Сэргээн санах/ойлгох түвшин</label>
+    </p-floatlabel>
+    
+    <p-floatlabel variant="on" class="w-full">
+      <p-inputNumber formControlName="analysisLevel" id="analysisLevel" autocomplete="off"
+        class="w-full p-3 border border-gray-300 rounded-lg focus:border-blue-500"></p-inputNumber>
+      <label for="analysisLevel" style="padding-left: 20px;">Хэрэглэх /дүн шинжилгээ хийх түвшин</label>
+    </p-floatlabel>
+    
+    <p-floatlabel variant="on" class="w-full">
+      <p-inputNumber formControlName="creationLevel" id="creationLevel" autocomplete="off"
+        class="w-full p-3 border border-gray-300 rounded-lg focus:border-blue-500"></p-inputNumber>
+      <label for="creationLevel" style="padding-left: 20px;">Үнэлэх/ бүтээх түвшин</label>
+    </p-floatlabel>
+    <p-button type="submit" label="Хадгалах"></p-button>
   </form>
 </div>

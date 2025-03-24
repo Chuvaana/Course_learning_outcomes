@@ -1,3 +1,36 @@
-// .card{
-//     background-color: aqua;
-// }
+.p-sidebar {
+    background-color: #ffffff;
+    z-index: 10000;
+}
+
+.p-sidebar .p-sidebar-header {
+    display: flex;
+    justify-content: flex-end;
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+}
+
+ul li {
+    padding: 10px 0;
+}
+
+ul li a {
+    text-decoration: none;
+    color: #333;
+    display: flex;
+    align-items: center;
+}
+
+ul li a:hover {
+    background-color: #f4f4f4;
+}
+
+.menu-toggle {
+    cursor: pointer;
+    padding: 1rem;
+    background-color: #333;
+    color: #fff;
+}
