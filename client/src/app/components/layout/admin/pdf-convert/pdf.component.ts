@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { PdfGeneratorService } from '../../../../services/pdf-generator.service';
+import { PdfCloGeneratorService } from '../../../../services/pdf-clo-generator.service';
 
 @Component({
   selector: 'pdf-root',
@@ -14,10 +15,20 @@ export class PdfComponent {
     ['sd', '28', 'Canada', 'Country']
   ];
 
-  constructor(private pdfService: PdfGeneratorService) {}
+  data = [
+    ['qw', 'Age', 'Country', 'Country','qw', 'Age', 'Country', 'Country','qw', 'Age', 'Country', 'Country','qw', 'Age', 'Country', 'Country','qw', 'Age', 'Country'],
+    ['qw', 'Age', 'Country', 'Country','qw', 'Age', 'Country', 'Country','qw', 'Age', 'Country', 'Country','qw', 'Age', 'Country', 'Country','qw', 'Age', 'Country'],
+    ['qw', 'Age', 'Country', 'Country','qw', 'Age', 'Country', 'Country','qw', 'Age', 'Country', 'Country','qw', 'Age', 'Country', 'Country','qw', 'Age', 'Country'],
+  ];
+
+  constructor(private pdfService: PdfGeneratorService, private pdfCloService : PdfCloGeneratorService) {}
 
   createPdf() {
     console.log(this.body);
     this.pdfService.generatePdfTest(this.body);
+  }
+  generatePdf(){
+    this.pdfCloService.generatePdf(this.data);
+
   }
 }

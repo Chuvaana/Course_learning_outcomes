@@ -16,6 +16,7 @@ import { saveAs } from 'file-saver'; // file-saver сан
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import { PdfGeneratorService } from '../../../../../../services/pdf-generator.service';
+import { PdfCloGeneratorService } from '../../../../../../services/pdf-clo-generator.service';
 
 @Component({
   selector: 'app-clo-plan',
@@ -49,7 +50,7 @@ export class CloPlanComponent {
     private fb: FormBuilder,
     private service: TeacherService,
     private cloService: CLOService,
-    private pdfService: PdfGeneratorService,
+    private pdfCloService: PdfCloGeneratorService,
     private msgService: MessageService) { }
 
   ngOnInit() {
@@ -371,6 +372,6 @@ export class CloPlanComponent {
       //   }
     }
     console.log(excelData);
-    this.pdfService.generatePdf(excelData);
+    this.pdfCloService.generatePdf(excelData);
   }
 }
