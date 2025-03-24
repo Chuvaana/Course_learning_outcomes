@@ -101,15 +101,15 @@ export class CloComponent {
           this.readData();
           this.msgService.add({
             severity: 'success',
-            summary: 'Success',
-            detail: 'New CLO created successfully!',
+            summary: 'Амжилттай',
+            detail: 'Амжилттай хадгалагдлаа!',
           });
         },
         (err) => {
           this.msgService.add({
             severity: 'error',
-            summary: 'Error',
-            detail: 'Failed to create CLO: ' + err.message,
+            summary: 'Алдаа',
+            detail: 'Алдаа гарлаа: ' + err.message,
           });
         }
       );
@@ -119,14 +119,14 @@ export class CloComponent {
           this.readData();
           this.msgService.add({
             severity: 'success',
-            summary: 'Success',
+            summary: 'Амжилттай',
             detail: 'CLO updated successfully!',
           });
         },
         (err) => {
           this.msgService.add({
             severity: 'error',
-            summary: 'Error',
+            summary: 'Алдаа',
             detail: 'Failed to update CLO: ' + err.message,
           });
         }

@@ -126,7 +126,7 @@ export class CloPointComponent implements OnInit {
             this.readData();
             this.msgService.add({
               severity: 'success',
-              summary: 'Success',
+              summary: 'Амжилттай',
               detail: 'Амжилттай хадгалагдлаа',
             });
           }
@@ -137,7 +137,7 @@ export class CloPointComponent implements OnInit {
           this.readData();
           this.msgService.add({
             severity: 'success',
-            summary: 'Success',
+            summary: 'Амжилттай',
             detail: 'Амжилттай шинэчлэгдлээ',
           });
         });

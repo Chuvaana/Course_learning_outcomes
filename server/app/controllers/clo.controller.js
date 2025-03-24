@@ -14,7 +14,6 @@ exports.getCloById = async (req, res) => {
     try {
         const id = req.params.id;
         const clos = await Clo.find({ lessonId: id });
-        console.log(id, clos);
         if (!clos) {
             return res.json([]);
         }

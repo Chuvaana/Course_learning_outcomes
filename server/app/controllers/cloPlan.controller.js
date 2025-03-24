@@ -39,9 +39,6 @@ exports.getCloByLessonId = async (req, res) => {
             creationLevel: plan.creationLevel,
             id: plan.id
         }));
-
-
-        console.log(id, cloPlans);
         res.json(cloPlanData);
     } catch (err) {
         res.status(500).json({ message: err.message });

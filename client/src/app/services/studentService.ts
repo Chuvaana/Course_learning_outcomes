@@ -22,6 +22,6 @@ export class StudentService {
 
   // Register a new teacher
   registerStudent(studentData: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/student`, studentData);
+    return this.http.post(`${this.apiUrl}/lesStudents/upload`, studentData);
   }
 }

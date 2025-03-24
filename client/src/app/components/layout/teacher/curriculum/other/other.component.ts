@@ -53,14 +53,14 @@ export class OtherComponent {
         this.service.addDefinition(this.otherForm.value).subscribe((res: any) => {
           this.msgService.add({
             severity: 'success',
-            summary: 'Success',
+            summary: 'Амжилттай',
             detail: 'Амжилттай хадгалагдлаа!',
           });
         },
           (err) => {
             this.msgService.add({
               severity: 'error',
-              summary: 'Error',
+              summary: 'Алдаа',
               detail: 'Алдаа гарлаа: ' + err.message,
             });
           })
@@ -68,14 +68,14 @@ export class OtherComponent {
         this.service.updateDefinition(this.lessonId, this.otherForm.value).subscribe((res: any) => {
           this.msgService.add({
             severity: 'success',
-            summary: 'Success',
+            summary: 'Амжилттай',
             detail: 'Амжилттай шинэчлэгдлээ!',
           });
         },
           (err) => {
             this.msgService.add({
               severity: 'error',
-              summary: 'Error',
+              summary: 'Алдаа',
               detail: 'Алдаа гарлаа: ' + err.message,
             });
           });

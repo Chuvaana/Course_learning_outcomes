@@ -51,6 +51,7 @@ require("./app/routes/definition.routes")(app);
 require("./app/routes/methodology.routes")(app);
 require("./app/routes/assessment.routes")(app);
 require("./app/routes/additional.routes")(app);
+require("./app/routes/lesStudent.routes")(app);
 
 
 // set port, listen for requests

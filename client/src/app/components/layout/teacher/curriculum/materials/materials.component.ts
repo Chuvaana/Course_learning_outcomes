@@ -72,7 +72,7 @@ export class MaterialsComponent {
       (err) => {
         this.msgService.add({
           severity: 'error',
-          summary: 'Error',
+          summary: 'Алдаа',
           detail: err.message,
         });
       })

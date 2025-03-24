@@ -257,59 +257,11 @@ export class CloPlanComponent {
       const formData = this.cloForm.value.cloRows;
       const request = this.isUpdate ? this.cloService.updateCloPlan(formData) : this.cloService.saveCloPlan(formData);
       request.subscribe(
-        () => this.msgService.add({ severity: 'success', summary: 'Success', detail: 'Амжилттай хадгалагдлаа' }),
-        err => this.msgService.add({ severity: 'error', summary: 'Error', detail: `Алдаа гарлаа: ${err.message}` })
+        () => this.msgService.add({ severity: 'success', summary: 'Амжилттай', detail: 'Амжилттай хадгалагдлаа' }),
+        err => this.msgService.add({ severity: 'error', summary: 'Алдаа', detail: `Алдаа гарлаа: ${err.message}` })
       );
     }
   }
-
-  // onSubmit(): void {
-  //   if (this.validateColumnTotals()) {
-  //     const formData = this.cloForm.value.cloRows;
-  //     // Check if we are updating or creating
-  //     if (this.isUpdate) {
-  //       this.updateCloPlan(formData);
-  //     } else {
-  //       this.cloService.saveCloPlan(formData).subscribe(
-  //         (res) => {
-  //           this.msgService.add({
-  //             severity: 'success',
-  //             summary: 'Success',
-  //             detail: 'Амжилттай хадгалагдлаа',
-  //           });
-  //           this.populateCLOForm();
-  //         },
-  //         (err) => {
-  //           this.msgService.add({
-  //             severity: 'error',
-  //             summary: 'Error',
-  //             detail: 'Алдаа гарлаа: ' + err.message,
-  //           });
-  //         }
-  //       );
-  //     }
-  //   }
-  // }
-
-  // updateCloPlan(updatedData: any): void {
-  //   this.cloService.updateCloPlan(updatedData).subscribe(
-  //     (res) => {
-  //       this.msgService.add({
-  //         severity: 'success',
-  //         summary: 'Success',
-  //         detail: 'Амжилттай шинэчэгдлээ',
-  //       });
-  //       // Optionally, refresh the data or navigate away
-  //     },
-  //     (err) => {
-  //       this.msgService.add({
-  //         severity: 'error',
-  //         summary: 'Error',
-  //         detail: 'Алдаа гарлаа: ' + err.message,
-  //       });
-  //     }
-  //   );
-  // }
 
   exportToExcel() {
     // Дата-г worksheet болгон хөрвүүлэх

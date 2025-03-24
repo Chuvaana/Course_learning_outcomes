@@ -8,7 +8,6 @@ exports.createAssessment = async (req, res) => {
       const assessment = new Assessment(item);
       validAssessment.push(assessment);
     });
-    console.log(validAssessment);
     const savedAssessment = await Assessment.insertMany(validAssessment);
     res.status(201).json(savedAssessment);
   } catch (error) {

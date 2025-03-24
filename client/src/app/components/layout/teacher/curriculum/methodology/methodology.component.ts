@@ -128,33 +128,6 @@ export class MethodologyComponent {
     };
   }
 
-  // onRowEditSave(method: Method) {
-  //   method.cloRelevance = method.cloRelevance.map(id => {
-  //     return this.clos.find((c: { id: string }) => c.id === id)?.id || id;
-  //   });
-
-  //   if (this.isNew) {
-  //     this.service.createMethod(method).subscribe((res: any) => {
-  //       this.msgService.add({
-  //         severity: 'success',
-  //         summary: 'Success',
-  //         detail: 'New CLO created successfully!',
-  //       });
-  //     },
-  //       (err) => {
-  //         this.msgService.add({
-  //           severity: 'error',
-  //           summary: 'Error',
-  //           detail: 'Failed to create CLO: ' + err.message,
-  //         });
-  //       })
-  //   } else {
-  //     this.service.updateMethod(method).subscribe((res: any) => { })
-
-  //   }
-
-  // }
-
   onRowEditSave(method: Method) {
     const methodData = { ...method, lessonId: this.lessonId };
 
@@ -162,15 +135,15 @@ export class MethodologyComponent {
       this.service.createMethod(method).subscribe((res: any) => {
         this.msgService.add({
           severity: 'success',
-          summary: 'Success',
-          detail: 'New CLO created successfully!',
+          summary: 'Амжилттай',
+          detail: 'Амжилттай хадгалагдлаа!',
         });
       },
         (err) => {
           this.msgService.add({
             severity: 'error',
-            summary: 'Error',
-            detail: 'Failed to create CLO: ' + err.message,
+            summary: 'Алдаа',
+            detail: 'Алдаа гарлаа: ' + err.message,
           });
         })
     } else {

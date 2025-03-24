@@ -3,10 +3,9 @@ import { ActivatedRoute, RouterModule } from '@angular/router';
 import { MenuItem } from 'primeng/api';
 import { TieredMenuModule } from 'primeng/tieredmenu';
 import { ToastModule } from 'primeng/toast';
-import { NavbarComponent } from './navbar/navbar.component';
 @Component({
   selector: 'app-lesson',
-  imports: [RouterModule, TieredMenuModule, ToastModule, NavbarComponent],
+  imports: [RouterModule, TieredMenuModule, ToastModule],
   templateUrl: './lesson.component.html',
   styleUrl: './lesson.component.scss'
 })
@@ -38,8 +37,19 @@ export class LessonComponent {
       },
       {
         label: 'Оюутан',
-        icon: 'pi pi-plus',
-        url: '/main/teacher/lesson/student'
+        icon: 'pi pi-graduation-cap',
+        items: [
+          {
+            label: 'Жагсаалт',
+            icon: 'pi pi-graduation-cap',
+            routerLink: ['/main/teacher/lesson', this.lessonId, 'student']
+          },
+          {
+            label: 'Бүртгэх',
+            icon: 'pi pi-graduation-cap',
+            routerLink: ['/main/teacher/lesson', this.lessonId, 'student']
+          }
+        ]
       },
       {
         label: 'Ирц',

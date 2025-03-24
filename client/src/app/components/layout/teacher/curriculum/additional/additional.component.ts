@@ -59,7 +59,7 @@ export class AdditionalComponent {
       (err) => {
         this.msgService.add({
           severity: 'error',
-          summary: 'Error',
+          summary: 'Алдаа',
           detail: err.message,
         });
       });
