@@ -81,18 +81,17 @@ exports.uploadStudents = async (req, res) => {
             let existingStudent = await Student.findOne({ studentCode: studentCode, lessonId: lessonId });
 
             if (existingStudent) {
-                existingStudent.lab = {
-                    day: labDay,
-                    time: labTime,
-                };
-                existingStudent.sem = {
-                    day: semDay,
-                    time: semTime,
-                };
-                existingStudent.sem = {
-                    day: lecDay,
-                    time: lecTime,
-                };
+                if (labDay && labTime) {
+                    existingStudent.lab = { day: labDay, time: labTime };
+                }
+                if (semDay && semTime) {
+                    existingStudent.sem = { day: semDay, time: semTime };
+                }
+
+                if (lecDay && lecTime) {
+                    existingStudent.lec = { day: lecDay, time: lecTime };
+                }
+
                 await existingStudent.save();
                 updatedStudents.push(existingStudent);
             } else {

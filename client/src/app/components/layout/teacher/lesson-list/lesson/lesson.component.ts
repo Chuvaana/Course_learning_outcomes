@@ -36,6 +36,11 @@ export class LessonComponent {
         routerLink: ['/main/teacher/lesson', this.lessonId, 'clo-point']
       },
       {
+        label: 'Дүнгийн төлөвлөлт3',
+        icon: 'pi pi-check',
+        routerLink: ['/main/teacher/lesson', this.lessonId, 'clo-tree']
+      },
+      {
         label: 'Оюутан',
         icon: 'pi pi-graduation-cap',
         items: [
@@ -54,7 +59,7 @@ export class LessonComponent {
       {
         label: 'Ирц',
         icon: 'pi pi-plus',
-        url: '/main/teacher/lesson/student'
+        routerLink: ['/main/teacher/lesson', this.lessonId, 'attendance']
       },
       {
         label: 'ХИЧЭЭЛИЙН АГУУЛГА, ЦАГИЙН ХУВААРИЛАЛТ',
