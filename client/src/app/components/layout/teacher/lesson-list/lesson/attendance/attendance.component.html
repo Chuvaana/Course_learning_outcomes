@@ -1,33 +1,29 @@
 <div class="p-fluid">
-    <div class="p-grid">
-        <div class="p-col-6">
+    <div class="filter-section">
             <p-dropdown [options]="weekdays" [(ngModel)]="selectedWeekday" (onChange)="onSelectionChange()"
-                placeholder="Select Weekday">
+                placeholder="Гариг">
             </p-dropdown>
-        </div>
-        <div class="p-col-6">
             <p-dropdown [options]="classTypes" [(ngModel)]="selectedClassType" (onChange)="onSelectionChange()"
-                placeholder="Select Class Type">
+                placeholder="Төрөл">
             </p-dropdown>
-        </div>
+        <button pButton type="button" label="Өмнөх долоо хоногийн ирцийг засах" (click)="togglePreviousWeeks()"></button>
     </div>
 
-    <button pButton type="button" label="Edit Previous Week Attendance" (click)="togglePreviousWeeks()"></button>
 
     <p-table [value]="attendanceRecords">
         <ng-template pTemplate="header">
             <tr>
-                <th>Student Name</th>
-                <th>{{ getPastThreeDates()[2] }}</th> <!-- Oldest Date -->
+                <th>Оюутан</th>
+                <th>{{ getPastThreeDates()[2] }}</th>
                 <th *ngIf="showPreviousWeeks">{{ getPastThreeDates()[1] }}</th>
-                <th *ngIf="showPreviousWeeks">{{ getPastThreeDates()[0] }}</th> <!-- Most Recent Date -->
+                <th *ngIf="showPreviousWeeks">{{ getPastThreeDates()[0] }}</th>
             </tr>
         </ng-template>
         <ng-template pTemplate="body" let-record>
             <tr>
-                <td>{{ record.student.name }}</td>
+                <td>{{ record.student.code }} - {{ record.student.name }}</td>
                 <td>
-                    <p-dropdown [options]="attendanceOptions" [(ngModel)]="record.attendance[getPastThreeDates()[2]]">
+                    <p-dropdown [options]="attendanceOptions" [(ngModel)]="record.attendance[getPastThreeDates()[2]]" appendTo="body" >
                     </p-dropdown>
                 </td>
                 <td *ngIf="showPreviousWeeks">

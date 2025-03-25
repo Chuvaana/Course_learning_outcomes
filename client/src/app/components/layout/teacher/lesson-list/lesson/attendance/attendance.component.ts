@@ -33,49 +33,52 @@ export class AttendanceComponent {
   selectedClassType: string = '';
   students: any[] = [];
   attendanceRecords: any[] = [];
+  lessonId!: string;
+
   attendanceOptions = [
-    { label: 'Absent', value: 'Absent' },
-    { label: 'Free', value: 'Free' },
-    { label: 'Present', value: 'Present' },
-    { label: 'Sick', value: 'Sick' }
+    { label: 'Тасалсан', value: 'Absent' },
+    { label: 'Чөлөөтэй', value: 'Free' },
+    { label: 'Ирсэн', value: 'Present' },
+    { label: 'Өвчтэй', value: 'Sick' }
   ];
   showPreviousWeeks: boolean = false;
 
-  constructor() { }
+  constructor(private studentService: StudentService, private route: ActivatedRoute) { }
 
   ngOnInit() {
     this.weekdays = [
-      { label: 'Monday', value: 'Monday' },
-      { label: 'Tuesday', value: 'Tuesday' },
-      { label: 'Wednesday', value: 'Wednesday' },
-      { label: 'Thursday', value: 'Thursday' },
-      { label: 'Friday', value: 'Friday' }
+      { label: 'Даваа', value: 'Monday' },
+      { label: 'Мягмар', value: 'Tuesday' },
+      { label: 'Лхагва', value: 'Wednesday' },
+      { label: 'Пүрэв', value: 'Thursday' },
+      { label: 'Баасан', value: 'Friday' }
     ];
     this.classTypes = [
-      { label: 'Lecture', value: 'Lecture' },
-      { label: 'Seminar', value: 'Seminar' },
-      { label: 'Laboratory', value: 'Laboratory' }
+      { label: 'Лекц', value: 'lec' },
+      { label: 'Семинар', value: 'sem' },
+      { label: 'Лаборатори', value: 'lab' }
     ];
+
+    this.route.parent?.paramMap.subscribe(params => {
+      this.lessonId = params.get('id')!;
+    });
   }
 
-  onSelectionChange() {
-    // Fetch students for the selected class type and weekday
-    this.students = this.getStudents();
-    this.attendanceRecords = this.generateAttendanceRecords();
-  }
-
-  getStudents() {
-    return [
-      { id: 1, name: 'Alice' },
-      { id: 2, name: 'Bob' },
-      { id: 3, name: 'Charlie' }
-    ];
-  }
+  onSelectionChange(): void {
+    if (this.selectedWeekday && this.selectedClassType) {
+      // Call the service to get students filtered by class type and day
+      this.studentService.getStudentByClasstypeAndDay(this.selectedClassType, this.selectedWeekday)
+        .subscribe((students: any[]) => {
+          this.students = students; // Update the students list
+          this.attendanceRecords = this.generateAttendanceRecords();
+        });
+    }
+  } 
 
   generateAttendanceRecords() {
     let dates = this.getPastThreeDates().sort(); // Sort dates in ascending order
     return this.students.map(student => ({
-      student,
+      student: {name: student.studentName, code: student.studentCode},
       attendance: dates.reduce((acc, date) => ({ ...acc, [date]: '' }), {})
     }));
   }

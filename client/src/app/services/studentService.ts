@@ -8,7 +8,7 @@ import { Observable } from 'rxjs';
 export class StudentService {
   private apiUrl = 'http://localhost:3000/api'; // Update with your actual API URL
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   // Fetch all branches
   getBranches(): Observable<any> {
@@ -27,5 +27,9 @@ export class StudentService {
 
   getStudents(lessonCode: string): Observable<any> {
     return this.http.get(`${this.apiUrl}/lesStudents/${lessonCode}`);
+  }
+
+  getStudentByClasstypeAndDay(classType: string, day: string): Observable<any> {
+    return this.http.get(`${this.apiUrl}/lesStudents/classType/${classType}?day=${day}`);
   }
 }

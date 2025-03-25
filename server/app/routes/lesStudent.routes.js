@@ -20,5 +20,7 @@ module.exports = app => {
     // Delete student by ID
     router.delete('/:id', studentController.deleteStudent);
 
+    router.get('/classType/:classType', studentController.getStudentsByClassTypeAndDay);
+
     app.use("/api/lesStudents", router);
 };
