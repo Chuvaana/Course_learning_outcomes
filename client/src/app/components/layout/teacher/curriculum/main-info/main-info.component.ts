@@ -9,6 +9,8 @@ import { InputTextModule } from 'primeng/inputtext';
 import { CurriculumService } from '../../../../../services/curriculum.service';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
+import { TeacherService } from '../../../../../services/teacherService';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-main-info',
@@ -37,8 +39,14 @@ export class MainInfoComponent {
   lessonLevel: any[] = [];
   lessonType: any[] = [];
   recommendedSemester: any[] = [];
+  teacherId!: string;
 
-  constructor(private fb: FormBuilder, private service: CurriculumService) {
+  constructor(
+    private fb: FormBuilder,
+    private service: CurriculumService,
+    private teacherService: TeacherService,
+    private msgService: MessageService,
+    private router: Router) {
     this.mainInfoForm = this.fb.group({
       lessonId: [],
       lessonName: ['', Validators.required],
@@ -51,10 +59,10 @@ export class MainInfoComponent {
       assistantTeacherRoom: [''],
       assistantTeacherEmail: ['', [Validators.email, Validators.pattern(/^[a-zA-Z0-9._%+-]+@must\.edu\.mn$/)]],
       assistantTeacherPhone: ['', [Validators.pattern('^[0-9]+$')]],
-      teacherName: ['teacher', Validators.required],
-      teacherRoom: ['108', Validators.required],
-      teacherEmail: ['teacher@must.edu.mn', [Validators.required, Validators.email, Validators.pattern(/^[a-zA-Z0-9._%+-]+@must\.edu\.mn$/)]],
-      teacherPhone: ['89898989', [Validators.required, Validators.pattern('^[0-9]+$')]],
+      teacherName: ['', Validators.required],
+      teacherRoom: ['', Validators.required],
+      teacherEmail: ['', [Validators.required, Validators.email, Validators.pattern(/^[a-zA-Z0-9._%+-]+@must\.edu\.mn$/)]],
+      teacherPhone: ['', [Validators.required, Validators.pattern('^[0-9]+$')]],
       lessonLevel: ['', Validators.required],
       lessonType: ['', Validators.required],
       recommendedSemester: ['', Validators.required],
@@ -75,6 +83,15 @@ export class MainInfoComponent {
       selfStudyPractice: ['', Validators.required],
     });
 
+    this.teacherId = (localStorage.getItem('teacherId') as string) || '';
+    this.teacherService.getTeacher(this.teacherId).subscribe((res) => {
+      this.mainInfoForm.patchValue({
+        teacherName: res.name,
+        teacherRoom: res.room,
+        teacherEmail: res.email,
+        teacherPhone: res.phone
+      });
+    })
   }
 
   ngOnInit(): void {
@@ -214,26 +231,42 @@ export class MainInfoComponent {
 
     if (this.isNew) {
       this.service.saveLesson(cleanedData).subscribe({
-        next: (response) => {
-          console.log('Lesson saved successfully:', response);
-          alert('Lesson saved successfully!');
-          this.readData();
+        next: (response: any) => {
+          const data = { lessonId: response.lesson.id, teacherId: this.teacherId }
+          this.service.addLessonToTeacher(this.teacherId, data).subscribe((res) => {
+            this.msgService.add({
+              severity: 'success',
+              summary: 'Амжилттай',
+              detail: 'Амжилттай хадгалагдлаа!',
+            });
+          })
+          this.router.navigate(['/main/teacher/curriculum', response.lesson.id]);
         },
         error: (error) => {
-          console.error('Error saving lesson:', error);
-          alert('Error saving lesson.');
+          this.msgService.add({
+            severity: 'error',
+            summary: 'Алдаа',
+            detail: 'Алдаа гарлаа: ' + error.message,
+          });
         }
       });
+
     } else {
       this.service.updateLesson(this.lessonId, cleanedData).subscribe({
         next: (response) => {
-          console.log('Lesson saved successfully:', response);
-          alert('Lesson saved successfully!');
+          this.msgService.add({
+            severity: 'success',
+            summary: 'Амжилттай',
+            detail: 'Амжилттай хадгалагдлаа!',
+          });
           this.readData();
         },
         error: (error) => {
-          console.error('Error saving lesson:', error);
-          alert('Error saving lesson.');
+          this.msgService.add({
+            severity: 'error',
+            summary: 'Алдаа',
+            detail: 'Алдаа гарлаа: ' + error.message,
+          });
         }
       });
 

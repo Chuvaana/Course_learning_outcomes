@@ -10,6 +10,7 @@ import { ButtonModule } from 'primeng/button';
 import { MethodService } from '../../../../../services/methodService';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { CheckboxModule } from 'primeng/checkbox';
+import { TabRefreshService } from '../tabRefreshService';
 
 interface Method {
   id: number;
@@ -55,7 +56,6 @@ export class MethodologyComponent {
   clonedMethods: { [s: string]: Method } = {};
   clos: any;
   editingRowId: number | null = null;
-  newRowData: any;
   index!: number;
   isNew = true;
 
@@ -74,20 +74,15 @@ export class MethodologyComponent {
     { label: 'Практик', value: 'Practice' }
   ];
 
-  constructor(private msgService: MessageService, private service: MethodService) { }
+  constructor(private msgService: MessageService, private service: MethodService, private tabRefreshService: TabRefreshService) { }
 
   ngOnInit() {
-    this.loadData();
-    this.newRowData = {
-      lessonId: this.lessonId,
-      pedagogy: '',
-      deliveryMode: '',
-      cloRelevance: [],
-      classroom: false,
-      electronic: false,
-      combined: false
-    };
-
+    if (this.lessonId) {
+      this.loadData();
+      this.tabRefreshService.refresh$.subscribe(() => {
+        this.loadData(); // Датаг дахин ачаалах функц
+      });
+    }
   }
 
   loadData() {

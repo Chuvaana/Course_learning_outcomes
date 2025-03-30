@@ -34,6 +34,8 @@ app.get("/", (req, res) => {
   res.json({ message: "Welcome to CLO application." });
 });
 
+require("./app/routes/config.routes")(app);
+
 // require("./app/routes/teacher.routes")(app);
 require("./app/routes/branch.routes")(app);
 require("./app/routes/teacher.routes")(app);
@@ -52,6 +54,7 @@ require("./app/routes/methodology.routes")(app);
 require("./app/routes/assessment.routes")(app);
 require("./app/routes/additional.routes")(app);
 require("./app/routes/lesStudent.routes")(app);
+require("./app/routes/attendance.routes")(app);
 
 
 // set port, listen for requests

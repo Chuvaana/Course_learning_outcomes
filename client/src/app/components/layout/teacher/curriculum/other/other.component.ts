@@ -25,26 +25,25 @@ export class OtherComponent {
   constructor(private fb: FormBuilder, private service: OtherService, private msgService: MessageService) { }
 
   ngOnInit() {
-    // Form setup with two textareas
     this.otherForm = this.fb.group({
       lessonId: [this.lessonId],
       description: ['', Validators.required],
       goal: ['', Validators.required]
     });
+    if (this.lessonId) {
+      this.service.getDefinition(this.lessonId).subscribe((res: any) => {
+        if (res != null && res.length != 0) {
+          res = res[0];
+          this.isNew = false;
+          this.otherForm.patchValue({
+            lessonId: res.lessonId,
+            description: res.description,
+            goal: res.goal
+          });
+        }
 
-    this.service.getDefinition(this.lessonId).subscribe((res: any) => {
-      if (res != null && res.length != 0) {
-        res = res[0];
-        this.isNew = false;
-        this.otherForm.patchValue({
-          lessonId: res.lessonId,
-          description: res.description,
-          goal: res.goal
-        });
-      }
-
-    });
-
+      });
+    }
   }
 
   onSubmit() {

@@ -42,4 +42,7 @@ export class CurriculumService {
     return this.http.get(`${this.apiUrl}/lesson/${id}`)
   }
 
+  addLessonToTeacher(id: string, teacherData: any): Observable<any> {
+    return this.http.put(`${this.apiUrl}/teachers/addLesson/${id}`, teacherData);
+  }
 }

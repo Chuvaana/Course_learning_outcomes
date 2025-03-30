@@ -109,9 +109,8 @@ export class LesStudentComponent {
       this.studentCount = this.tableData.length - 1;
 
       this.tableData
-        .filter((e: string[]) => e.length >= 4)
         .forEach((e: string[]) => {
-          const [name, id] = e;
+          const [id, name] = e;
           if (name) this.onlyName.push(name);
           if (id) this.onlyId.push(id);
         });

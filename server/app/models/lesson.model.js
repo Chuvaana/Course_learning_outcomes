@@ -11,13 +11,13 @@ const LessonSchema = new mongoose.Schema({
     name: { type: String },
     room: { type: String },
     email: { type: String, match: /^[a-zA-Z0-9._%+-]+@must\.edu\.mn$/ },
-    phone: { type: String }
+    phone: { type: Number }
   },
   teacher: {
     name: { type: String, required: true },
     room: { type: String, required: true },
     email: { type: String, required: true, match: /^[a-zA-Z0-9._%+-]+@must\.edu\.mn$/ },
-    phone: { type: String, required: true }
+    phone: { type: Number, required: true }
   },
   lessonLevel: { type: String, required: true, enum: ['BACHELOR', 'MAGISTER', 'DOCTOR'] },
   lessonType: { type: String, required: true, enum: ['REQ', 'CHO'] },

@@ -76,6 +76,50 @@ exports.update = async (req, res) => {
   }
 };
 
+exports.addLessonToTeacher = async (req, res) => {
+  try {
+    const { teacherId, lessonId } = req.body;
+
+    const updatedTeacher = await Teacher.findByIdAndUpdate(
+      teacherId,
+      { $addToSet: { lessons: lessonId } },
+      { new: true }
+    ).populate("lessons");
+
+    if (!updatedTeacher) {
+      return res.status(404).json({ message: "Teacher not found" });
+    }
+
+    res.json({ message: "Lesson added successfully", teacher: updatedTeacher });
+  } catch (error) {
+    console.error("Error updating teacher lessons:", error);
+    res.status(500).json({ message: "Server error", error });
+  }
+};
+
+// Remove a lesson from the teacher's lessons array
+exports.removeLessonFromTeacher = async (req, res) => {
+  try {
+    const { teacherId, lessonId } = req.body;
+
+    // Find the teacher and update the lessons array
+    const updatedTeacher = await Teacher.findByIdAndUpdate(
+      teacherId,
+      { $pull: { lessons: lessonId } }, // Remove the specific lesson
+      { new: true }
+    ).populate("lessons");
+
+    if (!updatedTeacher) {
+      return res.status(404).json({ message: "Teacher not found" });
+    }
+
+    res.json({ message: "Lesson removed successfully", teacher: updatedTeacher });
+  } catch (error) {
+    console.error("Error removing lesson from teacher:", error);
+    res.status(500).json({ message: "Server error", error });
+  }
+};
+
 exports.delete = async (req, res) => {
   try {
     const deletedTeacher = await Teacher.findByIdAndRemove(req.params.id);

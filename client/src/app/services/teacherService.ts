@@ -8,7 +8,7 @@ import { Observable } from 'rxjs';
 export class TeacherService {
   private apiUrl = 'http://localhost:3000/api'; // Update with your actual API URL
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   // Fetch all branches
   getBranches(): Observable<any> {
@@ -27,15 +27,14 @@ export class TeacherService {
 
   assignLesson(lessonId: string): Observable<any> {
     const teacherId = localStorage.getItem('teacherId'); // Get token from localStorage
-    return this.http.post(`${this.apiUrl}/teachers/assign-lesson`, {teacherId, lessonId});
+    return this.http.post(`${this.apiUrl}/teachers/assign-lesson`, { teacherId, lessonId });
   }
 
   getLessons(): Observable<any> {
     return this.http.get(`${this.apiUrl}/lesson`);
   }
 
-  getTeacher(): Observable<any> {
-    const teacherId = localStorage.getItem('teacherId'); // Get token from localStorage
+  getTeacher(teacherId: string): Observable<any> { // Get token from localStorage
     return this.http.get(`${this.apiUrl}/teachers/${teacherId}`);
   }
 

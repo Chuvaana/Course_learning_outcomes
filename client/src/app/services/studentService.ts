@@ -32,4 +32,9 @@ export class StudentService {
   getStudentByClasstypeAndDay(classType: string, day: string): Observable<any> {
     return this.http.get(`${this.apiUrl}/lesStudents/classType/${classType}?day=${day}`);
   }
+
+  getStudentByClasstypeAndDayTime(classType: string, day: string, time: number): Observable<any> {
+    return this.http.get(`${this.apiUrl}/lesStudents/classTypeDateTime/${classType}?day=${day}&time=${time}`);
+  }
+  
 }

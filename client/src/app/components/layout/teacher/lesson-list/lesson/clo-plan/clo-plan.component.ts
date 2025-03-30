@@ -89,15 +89,15 @@ export class CloPlanComponent {
       };
 
       this.cloPlan = cloPlan;
-      if ((Array.isArray(this.cloPlan[0]) && this.cloPlan[0].length === 0)) {
-        this.cloPlan[0] = [this.pointPlan];
-      }
-      if ((Array.isArray(this.cloPlan[1]) && this.cloPlan[1].length === 0)) {
+      // if ((Array.isArray(this.cloPlan[0]) && this.cloPlan[0].length === 0)) {
+      //   this.cloPlan[0] = [this.pointPlan];
+      // }
+      if ((Array.isArray(this.cloPlan) && this.cloPlan.length === 0)) {
         this.createRows();
         this.isLoading = false;
       } else {
-        this.isUpdate = true;
         this.populateCLOForm();
+        this.isUpdate = true;
         this.isLoading = false;
       }
     });
