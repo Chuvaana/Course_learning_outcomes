@@ -1,17 +1,25 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Router, RouterModule } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { DropdownModule } from 'primeng/dropdown';
 import { PasswordModule } from 'primeng/password';
 import { RegLogService } from '../../../../services/regLogService';
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-register-login',
   standalone: true,
-  imports: [ReactiveFormsModule, DropdownModule, PasswordModule, ButtonModule, CommonModule, FormsModule, CardModule],
+  imports: [
+    ReactiveFormsModule, 
+    DropdownModule, 
+    PasswordModule, 
+    ButtonModule, 
+    CommonModule, 
+    FormsModule, 
+    CardModule, 
+    RouterModule],
   templateUrl: './register-login.component.html',
   styleUrl: './register-login.component.scss'
 })
@@ -96,7 +104,7 @@ export class RegisterLoginComponent {
             localStorage.setItem('teacherId', response.teacher.id);
             
             // Optionally, you can navigate the user to a protected route
-            this.router.navigate(['/main/teacher']);
+            this.router.navigate(['/main/teacher/lessonList']);
           }
         },
         (error) => {

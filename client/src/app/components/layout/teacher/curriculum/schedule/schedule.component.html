@@ -17,10 +17,10 @@
                     </ng-template>
                     <ng-template pTemplate="body" let-lesson>
                         <tr [formGroup]="lesson">
-                            <td [pEditableColumn]>
+                            <td>
                                 <p-cellEditor>
                                     <ng-template pTemplate="input">
-                                        <input pInputText formControlName="week" [readonly]="true" [disabled]="true" />
+                                        <input pInputText formControlName="week" />
                                     </ng-template>
                                     <ng-template pTemplate="output">
                                         {{ lesson.get('week').value }}
@@ -86,10 +86,10 @@
                     </ng-template>
                     <ng-template pTemplate="body" let-lesson>
                         <tr [formGroup]="lesson">
-                            <td [pEditableColumn]>
+                            <td>
                                 <p-cellEditor>
                                     <ng-template pTemplate="input">
-                                        <input pInputText formControlName="week" [readonly]="true" [disabled]="true" />
+                                        <input pInputText formControlName="week" />
                                     </ng-template>
                                     <ng-template pTemplate="output">
                                         {{ lesson.get('week').value }}
@@ -156,10 +156,10 @@
 
                     <ng-template pTemplate="body" let-lesson>
                         <tr [formGroup]="lesson">
-                            <td [pEditableColumn]>
+                            <td>
                                 <p-cellEditor>
                                     <ng-template pTemplate="input">
-                                        <input pInputText formControlName="week" [readonly]="true" [disabled]="true" />
+                                        <input pInputText formControlName="week" />
                                     </ng-template>
                                     <ng-template pTemplate="output">
                                         {{ lesson.get('week').value }}
@@ -227,10 +227,10 @@
 
                     <ng-template pTemplate="body" let-lesson>
                         <tr [formGroup]="lesson">
-                            <td [pEditableColumn]>
+                            <td>
                                 <p-cellEditor>
                                     <ng-template pTemplate="input">
-                                        <input pInputText formControlName="week" [readonly]="true" [disabled]="true" />
+                                        <input pInputText formControlName="week" />
                                     </ng-template>
                                     <ng-template pTemplate="output">
                                         {{ lesson.get('week').value }}

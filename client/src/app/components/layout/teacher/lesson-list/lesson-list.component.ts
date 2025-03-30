@@ -35,9 +35,11 @@ export class LessonListComponent implements OnInit {
   constructor(private fb: FormBuilder, private service: TeacherService, private router: Router) { }
 
   ngOnInit(): void {
-    this.service.getLessons().subscribe((data) => {
+    const teacherId = localStorage.getItem("teacherId") || '';
+    this.service.getTeacherLessons(teacherId).subscribe((data)=>{
       if (data) {
-        const courseObservables: Observable<any>[] = data.map((item: any) => {
+        // this.courses = data.lessons;
+        const courseObservables: Observable<any>[] = data.lessons.map((item: any) => {
           if (item.department) {
             return this.service.getDepartments(item.school).pipe(
               map((departments: any[]) => {
@@ -60,7 +62,7 @@ export class LessonListComponent implements OnInit {
           this.courses = updatedCourses;
         });
       }
-    });
+    })
   }
 
   addLesson() {

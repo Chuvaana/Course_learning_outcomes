@@ -189,3 +189,26 @@ exports.assignLessonToTeacher = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+exports.getTeacherLessons = async (req, res) => {
+  try {
+    const teacherId = req.params.teacherId;
+
+    // Багшийн мэдээллийг Lesson моделд холбож авна
+    const teacher = await Teacher.findById(teacherId)
+      .populate('lessons') // Багшийн хичээлүүдийг жагсаалттай нь авна
+      .exec();
+
+    if (!teacher) {
+      return res.status(404).json({ message: 'Багш олдсонгүй' });
+    }
+
+    // Багшийн хичээлүүдийг мэдээлэлтэй нь буцаана
+    const lessons = teacher.lessons;
+
+    return res.status(200).json({ lessons });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Алдаа гарлаа' });
+  }
+};

@@ -11,6 +11,7 @@ import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 import { TeacherService } from '../../../../../services/teacherService';
 import { Router } from '@angular/router';
+import { TabRefreshService } from '../tabRefreshService';
 
 @Component({
   selector: 'app-main-info',
@@ -46,12 +47,13 @@ export class MainInfoComponent {
     private service: CurriculumService,
     private teacherService: TeacherService,
     private msgService: MessageService,
-    private router: Router) {
+    private router: Router,
+    private tabRefreshService: TabRefreshService) {
     this.mainInfoForm = this.fb.group({
       lessonId: [],
       lessonName: ['', Validators.required],
       lessonCode: ['', Validators.required],
-      lessonCredit: ['', Validators.required],
+      lessonCredit: [0, Validators.required],
       school: ['', Validators.required],
       department: ['', Validators.required],
       prerequisite: [''],
@@ -181,8 +183,8 @@ export class MainInfoComponent {
     });
   }
 
-  onBranchChange(branchId: string): void {
-    this.service.getDepartments(branchId).subscribe((data: any[]) => {
+  onBranchChange(branch: any): void {
+    this.service.getDepartments(branch.id).subscribe((data: any[]) => {
       if (data) {
         this.departments = data.map(dept => ({ name: dept.name, id: dept.id || dept.name }));
       }
@@ -211,6 +213,11 @@ export class MainInfoComponent {
     // Convert empty strings to 0 for numeric fields
     const cleanedData = {
       ...formData,
+      department: formData.department.id,
+      school: formData.school.id,
+      lessonLevel: formData.lessonLevel.value,
+      lessonType: formData.lessonType.value,
+      recommendedSemester: formData.recommendedSemester.value,
       lessonCredit: Number(formData.lessonCredit) || 0,
       weeklyLecture: Number(formData.weeklyLecture) || 0,
       weeklySeminar: Number(formData.weeklySeminar) || 0,
@@ -240,7 +247,8 @@ export class MainInfoComponent {
               detail: 'Амжилттай хадгалагдлаа!',
             });
           })
-          this.router.navigate(['/main/teacher/curriculum', response.lesson.id]);
+          this.tabRefreshService.triggerRefresh();
+          this.router.navigate(['/main/teacher/lesson', response.lesson.id, 'curriculum']);
         },
         error: (error) => {
           this.msgService.add({

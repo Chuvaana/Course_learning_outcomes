@@ -18,16 +18,10 @@
                 width: 100%; // Make sure it takes full width of the parent
             }
 
-            .p-float-label p-inputnumber:-webkit-autofill + label {
+            .p-float-label p-inputnumber:-webkit-autofill+label {
                 top: -0.75rem;
                 font-size: 12px;
-              }
-            // input, 
-            // p-dropdown, 
-            // p-inputnumber {
-            //     width: 100%; // Ensure all inputs and dropdowns take full width
-            //     max-width: 400px; // Set a maximum width if needed
-            // }
+            }
         }
     }
 }

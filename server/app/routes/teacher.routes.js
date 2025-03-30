@@ -20,10 +20,8 @@ module.exports = app => {
   // Delete a Teacher with id
   router.delete("/:id", teacherController.delete);
   router.post('/assign-lesson', teacherController.assignLessonToTeacher);
-
-  console.log("addLesson");
   router.put("/addLesson/:id", teacherController.addLessonToTeacher);
   router.put("/removeLesson", teacherController.removeLessonFromTeacher);
-
+  router.get('/:teacherId/lessons', teacherController.getTeacherLessons);
   app.use("/api/teachers", router);
 };

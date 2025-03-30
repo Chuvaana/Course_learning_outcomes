@@ -5,7 +5,7 @@
     <div *ngFor="let lesson of courses" class="lesson-card">
       <p-card [style]="{ width: '100%', overflow: 'hidden' }">
         <ng-template #title> {{ lesson.department }}</ng-template>
-        <a [routerLink]="['/main/teacher/lesson', lesson.id]">
+        <a [routerLink]="['/main/teacher/lesson', lesson.id, 'curriculum']">
           {{ lesson.lessonCode }} - {{ lesson.lessonName }}
         </a>
       </p-card>
