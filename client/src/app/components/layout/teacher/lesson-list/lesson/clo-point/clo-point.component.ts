@@ -27,7 +27,7 @@ import { CLOService } from '../../../../../../services/cloService';
 export class CloPointComponent implements OnInit {
   myForm!: FormGroup;
   isNew = true;
-  @Input() lessonId: string = '';
+  lessonId: string = '';
 
   constructor(
     private fb: FormBuilder,
@@ -38,7 +38,7 @@ export class CloPointComponent implements OnInit {
 
   ngOnInit() {
     this.route.parent?.paramMap.subscribe(params => {
-      this.lessonId = params.get('id')!;
+      this.lessonId = params.get('id')!; // Get "id" from the parent route
       console.log('Lesson ID:', this.lessonId);
     });
 

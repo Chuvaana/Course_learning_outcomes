@@ -29,12 +29,15 @@ import { MethodologyComponent } from './methodology/methodology.component';
   styleUrl: './curriculum.component.scss'
 })
 export class CurriculumComponent {
-  lessonId: string = '';
+  lessonId!: string;
 
   constructor(private route: ActivatedRoute) { }
 
   ngOnInit() {
-    this.lessonId = this.route.snapshot.paramMap.get('id') || '';
+    this.route.parent?.paramMap.subscribe(params => {
+      this.lessonId = params.get('id')!; // Get "id" from the parent route
+      console.log('Lesson ID:', this.lessonId);
+    });
   }
 
 }

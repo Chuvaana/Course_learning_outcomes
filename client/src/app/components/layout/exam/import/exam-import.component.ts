@@ -1,11 +1,12 @@
+import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { ButtonModule } from 'primeng/button';
 import * as XLSX from 'xlsx';
 import { DropdownModule } from 'primeng/dropdown';
 import { PasswordModule } from 'primeng/password';
 import { ButtonModule } from 'primeng/button';
-import { CommonModule } from '@angular/common';
 import { ExamService } from '../../../../services/examService';
 import { MessageService } from 'primeng/api';  // ✅ MessageService-г импортлох
 import { ToastModule } from 'primeng/toast';   // ✅ Toast-г импортлох

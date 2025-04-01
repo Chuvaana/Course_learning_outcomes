@@ -10,6 +10,10 @@ import { TagModule } from 'primeng/tag';
 import { ToastModule } from 'primeng/toast';
 import { CLOService } from '../../../../../services/cloService';
 import { CheckboxModule } from 'primeng/checkbox';
+import { AssessmentService } from '../../../../../services/assessmentService';
+import { MethodService } from '../../../../../services/methodService';
+import { ScheduleService } from '../../../../../services/schedule.service';
+import { TabRefreshService } from '../tabRefreshService';
 
 interface Clo {
   id: number;
@@ -19,7 +23,6 @@ interface Clo {
   skill: boolean;
   attitude: boolean;
 }
-
 interface Clo1 {
   type: string;
   cloName: string;
@@ -39,27 +42,29 @@ interface Clo1 {
 export class CloComponent {
   @Input() lessonId: string = '';
   clos: Clo[] = [];
-
   index!: number;
-
   types!: SelectItem[];
-
-  newRowData: any;
-
   clonedClos: { [s: string]: Clo } = {};
   editingRowId: number | null = null;
 
-  constructor(private service: CLOService, private msgService: MessageService) { }
+  constructor(
+    private service: CLOService,
+    private msgService: MessageService,
+    private assessmentService: AssessmentService,
+    private methodService: MethodService,
+    private scheduleService: ScheduleService,
+    private tabRefreshService: TabRefreshService
+  ) { }
 
   ngOnInit() {
+    if (this.lessonId) {
+      this.readData();
+    }
 
-    this.readData();
     this.types = [
       { label: 'Лекц семинар', value: 'LEC_SEM' },
       { label: 'Лаборатори', value: 'LAB' }
     ];
-
-    this.newRowData = { lessonId: this.lessonId, type: '', cloName: '', knowledge: false, skill: false, attitude: false };
   }
 
   readData() {
@@ -98,7 +103,10 @@ export class CloComponent {
       this.service.registerClo(cloData).subscribe(
         (res: Clo) => {
           clo.id = res.id;
+          this.saveAssess(res.id);
+          this.saveCloPlan(res);
           this.readData();
+          this.tabRefreshService.triggerRefresh();
           this.msgService.add({
             severity: 'success',
             summary: 'Амжилттай',
@@ -117,6 +125,7 @@ export class CloComponent {
       this.service.updateClo(clo).subscribe(
         (res) => {
           this.readData();
+          this.tabRefreshService.triggerRefresh();
           this.msgService.add({
             severity: 'success',
             summary: 'Амжилттай',
@@ -151,7 +160,7 @@ export class CloComponent {
         return cloType;
     }
   }
-  
+
 
   addClo() {
     const newClo: Clo1 = {
@@ -167,5 +176,49 @@ export class CloComponent {
     setTimeout(() => {
       this.onRowEditInit(newClo as Clo, this.clos.length - 1);
     });
+  }
+
+  saveAssess(data: any) {
+    const assessments = [{
+      lessonId: this.lessonId,
+      clo: data,
+      attendance: false,
+      assignment: false,
+      quiz: false,
+      project: false,
+      lab: false,
+      exam: false
+    }]
+    this.assessmentService.createAssessment(assessments).subscribe((res) => {
+      console.log(res);
+    })
+  }
+
+  saveCloPlan(clo: any) {
+    const plan = [{
+      id: '',
+      cloId: clo.id,
+      cloName: clo.cloName,
+      cloType: clo.type,
+      lessonId: this.lessonId,
+      timeManagement: 0,
+      engagement: 0,
+      recall: 0,
+      problemSolving: 0,
+      recall2: 0,
+      problemSolving2: 0,
+      toExp: 0,
+      processing: 0,
+      decisionMaking: 0,
+      formulation: 0,
+      analysis: 0,
+      implementation: 0,
+      understandingLevel: 0,
+      analysisLevel: 0,
+      creationLevel: 0
+    }]
+    this.service.saveCloPlan(plan).subscribe((res) => {
+      console.log(res);
+    })
   }
 }

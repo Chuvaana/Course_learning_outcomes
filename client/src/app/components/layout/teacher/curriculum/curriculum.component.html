@@ -2,13 +2,13 @@
     <p-tabs value="0" scrollable>
         <p-tablist>
             <p-tab value="0">ҮНДСЭН МЭДЭЭЛЭЛ</p-tab>
-            <p-tab value="1">АШИГЛАХ МАТЕРИАЛУУД</p-tab>
-            <p-tab value="2">ТОДОРХОЙЛОЛТ</p-tab>
-            <p-tab value="3">АГУУЛГА, ЦАГИЙН ХУВААРИЛАЛТ </p-tab>
-            <p-tab value="4">СУРАЛЦАХУЙН ҮР ДҮНГҮҮД</p-tab>
-            <p-tab value="5">СУРГАХ, СУРАЛЦАХ АРГА ЗҮЙ</p-tab>
-            <p-tab value="6">ХИЧЭЭЛИЙН ҮНЭЛГЭЭ</p-tab>
-            <p-tab value="7">ТАВИГДАХ НЭМЭЛТ ШААРДЛАГУУД</p-tab>
+            <p-tab value="1" [disabled]="!lessonId">АШИГЛАХ МАТЕРИАЛУУД</p-tab>
+            <p-tab value="2" [disabled]="!lessonId">ТОДОРХОЙЛОЛТ</p-tab>
+            <p-tab value="3" [disabled]="!lessonId">СУРАЛЦАХУЙН ҮР ДҮНГҮҮД</p-tab>
+            <p-tab value="4" [disabled]="!lessonId">АГУУЛГА, ЦАГИЙН ХУВААРИЛАЛТ </p-tab>
+            <p-tab value="5" [disabled]="!lessonId">СУРГАХ, СУРАЛЦАХ АРГА ЗҮЙ</p-tab>
+            <p-tab value="6" [disabled]="!lessonId">ХИЧЭЭЛИЙН ҮНЭЛГЭЭ</p-tab>
+            <p-tab value="7" [disabled]="!lessonId">ТАВИГДАХ НЭМЭЛТ ШААРДЛАГУУД</p-tab>
         </p-tablist>
         <p-tabpanels>
             <p-tabpanel value="0">
@@ -21,10 +21,10 @@
                 <app-other [lessonId]="lessonId"></app-other>
             </p-tabpanel>
             <p-tabpanel value="3">
-                <app-schedule [lessonId]="lessonId"></app-schedule>
+                <app-clo [lessonId]="lessonId"></app-clo>
             </p-tabpanel>
             <p-tabpanel value="4">
-                <app-clo [lessonId]="lessonId"></app-clo>
+                <app-schedule [lessonId]="lessonId"></app-schedule>
             </p-tabpanel>
             <p-tabpanel value="5">
                 <app-methodology [lessonId]="lessonId"></app-methodology>

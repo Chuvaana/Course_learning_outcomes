@@ -1,38 +1,47 @@
 <div class="p-fluid">
+    <p-toast />
     <div class="filter-section">
-            <p-dropdown [options]="weekdays" [(ngModel)]="selectedWeekday" (onChange)="onSelectionChange()"
-                placeholder="Гариг">
-            </p-dropdown>
-            <p-dropdown [options]="classTypes" [(ngModel)]="selectedClassType" (onChange)="onSelectionChange()"
-                placeholder="Төрөл">
-            </p-dropdown>
-        <button pButton type="button" label="Өмнөх долоо хоногийн ирцийг засах" (click)="togglePreviousWeeks()"></button>
+        <p-dropdown [options]="weekdays" [(ngModel)]="selectedWeekday" (onChange)="onSelectionChange()"
+            placeholder="Гариг">
+        </p-dropdown>
+        <p-dropdown [options]="classTypes" [(ngModel)]="selectedClassType" (onChange)="onSelectionChange()"
+            placeholder="Төрөл">
+        </p-dropdown>
+        <p-dropdown [options]="times" [(ngModel)]="selectedTimes" (onChange)="onSelectionChange()" placeholder="Цаг">
+        </p-dropdown>
+        <button pButton type="button" *ngIf="!showPreviousWeeks" label="Өмнөх долоо хоногуудыг харах" (click)="togglePreviousWeeks()"></button>
+        <button pButton type="button" *ngIf="showPreviousWeeks" label="Одоогийн долоо хоногийг харах" (click)="togglePreviousWeeks()"></button>
+        <button pButton type="button" label="Хадгалах" (click)="save()"></button>
     </div>
-
 
     <p-table [value]="attendanceRecords">
         <ng-template pTemplate="header">
-            <tr>
+            <tr *ngIf="!showPreviousWeeks">
+                <th>№</th>
                 <th>Оюутан</th>
-                <th>{{ getPastThreeDates()[2] }}</th>
-                <th *ngIf="showPreviousWeeks">{{ getPastThreeDates()[1] }}</th>
-                <th *ngIf="showPreviousWeeks">{{ getPastThreeDates()[0] }}</th>
+                <th> {{ getCurrentWeeks() }} </th>
+            </tr>
+            <tr *ngIf="showPreviousWeeks">
+                <th>№</th>
+                <th>Оюутан</th>
+                <th *ngFor="let week of getAllWeeks()">
+                    {{ week }}
+                </th>
             </tr>
         </ng-template>
-        <ng-template pTemplate="body" let-record>
-            <tr>
+        <ng-template pTemplate="body" let-record let-ri="rowIndex">
+            <tr *ngIf="!showPreviousWeeks">
+                <td> {{ ri + 1 }} </td>
                 <td>{{ record.student.code }} - {{ record.student.name }}</td>
                 <td>
-                    <p-dropdown [options]="attendanceOptions" [(ngModel)]="record.attendance[getPastThreeDates()[2]]" appendTo="body" >
-                    </p-dropdown>
+                    <p-checkbox [(ngModel)]="record.attendance[getCurrentWeeks()]" [binary]="true"></p-checkbox>
                 </td>
-                <td *ngIf="showPreviousWeeks">
-                    <p-dropdown [options]="attendanceOptions" [(ngModel)]="record.attendance[getPastThreeDates()[1]]">
-                    </p-dropdown>
-                </td>
-                <td *ngIf="showPreviousWeeks">
-                    <p-dropdown [options]="attendanceOptions" [(ngModel)]="record.attendance[getPastThreeDates()[0]]">
-                    </p-dropdown>
+            </tr>
+            <tr *ngIf="showPreviousWeeks">
+                <td> {{ ri + 1 }} </td>
+                <td>{{ record.student.code }} - {{ record.student.name }}</td>
+                <td *ngFor="let week of getAllWeeks()">
+                    <p-checkbox [(ngModel)]="record.attendance[week]" [binary]="true"></p-checkbox>
                 </td>
             </tr>
         </ng-template>

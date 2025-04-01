@@ -1,6 +1,5 @@
 const CloPlan = require('../models/cloPlan.model');
 const PointPlan = require('../models/pointPlan.model');
-const Clo = require('../models/clo.model');
 
 // Get all cloPlans
 exports.getAllCLOs = async (req, res) => {

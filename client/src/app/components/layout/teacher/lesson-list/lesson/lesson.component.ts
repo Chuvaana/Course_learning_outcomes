@@ -22,8 +22,7 @@ export class LessonComponent {
       {
         label: 'Хичээлийн хөтөлбөр',
         icon: 'pi pi-book',
-        // url: '/main/teacher/curriculum'
-        routerLink: ['/main/teacher/curriculum', this.lessonId]
+        routerLink: ['/main/teacher/lesson', this.lessonId, 'curriculum']
       },
       {
         label: 'Дүнгийн төлөвлөлт',
@@ -35,11 +34,11 @@ export class LessonComponent {
         icon: 'pi pi-check',
         routerLink: ['/main/teacher/lesson', this.lessonId, 'clo-point']
       },
-      {
-        label: 'Дүнгийн төлөвлөлт3',
-        icon: 'pi pi-check',
-        routerLink: ['/main/teacher/lesson', this.lessonId, 'clo-tree']
-      },
+      // {
+      //   label: 'Дүнгийн төлөвлөлт3',
+      //   icon: 'pi pi-check',
+      //   routerLink: ['/main/teacher/lesson', this.lessonId, 'clo-tree']
+      // },
       {
         label: 'Оюутан',
         icon: 'pi pi-graduation-cap',
@@ -60,11 +59,6 @@ export class LessonComponent {
         label: 'Ирц',
         icon: 'pi pi-plus',
         routerLink: ['/main/teacher/lesson', this.lessonId, 'attendance']
-      },
-      {
-        label: 'ХИЧЭЭЛИЙН АГУУЛГА, ЦАГИЙН ХУВААРИЛАЛТ',
-        icon: 'pi pi-plus',
-        url: '/main/teacher/lesson/syllabus/schedule'
       }
     ];
   }

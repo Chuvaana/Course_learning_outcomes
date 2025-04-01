@@ -6,15 +6,15 @@ var studentSchema = mongoose.Schema(
         studentName: { type: String, required: true },
         lec: {
             day: { type: String },
-            time: { type: String },
+            time: { type: Number },
         },
         sem: {
             day: { type: String },
-            time: { type: String },
+            time: { type: Number },
         },
         lab: {
             day: { type: String },
-            time: { type: String },
+            time: { type: Number },
         },
     },
     { timestamps: true }

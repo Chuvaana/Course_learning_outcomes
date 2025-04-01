@@ -11,7 +11,8 @@ import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { ToastModule } from 'primeng/toast';
 import { AssessmentService } from '../../../../../services/assessmentService';
-interface Clo {
+import { TabRefreshService } from '../tabRefreshService';
+interface Assessment {
   id: number;
   lessonId: string,
   clo: any;
@@ -43,7 +44,7 @@ interface Clo {
 })
 export class AssessmentComponent {
   @Input() lessonId: string = '';
-  assessments: Clo[] = [];
+  assessments: Assessment[] = [];
   clos: any;
 
   index!: number;
@@ -52,13 +53,19 @@ export class AssessmentComponent {
 
   isNew = true;
 
-  clonedClos: { [s: string]: Clo } = {};
+  clonedClos: { [s: string]: Assessment } = {};
   editingRowId: number | null = null;
 
-  constructor(private service: AssessmentService, private msgService: MessageService) { }
+  constructor(private service: AssessmentService, private msgService: MessageService, private tabRefreshService: TabRefreshService) { }
 
   ngOnInit() {
-    this.readData();
+    if (this.lessonId) {
+      this.readData();
+    }
+
+    this.tabRefreshService.refresh$.subscribe(() => {
+      this.readData(); // Датаг дахин ачаалах функц
+    });
   }
 
   readData() {
@@ -149,9 +156,9 @@ export class AssessmentComponent {
 
   getGroupHeaderLabel(cloType: string): string {
     switch (cloType) {
-      case 'LAB':
-        return 'Лекц, семинарын хичээлээр эзэмшсэн суралцахуйн үр дүнгүүд';
       case 'LEC_SEM':
+        return 'Лекц, семинарын хичээлээр эзэмшсэн суралцахуйн үр дүнгүүд';
+      case 'LAB':
         return 'Лабораторийн хичээлээр эзэмшсэн суралцахуйн үр дүнгүүд';
       default:
         return cloType;

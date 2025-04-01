@@ -146,3 +146,39 @@ exports.getStudentsByClassTypeAndDay = async (req, res) => {
         res.status(500).json({ message: 'Error fetching students' });
     }
 };
+
+exports.getStudentsByClassTypeAndDayTime = async (req, res) => {
+    const { classType } = req.params;
+    let { day, time } = req.query; // Getting the selected day and time from query params
+
+    try {
+        // Validate classType
+        if (!['lec', 'sem', 'lab'].includes(classType)) {
+            return res.status(400).json({ message: 'Invalid class type' });
+        }
+
+        // Validate time (optional: adjust according to your requirements)
+        if (!time) {
+            return res.status(400).json({ message: 'Time is required' });
+        }
+        time = parseInt(time, 10); 
+
+        // Find students based on classType, day, and time
+        console.log("classType:", classType);
+        console.log("day:", day);
+        console.log("time:", time);
+
+
+        const students = await Student.find({
+            [`${classType}.day`]: day,
+            [`${classType}.time`]: time
+        });
+
+        console.log("Filtered Students:", students);
+
+        res.json(students);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Error fetching students' });
+    }
+};

@@ -22,5 +22,7 @@ module.exports = app => {
 
     router.get('/classType/:classType', studentController.getStudentsByClassTypeAndDay);
 
+    router.get('/classTypeDateTime/:classType', studentController.getStudentsByClassTypeAndDayTime);
+
     app.use("/api/lesStudents", router);
 };

@@ -13,6 +13,7 @@ import { MessageService } from 'primeng/api';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { AccordionModule } from 'primeng/accordion';
+import { TabRefreshService } from '../tabRefreshService';
 
 @Component({
   selector: 'app-schedule',
@@ -48,12 +49,21 @@ export class ScheduleComponent {
   isLoading = true;
   clos: any;
 
-  constructor(private fb: FormBuilder, private service: ScheduleService, private msgService: MessageService) { }
+  constructor(
+    private fb: FormBuilder,
+    private service: ScheduleService,
+    private msgService: MessageService,
+    private tabRefreshService: TabRefreshService) { }
 
   async ngOnInit() {
-    this.service.getCloList(this.lessonId).subscribe(res => {
-      this.clos = res;
-    });
+    if (this.lessonId) {
+      this.service.getCloList(this.lessonId).subscribe(res => {
+        this.clos = res;
+      });
+      this.tabRefreshService.refresh$.subscribe(() => {
+        this.readData(); // Датаг дахин ачаалах функц
+      });
+    }
 
     this.scheduleForm = this.fb.group({
       schedules: this.fb.array([]) // This will hold the schedules data
@@ -203,22 +213,22 @@ export class ScheduleComponent {
   setDefaultSchedules(): void {
     const scheduleArray = this.scheduleForm.get('schedules') as FormArray;
     const defaultLessons = [
-      { week: 'I', title: '', time: 0, cloRelevance: [] },
-      { week: 'II', title: '', time: 0, cloRelevance: [] },
-      { week: 'III', title: '', time: 0, cloRelevance: [] },
-      { week: 'IV', title: '', time: 0, cloRelevance: [] },
-      { week: 'V', title: '', time: 0, cloRelevance: [] },
-      { week: 'VI', title: '', time: 0, cloRelevance: [] },
-      { week: 'VII', title: '', time: 0, cloRelevance: [] },
-      { week: 'VIII', title: '', time: 0, cloRelevance: [] },
-      { week: 'IX', title: '', time: 0, cloRelevance: [] },
-      { week: 'X', title: '', time: 0, cloRelevance: [] },
-      { week: 'XI', title: '', time: 0, cloRelevance: [] },
-      { week: 'XII', title: '', time: 0, cloRelevance: [] },
-      { week: 'XIII', title: '', time: 0, cloRelevance: [] },
-      { week: 'XIV', title: '', time: 0, cloRelevance: [] },
-      { week: 'XV', title: '', time: 0, cloRelevance: [] },
-      { week: 'XVI', title: '', time: 0, cloRelevance: [] }
+      { week: 'I', title: '', time: 2, cloRelevance: [] },
+      { week: 'II', title: '', time: 2, cloRelevance: [] },
+      { week: 'III', title: '', time: 2, cloRelevance: [] },
+      { week: 'IV', title: '', time: 2, cloRelevance: [] },
+      { week: 'V', title: '', time: 2, cloRelevance: [] },
+      { week: 'VI', title: '', time: 2, cloRelevance: [] },
+      { week: 'VII', title: '', time: 2, cloRelevance: [] },
+      { week: 'VIII', title: 'Явцын сорил 1', time: 2, cloRelevance: [] },
+      { week: 'IX', title: '', time: 2, cloRelevance: [] },
+      { week: 'X', title: '', time: 2, cloRelevance: [] },
+      { week: 'XI', title: '', time: 2, cloRelevance: [] },
+      { week: 'XII', title: '', time: 2, cloRelevance: [] },
+      { week: 'XIII', title: 'Явцын сорил 2', time: 2, cloRelevance: [] },
+      { week: 'XIV', title: '', time: 2, cloRelevance: [] },
+      { week: 'XV', title: '', time: 2, cloRelevance: [] },
+      { week: 'XVI', title: '', time: 2, cloRelevance: [] }
     ];
     defaultLessons.forEach(lesson => {
       scheduleArray.push(this.createLesson(lesson));
@@ -227,22 +237,22 @@ export class ScheduleComponent {
   setDefaultSemSchedules(): void {
     const scheduleSemArray = this.scheduleSemForm.get('scheduleSems') as FormArray;
     const defaultSemLessons = [
-      { week: 'I', title: '', time: 0, cloRelevance: [] },
-      { week: 'II', title: '', time: 0, cloRelevance: [] },
-      { week: 'III', title: '', time: 0, cloRelevance: [] },
-      { week: 'IV', title: '', time: 0, cloRelevance: [] },
-      { week: 'V', title: '', time: 0, cloRelevance: [] },
-      { week: 'VI', title: '', time: 0, cloRelevance: [] },
-      { week: 'VII', title: '', time: 0, cloRelevance: [] },
-      { week: 'VIII', title: '', time: 0, cloRelevance: [] },
-      { week: 'IX', title: '', time: 0, cloRelevance: [] },
-      { week: 'X', title: '', time: 0, cloRelevance: [] },
-      { week: 'XI', title: '', time: 0, cloRelevance: [] },
-      { week: 'XII', title: '', time: 0, cloRelevance: [] },
-      { week: 'XIII', title: '', time: 0, cloRelevance: [] },
-      { week: 'XIV', title: '', time: 0, cloRelevance: [] },
-      { week: 'XV', title: '', time: 0, cloRelevance: [] },
-      { week: 'XVI', title: '', time: 0, cloRelevance: [] }
+      { week: 'I', title: '', time: 2, cloRelevance: [] },
+      { week: 'II', title: '', time: 2, cloRelevance: [] },
+      { week: 'III', title: '', time: 2, cloRelevance: [] },
+      { week: 'IV', title: '', time: 2, cloRelevance: [] },
+      { week: 'V', title: '', time: 2, cloRelevance: [] },
+      { week: 'VI', title: '', time: 2, cloRelevance: [] },
+      { week: 'VII', title: '', time: 2, cloRelevance: [] },
+      { week: 'VIII', title: '', time: 2, cloRelevance: [] },
+      { week: 'IX', title: '', time: 2, cloRelevance: [] },
+      { week: 'X', title: '', time: 2, cloRelevance: [] },
+      { week: 'XI', title: '', time: 2, cloRelevance: [] },
+      { week: 'XII', title: '', time: 2, cloRelevance: [] },
+      { week: 'XIII', title: '', time: 2, cloRelevance: [] },
+      { week: 'XIV', title: '', time: 2, cloRelevance: [] },
+      { week: 'XV', title: '', time: 2, cloRelevance: [] },
+      { week: 'XVI', title: '', time: 2, cloRelevance: [] }
     ];
     defaultSemLessons.forEach(lesson => {
       scheduleSemArray.push(this.createLesson(lesson));
@@ -252,22 +262,22 @@ export class ScheduleComponent {
   setDefaultLabSchedules(): void {
     const scheduleLabArray = this.scheduleLabForm.get('scheduleLabs') as FormArray;
     const defaultLessons = [
-      { week: 'I', title: '', time: 0, cloRelevance: [] },
-      { week: 'II', title: '', time: 0, cloRelevance: [] },
-      { week: 'III', title: '', time: 0, cloRelevance: [] },
-      { week: 'IV', title: '', time: 0, cloRelevance: [] },
-      { week: 'V', title: '', time: 0, cloRelevance: [] },
-      { week: 'VI', title: '', time: 0, cloRelevance: [] },
-      { week: 'VII', title: '', time: 0, cloRelevance: [] },
-      { week: 'VIII', title: '', time: 0, cloRelevance: [] },
-      { week: 'IX', title: '', time: 0, cloRelevance: [] },
-      { week: 'X', title: '', time: 0, cloRelevance: [] },
-      { week: 'XI', title: '', time: 0, cloRelevance: [] },
-      { week: 'XII', title: '', time: 0, cloRelevance: [] },
-      { week: 'XIII', title: '', time: 0, cloRelevance: [] },
-      { week: 'XIV', title: '', time: 0, cloRelevance: [] },
-      { week: 'XV', title: '', time: 0, cloRelevance: [] },
-      { week: 'XVI', title: '', time: 0, cloRelevance: [] }
+      { week: 'I', title: '', time: 2, cloRelevance: [] },
+      { week: 'II', title: '', time: 2, cloRelevance: [] },
+      { week: 'III', title: '', time: 2, cloRelevance: [] },
+      { week: 'IV', title: '', time: 2, cloRelevance: [] },
+      { week: 'V', title: '', time: 2, cloRelevance: [] },
+      { week: 'VI', title: '', time: 2, cloRelevance: [] },
+      { week: 'VII', title: '', time: 2, cloRelevance: [] },
+      { week: 'VIII', title: '', time: 2, cloRelevance: [] },
+      { week: 'IX', title: '', time: 2, cloRelevance: [] },
+      { week: 'X', title: '', time: 2, cloRelevance: [] },
+      { week: 'XI', title: '', time: 2, cloRelevance: [] },
+      { week: 'XII', title: '', time: 2, cloRelevance: [] },
+      { week: 'XIII', title: '', time: 2, cloRelevance: [] },
+      { week: 'XIV', title: '', time: 2, cloRelevance: [] },
+      { week: 'XV', title: '', time: 2, cloRelevance: [] },
+      { week: 'XVI', title: '', time: 2, cloRelevance: [] }
     ];
     defaultLessons.forEach(lesson => {
       scheduleLabArray.push(this.createLesson(lesson));
