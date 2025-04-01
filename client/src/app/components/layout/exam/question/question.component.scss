@@ -16,11 +16,23 @@
 }
 
 .input-group {
+  margin-right: 50px;
   display: flex;
   flex-direction: column;
   flex: 1;
 }
-
 .form-dropdown {
-  width: 100%;
+  width: 300px;
+}
+
+.input-question-answer{
+  width: 300px;
+}
+.input-question-rate{
+  width: 300px;
+}
+.button-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 15px;
 }

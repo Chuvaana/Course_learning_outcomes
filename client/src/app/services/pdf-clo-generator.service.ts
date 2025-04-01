@@ -1,9 +1,11 @@
+import { style } from '@angular/animations';
 import { Injectable } from '@angular/core';
 import { backgroundClip } from 'html2canvas/dist/types/css/property-descriptors/background-clip';
 import { fontStyle } from 'html2canvas/dist/types/css/property-descriptors/font-style';
 import { fontWeight } from 'html2canvas/dist/types/css/property-descriptors/font-weight';
 import pdfMake from 'pdfmake/build/pdfmake';
 import { vfs } from 'pdfmake/build/vfs_fonts';
+import { Content } from 'pdfmake/interfaces';
 
 @Injectable({
   providedIn: 'root'
@@ -61,13 +63,13 @@ export class PdfCloGeneratorService {
         {},
         { text: 'Цаг\nтөлөвлөлт,\nхариуцлага', alignment: 'center', style: 'tableYellow' },
         { text: 'Суралцах\nхүсэл\nэрмэлзэл,\nөөрийгээ\nилэрхийлэх', alignment: 'center', style: 'tableYellow' },
-        { text: 'Мэдлэгээ\nсэргээн\nсанах,\nтайлбарлах',alignment: 'center', style: 'tableBlue' },
-        { text: 'Асуудал\nшийдвэрлэхэд\nмэдлэгээ\nхэрэглэх,\nзадлан\nшинжлэх',alignment: 'center', style: 'tableBlue' },
-        { text: 'Мэдлэгээ\nсэргээн\nсанах,\nтайлбарлах',alignment: 'center', style: 'tableGreen' },
-        { text: 'Асуудал\nшийдвэрлэхэд\nмэдлэгээ\nхэрэглэх,\nзадлан\nшинжлэх',alignment: 'center', style: 'tableGreen' },
-        { text: 'Лабораторийн\nхэмжилт,\nхэрэглэх,\nдаалгавар\nгүйцэтгэх',alignment: 'center', style: 'tableOrange' },
-        { text: 'Үр дүнг тохирох\nаргаар өгөгдсөн\nформатын\nдагуу\nболовсруулж,\nтайлагнах',alignment: 'center', style: 'tableOrange' },
-        { text: 'Өгөгдсөн\nдаалгаварын\nхүрээнд\nшийдвэрлэх\nасуудлаа\nтодорхойлж\nтомъёолох',alignment: 'center', style: 'tableGreen' },
+        { text: 'Мэдлэгээ\nсэргээн\nсанах,\nтайлбарлах', alignment: 'center', style: 'tableBlue' },
+        { text: 'Асуудал\nшийдвэрлэхэд\nмэдлэгээ\nхэрэглэх,\nзадлан\nшинжлэх', alignment: 'center', style: 'tableBlue' },
+        { text: 'Мэдлэгээ\nсэргээн\nсанах,\nтайлбарлах', alignment: 'center', style: 'tableGreen' },
+        { text: 'Асуудал\nшийдвэрлэхэд\nмэдлэгээ\nхэрэглэх,\nзадлан\nшинжлэх', alignment: 'center', style: 'tableGreen' },
+        { text: 'Лабораторийн\nхэмжилт,\nхэрэглэх,\nдаалгавар\nгүйцэтгэх', alignment: 'center', style: 'tableOrange' },
+        { text: 'Үр дүнг тохирох\nаргаар өгөгдсөн\nформатын\nдагуу\nболовсруулж,\nтайлагнах', alignment: 'center', style: 'tableOrange' },
+        { text: 'Өгөгдсөн\nдаалгаварын\nхүрээнд\nшийдвэрлэх\nасуудлаа\nтодорхойлж\nтомъёолох', alignment: 'center', style: 'tableGreen' },
         { text: 'Шийдвэрлэх\nасуудлын\nхүрээнд\nтодорхой\nшийдэл\nдэвшүүлэх,\nдүн\nшинжилгээ\nхийх', alignment: 'center', style: 'tableGreen' },
         { text: 'Мэдлэг, ур\nчадвараа\nашиглан\nсонгосон\nшийдлын\nдагуу\nасуудлыг\nшийдвэрлэх', alignment: 'center', style: 'tableGreen' },
         { text: 'Бичгийн болон\nхарилцах ур\nчадвараа\nашиглан үр\nдүнг өгөгдсөн\nформатын\nдагуу\nтайлагнах,\nилтгэх', alignment: 'center', style: 'tableGreen' },
@@ -81,7 +83,7 @@ export class PdfCloGeneratorService {
       [
         {},
         {},
-        { text: 'Явцын 70 онооны задаргаа /хичээлийн хэлбэрээс хамаарч өөрчлөгдөнө/',colSpan: 12, alignment: 'center', style: 'tableYellow' },
+        { text: 'Явцын 70 онооны задаргаа /хичээлийн хэлбэрээс хамаарч өөрчлөгдөнө/', colSpan: 12, alignment: 'center', style: 'tableYellow' },
         {},
         {},
         {},
@@ -94,7 +96,7 @@ export class PdfCloGeneratorService {
         {},
         {},
         {},
-        { text: 'Шалгалтын 30 онооны задаргаа',colSpan:3 , alignment: 'center', style: 'tableGreen' },
+        { text: 'Шалгалтын 30 онооны задаргаа', colSpan: 3, alignment: 'center', style: 'tableGreen' },
         {},
         {},
         {},
@@ -123,7 +125,7 @@ export class PdfCloGeneratorService {
         {}
       ],
       [
-        { text: 'Лекц семинарын хичээлээр эзэмшсэн суралцхуйн үр дүнгүүд',colSpan: 20, alignment: 'center', style: 'tableGoldenYellow' },
+        { text: 'Лекц семинарын хичээлээр эзэмшсэн суралцхуйн үр дүнгүүд', colSpan: 20, alignment: 'center', style: 'tableGoldenYellow' },
         {},
         {},
         {},
@@ -145,7 +147,7 @@ export class PdfCloGeneratorService {
         {}
       ],
       [
-        { text: 'Лабораторийн хичээлээр эзэмшсэн суралцхуйн үр дүнгүүд',colSpan: 20, alignment: 'center', style: 'tableGoldenYellow' },
+        { text: 'Лабораторийн хичээлээр эзэмшсэн суралцхуйн үр дүнгүүд', colSpan: 20, alignment: 'center', style: 'tableGoldenYellow' },
         {},
         {},
         {},
@@ -168,29 +170,122 @@ export class PdfCloGeneratorService {
       ],
     ];
 
+    const cloAssesment = [
+      [
+        { text: 'д/д', alignment: 'center', style: 'tableGreen' },
+        { text: 'Оюутны нэр/\nүнэлгээний аргууд', alignment: 'center', style: 'tableGreen' },
+        { text: 'Цаг төлөвлөлт, хариуцлага', alignment: 'center', style: 'tableGreen' },
+        { text: 'Мэдлэгээ сэргээн санах,\nтайлбарлах', alignment: 'center', style: 'tableGreen' },
+        { text: 'Асуудал шийдвэрлэхэд\nмэдлэгээ хэрэглэх, задлан\nшинжлэх', alignment: 'center', style: 'tableGreen' },
+        { text: 'Мэдлэгээ сэргээн санах,\nтайлбарлах', alignment: 'center', style: 'tableGreen' },
+        { text: 'Асуудал шийдвэрлэхэд\nмэдлэгээ хэрэглэх, задлан', alignment: 'center', style: 'tableGreen' },
+        { text: 'Өгөгдсөн даалгаварын хүрээнд\nшийдвэрлэх асуудлаа\nтодорхойлж томъёолох', alignment: 'center', style: 'tableGreen' },
+        { text: 'Шийдвэрлэх асуудлын хүрээнд\nтодорхой ши йдэл дэвшүүлэх,\nдүн шинжилгээ хийх', alignment: 'center', style: 'tableGreen' },
+        { text: 'Мэдлэг, ур чадвараа ашиглан\nсонгосон шийдлын дагуу', alignment: 'center', style: 'tableGreen' },
+        { text: 'Бичгийн болон харилцах ур\nчадвараа ашиглан үр дүнг\nөгөгдсөн форматын дагуу', alignment: 'center', style: 'tableGreen' },
+        { text: 'Сэргээн санах/ойлгох түвшин', alignment: 'center', style: 'tableGreen' },
+        { text: 'Үнэлэх/ бүтээх түвшин', alignment: 'center', style: 'tableGreen' },
+        { text: 'Нийт оноо', alignment: 'center', style: 'tableGreen' },
+        { text: '100%-д шилжүүлсэн оноо', alignment: 'center', style: 'tableGreen' },
+        { text: 'Үсгэн үнэлгээ', alignment: 'center', style: 'tableGreen' },
+      ],
+      [
+        { text: 'Математикийн ойлголтыг дүрс боловсруулалтад хэрэглэх;',colSpan: 16, alignment: 'center', style: 'tableGreen' },
+        {},
+        {},
+        {},
+        {},
+        {},
+        {},
+        {},
+        {},
+        {},
+        {},
+        {},
+        {},
+        {},
+        {},
+        {},
+      ],
+      [
+        { text: 'Авбал зохих оноо',colSpan: 2, alignment: 'center', style: 'tableHeader' },
+        {},
+        { text: '1', alignment: 'center', style: 'tableHeader' },
+        { text: '3', alignment: 'center', style: 'tableHeader' },
+        { text: '1', alignment: 'center', style: 'tableHeader' },
+        { text: '2', alignment: 'center', style: 'tableHeader' },
+        { text: '1', alignment: 'center', style: 'tableHeader' },
+        { text: '1', alignment: 'center', style: 'tableHeader' },
+        { text: '1', alignment: 'center', style: 'tableHeader' },
+        { text: '1', alignment: 'center', style: 'tableHeader' },
+        { text: '1', alignment: 'center', style: 'tableHeader' },
+        { text: '1', alignment: 'center', style: 'tableHeader' },
+        { text: '2', alignment: 'center', style: 'tableHeader' },
+        { text: '15', alignment: 'center', style: 'tableHeader' },
+        { text: '100%', alignment: 'center', style: 'tableHeader' },
+        { text: 'A', alignment: 'center', style: 'tableHeader' },
+      ],
+    ];
     // Dynamically generate widths based on number of columns
     const documentDefinition = {
       pageOrientation: 'landscape' as const,
       content: [
-        { text: '4.	ХИЧЭЭЛИЙН СУРАЛЦАХУЙН ҮР ДҮНГҮҮДИЙН ҮНЭЛГЭЭНИЙ ТӨЛӨВЛӨЛТ ', fontSize: 12, bold: true, margin: [0, 0, 0, 5] as [number, number, number, number]},
-        { text: [
-          { text: '<Энд UNIMIS системд оруулсан хичээлийн үнэлгээний 15 задаргаанд харгалзах оноо нь хичээлийн суралцахуйн үр дүнгүүдийн алийг үнэлэх, түүнд оноог хэрхэн хуваарилах төлөвлөлтийг хийнэ. Дагалдах', style: 'bodyRed' },
-          { text: '70.30-CLOs-khamaaral.xls ', style: 'body' },
-          { text: 'файлын төлөвлөлт хуудсыг ашиглан хичээлийн суралцахуйн үр дүнгийн онооны хуваарилалтыг хийж тайлангийн файл руу хуулж оруулна. Харин тус файлын гүйцэтгэл хуудсыг үр дүн тооцоолоход ашиглаж болно>', style: 'bodyRed' }
-        ]
-      },
+        { text: '4.	ХИЧЭЭЛИЙН СУРАЛЦАХУЙН ҮР ДҮНГҮҮДИЙН ҮНЭЛГЭЭНИЙ ТӨЛӨВЛӨЛТ ', fontSize: 12, bold: true, margin: [0, 0, 0, 5] as [number, number, number, number] },
+        {
+          text: [
+            { text: '<Энд UNIMIS системд оруулсан хичээлийн үнэлгээний 15 задаргаанд харгалзах оноо нь хичээлийн суралцахуйн үр дүнгүүдийн алийг үнэлэх, түүнд оноог хэрхэн хуваарилах төлөвлөлтийг хийнэ. Дагалдах', style: 'bodyRed' },
+            { text: '70.30-CLOs-khamaaral.xls ', style: 'body' },
+            { text: 'файлын төлөвлөлт хуудсыг ашиглан хичээлийн суралцахуйн үр дүнгийн онооны хуваарилалтыг хийж тайлангийн файл руу хуулж оруулна. Харин тус файлын гүйцэтгэл хуудсыг үр дүн тооцоолоход ашиглаж болно>', style: 'bodyRed' }
+          ]
+        },
         { text: ' ', style: 'bodyCenter' },
         { text: 'Хүснэгт 4. Хичээлийн суралцахуйн үр дүнгийн шууд үнэлгээний онооны хуваарилалт/төлөвлөлтөөр/', style: 'bodyCenter' },
         {
           table: {
             headerRows: 1,
-            widths: ['2%','8%','5%','5%','5%',
-                     '5%','5%','5%','5%','5%',
-                     '5%','5%','5%','5%','5%',
-                     '5%','5%','5%','5%','5%'],
+            widths: ['3%', '8%', '4%', '5%', '5%',
+              '5%', '5%', '5%', '5%', '5%',
+              '5%', '5%', '5%', '5%', '5%',
+              '5%', '5%', '5%', '5%', '5%'],
+            body: cloAssesment,
+          },
+        },
+        {
+          text: '5.	ХИЧЭЭЛИЙН ШУУД БА ШУУД БУС ҮНЭЛГЭЭНИЙ ҮР ДҮН ',
+          fontSize: 12,
+          bold: true,
+          margin: [0, 0, 0, 5] as [number, number, number, number],
+          pageBreak: 'before' as any,
+          pageOrientation: 'portrait' as const
+        },
+        {
+          text: '5.1.	ХИЧЭЭЛИЙН СУРАЛЦАХУЙН ҮР ДҮНГИЙН ШУУД ҮНЭЛГЭЭНИЙ ГҮЙЦЭТГЭЛ  ',
+          fontSize: 12,
+          bold: true,
+          margin: [0, 0, 0, 5] as [number, number, number, number]
+        },
+        {
+          text: '<Хүснэгт 4-д үзүүлсэн төлөвлөлтөд үндэслэн хичээлийн тухайн суралцахуйн үр дүн (CLOs)-нд харгалзах үнэлгээний аргыг (1-15 хүртэлх) түүвэрлэн, харгалзах гүйцэтгэлийн оноог оюутан бүрээр гаргана. Жишээ загварыг хүснэгт 5-аас 6-д үзүүлэв.>',
+          margin: [0, 0, 0, 5] as [number, number, number, number],
+          style: 'bodyRed'
+        },
+        {
+          text: '5.1.1.	ТУХАЙН CLO-Д ХАРГАЛЗАХ ОЮУТНЫ ГҮЙЦЭТГЭЛИЙН ҮНЭЛГЭЭ',
+          fontSize: 12,
+          bold: true,
+          margin: [0, 0, 0, 5] as [number, number, number, number]
+        },
+        { text: 'Хүснэгт 5. CLO-1 суралцахуйн үр дүнгийн оюутны гүйцэтгэлийн үнэлгээ', style: 'bodyCenter' },
+        {
+          table: {
+            headerRows: 1,
+            widths: ['4%', '12%',
+              '6%', '6%', '6%', '6%',
+              '6%', '6%', '6%', '6%', '6%',
+              '6%', '6%', '6%', '6%', '6%'],
             body: tableBody,
           },
-        }
+        },
       ],
       styles: {
         header: {
@@ -199,42 +294,42 @@ export class PdfCloGeneratorService {
           margin: [0, 0, 0, 0] as [number, number, number, number] // ✅ Force it to be a tuple
         },
         tableYellow: {
-          fontSize: 5,
+          fontSize: 4,
           fontStyle: 'Arial',
           color: 'black',
           fillColor: '#FFF2CC',
           padding: [0, 10, 0, 0] as [number, number, number, number],
         },
         tableBlue: {
-          fontSize: 5,
+          fontSize: 4,
           fontStyle: 'Arial',
           color: 'black',
           fillColor: '#D9E1F2',
           padding: [0, 10, 0, 0] as [number, number, number, number],
         },
         tableGreen: {
-          fontSize: 5,
+          fontSize: 4,
           fontStyle: 'Arial',
           color: 'black',
           fillColor: '#E2EFDA',
           padding: [0, 10, 0, 0] as [number, number, number, number],
         },
         tableOrange: {
-          fontSize: 5,
+          fontSize: 4,
           fontStyle: 'Arial',
           color: 'black',
           fillColor: '#F8CBAD',
           padding: [0, 10, 0, 0] as [number, number, number, number],
         },
         tableGoldenYellow: {
-          fontSize: 5,
+          fontSize: 4,
           fontStyle: 'Arial',
           color: 'black',
           fillColor: '#FFFF00',
           padding: [0, 10, 0, 0] as [number, number, number, number],
         },
         tableHeader: {
-          fontSize: 5,
+          fontSize: 4,
           fontStyle: 'Arial',
           color: 'black',
           padding: [0, 10, 0, 0] as [number, number, number, number],

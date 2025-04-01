@@ -1,4 +1,3 @@
-import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ExamService } from '../../../../services/examService';
@@ -12,7 +11,8 @@ import { FormsModule } from '@angular/forms';
 import { Editor } from 'primeng/editor';
 import { DropdownModule } from 'primeng/dropdown';
 import { AccordionModule } from 'primeng/accordion';
-
+import { Component, Inject } from '@angular/core';
+import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 @Component({
   selector: 'app-question',
   standalone: true,
@@ -32,6 +32,8 @@ import { AccordionModule } from 'primeng/accordion';
   styleUrls: ['./question.component.scss']
 })
 export class QuestionComponent {
+
+
   questionForm: FormGroup;
   value: string | undefined;
   text: string = 'Always bet on Prime!';
@@ -96,9 +98,10 @@ export class QuestionComponent {
     }
   ];
   answers = [
-    { answerId1: '', answerRate1: null},
-    { answerId2: '', answerRate2: null},
-    { answerId3: '', answerRate3: null}
+    { answerId: null, answerRate: null}
+  ];
+  answers1 = [
+    { answerId: null, answerRate: null}
   ];
 
   questionId: any;
@@ -106,14 +109,14 @@ export class QuestionComponent {
   questionPoint: any;
   status: any;
   answerId: any;
-  answerRate: any;
+  answerRate: string[] = [];
   activeIndex: number | undefined = 0;
-
   constructor(
     private fb: FormBuilder,
     private service: ExamService,
     private dialog: MatDialog,
-    private router: Router
+    private router: Router,
+    // @Inject(MAT_DIALOG_DATA) public data: any
   ) {
     this.questionForm = this.fb.group({
       id: ['', Validators.required],
@@ -124,8 +127,10 @@ export class QuestionComponent {
       cloLvl: ['', Validators.required],
       correctAnswer: ['', Validators.required],
       answer: ['', Validators.required],
-      answerRate: ['', Validators.required]
+      answerRate: this.fb.array([])  // Changed to FormArray for dynamic rates
     });
+
+    // console.log(this.data);
   }
   ngOnInit(): void {
   }
@@ -135,5 +140,27 @@ export class QuestionComponent {
   }
   valuea(e: any) {
     console.log('asdfasdf');
+  }
+
+  onQuestionSelect(){
+    this.questionForm.value.answer = this.answerRate;
+    console.log(this.questionForm.value);
+    console.log(this.answerRate);
+    console.log(this.answers);
+    console.log(this.answers1);
+  }
+
+  onDropdownChange(id: any, selectedId: any) {
+    const selectedItem = this.answerRates.find(i => i.id === selectedId.value);
+    if (selectedItem) {
+      // const idName = 'answerId'+id;
+      // // this.answers[id].idName? =
+      // // this.answerRate.push(selectedItem.name);
+      console.log('Updated answerRate:', this.answerRate);
+    }
+  }
+  onAnswerAdd(){
+    this.answers.push({ answerId: null, answerRate: null});
+    this.answers1.push({ answerId: null, answerRate: null});
   }
 }

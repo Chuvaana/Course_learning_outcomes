@@ -14,6 +14,9 @@ import { LessonComponent } from './lesson-list/lesson/lesson.component';
 import { TeacherComponent } from './teacher.component';
 import { CloTreeComponent } from './lesson-list/lesson/clo-tree/clo-tree.component';
 import { AttendanceComponent } from './lesson-list/lesson/attendance/attendance.component';
+import { QuestionComponent } from '../exam/question/question.component';
+import { QuestionListComponent } from '../exam/list/list.component';
+import { ExamQuestionListComponent } from '../exam/exam-question-list/exam-question-list.component';
 
 const routes: Routes = [
   {
@@ -65,6 +68,18 @@ const routes: Routes = [
       {
         path: 'curriculum',
         component: CurriculumComponent
+      },
+      {
+        path: 'question-create',
+        component: QuestionComponent
+      },
+      {
+        path: 'questionlist',
+        component: QuestionListComponent
+      },
+      {
+        path: 'exam-questionlist',
+        component: ExamQuestionListComponent
       }
     ]
   },

@@ -10,9 +10,7 @@ import { LessonListComponent } from '../teacher/lesson-list/lesson-list.componen
 import { LessonComponent } from '../teacher/lesson-list/lesson/lesson.component';
 import { TeacherComponent } from '../teacher/teacher.component';
 import { SharedComponent } from '../shared/shared.component';
-import { ListComponent } from '../exam/list/list.component';
 import { QuestionTypeListComponent } from '../exam/question-type-list/question-type-list.component';
-import { QuestionComponent } from '../exam/question/question.component';
 
 const routes: Routes = [
   {
@@ -24,16 +22,8 @@ const routes: Routes = [
         component: StudentImportComponent,
       },
       {
-        path: 'exam',
-        component: ListComponent,
-      },
-      {
         path: 'exam-list',
         component: ExamListComponent
-      },
-      {
-        path: 'question',
-        component: QuestionComponent,
       }
     ]
   },

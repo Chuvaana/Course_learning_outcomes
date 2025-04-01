@@ -1,0 +1,99 @@
+<div style="margin: 0px 100px;">
+  <div style="font-size: 40px;margin: 10px 0px;">
+    <span>Шалгалт авах асуултын жагсаалт</span>
+  </div>
+  <div style="display: flex; justify-content: flex-start;">
+    <div style="padding: 20px 0px;">
+      <button class="action-btn" mat-raised-button (click)="createBtn()">Асуулт нэмж оруулах </button>
+    </div>
+    <div style="padding: 20px 0px;">
+      <button class="action-btn" mat-raised-button (click)="exportToExcel()">Excel рүү хөрвүүлэх</button>
+    </div>
+    <div style="padding: 20px 0px;">
+      <button class="action-btn" mat-raised-button (click)="exportPdf()">PDF тайлан гаргах</button>
+    </div>
+  </div>
+  <div class="card" style="margin: 0px 100px;">
+    <p-splitter [style]="{ height: '100px' }" styleClass="mb-4" gutterSize="0">
+      <ng-template #panel>
+        <div class="flex items-center justify-center h-full" style="flex-direction: column;">
+          <label for="questionId">Хичээлийн нэр</label>
+          <input pInputText id="questionId" aria-describedby="questionId-help" [(ngModel)]="questionId"
+            placeholder="123.." />
+        </div>
+      </ng-template>
+      <ng-template #panel>
+        <div class="flex items-center justify-center h-full" style="flex-direction: column;">
+          <label for="questionId">Шалгалтын хэлбэр</label>
+          <input pInputText id="questionId" aria-describedby="questionId-help" [(ngModel)]="questionId"
+            placeholder="123.." />
+        </div>
+      </ng-template>
+      <ng-template #panel>
+        <div class="flex items-center justify-center h-full" style="flex-direction: column;">
+          <label for="questionId">Хувилбарын тоо</label>
+          <input pInputText id="questionId" aria-describedby="questionId-help" [(ngModel)]="questionId"
+            placeholder="123.." />
+        </div>
+      </ng-template>
+      <ng-template #panel>
+        <div class="flex items-center justify-center h-full" style="flex-direction: column;">
+          <label for="questionId">Шалгалт өгөх оюутны тоо</label>
+          <input pInputText id="questionId" aria-describedby="questionId-help" [(ngModel)]="questionId"
+            placeholder="123.." />
+        </div>
+      </ng-template>
+    </p-splitter>
+  </div>
+  <div class="card" style="margin: 0px 100px; justify-self: left">
+    <div style="margin: 10px 0px; padding-left: 50px;">
+      <label for="questionId">Шалгалтаар үнэлэх суралцахуйн үр дүнгүүд (CLOs)</label>
+    </div>
+    <p-splitter [style]="{ height: '100px' }">
+      <ng-template #panel>
+        <div *ngFor="let clo of clos; let i = index" style="margin-right: 20px;">
+          <p-checkbox
+            [inputId]="'ingredient' + i"
+            name="cloSelection"
+            [(ngModel)]="clo.isSelected"
+            binary="true"
+            (onChange)="onCheckboxClick(clo)"/>
+          <label [for]="'ingredient' + i" class="ml-2"> {{ clo.cloName }} </label>
+        </div>
+      </ng-template>
+    </p-splitter>
+  </div>
+  <div>
+    <p-table [value]="products" [paginator]="true" [rows]="5" [tableStyle]="{ 'min-width': '50rem' }"
+      [rowsPerPageOptions]="[5, 10, 20]">
+      <ng-template pTemplate="header">
+        <tr>
+          <th style="text-align: center; width:5%">№</th>
+          <th style="width:35%">Асуултын нэр</th>
+          <th style="text-align: center; width:10%">Үйл үг</th>
+          <th style="text-align: center; width:8%">Блүмийн түвшин</th>
+          <th style="text-align: center; width:7%">CLOs төрөл</th>
+          <th style="text-align: center; width:8%">Асуултын оноо</th>
+          <th style="width:10%">Асуулт оруулсан</th>
+          <th style="width:10%">Асуулт өөрчилсөн</th>
+          <th style="width:5%">Засвар</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-product let-i="index" style="align-items: center;">
+        <tr>
+          <td>{{ i + 1 }}</td>
+          <td>{{ product.questionName }}</td>
+          <td style="text-align-last: center;">{{ product.verb }}</td>
+          <td style="text-align-last: center;">{{ product.blmLevel }}</td>
+          <td style="text-align-last: center;">{{ product.CloLevel }}</td>
+          <td style="text-align-last: center;">{{ product.questionPoint }}</td>
+          <td>{{ product.createdBy }}</td>
+          <td>{{ product.modifyBy }}</td>
+          <td>
+            <button (click)="editBtn(product)">as</button>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</div>
