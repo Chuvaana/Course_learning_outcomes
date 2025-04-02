@@ -1,0 +1,100 @@
+<div class="card">
+    <h2>Configuration Form</h2>
+    <form [formGroup]="configForm" (ngSubmit)="onSubmit()">
+        <div class="p-fluid p-formgrid p-grid">
+            <!-- Branch Selection -->
+            <div class="p-field p-col-12 p-md-6">
+                <label for="branchId">Branch</label>
+                <p-dropdown id="branchId" formControlName="branchId" [options]="branches" optionLabel="name"
+                    placeholder="Select a branch" (onChange)="onBranchChange($event.value)"></p-dropdown>
+                <div *ngIf="configForm.get('branchId')?.invalid && configForm.get('branchId')?.touched" class="p-error">
+                    Branch is required.
+                </div>
+            </div>
+
+            <!-- Department Selection -->
+            <div class="p-field p-col-12 p-md-6">
+                <label for="department">Department</label>
+                <p-dropdown id="department" formControlName="department" [options]="departments" optionLabel="name"
+                    placeholder="Select a department"></p-dropdown>
+                <div *ngIf="configForm.get('department')?.invalid && configForm.get('department')?.touched"
+                    class="p-error">
+                    Department is required.
+                </div>
+            </div>
+
+            <div class="p-field p-col-12 p-md-6">
+                <label for="name">Name</label>
+                <input id="name" type="text" pInputText formControlName="name" placeholder="Enter name" />
+                <div *ngIf="configForm.get('name')?.invalid && configForm.get('name')?.touched" class="p-error">
+                    Name is required.
+                </div>
+            </div>
+
+            <div class="p-field p-col-12 p-md-6">
+                <label for="itemCode">Item Code</label>
+                <input id="itemCode" type="text" pInputText formControlName="itemCode" placeholder="Enter item code" />
+                <div *ngIf="configForm.get('itemCode')?.invalid && configForm.get('itemCode')?.touched" class="p-error">
+                    Item code is required and must be alphanumeric with a minimum length of 3.
+                </div>
+            </div>
+
+            <!-- Item Value -->
+            <div class="p-field p-col-12 p-md-6">
+                <label for="itemValue">Item Value</label>
+                <input id="itemValue" type="text" pInputText formControlName="itemValue"
+                    placeholder="Enter item value" />
+                <div *ngIf="configForm.get('itemValue')?.invalid && configForm.get('itemValue')?.touched"
+                    class="p-error">
+                    Item value is required.
+                </div>
+            </div>
+            <div class="p-field p-col-12">
+                <button pButton type="submit" label="Submit" [disabled]="configForm.invalid"></button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<p-table [value]="items" editMode="row">
+    <ng-template pTemplate="header">
+        <tr>
+            <th>Branch</th>
+            <th>Department</th>
+            <th>Nmae</th>
+            <th>Item Code</th>
+            <th>Item Value</th>
+            <th>Action</th>
+        </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-item let-editing="editing" let-ri="rowIndex">
+        <tr [pEditableRow]>
+            <td>
+                <input pInputText [(ngModel)]="item.branchId" />
+            </td>
+            <td [pEditableRow]>
+                <input pInputText [(ngModel)]="item.department" />
+            </td>
+            <td [pEditableRow]>
+                <input pInputText [(ngModel)]="item.name" />
+            </td>
+            <td [pEditableRow]>
+                <input pInputText [(ngModel)]="item.itemCode" />
+            </td>
+            <td [pEditableRow]>
+                <input pInputText [(ngModel)]="item.itemValue" />
+            </td>
+            <td>
+                <div class="flex items-center justify-center gap-2">
+                    <button *ngIf="!editing" pButton pRipple type="button" pInitEditableRow icon="pi pi-pencil"
+                        (click)="onRowEditInit(item, ri)" text rounded severity="secondary"></button>
+                    <button *ngIf="editing" pButton pRipple type="button" pSaveEditableRow icon="pi pi-check"
+                        (click)="onRowEditSave(item)" text rounded severity="secondary"></button>
+                    <button *ngIf="editing" pButton pRipple type="button" pCancelEditableRow icon="pi pi-times"
+                        (click)="onRowEditCancel(item, ri)" text rounded severity="secondary"></button>
+                </div>
+            </td>
+        </tr>
+    </ng-template>
+</p-table>

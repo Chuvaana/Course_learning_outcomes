@@ -1,5 +1,12 @@
 <div class="lesson-list-container">
-  <button pButton label="Хичээл нэмэх" icon="pi pi-plus" (click)="addLesson()"></button>
+  <div>
+    <button pButton label="Хичээл нэмэх" icon="pi pi-plus" (click)="addLesson()"></button>
+    <p-dropdown [options]="yearIntervals" [(ngModel)]="selectedInterval" placeholder="Select a Year Interval"
+      (onChange)="onYearChange($event.value)"></p-dropdown>
+    <p-dropdown [(ngModel)]="selectedSeason" [options]="recommendedSemester"
+      (onChange)="onSeasonChange($event.value)" />
+  </div>
+
 
   <div class="lesson-cards">
     <div *ngFor="let lesson of courses" class="lesson-card">

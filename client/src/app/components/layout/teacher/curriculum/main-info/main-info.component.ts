@@ -12,6 +12,7 @@ import { MessageService } from 'primeng/api';
 import { TeacherService } from '../../../../../services/teacherService';
 import { Router } from '@angular/router';
 import { TabRefreshService } from '../tabRefreshService';
+import { SharedService } from '../../../../../services/sharedService';
 
 @Component({
   selector: 'app-main-info',
@@ -41,6 +42,7 @@ export class MainInfoComponent {
   lessonType: any[] = [];
   recommendedSemester: any[] = [];
   teacherId!: string;
+  schoolYear!: string;
 
   constructor(
     private fb: FormBuilder,
@@ -48,7 +50,8 @@ export class MainInfoComponent {
     private teacherService: TeacherService,
     private msgService: MessageService,
     private router: Router,
-    private tabRefreshService: TabRefreshService) {
+    private tabRefreshService: TabRefreshService,
+    private sharedService: SharedService) {
     this.mainInfoForm = this.fb.group({
       lessonId: [],
       lessonName: ['', Validators.required],
@@ -57,6 +60,7 @@ export class MainInfoComponent {
       school: ['', Validators.required],
       department: ['', Validators.required],
       prerequisite: [''],
+      schoolYear: [''],
       assistantTeacherName: [''],
       assistantTeacherRoom: [''],
       assistantTeacherEmail: ['', [Validators.email, Validators.pattern(/^[a-zA-Z0-9._%+-]+@must\.edu\.mn$/)]],
@@ -111,12 +115,18 @@ export class MainInfoComponent {
     ];
 
     this.recommendedSemester = [
-      { label: 'Намар', value: 'LEC_SEM' },
-      { label: 'Хавар', value: 'LAB' },
-      { label: 'Дурын', value: 'LAB' },
-      { label: 'Өвлийн улирал', value: 'LAB' },
-      { label: 'Зуны улирал', value: 'LAB' },
+      { label: 'Намар', value: 'autumn' },
+      { label: 'Хавар', value: 'spring' },
+      { label: 'Дурын', value: 'any' },
+      { label: 'Өвлийн улирал', value: 'winter' },
+      { label: 'Зуны улирал', value: 'summer' },
     ];
+
+    this.sharedService.getConfig("School_year").subscribe((res) => {
+      if (res) {
+        this.schoolYear = res.itemValue;
+      }
+    })
     if (this.lessonId) {
       this.readData();
     }
@@ -215,6 +225,7 @@ export class MainInfoComponent {
       ...formData,
       department: formData.department.id,
       school: formData.school.id,
+      schoolYear: this.schoolYear,
       lessonLevel: formData.lessonLevel.value,
       lessonType: formData.lessonType.value,
       recommendedSemester: formData.recommendedSemester.value,

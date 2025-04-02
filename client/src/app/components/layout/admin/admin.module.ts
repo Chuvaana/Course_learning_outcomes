@@ -10,6 +10,7 @@ import { TeacherComponent } from '../teacher/teacher.component';
 import { AdminComponent } from './admin.component';
 import { AdminStudentImportComponent } from './import/student-import.component';
 import { PdfComponent } from './pdf-convert/pdf.component';
+import { ConfigComponent } from './config/config.component';
 
 const routes: Routes = [
   {
@@ -27,6 +28,10 @@ const routes: Routes = [
       {
         path: 'pdf',
         component: PdfComponent,
+      },
+      {
+        path: 'config',
+        component: ConfigComponent,
       }
     ]
   },

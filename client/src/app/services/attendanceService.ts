@@ -52,4 +52,8 @@ export class AttendanceService {
     deleteAttendance(id: string): Observable<{ message: string }> {
         return this.http.delete<{ message: string }>(`${this.apiUrl}/${id}`);
     }
+
+    getConfig(itemCode: string): Observable<any> {
+        return this.http.get(`http://localhost:3000/api/config/${itemCode}`);
+    }
 }

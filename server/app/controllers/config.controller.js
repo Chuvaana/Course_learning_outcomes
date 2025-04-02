@@ -3,13 +3,14 @@ const Config = require('../models/config.model');  // Path to your model file
 // Create a new configuration entry
 exports.createConfig = async (req, res) => {
     try {
-        const { branch_id, department, item_code, item_value } = req.body;
+        const { branchId, department, name, itemCode, itemValue } = req.body;
 
         const newConfig = new Config({
-            branch_id,
+            branchId,
             department,
-            item_code,
-            item_value,
+            name,
+            itemCode,
+            itemValue,
         });
 
         await newConfig.save();
@@ -33,9 +34,9 @@ exports.getConfigs = async (req, res) => {
 
 // Get a specific configuration by item_code
 exports.getConfigByItemCode = async (req, res) => {
-    const { item_code } = req.params;
+    const id = req.params.id;
     try {
-        const config = await Config.findOne({ item_code });
+        const config = await Config.findOne({ itemCode: id });
         if (!config) {
             return res.status(404).json({ message: 'Configuration not found' });
         }
@@ -47,31 +48,39 @@ exports.getConfigByItemCode = async (req, res) => {
 };
 
 // Update an existing configuration
+const mongoose = require("mongoose");
+
 exports.updateConfig = async (req, res) => {
-    const { item_code } = req.params;
-    const { branch_id, department, item_value } = req.body;
+    const id = req.params.id;
+    const { branchId, department, name, itemCode, itemValue } = req.body;
+
     try {
+        // Convert id to ObjectId
+        const objectId = new mongoose.Types.ObjectId(id);
+
         const updatedConfig = await Config.findOneAndUpdate(
-            { item_code },
-            { branch_id, department, item_value },
-            { new: true } // Return the updated document
+            { _id: objectId },  // Use an object for the filter
+            { branchId, department, name, itemCode, itemValue },
+            { new: true, runValidators: true }
         );
 
         if (!updatedConfig) {
-            return res.status(404).json({ message: 'Configuration not found' });
+            return res.status(404).json({ message: "Configuration not found" });
         }
-        res.status(200).json({ message: 'Configuration updated successfully', updatedConfig });
+        
+        res.status(200).json({ message: "Configuration updated successfully", updatedConfig });
     } catch (error) {
-        console.error('Error updating configuration:', error);
-        res.status(500).json({ message: 'Error updating configuration', error });
+        console.error("Error updating configuration:", error);
+        res.status(500).json({ message: "Error updating configuration", error });
     }
 };
 
+
 // Delete a configuration entry
 exports.deleteConfig = async (req, res) => {
-    const { item_code } = req.params;
+    const { itemCode } = req.params;
     try {
-        const deletedConfig = await Config.findOneAndDelete({ item_code });
+        const deletedConfig = await Config.findOneAndDelete({ itemCode });
 
         if (!deletedConfig) {
             return res.status(404).json({ message: 'Configuration not found' });
