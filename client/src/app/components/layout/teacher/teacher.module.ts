@@ -14,8 +14,6 @@ import { LesStudentListComponent } from './lesson-list/lesson/les-student-list/l
 import { LesStudentComponent } from './lesson-list/lesson/les-student/les-student.component';
 import { LessonComponent } from './lesson-list/lesson/lesson.component';
 import { TeacherComponent } from './teacher.component';
-import { CloTreeComponent } from './lesson-list/lesson/clo-tree/clo-tree.component';
-import { AttendanceComponent } from './lesson-list/lesson/attendance/attendance.component';
 import { QuestionComponent } from '../exam/question/question.component';
 import { QuestionListComponent } from '../exam/list/list.component';
 import { ExamQuestionListComponent } from '../exam/exam-question-list/exam-question-list.component';
