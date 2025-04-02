@@ -50,7 +50,15 @@ export class TeacherService {
     return this.http.put(`${this.apiUrl}/clos/${cloData.id}`, cloData);
   }
 
-  getTeacherLessons(teacherId: string): Observable<any> {
-    return this.http.get(`${this.apiUrl}/teachers/${teacherId}/lessons`);
+  // getTeacherLessons(teacherId: string): Observable<any> {
+  //   return this.http.get(`${this.apiUrl}/teachers/${teacherId}/lessons`);
+  // }
+
+  getTeacherLessons(teacherId: string, year: string , season: string): Observable<any> {
+    return this.http.get(`${this.apiUrl}/teachers/${teacherId}/lessons/${year}/${season}`);
   }
+
+  getConfig(itemCode: string): Observable<any> {
+    return this.http.get(`${this.apiUrl}/config/${itemCode}`);
+}
 }

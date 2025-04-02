@@ -14,6 +14,7 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { AccordionModule } from 'primeng/accordion';
 import { TabRefreshService } from '../tabRefreshService';
+import { CLOService } from '../../../../../services/cloService';
 
 @Component({
   selector: 'app-schedule',
@@ -48,10 +49,24 @@ export class ScheduleComponent {
   isNewBd = false;
   isLoading = true;
   clos: any;
+  closLecSem: any;
+  closLab: any;
+  cloPlan: any;
+  mergedCloRelevanceCountsArray: any;
+  cloRelevanceCountsLabArray: any;
+  cloRelevanceCountsBdArray: any;
+  // point: { [key: string]: number } = {};
+
+  cloRelevanceCounts: { [key: string]: number } = {};
+  cloRelevanceCountsSem: { [key: string]: number } = {};
+  cloRelevanceCountsLab: { [key: string]: { count: number, lecPoint: number, labPoint: number } } = {};
+  cloRelevanceCountsBd: { [key: string]: { count: number, point: number } } = {};
+  mergedCloRelevanceCounts: { [key: string]: { semCount: number; count: number, point: number } } = {};
 
   constructor(
     private fb: FormBuilder,
     private service: ScheduleService,
+    private cloService: CLOService,
     private msgService: MessageService,
     private tabRefreshService: TabRefreshService) { }
 
@@ -59,6 +74,8 @@ export class ScheduleComponent {
     if (this.lessonId) {
       this.service.getCloList(this.lessonId).subscribe(res => {
         this.clos = res;
+        this.closLecSem = this.clos.filter((item: any) => item.type === 'LEC_SEM');
+        this.closLab = this.clos.filter((item: any) => item.type === 'LAB');
       });
       this.tabRefreshService.refresh$.subscribe(() => {
         this.readData(); // Датаг дахин ачаалах функц
@@ -103,6 +120,7 @@ export class ScheduleComponent {
       const resSem = await this.service.getScheduleSems(this.lessonId).toPromise();
       const resLab = await this.service.getScheduleLabs(this.lessonId).toPromise();
       const resBd = await this.service.getScheduleBds(this.lessonId).toPromise();
+      const cloPlan = await this.cloService.getCloPlan(this.lessonId).toPromise();
       const scheduleArray = this.scheduleForm.get('schedules') as FormArray;
       const scheduleSemArray = this.scheduleSemForm.get('scheduleSems') as FormArray;
       const scheduleLabArray = this.scheduleLabForm.get('scheduleLabs') as FormArray;
@@ -111,6 +129,7 @@ export class ScheduleComponent {
       scheduleSemArray.clear();
       scheduleLabArray.clear();
       scheduleBdArray.clear();
+      this.cloPlan = cloPlan;
 
       if (res && res.length > 0) {
         this.setSchedules(res);
@@ -140,6 +159,56 @@ export class ScheduleComponent {
         this.setDefaultBdSchedules();
         this.isNewBd = true;
       }
+
+      let point: { [key: string]: number } = {}; // Initialize point as an empty object
+
+      for (const cloKey in this.cloPlan) {
+        if (this.cloPlan.hasOwnProperty(cloKey)) { // Check if the property belongs to the object
+          const clo = this.cloPlan[cloKey]; // Access the object using the key
+          point[clo.cloId] = clo.timeManagement + clo.engagement; // Now you can access cloId
+        }
+      }
+
+      console.log(point);
+
+      // Merge cloRelevanceCounts
+      for (const key in this.cloRelevanceCounts) {
+        if (this.cloRelevanceCounts.hasOwnProperty(key)) {
+          this.mergedCloRelevanceCounts[key] = {
+            semCount: 0, // Initialize semCount to 0
+            count: this.cloRelevanceCounts[key],
+            point: point[key] // Set the count from the first object
+          };
+        }
+      }
+
+      // Merge cloRelevanceCountsSem
+      for (const key in this.cloRelevanceCountsSem) {
+        if (this.cloRelevanceCountsSem.hasOwnProperty(key)) {
+          if (this.mergedCloRelevanceCounts[key]) {
+            // If the key exists, sum the counts
+            this.mergedCloRelevanceCounts[key].semCount = this.cloRelevanceCountsSem[key];
+          } else {
+            // If the key does not exist, initialize it
+            this.mergedCloRelevanceCounts[key] = {
+              semCount: this.cloRelevanceCountsSem[key],
+              count: 0,
+              point: point[key]
+            };
+          }
+        }
+      }
+
+      // Now mergedCloRelevanceCounts contains the merged data
+      console.log(this.mergedCloRelevanceCounts);
+
+      // Convert mergedCloRelevanceCounts to an array for display
+      this.mergedCloRelevanceCountsArray = Object.keys(this.mergedCloRelevanceCounts).map(key => ({
+        key: key,
+        semCount: this.mergedCloRelevanceCounts[key].semCount,
+        count: this.mergedCloRelevanceCounts[key].count,
+        point: this.mergedCloRelevanceCounts[key].point
+      }));
     } catch (error) {
       console.error('Алдаа:', error);
     } finally {
@@ -160,7 +229,16 @@ export class ScheduleComponent {
       });
       scheduleArray.push(lessonGroup);
     });
+    let cloRelevanceCounts: { [key: string]: number } = {};
+    const data = scheduleArray.value;
+    data.forEach((item: any) => {
+      item.cloRelevance.forEach((clo: any) => {
+        cloRelevanceCounts[clo] = (cloRelevanceCounts[clo] || 0) + 1;
+      });
+    });
 
+    this.cloRelevanceCounts = cloRelevanceCounts;
+    console.log(this.cloRelevanceCounts);
   }
 
   setScheduleSems(res: any[]): void {
@@ -176,7 +254,16 @@ export class ScheduleComponent {
       });
       scheduleSemArray.push(lessonGroup);
     });
+    let cloRelevanceCounts: { [key: string]: number } = {};
+    const data = scheduleSemArray.value;
+    data.forEach((item: any) => {
+      item.cloRelevance.forEach((clo: any) => {
+        cloRelevanceCounts[clo] = (cloRelevanceCounts[clo] || 0) + 1;
+      });
+    });
 
+    this.cloRelevanceCountsSem = cloRelevanceCounts;
+    console.log(this.cloRelevanceCountsSem);
   }
 
   setScheduleLabs(res: any[]): void {
@@ -192,6 +279,47 @@ export class ScheduleComponent {
       });
       scheduleLabArray.push(lessonGroup);
     });
+    let cloRelevanceCounts: { [key: string]: { count: number, lecPoint: number, labPoint: number } } = {};
+    const data = scheduleLabArray.value;
+    let lecPoint: { [key: string]: number } = {};
+    let labPoint: { [key: string]: number } = {};
+
+    for (const cloKey in this.cloPlan) {
+      if (this.cloPlan.hasOwnProperty(cloKey)) { // Check if the property belongs to the object
+        const clo = this.cloPlan[cloKey]; // Access the object using the key
+        lecPoint[clo.cloId] = clo.timeManagement + clo.engagement; // Now you can access cloId
+        labPoint[clo.cloId] = clo.toExp + clo.processing; // Now you can access cloId
+      }
+    }
+
+    data.forEach((item: any) => {
+      item.cloRelevance.forEach((clo: any) => {
+        // Initialize the cloRelevanceCounts entry if it doesn't exist
+        if (!cloRelevanceCounts[clo]) {
+          cloRelevanceCounts[clo] = { count: 0, lecPoint: 0, labPoint: 0 }; // Initialize count and point
+        }
+
+        // Increment the count
+        cloRelevanceCounts[clo].count += 1;
+
+        // Add the point from the previously calculated points
+        if (lecPoint[clo]) {
+          cloRelevanceCounts[clo].lecPoint = lecPoint[clo]; // Increment the point
+        }
+        // Add the point from the previously calculated points
+        if (labPoint[clo]) {
+          cloRelevanceCounts[clo].labPoint = labPoint[clo]; // Increment the point
+        }
+      });
+    });
+
+    this.cloRelevanceCountsLab = cloRelevanceCounts;
+    this.cloRelevanceCountsLabArray = Object.keys(this.cloRelevanceCountsLab).map(key => ({
+      key: key,
+      count: this.cloRelevanceCountsLab[key].count,
+      lecPoint: this.cloRelevanceCountsLab[key].lecPoint,
+      labPoint: this.cloRelevanceCountsLab[key].labPoint
+    }));
   }
 
   setScheduleBds(res: any[]): void {
@@ -208,6 +336,40 @@ export class ScheduleComponent {
       });
       scheduleBdArray.push(lessonGroup);
     });
+    let cloRelevanceCounts: { [key: string]: { count: number, point: number } } = {};
+    const data = scheduleBdArray.value;
+    let point: { [key: string]: number } = {};
+
+    for (const cloKey in this.cloPlan) {
+      if (this.cloPlan.hasOwnProperty(cloKey)) { // Check if the property belongs to the object
+        const clo = this.cloPlan[cloKey]; // Access the object using the key
+        point[clo.cloId] = clo.decisionMaking + clo.formulation + clo.analysis + clo.implementation; // Now you can access cloId
+      }
+    }
+
+    data.forEach((item: any) => {
+      item.cloRelevance.forEach((clo: any) => {
+        // Initialize the cloRelevanceCounts entry if it doesn't exist
+        if (!cloRelevanceCounts[clo]) {
+          cloRelevanceCounts[clo] = { count: 0, point: 0 }; // Initialize count and point
+        }
+
+        // Increment the count
+        cloRelevanceCounts[clo].count += 1;
+
+        // Add the point from the previously calculated points
+        if (point[clo]) {
+          cloRelevanceCounts[clo].point = point[clo]; // Increment the point
+        }
+      });
+    });
+
+    this.cloRelevanceCountsBd = cloRelevanceCounts;
+    this.cloRelevanceCountsBdArray = Object.keys(this.cloRelevanceCountsBd).map(key => ({
+      key: key,
+      count: this.cloRelevanceCountsBd[key].count,
+      point: this.cloRelevanceCountsBd[key].point
+    }));
   }
 
   setDefaultSchedules(): void {
@@ -283,6 +445,7 @@ export class ScheduleComponent {
       scheduleLabArray.push(this.createLesson(lesson));
     });
   }
+  
   setDefaultBdSchedules(): void {
     const scheduleBdArray = this.scheduleBdForm.get('scheduleBds') as FormArray;
     const defaultBdLessons = [

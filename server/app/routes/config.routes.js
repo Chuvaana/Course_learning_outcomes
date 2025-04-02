@@ -9,10 +9,10 @@ module.exports = app => {
     router.get('/', configController.getConfigs);
 
     // Get a specific configuration by item_code
-    router.get('/:item_code', configController.getConfigByItemCode);
+    router.get('/:id', configController.getConfigByItemCode);
 
     // Update a configuration
-    router.put('/:item_code', configController.updateConfig);
+    router.put('/:id', configController.updateConfig);
 
     // Delete a configuration
     router.delete('/:item_code', configController.deleteConfig);

@@ -23,5 +23,6 @@ module.exports = app => {
   router.put("/addLesson/:id", teacherController.addLessonToTeacher);
   router.put("/removeLesson", teacherController.removeLessonFromTeacher);
   router.get('/:teacherId/lessons', teacherController.getTeacherLessons);
+  router.get('/:teacherId/lessons/:yearIntervals/:selectedSeason', teacherController.getTeacherLessons);
   app.use("/api/teachers", router);
 };

@@ -2,15 +2,15 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import { MessageService, SelectItem } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
+import { CheckboxModule } from 'primeng/checkbox';
 import { DropdownModule } from 'primeng/dropdown';
 import { InputTextModule } from 'primeng/inputtext';
 import { TableModule } from 'primeng/table';
-import { StudentService } from '../../../../../../services/studentService';
-import { MessageService, SelectItem } from 'primeng/api';
-import { CheckboxModule } from 'primeng/checkbox';
-import { Attendance, AttendanceService } from '../../../../../../services/attendanceService';
 import { ToastModule } from 'primeng/toast';
+import { AttendanceService } from '../../../../../../services/attendanceService';
+import { StudentService } from '../../../../../../services/studentService';
 
 
 interface Student {
@@ -67,6 +67,7 @@ export class AttendanceComponent {
   students: any[] = [];
   attendanceRecords: any[] = [];
   lessonId!: string;
+  startDate!: Date;
 
   times = [
     { value: 1, label: '1-р цаг' },
@@ -103,6 +104,12 @@ export class AttendanceComponent {
     this.route.parent?.paramMap.subscribe(params => {
       this.lessonId = params.get('id')!;
     });
+
+    this.attendanceService.getConfig("First_day_of_school").subscribe((res) => {
+      if (res) {
+        this.startDate = new Date(res.itemValue);
+      }
+    })
   }
 
 
@@ -156,9 +163,8 @@ export class AttendanceComponent {
 
   getAllWeeks() {
     let today = new Date();
-    let startDate = new Date("2025-02-03"); // Хичээл эхэлсэн өдөр
 
-    let diffInTime = today.getTime() - startDate.getTime();
+    let diffInTime = today.getTime() - this.startDate.getTime();
     let diffInDays = Math.floor(diffInTime / (1000 * 3600 * 24));
     let currentWeek = Math.floor(diffInDays / 7) + 1;
 
@@ -181,9 +187,8 @@ export class AttendanceComponent {
 
   getCurrentWeeks() {
     let today = new Date();
-    let startDate = new Date("2025-02-03"); // Хичээл эхэлсэн өдөр
 
-    let diffInTime = today.getTime() - startDate.getTime();
+    let diffInTime = today.getTime() - this.startDate.getTime();
     let diffInDays = Math.floor(diffInTime / (1000 * 3600 * 24));
     let currentWeek = Math.floor(diffInDays / 7) + 1;
 

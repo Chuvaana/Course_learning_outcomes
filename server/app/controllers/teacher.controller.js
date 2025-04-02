@@ -192,23 +192,25 @@ exports.assignLessonToTeacher = async (req, res) => {
 
 exports.getTeacherLessons = async (req, res) => {
   try {
-    const teacherId = req.params.teacherId;
+    const { teacherId, yearIntervals, selectedSeason } = req.params;
 
-    // Багшийн мэдээллийг Lesson моделд холбож авна
-    const teacher = await Teacher.findById(teacherId)
-      .populate('lessons') // Багшийн хичээлүүдийг жагсаалттай нь авна
-      .exec();
+    // Find the teacher
+    const teacher = await Teacher.findOne({ id: teacherId });
 
     if (!teacher) {
       return res.status(404).json({ message: 'Багш олдсонгүй' });
     }
 
-    // Багшийн хичээлүүдийг мэдээлэлтэй нь буцаана
-    const lessons = teacher.lessons;
+    // Fetch lessons for the teacher with the specified year and season
+    const lessons = await Lesson.find({
+      teacherId: teacherId,
+      schoolYear: yearIntervals,
+      recommendedSemester: selectedSeason
+    });
 
     return res.status(200).json({ lessons });
   } catch (error) {
-    console.error(error);
+    console.error("Error fetching lessons:", error);
     res.status(500).json({ message: 'Алдаа гарлаа' });
   }
 };

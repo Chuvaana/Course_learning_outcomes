@@ -60,13 +60,13 @@ exports.createSchedules = async (req, res) => {
 // Update ScheduleSem
 exports.updateSchedule = async (req, res) => {
     try {
-        const { schedules } = req.body;
-        if (!Array.isArray(schedules)) {
+        const { scheduleSems } = req.body;
+        if (!Array.isArray(scheduleSems)) {
             return res.status(400).json({ message: "Input should be an array of ScheduleSem" });
         }
 
         // Use Promise.all for parallel execution of updates
-        const updatePromises = schedules.map(async (item) => {
+        const updatePromises = scheduleSems.map(async (item) => {
             try {
                 const updatedSchedule = await ScheduleSem.findByIdAndUpdate(item.id, item, { new: true });
 
