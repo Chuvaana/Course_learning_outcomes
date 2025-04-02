@@ -26,3 +26,21 @@ th {
 .col:nth-child(1) {
   flex: 2; /* Make the first column wider if needed */
 }
+
+.clo-row{
+  margin: 10px 100px;
+  height: 50px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  p{
+    height: 20px;
+    width: 150px;
+  }
+  .input{
+    height: 25px;
+    margin: 10px 10px;
+    width: 100px;
+  }
+}
+

@@ -18,6 +18,10 @@ var schema = mongoose.Schema(
     answer6: { type: String, required: true  },
     answer7: { type: String, required: true  },
     answer8: { type: String, required: true  },
+    answer9: { type: String, required: true  },
+    answer10: { type: String, required: true  },
+    answer11: { type: String, required: true  },
+    answer12: { type: String, required: true  },
     createdBy: { type: String}
   },
   { timestamps: true }

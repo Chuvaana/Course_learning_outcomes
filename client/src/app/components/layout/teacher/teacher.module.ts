@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule, Routes } from '@angular/router';
 
 import { SharedComponent } from '../shared/shared.component';
@@ -13,6 +14,11 @@ import { LesStudentListComponent } from './lesson-list/lesson/les-student-list/l
 import { LesStudentComponent } from './lesson-list/lesson/les-student/les-student.component';
 import { LessonComponent } from './lesson-list/lesson/lesson.component';
 import { TeacherComponent } from './teacher.component';
+import { CloTreeComponent } from './lesson-list/lesson/clo-tree/clo-tree.component';
+import { AttendanceComponent } from './lesson-list/lesson/attendance/attendance.component';
+import { QuestionComponent } from '../exam/question/question.component';
+import { QuestionListComponent } from '../exam/list/list.component';
+import { ExamQuestionListComponent } from '../exam/exam-question-list/exam-question-list.component';
 
 const routes: Routes = [
   {
@@ -33,7 +39,26 @@ const routes: Routes = [
           { path: 'curriculum', component: CurriculumComponent },
         ]
       },
-      { path: 'curriculum', component: CurriculumComponent },
+      {
+        path: 'curriculum/:id',
+        component: CurriculumComponent
+      },
+      {
+        path: 'curriculum',
+        component: CurriculumComponent
+      },
+      {
+        path: 'question-create',
+        component: QuestionComponent
+      },
+      {
+        path: 'questionlist',
+        component: QuestionListComponent
+      },
+      {
+        path: 'exam-questionlist',
+        component: ExamQuestionListComponent
+      }
     ]
   }
 ];
@@ -42,8 +67,10 @@ const routes: Routes = [
   imports: [
     CommonModule,
     RouterModule.forChild(routes),
-
-    // Import standalone components
+    FormsModule,
+    ReactiveFormsModule,
+    LessonListComponent, // ✅ Explicitly importing standalone components
+    LessonComponent,
     TeacherComponent,
     LessonListComponent,
     LessonComponent,
@@ -56,6 +83,7 @@ const routes: Routes = [
     CurriculumComponent,
     SharedComponent
   ],
-  exports: [RouterModule]
+  exports: [RouterModule, FormsModule, ReactiveFormsModule],
+  declarations: []
 })
 export class TeacherModule { }
