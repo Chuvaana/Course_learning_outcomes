@@ -3,7 +3,12 @@ import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule, Routes } from '@angular/router';
 
+import { ExamQuestionListComponent } from '../exam/exam-question-list/exam-question-list.component';
+import { QuestionListComponent } from '../exam/list/list.component';
+import { QuestionComponent } from '../exam/question/question.component';
 import { SharedComponent } from '../shared/shared.component';
+import { BdGradeComponent } from './course-grades/bd-grade/bd-grade.component';
+import { LabGradeComponent } from './course-grades/lab-grade/lab-grade.component';
 import { CurriculumComponent } from './curriculum/curriculum.component';
 import { LessonListComponent } from './lesson-list/lesson-list.component';
 import { AttendanceComponent } from './lesson-list/lesson/attendance/attendance.component';
@@ -14,9 +19,6 @@ import { LesStudentListComponent } from './lesson-list/lesson/les-student-list/l
 import { LesStudentComponent } from './lesson-list/lesson/les-student/les-student.component';
 import { LessonComponent } from './lesson-list/lesson/lesson.component';
 import { TeacherComponent } from './teacher.component';
-import { QuestionComponent } from '../exam/question/question.component';
-import { QuestionListComponent } from '../exam/list/list.component';
-import { ExamQuestionListComponent } from '../exam/exam-question-list/exam-question-list.component';
 
 const routes: Routes = [
   {
@@ -35,6 +37,8 @@ const routes: Routes = [
           { path: 'clo-plan', component: CloPlanComponent },
           { path: 'attendance', component: AttendanceComponent },
           { path: 'curriculum', component: CurriculumComponent },
+          { path: 'lab-grade', component: LabGradeComponent },
+          { path: 'bd-grade', component: BdGradeComponent },
         ]
       },
       {

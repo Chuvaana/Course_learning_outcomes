@@ -59,7 +59,23 @@ export class LessonComponent {
         label: 'Ирц',
         icon: 'pi pi-plus',
         routerLink: ['/main/teacher/lesson', this.lessonId, 'attendance']
-      }
+      },
+      {
+        label: 'Дүн',
+        icon: 'pi pi-graduation-cap',
+        items: [
+          {
+            label: 'Лабораторийн дүн',
+            icon: 'pi pi-graduation-cap',
+            routerLink: ['/main/teacher/lesson', this.lessonId, 'lab-grade']
+          },
+          {
+            label: 'Бие даалтын дүн',
+            icon: 'pi pi-graduation-cap',
+            routerLink: ['/main/teacher/lesson', this.lessonId, 'bd-grade']
+          }
+        ]
+      },
     ];
   }
 }
