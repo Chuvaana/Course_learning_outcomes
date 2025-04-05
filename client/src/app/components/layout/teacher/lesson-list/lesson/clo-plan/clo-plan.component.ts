@@ -1,6 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import {
+  FormArray,
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+} from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { saveAs } from 'file-saver'; // file-saver сан
 import { MessageService } from 'primeng/api';
@@ -33,14 +39,13 @@ import { TeacherService } from '../../../../../../services/teacherService';
     FormsModule,
     ReactiveFormsModule,
     InputNumber,
-    ProgressSpinnerModule
+    ProgressSpinnerModule,
   ],
   providers: [MessageService],
   templateUrl: './clo-plan.component.html',
-  styleUrl: './clo-plan.component.scss'
+  styleUrl: './clo-plan.component.scss',
 })
 export class CloPlanComponent {
-
   cloForm!: FormGroup;
   sampleData!: any;
   cloList!: any;
@@ -57,14 +62,14 @@ export class CloPlanComponent {
     private pdfService: PdfGeneratorService,
     private msgService: MessageService,
     private route: ActivatedRoute,
-    private pdfCloService: PdfCloGeneratorService) { }
+    private pdfCloService: PdfCloGeneratorService
+  ) {}
 
   async ngOnInit() {
-    this.route.parent?.paramMap.subscribe(params => {
+    this.route.parent?.paramMap.subscribe((params) => {
       this.lessonId = params.get('id')!;
       console.log('Lesson ID:', this.lessonId);
     });
-    
 
     this.cloForm = this.fb.group({
       cloRows: this.fb.array([]),
@@ -76,23 +81,35 @@ export class CloPlanComponent {
   async readData() {
     this.isLoading = true;
 
-    await forkJoin([this.service.getCloList(this.lessonId),
-    this.cloService.getPointPlan(this.lessonId),
-    this.cloService.getCloPlan(this.lessonId)]).subscribe(([cloList, pointPlan, cloPlan]) => {
+    await forkJoin([
+      this.service.getCloList(this.lessonId),
+      this.cloService.getPointPlan(this.lessonId),
+      this.cloService.getCloPlan(this.lessonId),
+    ]).subscribe(([cloList, pointPlan, cloPlan]) => {
       this.cloList = cloList;
       this.pointPlan = pointPlan || {
-        timeManagement: 5, engagement: 5, recall: 5, problemSolving: 5,
-        recall2: 5, problemSolving2: 5, toExp: 15, processing: 5,
-        decisionMaking: 5, formulation: 5, analysis: 5,
-        implementation: 5, understandingLevel: 5,
-        analysisLevel: 10, creationLevel: 15
+        timeManagement: 0,
+        engagement: 0,
+        recall: 0,
+        problemSolving: 0,
+        recall2: 0,
+        problemSolving2: 0,
+        toExp: 0,
+        processing: 0,
+        decisionMaking: 0,
+        formulation: 0,
+        analysis: 0,
+        implementation: 0,
+        understandingLevel: 0,
+        analysisLevel: 0,
+        creationLevel: 0,
       };
 
       this.cloPlan = cloPlan;
       // if ((Array.isArray(this.cloPlan[0]) && this.cloPlan[0].length === 0)) {
       //   this.cloPlan[0] = [this.pointPlan];
       // }
-      if ((Array.isArray(this.cloPlan) && this.cloPlan.length === 0)) {
+      if (Array.isArray(this.cloPlan) && this.cloPlan.length === 0) {
         this.createRows();
         this.isLoading = false;
       } else {
@@ -136,8 +153,8 @@ export class CloPlanComponent {
         implementation: 0,
         understandingLevel: 0,
         analysisLevel: 0,
-        creationLevel: 0
-      }))
+        creationLevel: 0,
+      })),
     ];
     this.sampleData[1].forEach((data: any) => {
       this.cloRows.push(
@@ -161,7 +178,7 @@ export class CloPlanComponent {
           implementation: [data.implementation],
           understandingLevel: [data.understandingLevel],
           analysisLevel: [data.analysisLevel],
-          creationLevel: [data.creationLevel]
+          creationLevel: [data.creationLevel],
         })
       );
     });
@@ -192,7 +209,7 @@ export class CloPlanComponent {
           implementation: [data.implementation],
           understandingLevel: [data.understandingLevel],
           analysisLevel: [data.analysisLevel],
-          creationLevel: [data.creationLevel]
+          creationLevel: [data.creationLevel],
         })
       );
     });
@@ -200,33 +217,41 @@ export class CloPlanComponent {
 
   validateColumnTotals(): boolean {
     const columnNames: Record<string, string> = {
-      timeManagement: "Цаг төлөвлөлт, хариуцлага",
-      engagement: "Суралцах хүсэл эрмэлзэл, өөрийгээ илэрхийлэх",
-      recall: "Сорил 1: Мэдлэгээ сэргээн санах, тайлбарлах",
-      problemSolving: "Сорил 1: Асуудал шийдвэрлэхэд мэдлэгээ хэрэглэх, задлан шинжлэх",
-      recall2: "Сорил 2: Мэдлэгээ сэргээн санах, тайлбарлах",
-      problemSolving2: "Сорил 2: Асуудал шийдвэрлэхэд мэдлэгээ хэрэглэх, задлан шинжлэх",
-      toExp: "Лабораторийн хэмжилт, туршилт, даалгавар гүйцэтгэх",
-      processing: "Үр дүнг тохирох аргаар өгөгдсөн форматын дагуу боловсруулж, тайлагнах",
-      decisionMaking: "Өгөгдсөн даалгаварын хүрээнд шийдвэрлэх асуудлаа тодорхойлж томъёолох",
-      formulation: "Шийдвэрлэх асуудлын хүрээнд тодорхой шийдэл дэвшүүлэх, дүн шинжилгээ хийх",
-      analysis: "Мэдлэг, ур чадвараа ашиглан сонгосон шийдлын дагуу асуудлыг шийдвэрлэх",
-      implementation: "Бичгийн болон харилцах ур чадвараа ашиглан үр дүнг өгөгдсөн форматын дагуу тайлагнах, илтгэх",
-      understandingLevel: "Сэргээн санах/ойлгох түвшин",
-      analysisLevel: "Хэрэглэх /дүн шинжилгээ хийх түвшин",
-      creationLevel: "Үнэлэх/ бүтээх түвшин",
+      timeManagement: 'Цаг төлөвлөлт, хариуцлага',
+      engagement: 'Суралцах хүсэл эрмэлзэл, өөрийгээ илэрхийлэх',
+      recall: 'Сорил 1: Мэдлэгээ сэргээн санах, тайлбарлах',
+      problemSolving:
+        'Сорил 1: Асуудал шийдвэрлэхэд мэдлэгээ хэрэглэх, задлан шинжлэх',
+      recall2: 'Сорил 2: Мэдлэгээ сэргээн санах, тайлбарлах',
+      problemSolving2:
+        'Сорил 2: Асуудал шийдвэрлэхэд мэдлэгээ хэрэглэх, задлан шинжлэх',
+      toExp: 'Лабораторийн хэмжилт, туршилт, даалгавар гүйцэтгэх',
+      processing:
+        'Үр дүнг тохирох аргаар өгөгдсөн форматын дагуу боловсруулж, тайлагнах',
+      decisionMaking:
+        'Өгөгдсөн даалгаварын хүрээнд шийдвэрлэх асуудлаа тодорхойлж томъёолох',
+      formulation:
+        'Шийдвэрлэх асуудлын хүрээнд тодорхой шийдэл дэвшүүлэх, дүн шинжилгээ хийх',
+      analysis:
+        'Мэдлэг, ур чадвараа ашиглан сонгосон шийдлын дагуу асуудлыг шийдвэрлэх',
+      implementation:
+        'Бичгийн болон харилцах ур чадвараа ашиглан үр дүнг өгөгдсөн форматын дагуу тайлагнах, илтгэх',
+      understandingLevel: 'Сэргээн санах/ойлгох түвшин',
+      analysisLevel: 'Хэрэглэх /дүн шинжилгээ хийх түвшин',
+      creationLevel: 'Үнэлэх/ бүтээх түвшин',
     };
 
     let isValid = true;
 
-    Object.keys(columnNames).forEach(column => {
-      const expectedTotal = (this.pointPlan && this.pointPlan && this.pointPlan[column] !== undefined)
-        ? this.pointPlan[column]
-        : 0;
+    Object.keys(columnNames).forEach((column) => {
+      const expectedTotal =
+        this.pointPlan && this.pointPlan && this.pointPlan[column] !== undefined
+          ? this.pointPlan[column]
+          : 0;
 
       let actualTotal = 0;
 
-      this.cloRows.controls.forEach(row => {
+      this.cloRows.controls.forEach((row) => {
         actualTotal += row.get(column)?.value || 0;
       });
 
@@ -236,14 +261,14 @@ export class CloPlanComponent {
         this.msgService.add({
           severity: 'warn',
           summary: 'Анхааруулга',
-          detail: `${columnName} баганын нийт оноо (${actualTotal}) хэтэрсэн!`
+          detail: `${columnName} баганын нийт оноо (${actualTotal}) хэтэрсэн!`,
         });
         isValid = false;
       } else if (actualTotal < expectedTotal) {
         this.msgService.add({
           severity: 'warn',
           summary: 'Анхааруулга',
-          detail: `${columnName} баганын нийт оноо (${actualTotal}) хүрэлцэхгүй байна!`
+          detail: `${columnName} баганын нийт оноо (${actualTotal}) хүрэлцэхгүй байна!`,
         });
         isValid = false;
       }
@@ -255,10 +280,22 @@ export class CloPlanComponent {
   onSubmit() {
     if (this.validateColumnTotals()) {
       const formData = this.cloForm.value.cloRows;
-      const request = this.isUpdate ? this.cloService.updateCloPlan(formData) : this.cloService.saveCloPlan(formData);
+      const request = this.isUpdate
+        ? this.cloService.updateCloPlan(formData)
+        : this.cloService.saveCloPlan(formData);
       request.subscribe(
-        () => this.msgService.add({ severity: 'success', summary: 'Амжилттай', detail: 'Амжилттай хадгалагдлаа' }),
-        err => this.msgService.add({ severity: 'error', summary: 'Алдаа', detail: `Алдаа гарлаа: ${err.message}` })
+        () =>
+          this.msgService.add({
+            severity: 'success',
+            summary: 'Амжилттай',
+            detail: 'Амжилттай хадгалагдлаа',
+          }),
+        (err) =>
+          this.msgService.add({
+            severity: 'error',
+            summary: 'Алдаа',
+            detail: `Алдаа гарлаа: ${err.message}`,
+          })
       );
     }
   }
@@ -267,7 +304,7 @@ export class CloPlanComponent {
     // Дата-г worksheet болгон хөрвүүлэх
     let excelData = [];
     let conver: any;
-    let count
+    let count;
     for (let i = 0; i < this.sampleData.length; i++) {
       if (i == 0) {
         conver = this.sampleData[i][0];
@@ -276,7 +313,7 @@ export class CloPlanComponent {
       } else if (i == 1) {
         this.sampleData[1].map((e: any) => {
           excelData.push(e);
-        })
+        });
       }
     }
     console.log(excelData);
@@ -309,10 +346,9 @@ export class CloPlanComponent {
     saveAs(data, `${fileName}_${new Date().getTime()}.xlsx`);
   }
   generate() {
-
     let excelData: any[] = [];
     let conver: any;
-    let count
+    let count;
     // const header = Object.keys(this.sampleData[0][0][0]);
     // excelData.push(header);
     // console.log(excelData);
@@ -320,7 +356,7 @@ export class CloPlanComponent {
       if (i == 1) {
         this.sampleData[1].map((e: any) => {
           excelData.push(Object.keys(e));
-        })
+        });
       }
       //   if (i == 0) {
       //     const header = Object.keys(this.sampleData[0][0][0]);

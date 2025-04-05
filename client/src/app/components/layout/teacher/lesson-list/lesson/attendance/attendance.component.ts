@@ -12,7 +12,6 @@ import { ToastModule } from 'primeng/toast';
 import { AttendanceService } from '../../../../../../services/attendanceService';
 import { StudentService } from '../../../../../../services/studentService';
 
-
 interface Student {
   lessonId: string;
   studentCode: string;
@@ -23,14 +22,12 @@ interface Student {
 }
 
 interface Att {
-  lessonId: string,
-  weekDay: string,
-  type: string,
-  time: number,
-  weekNumber: string,
-  attendance: [
-    { studentId: string, status: boolean }
-  ]
+  lessonId: string;
+  weekDay: string;
+  type: string;
+  time: number;
+  weekNumber: string;
+  attendance: [{ studentId: string; status: boolean }];
 }
 
 interface AttendanceRecord {
@@ -52,11 +49,11 @@ interface AttendanceRecord {
     ButtonModule,
     FormsModule,
     CheckboxModule,
-    ToastModule
+    ToastModule,
   ],
   providers: [MessageService],
   templateUrl: './attendance.component.html',
-  styleUrl: './attendance.component.scss'
+  styleUrl: './attendance.component.scss',
 })
 export class AttendanceComponent {
   weekdays: SelectItem[] = [];
@@ -78,14 +75,15 @@ export class AttendanceComponent {
     { value: 6, label: '6-р цаг' },
     { value: 7, label: '7-р цаг' },
     { value: 8, label: '8-р цаг' },
-  ]
+  ];
   showPreviousWeeks = false;
 
   constructor(
     private studentService: StudentService,
     private route: ActivatedRoute,
     private attendanceService: AttendanceService,
-    private msgService: MessageService) { }
+    private msgService: MessageService
+  ) {}
 
   ngOnInit() {
     this.weekdays = [
@@ -93,53 +91,67 @@ export class AttendanceComponent {
       { label: 'Мягмар', value: 'Tuesday' },
       { label: 'Лхагва', value: 'Wednesday' },
       { label: 'Пүрэв', value: 'Thursday' },
-      { label: 'Баасан', value: 'Friday' }
+      { label: 'Баасан', value: 'Friday' },
     ];
     this.classTypes = [
       { label: 'Лекц', value: 'lec' },
       { label: 'Семинар', value: 'sem' },
-      { label: 'Лаборатори', value: 'lab' }
+      { label: 'Лаборатори', value: 'lab' },
     ];
 
-    this.route.parent?.paramMap.subscribe(params => {
+    this.route.parent?.paramMap.subscribe((params) => {
       this.lessonId = params.get('id')!;
     });
 
-    this.attendanceService.getConfig("First_day_of_school").subscribe((res) => {
+    this.attendanceService.getConfig('First_day_of_school').subscribe((res) => {
       if (res) {
         this.startDate = new Date(res.itemValue);
       }
-    })
+    });
   }
-
 
   onSelectionChange(): void {
     if (this.selectedWeekday && this.selectedClassType && this.selectedTimes) {
-      this.attendanceService.getAttendance(this.lessonId, this.selectedWeekday, this.selectedClassType, this.selectedTimes).subscribe((res: any) => {
-        console.log(res);
-        this.attendanceRecords = this.generateAttendance(res);
-        if (this.attendanceRecords.length == 0) {
-
-          this.studentService.getStudentByClasstypeAndDayTime(this.selectedClassType, this.selectedWeekday, this.selectedTimes)
-            .subscribe((students: any[]) => {
-              this.students = students;
-              this.attendanceRecords = this.generateAttendanceRecords();
-            });
-        }
-      })
+      this.attendanceService
+        .getAttendance(
+          this.lessonId,
+          this.selectedWeekday,
+          this.selectedClassType,
+          this.selectedTimes
+        )
+        .subscribe((res: any) => {
+          console.log(res);
+          this.attendanceRecords = this.generateAttendance(res);
+          if (this.attendanceRecords.length == 0) {
+            this.studentService
+              .getStudentByClasstypeAndDayTime(
+                this.selectedClassType,
+                this.selectedWeekday,
+                this.selectedTimes
+              )
+              .subscribe((students: any[]) => {
+                this.students = students;
+                this.attendanceRecords = this.generateAttendanceRecords();
+              });
+          }
+        });
     }
   }
 
   generateAttendanceRecords() {
     let dates = this.getAllWeeks().sort();
-    return this.students.map(student => ({
-      student: { name: student.studentName, code: student.studentCode, studentId: student.id },
-      attendance: dates.reduce((acc, date) => ({ ...acc, [date]: false }), {})
+    return this.students.map((student) => ({
+      student: {
+        name: student.studentName,
+        code: student.studentCode,
+        studentId: student.id,
+      },
+      attendance: dates.reduce((acc, date) => ({ ...acc, [date]: false }), {}),
     }));
   }
 
   generateAttendance(data: any): AttendanceRecord[] {
-    let studentAttendanceMap: { [studentId: string]: AttendanceRecord } = {};
+    const studentAttendanceMap: { [studentId: string]: AttendanceRecord } = {};
 
     data.forEach((weekData: any) => {
       weekData.attendance.forEach((item: any) => {
@@ -148,13 +160,15 @@ export class AttendanceComponent {
             student: {
               name: item.studentId.studentName,
               code: item.studentId.studentCode,
-              studentId: item.studentId.id
+              studentId: item.studentId.id,
             },
-            attendance: {}
+            attendance: {},
           };
         }
 
-        studentAttendanceMap[item.studentId.id].attendance[weekData.weekNumber] = item.status;
+        studentAttendanceMap[item.studentId.id].attendance[
+          weekData.weekNumber
+        ] = item.status;
       });
     });
 
@@ -178,12 +192,25 @@ export class AttendanceComponent {
 
   toRoman(num: number): string {
     const romanNumerals = [
-      'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X',
-      'XI', 'XII', 'XIII', 'XIV', 'XV', 'XVI'
+      'I',
+      'II',
+      'III',
+      'IV',
+      'V',
+      'VI',
+      'VII',
+      'VIII',
+      'IX',
+      'X',
+      'XI',
+      'XII',
+      'XIII',
+      'XIV',
+      'XV',
+      'XVI',
     ];
     return romanNumerals[num - 1] || '';
   }
-
 
   getCurrentWeeks() {
     let today = new Date();
@@ -209,62 +236,83 @@ export class AttendanceComponent {
         type: this.selectedClassType,
         time: this.selectedTimes,
         weekNumber: currentWeek,
-        attendance: this.attendanceRecords.flatMap(record =>
-          Object.keys(record.attendance).map(date => {
-            if (date === currentWeek) {
-              return {
-                studentId: record.student.studentId,
-                status: record.attendance[date]
-              };
-            }
-            return null;
-          }).filter(item => item !== null)
-        )
+        attendance: this.attendanceRecords.flatMap((record) =>
+          Object.keys(record.attendance)
+            .map((date) => {
+              if (date === currentWeek) {
+                return {
+                  studentId: record.student.studentId,
+                  status: record.attendance[date],
+                };
+              }
+              return null;
+            })
+            .filter((item) => item !== null)
+        ),
       };
 
       this.attendanceService.createAttendance(attendanceData).subscribe(
         (response) => {
           console.log('Attendance Saved:', response);
-          this.msgService.add({ severity: 'success', summary: 'Амжилттай', detail: 'Амжилттай хадгалагдлаа' })
+          this.msgService.add({
+            severity: 'success',
+            summary: 'Амжилттай',
+            detail: 'Амжилттай хадгалагдлаа',
+          });
         },
         (error) => {
-          this.msgService.add({ severity: 'error', summary: 'Алдаа', detail: `Алдаа гарлаа: ${error.message}` })
+          this.msgService.add({
+            severity: 'error',
+            summary: 'Алдаа',
+            detail: `Алдаа гарлаа: ${error.message}`,
+          });
         }
       );
     } else {
       const weeks = this.getAllWeeks();
       const lessonId = this.lessonId;
       console.log(weeks);
-      const attendanceDatas = weeks.map(item => {
+      const attendanceDatas = weeks.map((item) => {
         return {
           lessonId: lessonId,
           weekDay: this.selectedWeekday,
           type: this.selectedClassType,
           time: this.selectedTimes,
           weekNumber: item,
-          attendance: this.attendanceRecords.flatMap(record =>
-            Object.keys(record.attendance).map(date => {
-              if (date === item) {
-                return {
-                  studentId: record.student.studentId,
-                  status: record.attendance[date]
-                };
-              }
-              return null;
-            }).filter(item => item !== null)
-          )
+          attendance: this.attendanceRecords.flatMap((record) =>
+            Object.keys(record.attendance)
+              .map((date) => {
+                if (date === item) {
+                  return {
+                    studentId: record.student.studentId,
+                    status: record.attendance[date],
+                  };
+                }
+                return null;
+              })
+              .filter((item) => item !== null)
+          ),
         };
       });
 
-      this.attendanceService.createAttendanceAll(attendanceDatas).subscribe(response => {
-        console.log('Attendance saved:', response);
-        this.msgService.add({ severity: 'success', summary: 'Амжилттай', detail: 'Амжилттай хадгалагдлаа' })
-      }, error => {
-        console.error('Error saving attendance:', error);
-        this.msgService.add({ severity: 'error', summary: 'Алдаа', detail: `Алдаа гарлаа: ${error.message}` })
-      });
-
+      this.attendanceService.createAttendanceAll(attendanceDatas).subscribe(
+        (response) => {
+          console.log('Attendance saved:', response);
+          this.msgService.add({
+            severity: 'success',
+            summary: 'Амжилттай',
+            detail: 'Амжилттай хадгалагдлаа',
+          });
+        },
+        (error) => {
+          console.error('Error saving attendance:', error);
+          this.msgService.add({
+            severity: 'error',
+            summary: 'Алдаа',
+            detail: `Алдаа гарлаа: ${error.message}`,
+          });
+        }
+      );
     }
   }
-
 }

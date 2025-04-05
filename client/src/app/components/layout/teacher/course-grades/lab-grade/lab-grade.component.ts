@@ -9,17 +9,32 @@ import { DropdownModule } from 'primeng/dropdown';
 import { InputTextModule } from 'primeng/inputtext';
 import { TableModule } from 'primeng/table';
 import { ToastModule } from 'primeng/toast';
-import { AttendanceService } from '../../../../../services/attendanceService';
 import { StudentService } from '../../../../../services/studentService';
 import { InputNumberModule } from 'primeng/inputnumber';
+import { LabGradeService } from '../../../../../services/labGradeService';
 
-interface AttendanceRecord {
+interface GradeRecord {
   student: {
     name: string;
     code: string;
     studentId: string;
   };
-  attendance: { [weekNumber: string]: boolean }; // Week number as key, attendance status as value
+  grade1: { [weekNumber: string]: number };
+  grade2: { [weekNumber: string]: number };
+}
+
+interface GradeRecord1 {
+  _id?: string;
+  lessonId: string;
+  weekDay: string;
+  type: 'lec' | 'sem' | 'lab' | '';
+  time: number;
+  weekNumber: string;
+  labGrade: {
+    studentId: string;
+    grade1: number;
+    grade2: number;
+  };
 }
 
 @Component({
@@ -34,18 +49,18 @@ interface AttendanceRecord {
     FormsModule,
     CheckboxModule,
     ToastModule,
-    InputNumberModule
+    InputNumberModule,
   ],
   providers: [MessageService],
   templateUrl: './lab-grade.component.html',
-  styleUrl: './lab-grade.component.scss'
+  styleUrl: './lab-grade.component.scss',
 })
 export class LabGradeComponent {
   selectedWeekday: string = '';
   selectedClassType!: 'lec' | 'sem' | 'lab';
   selectedTimes!: number;
   students: any[] = [];
-  attendanceRecords: any[] = [];
+  labGradeRecords: GradeRecord[] = [];
   lessonId!: string;
   startDate!: Date;
 
@@ -65,13 +80,13 @@ export class LabGradeComponent {
     { label: 'Мягмар', value: 'Tuesday' },
     { label: 'Лхагва', value: 'Wednesday' },
     { label: 'Пүрэв', value: 'Thursday' },
-    { label: 'Баасан', value: 'Friday' }
+    { label: 'Баасан', value: 'Friday' },
   ];
 
   classTypes = [
     { label: 'Лекц', value: 'lec' },
     { label: 'Семинар', value: 'sem' },
-    { label: 'Лаборатори', value: 'lab' }
+    { label: 'Лаборатори', value: 'lab' },
   ];
 
   showPreviousWeeks = false;
@@ -79,68 +94,88 @@ export class LabGradeComponent {
   constructor(
     private studentService: StudentService,
     private route: ActivatedRoute,
-    private attendanceService: AttendanceService,
-    private msgService: MessageService) { }
+    private labGradeService: LabGradeService,
+    private msgService: MessageService
+  ) {}
 
   ngOnInit() {
-    this.route.parent?.paramMap.subscribe(params => {
+    this.route.parent?.paramMap.subscribe((params) => {
       this.lessonId = params.get('id')!;
     });
 
-    this.attendanceService.getConfig("First_day_of_school").subscribe((res) => {
+    this.labGradeService.getConfig('First_day_of_school').subscribe((res) => {
       if (res) {
         this.startDate = new Date(res.itemValue);
       }
-    })
+    });
   }
-
 
   onSelectionChange(): void {
     if (this.selectedWeekday && this.selectedClassType && this.selectedTimes) {
-      this.attendanceService.getAttendance(this.lessonId, this.selectedWeekday, this.selectedClassType, this.selectedTimes).subscribe((res: any) => {
-        console.log(res);
-        this.attendanceRecords = this.generateAttendance(res);
-        if (this.attendanceRecords.length == 0) {
+      this.labGradeService
+        .getlabGrade(
+          this.lessonId,
+          this.selectedWeekday,
+          this.selectedClassType,
+          this.selectedTimes
+        )
+        .subscribe((res: any) => {
+          console.log(res);
+          this.labGradeRecords = this.generateGradeRecords(res);
 
-          this.studentService.getStudentByClasstypeAndDayTime(this.selectedClassType, this.selectedWeekday, this.selectedTimes)
-            .subscribe((students: any[]) => {
-              this.students = students;
-              this.attendanceRecords = this.generateAttendanceRecords();
-            });
-        }
-      })
+          if (this.labGradeRecords.length == 0) {
+            this.studentService
+              .getStudentByClasstypeAndDayTime(
+                this.selectedClassType,
+                this.selectedWeekday,
+                this.selectedTimes
+              )
+              .subscribe((students: any[]) => {
+                this.students = students;
+                this.labGradeRecords = this.generateEmptyGradeRecords();
+              });
+          }
+        });
     }
   }
 
-  generateAttendanceRecords() {
-    let dates = this.getAllWeeks().sort();
-    return this.students.map(student => ({
-      student: { name: student.studentName, code: student.studentCode, studentId: student.id },
-      attendance: dates.reduce((acc, date) => ({ ...acc, [date]: false }), {})
+  generateEmptyGradeRecords(): GradeRecord[] {
+    const weeks = this.getAllWeeks();
+    return this.students.map((student) => ({
+      student: {
+        name: student.studentName,
+        code: student.studentCode,
+        studentId: student.id,
+      },
+      grade1: weeks.reduce((acc, week) => ({ ...acc, [week]: 0 }), {}),
+      grade2: weeks.reduce((acc, week) => ({ ...acc, [week]: 0 }), {}),
     }));
   }
 
-  generateAttendance(data: any): AttendanceRecord[] {
-    let studentAttendanceMap: { [studentId: string]: AttendanceRecord } = {};
+  generateGradeRecords(data: any): GradeRecord[] {
+    const studentGradeMap: { [studentId: string]: GradeRecord } = {};
 
     data.forEach((weekData: any) => {
-      weekData.attendance.forEach((item: any) => {
-        if (!studentAttendanceMap[item.studentId.id]) {
-          studentAttendanceMap[item.studentId.id] = {
+      weekData.labGrade.forEach((item: any) => {
+        const sid = item.studentId.id;
+        if (!studentGradeMap[sid]) {
+          studentGradeMap[sid] = {
             student: {
               name: item.studentId.studentName,
               code: item.studentId.studentCode,
-              studentId: item.studentId.id
+              studentId: sid,
             },
-            attendance: {}
+            grade1: {},
+            grade2: {},
           };
         }
 
-        studentAttendanceMap[item.studentId.id].attendance[weekData.weekNumber] = item.status;
+        studentGradeMap[sid].grade1[weekData.weekNumber] = item.grade1 ?? 0;
+        studentGradeMap[sid].grade2[weekData.weekNumber] = item.grade2 ?? 0;
       });
     });
 
-    return Object.values(studentAttendanceMap);
+    return Object.values(studentGradeMap);
   }
 
   getAllWeeks() {
@@ -160,12 +195,25 @@ export class LabGradeComponent {
 
   toRoman(num: number): string {
     const romanNumerals = [
-      'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X',
-      'XI', 'XII', 'XIII', 'XIV', 'XV', 'XVI'
+      'I',
+      'II',
+      'III',
+      'IV',
+      'V',
+      'VI',
+      'VII',
+      'VIII',
+      'IX',
+      'X',
+      'XI',
+      'XII',
+      'XIII',
+      'XIV',
+      'XV',
+      'XVI',
     ];
     return romanNumerals[num - 1] || '';
   }
-
 
   getCurrentWeeks() {
     let today = new Date();
@@ -182,71 +230,91 @@ export class LabGradeComponent {
   }
 
   save(): void {
+    const lessonId = this.lessonId;
+
     if (!this.showPreviousWeeks) {
       const currentWeek = this.getCurrentWeeks();
-      const lessonId = this.lessonId;
-      const attendanceData = {
+      const gradeData = {
         lessonId: lessonId,
         weekDay: this.selectedWeekday,
         type: this.selectedClassType,
         time: this.selectedTimes,
         weekNumber: currentWeek,
-        attendance: this.attendanceRecords.flatMap(record =>
-          Object.keys(record.attendance).map(date => {
-            if (date === currentWeek) {
-              return {
-                studentId: record.student.studentId,
-                status: record.attendance[date]
-              };
-            }
-            return null;
-          }).filter(item => item !== null)
-        )
+        labGrades: this.labGradeRecords.flatMap((record) => {
+          const grade1 = record.grade1[currentWeek] ?? 0;
+          const grade2 = record.grade2[currentWeek] ?? 0;
+
+          // Only push if there’s actual data
+          if (grade1 !== 0 || grade2 !== 0) {
+            return {
+              studentId: record.student.studentId,
+              grade1: grade1,
+              grade2: grade2,
+            };
+          }
+          return [];
+        }),
       };
 
-      this.attendanceService.createAttendance(attendanceData).subscribe(
+      this.labGradeService.createLabGrade(gradeData).subscribe(
         (response) => {
-          console.log('Attendance Saved:', response);
-          this.msgService.add({ severity: 'success', summary: 'Амжилттай', detail: 'Амжилттай хадгалагдлаа' })
+          console.log('Grades Saved:', response);
+          this.msgService.add({
+            severity: 'success',
+            summary: 'Амжилттай',
+            detail: 'Дүн амжилттай хадгалагдлаа',
+          });
         },
         (error) => {
-          this.msgService.add({ severity: 'error', summary: 'Алдаа', detail: `Алдаа гарлаа: ${error.message}` })
+          this.msgService.add({
+            severity: 'error',
+            summary: 'Алдаа',
+            detail: `Алдаа гарлаа: ${error.message}`,
+          });
         }
       );
     } else {
-      const weeks = this.getAllWeeks();
-      const lessonId = this.lessonId;
-      console.log(weeks);
-      const attendanceDatas = weeks.map(item => {
+      const allWeeks = this.getAllWeeks();
+      const gradeDatas = allWeeks.map((week) => {
         return {
           lessonId: lessonId,
           weekDay: this.selectedWeekday,
           type: this.selectedClassType,
           time: this.selectedTimes,
-          weekNumber: item,
-          attendance: this.attendanceRecords.flatMap(record =>
-            Object.keys(record.attendance).map(date => {
-              if (date === item) {
-                return {
-                  studentId: record.student.studentId,
-                  status: record.attendance[date]
-                };
-              }
-              return null;
-            }).filter(item => item !== null)
-          )
+          weekNumber: week,
+          labGrades: this.labGradeRecords.flatMap((record) => {
+            const grade1 = record.grade1[week] ?? 0;
+            const grade2 = record.grade2[week] ?? 0;
+
+            if (grade1 !== 0 || grade2 !== 0) {
+              return {
+                studentId: record.student.studentId,
+                grade1: grade1,
+                grade2: grade2,
+              };
+            }
+            return [];
+          }),
         };
       });
 
-      this.attendanceService.createAttendanceAll(attendanceDatas).subscribe(response => {
-        console.log('Attendance saved:', response);
-        this.msgService.add({ severity: 'success', summary: 'Амжилттай', detail: 'Амжилттай хадгалагдлаа' })
-      }, error => {
-        console.error('Error saving attendance:', error);
-        this.msgService.add({ severity: 'error', summary: 'Алдаа', detail: `Алдаа гарлаа: ${error.message}` })
-      });
-
+      this.labGradeService.createLabGradeAll(gradeDatas).subscribe(
+        (response) => {
+          console.log('Grades Saved:', response);
+          this.msgService.add({
+            severity: 'success',
+            summary: 'Амжилттай',
+            detail: 'Дүн амжилттай хадгалагдлаа',
+          });
+        },
+        (error) => {
+          this.msgService.add({
+            severity: 'error',
+            summary: 'Алдаа',
+            detail: `Алдаа гарлаа: ${error.message}`,
+          });
+        }
+      );
     }
   }
-
 }

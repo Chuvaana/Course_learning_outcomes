@@ -5,6 +5,7 @@ import { MessageService, SelectItem } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { CheckboxModule } from 'primeng/checkbox';
 import { DropdownModule } from 'primeng/dropdown';
+import { InputNumberModule } from 'primeng/inputnumber';
 import { InputTextModule } from 'primeng/inputtext';
 import { SelectModule } from 'primeng/select';
 import { TableModule } from 'primeng/table';
@@ -12,16 +13,29 @@ import { TagModule } from 'primeng/tag';
 import { ToastModule } from 'primeng/toast';
 import { AssessmentService } from '../../../../../services/assessmentService';
 import { TabRefreshService } from '../tabRefreshService';
+import { Subscription } from 'rxjs';
 interface Assessment {
-  id: number;
-  lessonId: string,
+  id: string;
+  lessonId: string;
   clo: any;
-  attendance: string;
+  attendance: boolean;
   assignment: boolean;
   quiz: boolean;
   project: boolean;
   lab: boolean;
   exam: boolean;
+}
+
+interface AssessFooter {
+  id?: string;
+  lessonId: string;
+  name: string;
+  attendanceValue: number;
+  assignmentValue: number;
+  quizValue: number;
+  projectValue: number;
+  labValue: number;
+  examValue: number;
 }
 
 @Component({
@@ -37,14 +51,18 @@ interface Assessment {
     SelectModule,
     CheckboxModule,
     DropdownModule,
-    InputTextModule],
+    InputTextModule,
+    InputNumberModule,
+  ],
   providers: [MessageService],
   templateUrl: './assessment.component.html',
-  styleUrl: './assessment.component.scss'
+  styleUrl: './assessment.component.scss',
 })
 export class AssessmentComponent {
   @Input() lessonId: string = '';
   assessments: Assessment[] = [];
+  assessFooter: AssessFooter[] = [];
+  // assessFooter!: any;
   clos: any;
 
   index!: number;
@@ -52,20 +70,33 @@ export class AssessmentComponent {
   types!: SelectItem[];
 
   isNew = true;
+  isNewFooter = true;
 
   clonedClos: { [s: string]: Assessment } = {};
   editingRowId: number | null = null;
+  private refreshSubscription!: Subscription;
 
-  constructor(private service: AssessmentService, private msgService: MessageService, private tabRefreshService: TabRefreshService) { }
+  constructor(
+    private service: AssessmentService,
+    private msgService: MessageService,
+    private tabRefreshService: TabRefreshService
+  ) {}
 
   ngOnInit() {
     if (this.lessonId) {
-      this.readData();
+      this.refreshSubscription = this.tabRefreshService.refresh$.subscribe(
+        () => {
+          this.readData(); // Reload data
+        }
+      );
     }
+  }
 
-    this.tabRefreshService.refresh$.subscribe(() => {
-      this.readData(); // Датаг дахин ачаалах функц
-    });
+  ngOnDestroy() {
+    // Unsubscribe from the observable to avoid memory leaks
+    if (this.refreshSubscription) {
+      this.refreshSubscription.unsubscribe();
+    }
   }
 
   readData() {
@@ -82,32 +113,77 @@ export class AssessmentComponent {
             quiz: item.quiz,
             project: item.project,
             lab: item.lab,
-            exam: item.exam
+            exam: item.exam,
           };
         });
       } else {
         this.setDefaultValues();
       }
-    })
+    });
 
+    this.service.getAssessFooter(this.lessonId).subscribe((res) => {
+      if (res && res.length) {
+        this.isNewFooter = false;
+        this.assessFooter = res.map((item: any) => {
+          return {
+            id: item._id,
+            lessonId: item.lessonId,
+            name: item.name,
+            attendanceValue: item.attendanceValue,
+            assignmentValue: item.assignmentValue,
+            quizValue: item.quizValue,
+            projectValue: item.projectValue,
+            labValue: item.labValue,
+            examValue: item.examValue,
+          };
+        });
+      } else {
+        this.setDefaultFooterValues();
+      }
+    });
   }
 
   setDefaultValues() {
     this.service.getCloList(this.lessonId).subscribe((data: any) => {
+      // Map the returned data and create the assessment objects.
       this.assessments = data.map((item: any) => {
         return {
           lessonId: this.lessonId,
           clo: item,
-          attendance: false,
-          assignment: false,
-          quiz: false,
-          project: false,
-          lab: false,
-          exam: false
+          attendance: 0,
+          assignment: 0,
+          quiz: 0,
+          project: 0,
+          lab: 0,
+          exam: 0,
         };
       });
       console.log(this.assessments);
     });
+  }
+  setDefaultFooterValues() {
+    this.assessFooter.push(
+      {
+        lessonId: this.lessonId,
+        name: 'Үнэлгээний эзлэх хувь',
+        attendanceValue: 0,
+        assignmentValue: 0,
+        quizValue: 0,
+        projectValue: 0,
+        labValue: 0,
+        examValue: 0,
+      },
+      {
+        lessonId: this.lessonId,
+        name: 'Үнэлгээний хийх давтамж',
+        attendanceValue: 0,
+        assignmentValue: 0,
+        quizValue: 0,
+        projectValue: 0,
+        labValue: 0,
+        examValue: 0,
+      }
+    );
   }
 
   save() {
@@ -115,6 +191,33 @@ export class AssessmentComponent {
       ...item,
       clo: item.clo.id,
     }));
+
+    const footerData = this.assessFooter.map((footer) => ({
+      ...footer,
+    }));
+
+    const sumField = this.assessFooter[0];
+    const sum =
+      sumField.attendanceValue +
+      sumField.assignmentValue +
+      sumField.quizValue +
+      sumField.projectValue +
+      sumField.labValue +
+      sumField.examValue;
+
+    console.log(sum);
+
+    if (sum !== 100) {
+      this.msgService.add({
+        severity: 'warn',
+        summary: 'Анхааруулга',
+        detail:
+          'Үнэлгээний эзлэх хувь нийлбэр 100 байх ёстой! \n Одогийн нийлбэр: ' +
+          sum,
+      });
+      return; // Датаг илгээхгүй
+    }
+
     if (this.isNew) {
       this.service.createAssessment(data).subscribe(
         (res: any) => {
@@ -122,14 +225,14 @@ export class AssessmentComponent {
           this.msgService.add({
             severity: 'success',
             summary: 'Амжилттай',
-            detail: 'Амжилттай хадгалагдлаа',
+            detail: 'Үнэлгээ амжилттай хадгалагдлаа',
           });
         },
         (err) => {
           this.msgService.add({
             severity: 'error',
             summary: 'Алдаа',
-            detail: 'Алдаа гарлаа: ' + err.message,
+            detail: 'Үнэлгээг хадгалахад алдаа гарлаа: ' + err.message,
           });
         }
       );
@@ -140,14 +243,54 @@ export class AssessmentComponent {
           this.msgService.add({
             severity: 'success',
             summary: 'Амжилттай',
-            detail: 'Амжилттай шинэчлэгдлээ!',
+            detail: 'Үнэлгээ амжилттай шинэчлэгдлээ!',
           });
         },
         (err) => {
           this.msgService.add({
             severity: 'error',
             summary: 'Алдаа',
-            detail: 'Алдаа гарлаа: ' + err.message,
+            detail: 'Үнэлгээг шинэчлэхэд алдаа гарлаа: ' + err.message,
+          });
+        }
+      );
+    }
+
+    if (this.isNewFooter) {
+      this.service.createAssessFooter(footerData).subscribe(
+        (res: any) => {
+          this.readData();
+          this.msgService.add({
+            severity: 'success',
+            summary: 'Амжилттай',
+            detail: 'Үнэлгээний мэдээлэл амжилттай хадгалагдлаа',
+          });
+        },
+        (err) => {
+          this.msgService.add({
+            severity: 'error',
+            summary: 'Алдаа',
+            detail:
+              'Үнэлгээний мэдээлэл хадгалахад алдаа гарлаа: ' + err.message,
+          });
+        }
+      );
+    } else {
+      this.service.updateAssessFooter(this.lessonId, footerData).subscribe(
+        (res) => {
+          this.readData();
+          this.msgService.add({
+            severity: 'success',
+            summary: 'Амжилттай',
+            detail: 'Үнэлгээний мэдээлэл амжилттай шинэчлэгдлээ!',
+          });
+        },
+        (err) => {
+          this.msgService.add({
+            severity: 'error',
+            summary: 'Алдаа',
+            detail:
+              'Үнэлгээний мэдээлэл шинэчлэхэд алдаа гарлаа: ' + err.message,
           });
         }
       );

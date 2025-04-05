@@ -7,13 +7,13 @@ import { ToastModule } from 'primeng/toast';
   selector: 'app-lesson',
   imports: [RouterModule, TieredMenuModule, ToastModule],
   templateUrl: './lesson.component.html',
-  styleUrl: './lesson.component.scss'
+  styleUrl: './lesson.component.scss',
 })
 export class LessonComponent {
   lessonId: string = '';
   items: MenuItem[] | undefined;
 
-  constructor(private route: ActivatedRoute) { }
+  constructor(private route: ActivatedRoute) {}
 
   ngOnInit(): void {
     this.lessonId = this.route.snapshot.paramMap.get('id') || '';
@@ -22,18 +22,19 @@ export class LessonComponent {
       {
         label: 'Хичээлийн хөтөлбөр',
         icon: 'pi pi-book',
-        routerLink: ['/main/teacher/lesson', this.lessonId, 'curriculum']
+        routerLink: ['/main/teacher/lesson', this.lessonId, 'curriculum'],
+      },
+      {
+        label: 'Дүнгийн ерөнхий төлөвлөлт',
+        icon: 'pi pi-check',
+        routerLink: ['/main/teacher/lesson', this.lessonId, 'clo-point'],
       },
       {
         label: 'Дүнгийн төлөвлөлт',
         icon: 'pi pi-check',
-        routerLink: ['/main/teacher/lesson', this.lessonId, 'clo-plan']
+        routerLink: ['/main/teacher/lesson', this.lessonId, 'clo-plan'],
       },
-      {
-        label: 'Дүнгийн төлөвлөлт2',
-        icon: 'pi pi-check',
-        routerLink: ['/main/teacher/lesson', this.lessonId, 'clo-point']
-      },
+
       // {
       //   label: 'Дүнгийн төлөвлөлт3',
       //   icon: 'pi pi-check',
@@ -46,19 +47,19 @@ export class LessonComponent {
           {
             label: 'Жагсаалт',
             icon: 'pi pi-graduation-cap',
-            routerLink: ['/main/teacher/lesson', this.lessonId, 'studentList']
+            routerLink: ['/main/teacher/lesson', this.lessonId, 'studentList'],
           },
           {
             label: 'Бүртгэх',
             icon: 'pi pi-graduation-cap',
-            routerLink: ['/main/teacher/lesson', this.lessonId, 'student']
-          }
-        ]
+            routerLink: ['/main/teacher/lesson', this.lessonId, 'student'],
+          },
+        ],
       },
       {
         label: 'Ирц',
         icon: 'pi pi-plus',
-        routerLink: ['/main/teacher/lesson', this.lessonId, 'attendance']
+        routerLink: ['/main/teacher/lesson', this.lessonId, 'attendance'],
       },
       {
         label: 'Дүн',
@@ -67,14 +68,14 @@ export class LessonComponent {
           {
             label: 'Лабораторийн дүн',
             icon: 'pi pi-graduation-cap',
-            routerLink: ['/main/teacher/lesson', this.lessonId, 'lab-grade']
+            routerLink: ['/main/teacher/lesson', this.lessonId, 'lab-grade'],
           },
           {
             label: 'Бие даалтын дүн',
             icon: 'pi pi-graduation-cap',
-            routerLink: ['/main/teacher/lesson', this.lessonId, 'bd-grade']
-          }
-        ]
+            routerLink: ['/main/teacher/lesson', this.lessonId, 'bd-grade'],
+          },
+        ],
       },
     ];
   }

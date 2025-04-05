@@ -1,41 +1,48 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import {
+  FormArray,
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+} from '@angular/forms';
+import { AccordionModule } from 'primeng/accordion';
+import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
-import { InputNumber } from 'primeng/inputnumber';
+import { InputNumber, InputNumberModule } from 'primeng/inputnumber';
 import { InputTextModule } from 'primeng/inputtext';
+import { MultiSelectModule } from 'primeng/multiselect';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { SelectModule } from 'primeng/select';
 import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { ToastModule } from 'primeng/toast';
-import { ScheduleService } from '../../../../../services/schedule.service';
-import { MessageService } from 'primeng/api';
-import { ProgressSpinnerModule } from 'primeng/progressspinner';
-import { MultiSelectModule } from 'primeng/multiselect';
-import { AccordionModule } from 'primeng/accordion';
-import { TabRefreshService } from '../tabRefreshService';
 import { CLOService } from '../../../../../services/cloService';
+import { ScheduleService } from '../../../../../services/schedule.service';
+import { TabRefreshService } from '../tabRefreshService';
 
 @Component({
   selector: 'app-schedule',
   standalone: true,
   imports: [
-    TableModule,
-    ToastModule,
     CommonModule,
-    TagModule,
-    SelectModule,
-    ButtonModule,
-    InputTextModule,
+    TableModule,
     FormsModule,
+    ToastModule,
+    TagModule,
+    ButtonModule,
+    SelectModule,
+    InputTextModule,
     ReactiveFormsModule,
-    InputNumber,
+    InputNumberModule,
     ProgressSpinnerModule,
     MultiSelectModule,
-    AccordionModule],
+    AccordionModule,
+  ],
   providers: [MessageService],
   templateUrl: './schedule.component.html',
-  styleUrl: './schedule.component.scss'
+  styleUrl: './schedule.component.scss',
 })
 export class ScheduleComponent {
   @Input() lessonId: string = '';
@@ -59,43 +66,51 @@ export class ScheduleComponent {
 
   cloRelevanceCounts: { [key: string]: number } = {};
   cloRelevanceCountsSem: { [key: string]: number } = {};
-  cloRelevanceCountsLab: { [key: string]: { count: number, lecPoint: number, labPoint: number } } = {};
-  cloRelevanceCountsBd: { [key: string]: { count: number, point: number } } = {};
-  mergedCloRelevanceCounts: { [key: string]: { semCount: number; count: number, point: number } } = {};
+  cloRelevanceCountsLab: {
+    [key: string]: { count: number; lecPoint: number; labPoint: number };
+  } = {};
+  cloRelevanceCountsBd: { [key: string]: { count: number; point: number } } =
+    {};
+  mergedCloRelevanceCounts: {
+    [key: string]: { semCount: number; count: number; point: number };
+  } = {};
 
   constructor(
     private fb: FormBuilder,
     private service: ScheduleService,
     private cloService: CLOService,
     private msgService: MessageService,
-    private tabRefreshService: TabRefreshService) { }
+    private tabRefreshService: TabRefreshService
+  ) {}
 
   async ngOnInit() {
     if (this.lessonId) {
-      this.service.getCloList(this.lessonId).subscribe(res => {
-        this.clos = res;
-        this.closLecSem = this.clos.filter((item: any) => item.type === 'LEC_SEM');
-        this.closLab = this.clos.filter((item: any) => item.type === 'LAB');
-      });
       this.tabRefreshService.refresh$.subscribe(() => {
+        this.service.getCloList(this.lessonId).subscribe((res) => {
+          this.clos = res;
+          this.closLecSem = this.clos.filter(
+            (item: any) => item.type === 'LEC_SEM'
+          );
+          this.closLab = this.clos.filter((item: any) => item.type === 'LAB');
+        });
         this.readData(); // Датаг дахин ачаалах функц
       });
     }
 
     this.scheduleForm = this.fb.group({
-      schedules: this.fb.array([]) // This will hold the schedules data
+      schedules: this.fb.array([]), // This will hold the schedules data
     });
 
     this.scheduleSemForm = this.fb.group({
-      scheduleSems: this.fb.array([]) // This will hold the schedules data
+      scheduleSems: this.fb.array([]), // This will hold the schedules data
     });
 
     this.scheduleLabForm = this.fb.group({
-      scheduleLabs: this.fb.array([]) // This will hold the schedules data
+      scheduleLabs: this.fb.array([]), // This will hold the schedules data
     });
 
     this.scheduleBdForm = this.fb.group({
-      scheduleBds: this.fb.array([]) // This will hold the schedules data
+      scheduleBds: this.fb.array([]), // This will hold the schedules data
     });
 
     if (this.lessonId) {
@@ -117,14 +132,28 @@ export class ScheduleComponent {
     this.isLoading = true;
     try {
       const res = await this.service.getSchedules(this.lessonId).toPromise();
-      const resSem = await this.service.getScheduleSems(this.lessonId).toPromise();
-      const resLab = await this.service.getScheduleLabs(this.lessonId).toPromise();
-      const resBd = await this.service.getScheduleBds(this.lessonId).toPromise();
-      const cloPlan = await this.cloService.getCloPlan(this.lessonId).toPromise();
+      const resSem = await this.service
+        .getScheduleSems(this.lessonId)
+        .toPromise();
+      const resLab = await this.service
+        .getScheduleLabs(this.lessonId)
+        .toPromise();
+      const resBd = await this.service
+        .getScheduleBds(this.lessonId)
+        .toPromise();
+      const cloPlan = await this.cloService
+        .getCloPlan(this.lessonId)
+        .toPromise();
       const scheduleArray = this.scheduleForm.get('schedules') as FormArray;
-      const scheduleSemArray = this.scheduleSemForm.get('scheduleSems') as FormArray;
-      const scheduleLabArray = this.scheduleLabForm.get('scheduleLabs') as FormArray;
-      const scheduleBdArray = this.scheduleBdForm.get('scheduleBds') as FormArray;
+      const scheduleSemArray = this.scheduleSemForm.get(
+        'scheduleSems'
+      ) as FormArray;
+      const scheduleLabArray = this.scheduleLabForm.get(
+        'scheduleLabs'
+      ) as FormArray;
+      const scheduleBdArray = this.scheduleBdForm.get(
+        'scheduleBds'
+      ) as FormArray;
       scheduleArray.clear();
       scheduleSemArray.clear();
       scheduleLabArray.clear();
@@ -163,7 +192,8 @@ export class ScheduleComponent {
       let point: { [key: string]: number } = {}; // Initialize point as an empty object
 
       for (const cloKey in this.cloPlan) {
-        if (this.cloPlan.hasOwnProperty(cloKey)) { // Check if the property belongs to the object
+        if (this.cloPlan.hasOwnProperty(cloKey)) {
+          // Check if the property belongs to the object
           const clo = this.cloPlan[cloKey]; // Access the object using the key
           point[clo.cloId] = clo.timeManagement + clo.engagement; // Now you can access cloId
         }
@@ -177,7 +207,7 @@ export class ScheduleComponent {
           this.mergedCloRelevanceCounts[key] = {
             semCount: 0, // Initialize semCount to 0
             count: this.cloRelevanceCounts[key],
-            point: point[key] // Set the count from the first object
+            point: point[key], // Set the count from the first object
           };
         }
       }
@@ -187,13 +217,14 @@ export class ScheduleComponent {
         if (this.cloRelevanceCountsSem.hasOwnProperty(key)) {
           if (this.mergedCloRelevanceCounts[key]) {
             // If the key exists, sum the counts
-            this.mergedCloRelevanceCounts[key].semCount = this.cloRelevanceCountsSem[key];
+            this.mergedCloRelevanceCounts[key].semCount =
+              this.cloRelevanceCountsSem[key];
           } else {
             // If the key does not exist, initialize it
             this.mergedCloRelevanceCounts[key] = {
               semCount: this.cloRelevanceCountsSem[key],
               count: 0,
-              point: point[key]
+              point: point[key],
             };
           }
         }
@@ -203,11 +234,13 @@ export class ScheduleComponent {
       console.log(this.mergedCloRelevanceCounts);
 
       // Convert mergedCloRelevanceCounts to an array for display
-      this.mergedCloRelevanceCountsArray = Object.keys(this.mergedCloRelevanceCounts).map(key => ({
+      this.mergedCloRelevanceCountsArray = Object.keys(
+        this.mergedCloRelevanceCounts
+      ).map((key) => ({
         key: key,
         semCount: this.mergedCloRelevanceCounts[key].semCount,
         count: this.mergedCloRelevanceCounts[key].count,
-        point: this.mergedCloRelevanceCounts[key].point
+        point: this.mergedCloRelevanceCounts[key].point,
       }));
     } catch (error) {
       console.error('Алдаа:', error);
@@ -218,14 +251,14 @@ export class ScheduleComponent {
 
   setSchedules(res: any[]): void {
     const scheduleArray = this.scheduleForm.get('schedules') as FormArray;
-    res.forEach(schedule => {
+    res.forEach((schedule) => {
       const lessonGroup = this.fb.group({
         id: [schedule._id],
         lessonId: [schedule.lessonId],
         cloRelevance: [schedule.cloRelevance.map((clo: any) => clo.id) || []], // Ensure it is always an array
         week: [{ value: schedule.week, disabled: true }],
         title: [schedule.title],
-        time: [schedule.time]
+        time: [schedule.time],
       });
       scheduleArray.push(lessonGroup);
     });
@@ -242,15 +275,17 @@ export class ScheduleComponent {
   }
 
   setScheduleSems(res: any[]): void {
-    const scheduleSemArray = this.scheduleSemForm.get('scheduleSems') as FormArray;
-    res.forEach(schedule => {
+    const scheduleSemArray = this.scheduleSemForm.get(
+      'scheduleSems'
+    ) as FormArray;
+    res.forEach((schedule) => {
       const lessonGroup = this.fb.group({
         id: [schedule._id],
         lessonId: [schedule.lessonId],
         cloRelevance: [schedule.cloRelevance.map((clo: any) => clo.id) || []], // Ensure it is always an array
         week: [{ value: schedule.week, disabled: true }],
         title: [schedule.title],
-        time: [schedule.time]
+        time: [schedule.time],
       });
       scheduleSemArray.push(lessonGroup);
     });
@@ -267,25 +302,30 @@ export class ScheduleComponent {
   }
 
   setScheduleLabs(res: any[]): void {
-    const scheduleLabArray = this.scheduleLabForm.get('scheduleLabs') as FormArray;
-    res.forEach(schedule => {
+    const scheduleLabArray = this.scheduleLabForm.get(
+      'scheduleLabs'
+    ) as FormArray;
+    res.forEach((schedule) => {
       const lessonGroup = this.fb.group({
         id: [schedule._id],
         lessonId: [schedule.lessonId],
         cloRelevance: [schedule.cloRelevance.map((clo: any) => clo.id) || []], // Ensure it is always an array
         week: [schedule.week],
         title: [schedule.title],
-        time: [schedule.time]
+        time: [schedule.time],
       });
       scheduleLabArray.push(lessonGroup);
     });
-    let cloRelevanceCounts: { [key: string]: { count: number, lecPoint: number, labPoint: number } } = {};
+    let cloRelevanceCounts: {
+      [key: string]: { count: number; lecPoint: number; labPoint: number };
+    } = {};
     const data = scheduleLabArray.value;
     let lecPoint: { [key: string]: number } = {};
     let labPoint: { [key: string]: number } = {};
 
     for (const cloKey in this.cloPlan) {
-      if (this.cloPlan.hasOwnProperty(cloKey)) { // Check if the property belongs to the object
+      if (this.cloPlan.hasOwnProperty(cloKey)) {
+        // Check if the property belongs to the object
         const clo = this.cloPlan[cloKey]; // Access the object using the key
         lecPoint[clo.cloId] = clo.timeManagement + clo.engagement; // Now you can access cloId
         labPoint[clo.cloId] = clo.toExp + clo.processing; // Now you can access cloId
@@ -314,17 +354,19 @@ export class ScheduleComponent {
     });
 
     this.cloRelevanceCountsLab = cloRelevanceCounts;
-    this.cloRelevanceCountsLabArray = Object.keys(this.cloRelevanceCountsLab).map(key => ({
+    this.cloRelevanceCountsLabArray = Object.keys(
+      this.cloRelevanceCountsLab
+    ).map((key) => ({
       key: key,
       count: this.cloRelevanceCountsLab[key].count,
       lecPoint: this.cloRelevanceCountsLab[key].lecPoint,
-      labPoint: this.cloRelevanceCountsLab[key].labPoint
+      labPoint: this.cloRelevanceCountsLab[key].labPoint,
     }));
   }
 
   setScheduleBds(res: any[]): void {
     const scheduleBdArray = this.scheduleBdForm.get('scheduleBds') as FormArray;
-    res.forEach(schedule => {
+    res.forEach((schedule) => {
       const lessonGroup = this.fb.group({
         id: [schedule._id],
         lessonId: [schedule.lessonId],
@@ -332,18 +374,25 @@ export class ScheduleComponent {
         week: [schedule.week],
         title: [schedule.title],
         adviceTime: [schedule.adviceTime],
-        time: [schedule.time]
+        time: [schedule.time],
       });
       scheduleBdArray.push(lessonGroup);
     });
-    let cloRelevanceCounts: { [key: string]: { count: number, point: number } } = {};
+    let cloRelevanceCounts: {
+      [key: string]: { count: number; point: number };
+    } = {};
     const data = scheduleBdArray.value;
     let point: { [key: string]: number } = {};
 
     for (const cloKey in this.cloPlan) {
-      if (this.cloPlan.hasOwnProperty(cloKey)) { // Check if the property belongs to the object
+      if (this.cloPlan.hasOwnProperty(cloKey)) {
+        // Check if the property belongs to the object
         const clo = this.cloPlan[cloKey]; // Access the object using the key
-        point[clo.cloId] = clo.decisionMaking + clo.formulation + clo.analysis + clo.implementation; // Now you can access cloId
+        point[clo.cloId] =
+          clo.decisionMaking +
+          clo.formulation +
+          clo.analysis +
+          clo.implementation; // Now you can access cloId
       }
     }
 
@@ -365,11 +414,13 @@ export class ScheduleComponent {
     });
 
     this.cloRelevanceCountsBd = cloRelevanceCounts;
-    this.cloRelevanceCountsBdArray = Object.keys(this.cloRelevanceCountsBd).map(key => ({
-      key: key,
-      count: this.cloRelevanceCountsBd[key].count,
-      point: this.cloRelevanceCountsBd[key].point
-    }));
+    this.cloRelevanceCountsBdArray = Object.keys(this.cloRelevanceCountsBd).map(
+      (key) => ({
+        key: key,
+        count: this.cloRelevanceCountsBd[key].count,
+        point: this.cloRelevanceCountsBd[key].point,
+      })
+    );
   }
 
   setDefaultSchedules(): void {
@@ -390,14 +441,16 @@ export class ScheduleComponent {
       { week: 'XIII', title: 'Явцын сорил 2', time: 2, cloRelevance: [] },
       { week: 'XIV', title: '', time: 2, cloRelevance: [] },
       { week: 'XV', title: '', time: 2, cloRelevance: [] },
-      { week: 'XVI', title: '', time: 2, cloRelevance: [] }
+      { week: 'XVI', title: '', time: 2, cloRelevance: [] },
     ];
-    defaultLessons.forEach(lesson => {
+    defaultLessons.forEach((lesson) => {
       scheduleArray.push(this.createLesson(lesson));
     });
   }
   setDefaultSemSchedules(): void {
-    const scheduleSemArray = this.scheduleSemForm.get('scheduleSems') as FormArray;
+    const scheduleSemArray = this.scheduleSemForm.get(
+      'scheduleSems'
+    ) as FormArray;
     const defaultSemLessons = [
       { week: 'I', title: '', time: 2, cloRelevance: [] },
       { week: 'II', title: '', time: 2, cloRelevance: [] },
@@ -414,15 +467,17 @@ export class ScheduleComponent {
       { week: 'XIII', title: '', time: 2, cloRelevance: [] },
       { week: 'XIV', title: '', time: 2, cloRelevance: [] },
       { week: 'XV', title: '', time: 2, cloRelevance: [] },
-      { week: 'XVI', title: '', time: 2, cloRelevance: [] }
+      { week: 'XVI', title: '', time: 2, cloRelevance: [] },
     ];
-    defaultSemLessons.forEach(lesson => {
+    defaultSemLessons.forEach((lesson) => {
       scheduleSemArray.push(this.createLesson(lesson));
     });
   }
 
   setDefaultLabSchedules(): void {
-    const scheduleLabArray = this.scheduleLabForm.get('scheduleLabs') as FormArray;
+    const scheduleLabArray = this.scheduleLabForm.get(
+      'scheduleLabs'
+    ) as FormArray;
     const defaultLessons = [
       { week: 'I', title: '', time: 2, cloRelevance: [] },
       { week: 'II', title: '', time: 2, cloRelevance: [] },
@@ -439,13 +494,13 @@ export class ScheduleComponent {
       { week: 'XIII', title: '', time: 2, cloRelevance: [] },
       { week: 'XIV', title: '', time: 2, cloRelevance: [] },
       { week: 'XV', title: '', time: 2, cloRelevance: [] },
-      { week: 'XVI', title: '', time: 2, cloRelevance: [] }
+      { week: 'XVI', title: '', time: 2, cloRelevance: [] },
     ];
-    defaultLessons.forEach(lesson => {
+    defaultLessons.forEach((lesson) => {
       scheduleLabArray.push(this.createLesson(lesson));
     });
   }
-  
+
   setDefaultBdSchedules(): void {
     const scheduleBdArray = this.scheduleBdForm.get('scheduleBds') as FormArray;
     const defaultBdLessons = [
@@ -464,15 +519,15 @@ export class ScheduleComponent {
       { week: 'XIII', title: '', adviceTime: 0, time: 0, cloRelevance: [] },
       { week: 'XIV', title: '', adviceTime: 0, time: 0, cloRelevance: [] },
       { week: 'XV', title: '', adviceTime: 0, time: 0, cloRelevance: [] },
-      { week: 'XVI', title: '', adviceTime: 0, time: 0, cloRelevance: [] }
+      { week: 'XVI', title: '', adviceTime: 0, time: 0, cloRelevance: [] },
     ];
-    defaultBdLessons.forEach(lesson => {
+    defaultBdLessons.forEach((lesson) => {
       scheduleBdArray.push(this.createBdLesson(lesson));
     });
   }
 
   getCloName(cloId: string): string {
-    const clo = this.clos.find((c: { id: string; }) => c.id === cloId);
+    const clo = this.clos.find((c: { id: string }) => c.id === cloId);
     return clo ? clo.cloName : 'Unknown';
   }
 
@@ -482,7 +537,7 @@ export class ScheduleComponent {
       week: [lesson.week],
       title: [lesson.title],
       time: [lesson.time],
-      cloRelevance: [lesson.cloRelevance]
+      cloRelevance: [lesson.cloRelevance],
     });
   }
 
@@ -493,7 +548,7 @@ export class ScheduleComponent {
       title: [lesson.title],
       adviceTime: [lesson.adviceTime],
       time: [lesson.time],
-      cloRelevance: [lesson.cloRelevance]
+      cloRelevance: [lesson.cloRelevance],
     });
   }
 
@@ -519,153 +574,168 @@ export class ScheduleComponent {
 
   saveLecSchedule() {
     if (this.isNew) {
-      this.service.addSchedules(this.scheduleForm.value).subscribe((res: any) => {
-        this.readData();
-        this.msgService.add({
-          severity: 'success',
-          summary: 'Амжилттай',
-          detail: 'Амжилттай хадгалагдлаа!',
-        });
-      },
+      this.service.addSchedules(this.scheduleForm.value).subscribe(
+        (res: any) => {
+          this.readData();
+          this.msgService.add({
+            severity: 'success',
+            summary: 'Амжилттай',
+            detail: 'Амжилттай хадгалагдлаа!',
+          });
+        },
         (err) => {
           this.msgService.add({
             severity: 'error',
             summary: 'Алдаа',
             detail: 'Алдаа гарлаа: ' + err.message,
           });
-        });
-
+        }
+      );
     } else {
-      this.service.updateSchedules(this.lessonId, this.scheduleForm.value).subscribe((res: any) => {
-        this.readData();
-        this.msgService.add({
-          severity: 'success',
-          summary: 'Амжилттай',
-          detail: 'Амжилттай шинэчлэгдлээ!',
-        });
-      },
-        (err) => {
-          this.msgService.add({
-            severity: 'error',
-            summary: 'Алдаа',
-            detail: 'Алдаа гарлаа: ' + err.message,
-          });
-        });
-
+      this.service
+        .updateSchedules(this.lessonId, this.scheduleForm.value)
+        .subscribe(
+          (res: any) => {
+            this.readData();
+            this.msgService.add({
+              severity: 'success',
+              summary: 'Амжилттай',
+              detail: 'Амжилттай шинэчлэгдлээ!',
+            });
+          },
+          (err) => {
+            this.msgService.add({
+              severity: 'error',
+              summary: 'Алдаа',
+              detail: 'Алдаа гарлаа: ' + err.message,
+            });
+          }
+        );
     }
   }
   saveSemSchedule() {
     if (this.isNewSem) {
-      this.service.addScheduleSems(this.scheduleSemForm.value).subscribe((res: any) => {
-        this.readData();
-        this.msgService.add({
-          severity: 'success',
-          summary: 'Амжилттай',
-          detail: 'Амжилттай хадгалагдлаа!',
-        });
-      },
+      this.service.addScheduleSems(this.scheduleSemForm.value).subscribe(
+        (res: any) => {
+          this.readData();
+          this.msgService.add({
+            severity: 'success',
+            summary: 'Амжилттай',
+            detail: 'Амжилттай хадгалагдлаа!',
+          });
+        },
         (err) => {
           this.msgService.add({
             severity: 'error',
             summary: 'Алдаа',
             detail: 'Алдаа гарлаа: ' + err.message,
           });
-        });
-
+        }
+      );
     } else {
-      this.service.updateScheduleSems(this.lessonId, this.scheduleSemForm.value).subscribe((res: any) => {
-        this.readData();
-        this.msgService.add({
-          severity: 'success',
-          summary: 'Амжилттай',
-          detail: 'Амжилттай шинэчлэгдлээ!',
-        });
-      },
-        (err) => {
-          this.msgService.add({
-            severity: 'error',
-            summary: 'Алдаа',
-            detail: 'Алдаа гарлаа: ' + err.message,
-          });
-        });
-
+      this.service
+        .updateScheduleSems(this.lessonId, this.scheduleSemForm.value)
+        .subscribe(
+          (res: any) => {
+            this.readData();
+            this.msgService.add({
+              severity: 'success',
+              summary: 'Амжилттай',
+              detail: 'Амжилттай шинэчлэгдлээ!',
+            });
+          },
+          (err) => {
+            this.msgService.add({
+              severity: 'error',
+              summary: 'Алдаа',
+              detail: 'Алдаа гарлаа: ' + err.message,
+            });
+          }
+        );
     }
   }
 
-
   saveLabSchedule() {
     if (this.isNewLab) {
-      this.service.addScheduleLabs(this.scheduleLabForm.value).subscribe((res: any) => {
-        this.readData();
-        this.msgService.add({
-          severity: 'success',
-          summary: 'Амжилттай',
-          detail: 'Амжилттай хадгалагдлаа!',
-        });
-      },
+      this.service.addScheduleLabs(this.scheduleLabForm.value).subscribe(
+        (res: any) => {
+          this.readData();
+          this.msgService.add({
+            severity: 'success',
+            summary: 'Амжилттай',
+            detail: 'Амжилттай хадгалагдлаа!',
+          });
+        },
         (err) => {
           this.msgService.add({
             severity: 'error',
             summary: 'Алдаа',
             detail: 'Алдаа гарлаа: ' + err.message,
           });
-        });
-
+        }
+      );
     } else {
-      this.service.updateScheduleLabs(this.lessonId, this.scheduleLabForm.value).subscribe((res: any) => {
-        this.readData();
-        this.msgService.add({
-          severity: 'success',
-          summary: 'Амжилттай',
-          detail: 'Амжилттай шинэчлэгдлээ!',
-        });
-      },
-        (err) => {
-          this.msgService.add({
-            severity: 'error',
-            summary: 'Алдаа',
-            detail: 'Алдаа гарлаа: ' + err.message,
-          });
-        });
-
+      this.service
+        .updateScheduleLabs(this.lessonId, this.scheduleLabForm.value)
+        .subscribe(
+          (res: any) => {
+            this.readData();
+            this.msgService.add({
+              severity: 'success',
+              summary: 'Амжилттай',
+              detail: 'Амжилттай шинэчлэгдлээ!',
+            });
+          },
+          (err) => {
+            this.msgService.add({
+              severity: 'error',
+              summary: 'Алдаа',
+              detail: 'Алдаа гарлаа: ' + err.message,
+            });
+          }
+        );
     }
   }
 
   saveBdSchedule() {
     if (this.isNewBd) {
-      this.service.addScheduleBds(this.scheduleBdForm.value).subscribe((res: any) => {
-        this.readData();
-        this.msgService.add({
-          severity: 'success',
-          summary: 'Амжилттай',
-          detail: 'Амжилттай хадгалагдлаа!',
-        });
-      },
+      this.service.addScheduleBds(this.scheduleBdForm.value).subscribe(
+        (res: any) => {
+          this.readData();
+          this.msgService.add({
+            severity: 'success',
+            summary: 'Амжилттай',
+            detail: 'Амжилттай хадгалагдлаа!',
+          });
+        },
         (err) => {
           this.msgService.add({
             severity: 'error',
             summary: 'Алдаа',
             detail: 'Алдаа гарлаа: ' + err.message,
           });
-        });
-
+        }
+      );
     } else {
-      this.service.updateScheduleBds(this.lessonId, this.scheduleBdForm.value).subscribe((res: any) => {
-        this.readData();
-        this.msgService.add({
-          severity: 'success',
-          summary: 'Амжилттай',
-          detail: 'Амжилттай шинэчлэгдлээ!',
-        });
-      },
-        (err) => {
-          this.msgService.add({
-            severity: 'error',
-            summary: 'Алдаа',
-            detail: 'Алдаа гарлаа: ' + err.message,
-          });
-        });
-
+      this.service
+        .updateScheduleBds(this.lessonId, this.scheduleBdForm.value)
+        .subscribe(
+          (res: any) => {
+            this.readData();
+            this.msgService.add({
+              severity: 'success',
+              summary: 'Амжилттай',
+              detail: 'Амжилттай шинэчлэгдлээ!',
+            });
+          },
+          (err) => {
+            this.msgService.add({
+              severity: 'error',
+              summary: 'Алдаа',
+              detail: 'Алдаа гарлаа: ' + err.message,
+            });
+          }
+        );
     }
   }
 }
