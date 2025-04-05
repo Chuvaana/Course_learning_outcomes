@@ -1,72 +1,93 @@
 <div>
   <p-toast />
-  <div style="font-size: 50px;margin-left: 5%;margin-top: 20px;">
+  <div style="font-size: 50px; margin-left: 5%; margin-top: 20px">
     <span>Хичээлд сурагчдыг бүртгэх</span>
   </div>
-  <div style="
-  DISPLAY: flex;
-  justify-content: space-between;
-  padding: 0px 10%;
-  margin-top: 50px;">
-    <div *ngIf="clos.length > 0" style="display: flex; flex-direction: row; flex-wrap: wrap;">
+  <div
+    style="
+      display: flex;
+      justify-content: space-between;
+      padding: 0px 10%;
+      margin-top: 50px;
+    "
+  >
+    <div
+      *ngIf="clos.length > 0"
+      style="display: flex; flex-direction: row; flex-wrap: wrap"
+    >
       <div *ngFor="let clo of clos; let i = index" class="clo-row">
-        <p class="span">{{clo.cloName}}</p>
+        <p class="span">{{ clo.cloName }}</p>
         <div class="flex-auto">
           <label class="mb-2 block font-bold" for="minmax-buttons">
-              Min-Max Boundaries
+            Min-Max Boundaries
           </label>
-          <p-inputnumber [(ngModel)]="value2" mode="decimal" [showButtons]="true" inputId="minmax-buttons" [min]="0" [max]="questionAmount" />
-      </div>
-        <input class="input" type="number" placeholder="0" max="questionAmount">
+          <!-- <p-inputnumber
+            [(ngModel)]="value2"
+            mode="decimal"
+            [showButtons]="true"
+            inputId="minmax-buttons"
+            [min]="0"
+            [max]="questionAmount"
+          /> -->
+        </div>
+        <input
+          class="input"
+          type="number"
+          placeholder="0"
+          max="questionAmount"
+        />
         <span> - </span>
-        <input class="input" type="number" [attr.placeholder]="questionAmount" max="questionAmount">
+        <input
+          class="input"
+          type="number"
+          [attr.placeholder]="questionAmount"
+          max="questionAmount"
+        />
       </div>
     </div>
-
-
   </div>
-  <div style="
-  DISPLAY: flex;
-  justify-content: space-between;
-  padding: 0px 10%;
-  margin-top: 50px;">
+  <div
+    style="
+      display: flex;
+      justify-content: space-between;
+      padding: 0px 10%;
+      margin-top: 50px;
+    "
+  >
     <div class="action-btn">
       <input type="file" (change)="onFileChange($event)" accept=".xls,.xlsx" />
     </div>
-    <div class="drop-btn">
+    <div class="drop-btn"></div>
+    <div class="action-btn">
+      <!-- <button mat-raised-button (click)="openPopup()">Open Popup</button> -->
     </div>
     <div class="action-btn">
-      <button mat-raised-button (click)="openPopup()">Open Popup</button>
-    </div>
-    <div class="action-btn">
-      <button mat-raised-button (click)="submit()">Create New Student</button>
+      <!-- <button mat-raised-button (click)="submit()">Create New Student</button> -->
     </div>
   </div>
-  <div style="
-  DISPLAY: flex;
-  padding: 0px 10%;
-  margin-top: 20px;
-  font-weight: bold;">
+  <div
+    style="display: flex; padding: 0px 10%; margin-top: 20px; font-weight: bold"
+  >
     <div>
       <span>Нийт сурагчдын тоо</span>
     </div>
-    <div style="
-    padding-left: 20px;">
-      <span>{{this.studentCount}}</span>
+    <div style="padding-left: 20px">
+      <span>{{ this.studentCount }}</span>
     </div>
   </div>
-  <div style="margin-top: 2%;">
-
+  <div style="margin-top: 2%">
     <table *ngIf="tableData.length > 0" class="custom-table">
       <thead>
         <tr>
-          <th>#</th> <!-- Row count header -->
+          <th>#</th>
+          <!-- Row count header -->
           <th *ngFor="let header of tableData[0]">{{ header }}</th>
         </tr>
       </thead>
       <tbody>
         <tr *ngFor="let row of tableData.slice(1); let i = index">
-          <td>{{ i + 1 }}</td> <!-- Row count -->
+          <td>{{ i + 1 }}</td>
+          <!-- Row count -->
           <td *ngFor="let cell of row">{{ cell }}</td>
         </tr>
       </tbody>

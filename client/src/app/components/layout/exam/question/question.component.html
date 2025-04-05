@@ -1,74 +1,119 @@
 <div class="card">
-  <div style="display: flex; justify-content: space-around; margin-top: 2%; place-self: center;  width: 80%;">
-    <p-button (click)="onQuestionSelect()" [rounded]="true" label="1" class="w-8 h-8 p-0" [outlined]="active !== '0'" />
-    <p-button (click)="onQuestionSelect()" [rounded]="true" label="2" class="w-8 h-8 p-0" [outlined]="active !== '1'" />
-  </div>
-  <div style="display: flex; justify-content: space-around; margin-top: 2%; place-self: center;  width: 80%;">
+  <div
+    style="
+      display: flex;
+      justify-content: space-around;
+      margin-top: 2%;
+      place-self: center;
+      width: 80%;
+    "
+  >
     <div class="card flex justify-center">
-      <div class="flex flex-col gap-2 " style="flex-direction: column;">
+      <div class="flex flex-col gap-2" style="flex-direction: column">
         <label for="questionId">Асуултын ID</label>
-        <input pInputText id="questionId" aria-describedby="questionId-help" [(ngModel)]="questionId"
-          placeholder="123.." />
-        <small id="questionId-help">Enter your username to reset your password.</small>
+        <input
+          pInputText
+          id="questionId"
+          aria-describedby="questionId-help"
+          [(ngModel)]="questionId"
+          placeholder="123.."
+        />
+        <small id="questionId-help"
+          >Enter your username to reset your password.</small
+        >
       </div>
     </div>
     <div class="card flex justify-center">
-      <div class="flex flex-col gap-2" style="flex-direction: column;">
+      <div class="flex flex-col gap-2" style="flex-direction: column">
         <label for="questionName">Асуултын нэр</label>
-        <input pInputText id="questionName" aria-describedby="questionName-help" [(ngModel)]="questionName"
-          placeholder="нэр..." />
-        <small id="questionName-help">Enter your username to reset your password.</small>
+        <input
+          pInputText
+          id="questionName"
+          aria-describedby="questionName-help"
+          [(ngModel)]="questionName"
+          placeholder="нэр..."
+        />
+        <small id="questionName-help"
+          >Enter your username to reset your password.</small
+        >
       </div>
     </div>
     <div class="card flex justify-center">
-      <div class="flex flex-col gap-2" style="flex-direction: column;">
+      <div class="flex flex-col gap-2" style="flex-direction: column">
         <label for="questionPoint">Тус асуултын нийт оноо</label>
-        <input pInputText id="questionPoint" aria-describedby="questionPoint-help" [(ngModel)]="questionPoint"
-          placeholder="1,2,.." />
-        <small id="questionPoint-help">Enter your username to reset your password.</small>
+        <input
+          pInputText
+          id="questionPoint"
+          aria-describedby="questionPoint-help"
+          [(ngModel)]="questionPoint"
+          placeholder="1,2,.."
+        />
+        <small id="questionPoint-help"
+          >Enter your username to reset your password.</small
+        >
       </div>
     </div>
     <div class="card flex justify-center">
-      <div class="flex flex-col gap-2" style="flex-direction: column;">
+      <div class="flex flex-col gap-2" style="flex-direction: column">
         <label for="status">Төлөв</label>
-        <p-dropdown formControlName="status" [options]="statuss" optionLabel="name" optionValue="id" placeholder="Төлөв"
-          class="form-dropdown" />
-        <small id="status-help">Enter your status to reset your password.</small>
+        <p-dropdown
+          formControlName="status"
+          [options]="statuss"
+          optionLabel="name"
+          optionValue="id"
+          placeholder="Төлөв"
+          class="form-dropdown"
+        />
+        <small id="status-help"
+          >Enter your status to reset your password.</small
+        >
       </div>
     </div>
   </div>
-  <div style=" margin-top: 2%; place-self: center;  width: 75%;">
-    <div class="flex flex-col gap-2" style="flex-direction: column;">
+  <div style="margin-top: 2%; place-self: center; width: 75%">
+    <div class="flex flex-col gap-2" style="flex-direction: column">
       <label for="questionTxt">Асуултын текст</label>
-      <p-editor [(ngModel)]="text" [readonly]="false" [style]="{ height: '320px'}" />
+      <p-editor
+        [(ngModel)]="text"
+        [readonly]="false"
+        [style]="{ height: '320px' }"
+      />
     </div>
   </div>
 
-  <p-accordion [(value)]="active">
+  <p-accordion value="0">
     <p-accordion-panel value="0">
       <p-accordion-header>Хариултууд</p-accordion-header>
-      <p-accordion-content style="display: flex; justify-content: center;">
+      <p-accordion-content style="display: flex; justify-content: center">
         <div class="form-container">
-          <div class="card" style="
-          display: flex;
-          flex-direction: row;
-      ">
+          <div class="card" style="display: flex; flex-direction: row">
             <div>
               <div *ngFor="let answer of answers; let i = index" class="row">
                 <!-- Хариулт 1 -->
                 <div class="input-group">
                   <label [for]="'answerId-' + i">Хариулт {{ i * 2 + 1 }}</label>
-                  <input class="input-question-answer" pInputText [id]="'answerId-' + i" [(ngModel)]="answer.answerId"
-                    placeholder="123.." />
+                  <input
+                    class="input-question-answer"
+                    pInputText
+                    [id]="'answerId-' + i"
+                    [(ngModel)]="answer.answerId"
+                    placeholder="123.."
+                  />
                   <small [id]="'answerId-help-' + i">Enter your answer.</small>
                 </div>
 
                 <!-- Төлөв 1 -->
-                <div class="input-group" style="margin-right: 100px;">
+                <div class="input-group" style="margin-right: 100px">
                   <label [for]="'answerRate' + i">Үнэлгээ</label>
-                  <p-dropdown [(ngModel)]="answer.answerRate" [options]="answerRates" optionLabel="name"
-                    optionValue="id" placeholder="Төлөв" class="form-dropdown" (onChange)="onDropdownChange(i, $event)"
-                    style="width: 150px;">
+                  <p-dropdown
+                    [(ngModel)]="answer.answerRate"
+                    [options]="answerRates"
+                    optionLabel="name"
+                    optionValue="id"
+                    placeholder="Төлөв"
+                    class="form-dropdown"
+                    (onChange)="onDropdownChange(i, $event)"
+                  >
                   </p-dropdown>
                 </div>
               </div>
@@ -78,37 +123,45 @@
               <div *ngFor="let answer of answers1; let i = index" class="row">
                 <!-- Хариулт 2 -->
                 <div class="input-group">
-                  <label [for]="'answerId2-' + i">Хариулт {{ i * 2 + 2 }}</label>
-                  <input class="input-question-answer" pInputText [id]="'answerId2-' + i" [(ngModel)]="answer.answerId"
-                    placeholder="456.." />
+                  <label [for]="'answerId2-' + i"
+                    >Хариулт {{ i * 2 + 2 }}</label
+                  >
+                  <input
+                    class="input-question-answer"
+                    pInputText
+                    [id]="'answerId2-' + i"
+                    [(ngModel)]="answer.answerId"
+                    placeholder="456.."
+                  />
                   <small [id]="'answerId-help2-' + i">Enter your answer.</small>
                 </div>
 
                 <!-- Төлөв 2 -->
                 <div class="input-group">
                   <label [for]="'answerRate2-' + i">Үнэлгээ</label>
-                  <p-dropdown [(ngModel)]="answer.answerRate" [options]="answerRates" optionLabel="name"
-                    optionValue="id" placeholder="Төлөв" class="form-dropdown" (onChange)="onDropdownChange(i, $event)"
-                    style="width: 150px;">
+                  <p-dropdown
+                    [(ngModel)]="answer.answerRate"
+                    [options]="answerRates"
+                    optionLabel="name"
+                    optionValue="id"
+                    placeholder="Төлөв"
+                    class="form-dropdown"
+                    (onChange)="onDropdownChange(i, $event)"
+                  >
                   </p-dropdown>
                 </div>
               </div>
             </div>
-
           </div>
         </div>
         <div class="button-container">
-          <button (click)="onAnswerAdd()" class="end-btn">
-            Асуулт нэмэх
-          </button>
+          <button (click)="onAnswerAdd()" class="end-btn">Асуулт нэмэх</button>
         </div>
-
       </p-accordion-content>
     </p-accordion-panel>
     <p-accordion-panel value="1">
       <p-accordion-header>Header II</p-accordion-header>
-      <p-accordion-content>
-      </p-accordion-content>
+      <p-accordion-content> </p-accordion-content>
     </p-accordion-panel>
   </p-accordion>
 </div>

@@ -1,22 +1,36 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ButtonModule } from 'primeng/button';
 import * as XLSX from 'xlsx';
 import { DropdownModule } from 'primeng/dropdown';
 import { PasswordModule } from 'primeng/password';
 import { ExamService } from '../../../../services/examService';
-import { MessageService } from 'primeng/api';  // ✅ MessageService-г импортлох
-import { ToastModule } from 'primeng/toast';   // ✅ Toast-г импортлох
+import { MessageService } from 'primeng/api'; // ✅ MessageService-г импортлох
+import { ToastModule } from 'primeng/toast'; // ✅ Toast-г импортлох
+import { InputTextModule } from 'primeng/inputtext';
 
 @Component({
   selector: 'app-exam-import',
   standalone: true,
   providers: [MessageService],
-  imports: [ReactiveFormsModule, DropdownModule, PasswordModule, ButtonModule, ToastModule, CommonModule],
+  imports: [
+    ReactiveFormsModule,
+    DropdownModule,
+    PasswordModule,
+    ButtonModule,
+    ToastModule,
+    CommonModule,
+    InputTextModule,
+  ],
   templateUrl: './exam-import.component.html',
-  styleUrls: ['./exam-import.component.scss']
+  styleUrls: ['./exam-import.component.scss'],
 })
 export class ExamImportComponent {
   studentForm: FormGroup;
@@ -40,9 +54,16 @@ export class ExamImportComponent {
       name: ['', Validators.required],
       id: ['', Validators.required],
       branch: ['', Validators.required],
-      email: ['', [Validators.required, Validators.email, Validators.pattern(/^[a-zA-Z0-9._%+-]+@must\.edu\.mn$/)]],
+      email: [
+        '',
+        [
+          Validators.required,
+          Validators.email,
+          Validators.pattern(/^[a-zA-Z0-9._%+-]+@must\.edu\.mn$/),
+        ],
+      ],
       userName: ['', Validators.required],
-      password: ['', Validators.required]
+      password: ['', Validators.required],
     });
   }
 
@@ -63,8 +84,7 @@ export class ExamImportComponent {
     });
   }
   onFileChange(event: any) {
-
-    const target: DataTransfer = <DataTransfer>(event.target);
+    const target: DataTransfer = <DataTransfer>event.target;
     if (target.files.length !== 1) {
       console.error('Cannot use multiple files');
       return;
@@ -75,7 +95,9 @@ export class ExamImportComponent {
     const reader: FileReader = new FileReader();
     reader.onload = (e: any) => {
       const binaryString: string = e.target.result;
-      const workbook: XLSX.WorkBook = XLSX.read(binaryString, { type: 'binary' });
+      const workbook: XLSX.WorkBook = XLSX.read(binaryString, {
+        type: 'binary',
+      });
 
       const sheetName: string = workbook.SheetNames[0];
       const worksheet: XLSX.WorkSheet = workbook.Sheets[sheetName];
@@ -89,9 +111,7 @@ export class ExamImportComponent {
       if (!fileLogic) {
         this.tableData = [];
       } else {
-
         this.countQuestion(this.tableData[0]);
-
 
         this.tableData
           .filter((e: string[]) => e.length >= 9)
@@ -102,7 +122,6 @@ export class ExamImportComponent {
             if (branch) this.onlyBranch.push(branch);
             if (department) this.onlyDepartment.push(department);
           });
-
       }
     };
 
@@ -120,13 +139,21 @@ export class ExamImportComponent {
 
   checkData(data: any[]): boolean {
     const expectedHeaders = [
-      'Last name', 'First name', 'Username', 'Email address', 'Status',
-      'Started', 'Completed', 'Duration', 'Grade/10.00'
+      'Last name',
+      'First name',
+      'Username',
+      'Email address',
+      'Status',
+      'Started',
+      'Completed',
+      'Duration',
+      'Grade/10.00',
     ];
 
     // Trim and normalize for case-insensitive comparison
-    const isValid = expectedHeaders.every((header, index) =>
-      data[index]?.trim().toLowerCase() === header.toLowerCase()
+    const isValid = expectedHeaders.every(
+      (header, index) =>
+        data[index]?.trim().toLowerCase() === header.toLowerCase()
     );
 
     if (isValid) {
@@ -138,17 +165,19 @@ export class ExamImportComponent {
       return true;
     } else {
       // Identify the first mismatch for better debugging
-      const mismatchedIndex = data.findIndex((header, index) =>
-        header?.trim().toLowerCase() !== expectedHeaders[index].toLowerCase()
+      const mismatchedIndex = data.findIndex(
+        (header, index) =>
+          header?.trim().toLowerCase() !== expectedHeaders[index].toLowerCase()
       );
 
       this.msgService.add({
         severity: 'error',
         summary: 'Алдаа',
-        detail: `Алдаа гарлаа: Дүнгийн файл зөрсөн байна! Алдаа -> '${data[mismatchedIndex]}' (${mismatchedIndex + 1}-р багана)`,
+        detail: `Алдаа гарлаа: Дүнгийн файл зөрсөн байна! Алдаа -> '${
+          data[mismatchedIndex]
+        }' (${mismatchedIndex + 1}-р багана)`,
       });
       return false;
     }
   }
-
 }

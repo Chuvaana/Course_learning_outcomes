@@ -216,7 +216,10 @@ import { TeacherService } from './services/teacherService';
     AutoFocusModule,
     OverlayBadgeModule,
     DropdownModule,
-    RouterModule.forRoot(routes)
+    RouterModule.forRoot(routes),
+    MainComponent,
+    LessonListComponent,
+    MenuComponent,
   ],
   exports: [
     TabsModule,
@@ -323,11 +326,12 @@ import { TeacherService } from './services/teacherService';
     AutoFocusModule,
     OverlayBadgeModule,
     DropdownModule,
-    RouterModule
+    RouterModule,
   ],
-  providers: [TeacherService,
-    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
+  providers: [
+    TeacherService,
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
   ],
-  declarations: [MainComponent, LessonListComponent, MenuComponent]
+  declarations: [],
 })
-export class AppModule { }
+export class AppModule {}
