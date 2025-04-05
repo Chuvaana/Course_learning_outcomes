@@ -15,6 +15,7 @@ import { SplitterModule } from 'primeng/splitter';
 import { Checkbox } from 'primeng/checkbox';
 import { FormsModule } from '@angular/forms';
 import { PdfExamQuestionService } from '../../../../services/pdf-exam-question.service';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-list',
@@ -40,12 +41,14 @@ export class ExamQuestionListComponent {
   products: any[] = [];
   selectedClos: any[] = [];
   clos: any[] = [];
+  lessonId!: string;
   index = 0;
   constructor(
     private fb: FormBuilder,
     private service: ExamService,
     private dialog: MatDialog,
-    private pdfExamQuestionSerivce : PdfExamQuestionService
+    private route: ActivatedRoute,
+    private pdfExamQuestionSerivce: PdfExamQuestionService
   ) {
     this.studentForm = this.fb.group({
       id: ['', Validators.required],
@@ -146,17 +149,22 @@ export class ExamQuestionListComponent {
         modifyBy: 'Unubileg Batbold',
       }
     ];
+
+    this.route.parent?.paramMap.subscribe(params => {
+      this.lessonId = params.get('id')!;
+    });
+
     console.log('Products:', this.products);
     this.loadBranches();
   }
-  exportPdf(){
+  exportPdf() {
     const data = {
       lessonName: 'Программ хангамж хөгжүүлэлтийн процесс',
       lessonCode: 'CD-121',
       kredit: '3',
       kreditName: 'TEST',
-      clos : this.selectedClos,
-      testData : this.products,
+      clos: this.selectedClos,
+      testData: this.products,
       teacherName: 'Ж.Алимаа'
     };
     this.pdfExamQuestionSerivce.generatePdf(data);
@@ -211,7 +219,7 @@ export class ExamQuestionListComponent {
     });
     saveAs(data, `${fileName}_${new Date().getTime()}.xlsx`);
   }
-  editBtn(detailData : any){
+  editBtn(detailData: any) {
     const dialogRef = this.dialog.open(QuestionComponent, {
       width: '1400px',
       height: '800px',

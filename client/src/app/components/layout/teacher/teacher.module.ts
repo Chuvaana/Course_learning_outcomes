@@ -19,6 +19,7 @@ import { LesStudentListComponent } from './lesson-list/lesson/les-student-list/l
 import { LesStudentComponent } from './lesson-list/lesson/les-student/les-student.component';
 import { LessonComponent } from './lesson-list/lesson/lesson.component';
 import { TeacherComponent } from './teacher.component';
+import { ExamImportComponent } from '../exam/import/exam-import.component';
 
 const routes: Routes = [
   {
@@ -39,6 +40,7 @@ const routes: Routes = [
           { path: 'curriculum', component: CurriculumComponent },
           { path: 'lab-grade', component: LabGradeComponent },
           { path: 'bd-grade', component: BdGradeComponent },
+          { path: 'exam-import', component: ExamImportComponent },
         ]
       },
       {
