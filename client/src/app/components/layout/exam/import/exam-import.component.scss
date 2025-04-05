@@ -28,7 +28,7 @@ th {
 }
 
 .clo-row{
-  margin: 10px 100px;
+  margin: 10px 0px;
   height: 50px;
   display: flex;
   flex-direction: row;
@@ -38,9 +38,10 @@ th {
     width: 150px;
   }
   .input{
-    height: 25px;
+    font-size: 20px;
+    height: 35px;
     margin: 10px 10px;
     width: 100px;
+    border-radius: 5px;
   }
 }
-

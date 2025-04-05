@@ -58,6 +58,7 @@ require('./app/routes/additional.routes')(app);
 require('./app/routes/lesStudent.routes')(app);
 require('./app/routes/attendance.routes')(app);
 require('./app/routes/assessFooter.routes')(app);
+// require('./app/routes/lessonAssessment.routes')(app);
 require('./app/routes/labGrade.routes')(app);
 
 // set port, listen for requests
