@@ -1,43 +1,53 @@
 <div class="card">
-    <p-tabs value="0" scrollable>
-        <p-tablist>
-            <p-tab value="0">ҮНДСЭН МЭДЭЭЛЭЛ</p-tab>
-            <p-tab value="1" [disabled]="!lessonId">АШИГЛАХ МАТЕРИАЛУУД</p-tab>
-            <p-tab value="2" [disabled]="!lessonId">ТОДОРХОЙЛОЛТ</p-tab>
-            <p-tab value="3" [disabled]="!lessonId">СУРАЛЦАХУЙН ҮР ДҮНГҮҮД</p-tab>
-            <p-tab value="4" [disabled]="!lessonId">АГУУЛГА, ЦАГИЙН ХУВААРИЛАЛТ </p-tab>
-            <p-tab value="5" [disabled]="!lessonId">СУРГАХ, СУРАЛЦАХ АРГА ЗҮЙ</p-tab>
-            <p-tab value="6" [disabled]="!lessonId">ХИЧЭЭЛИЙН ҮНЭЛГЭЭ</p-tab>
-            <p-tab value="7" [disabled]="!lessonId">ТАВИГДАХ НЭМЭЛТ ШААРДЛАГУУД</p-tab>
-        </p-tablist>
-        <p-tabpanels>
-            <p-tabpanel value="0">
-                <app-main-info [lessonId]="lessonId"></app-main-info>
-            </p-tabpanel>
-            <p-tabpanel value="1">
-                <app-materials [lessonId]="lessonId"></app-materials>
-            </p-tabpanel>
-            <p-tabpanel value="2">
-                <app-other [lessonId]="lessonId"></app-other>
-            </p-tabpanel>
-            <p-tabpanel value="3">
-                <app-clo [lessonId]="lessonId"></app-clo>
-            </p-tabpanel>
-            <p-tabpanel value="4">
-                <app-schedule [lessonId]="lessonId"></app-schedule>
-            </p-tabpanel>
-            <p-tabpanel value="5">
-                <app-methodology [lessonId]="lessonId"></app-methodology>
-            </p-tabpanel>
-            <p-tabpanel value="6">
-                <app-assessment [lessonId]="lessonId"></app-assessment>
-            </p-tabpanel>
-            <!-- <p-tabpanel value="6">
+  <p-button
+    severity="success"
+    icon="pi pi-file-pdf"
+    label="Хэвлэх"
+    (click)="exportToExcel()"
+  />
+  <p-tabs value="0" scrollable>
+    <p-tablist>
+      <p-tab value="0">ҮНДСЭН МЭДЭЭЛЭЛ</p-tab>
+      <p-tab value="1" [disabled]="!lessonId">АШИГЛАХ МАТЕРИАЛУУД</p-tab>
+      <p-tab value="2" [disabled]="!lessonId">ТОДОРХОЙЛОЛТ</p-tab>
+      <p-tab value="3" [disabled]="!lessonId">СУРАЛЦАХУЙН ҮР ДҮНГҮҮД</p-tab>
+      <p-tab value="4" [disabled]="!lessonId"
+        >АГУУЛГА, ЦАГИЙН ХУВААРИЛАЛТ
+      </p-tab>
+      <p-tab value="5" [disabled]="!lessonId">СУРГАХ, СУРАЛЦАХ АРГА ЗҮЙ</p-tab>
+      <p-tab value="6" [disabled]="!lessonId">ХИЧЭЭЛИЙН ҮНЭЛГЭЭ</p-tab>
+      <p-tab value="7" [disabled]="!lessonId"
+        >ТАВИГДАХ НЭМЭЛТ ШААРДЛАГУУД</p-tab
+      >
+    </p-tablist>
+    <p-tabpanels>
+      <p-tabpanel value="0">
+        <app-main-info [lessonId]="lessonId"></app-main-info>
+      </p-tabpanel>
+      <p-tabpanel value="1">
+        <app-materials [lessonId]="lessonId"></app-materials>
+      </p-tabpanel>
+      <p-tabpanel value="2">
+        <app-other [lessonId]="lessonId"></app-other>
+      </p-tabpanel>
+      <p-tabpanel value="3">
+        <app-clo [lessonId]="lessonId"></app-clo>
+      </p-tabpanel>
+      <p-tabpanel value="4">
+        <app-schedule [lessonId]="lessonId"></app-schedule>
+      </p-tabpanel>
+      <p-tabpanel value="5">
+        <app-methodology [lessonId]="lessonId"></app-methodology>
+      </p-tabpanel>
+      <p-tabpanel value="6">
+        <app-assessment [lessonId]="lessonId"></app-assessment>
+      </p-tabpanel>
+      <!-- <p-tabpanel value="6">
                 <app-clo-plan [lessonId]="lessonId"></app-clo-plan>
             </p-tabpanel> -->
-            <p-tabpanel value="7">
-                <app-additional [lessonId]="lessonId"></app-additional>
-            </p-tabpanel>
-        </p-tabpanels>
-    </p-tabs>
+      <p-tabpanel value="7">
+        <app-additional [lessonId]="lessonId"></app-additional>
+      </p-tabpanel>
+    </p-tabpanels>
+  </p-tabs>
 </div>

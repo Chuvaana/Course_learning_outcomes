@@ -11,9 +11,17 @@ import { RippleModule } from 'primeng/ripple';
 @Component({
   selector: 'app-menu',
   standalone: true,
-  imports: [MenubarModule, BadgeModule, AvatarModule, InputTextModule, RippleModule, CommonModule, RouterModule],
+  imports: [
+    MenubarModule,
+    BadgeModule,
+    AvatarModule,
+    InputTextModule,
+    RippleModule,
+    CommonModule,
+    RouterModule,
+  ],
   templateUrl: './menu.component.html',
-  styleUrl: './menu.component.scss'
+  styleUrl: './menu.component.scss',
 })
 export class MenuComponent implements OnInit {
   items: MenuItem[] | undefined;
@@ -23,27 +31,27 @@ export class MenuComponent implements OnInit {
       {
         label: 'Home',
         icon: 'pi pi-home',
-        url: '/'
+        url: '/',
       },
       {
         label: 'Хичээл',
-        icon: 'pi pi-star',
-        url: '/main/teacher/lessonList'
+        icon: 'pi pi-book',
+        url: '/main/teacher/lessonList',
       },
       {
         label: 'Шалгалт',
         icon: 'pi pi-star',
-        url: '/main/teacher/question-create'
+        url: '/main/teacher/question-create',
       },
       {
         label: 'Санал асуулга',
         icon: 'pi pi-star',
-        url: '/'
+        url: '/',
       },
       {
         label: 'Асуултын жагсаалт',
         icon: 'pi pi-star',
-        url: '/main/teacher/questionlist'
+        url: '/main/teacher/questionlist',
       },
       // {
       //   label: 'Шалгалт',

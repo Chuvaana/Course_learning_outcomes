@@ -10,6 +10,7 @@ import { MaterialsComponent } from './materials/materials.component';
 import { ScheduleComponent } from './schedule/schedule.component';
 import { OtherComponent } from './other/other.component';
 import { MethodologyComponent } from './methodology/methodology.component';
+import { ButtonModule } from 'primeng/button';
 
 @Component({
   selector: 'app-curriculum',
@@ -24,20 +25,22 @@ import { MethodologyComponent } from './methodology/methodology.component';
     ScheduleComponent,
     AssessmentComponent,
     AdditionalComponent,
-    MethodologyComponent],
+    MethodologyComponent,
+    ButtonModule,
+  ],
   templateUrl: './curriculum.component.html',
-  styleUrl: './curriculum.component.scss'
+  styleUrl: './curriculum.component.scss',
 })
 export class CurriculumComponent {
   lessonId!: string;
 
-  constructor(private route: ActivatedRoute) { }
+  constructor(private route: ActivatedRoute) {}
 
   ngOnInit() {
-    this.route.parent?.paramMap.subscribe(params => {
+    this.route.parent?.paramMap.subscribe((params) => {
       this.lessonId = params.get('id')!; // Get "id" from the parent route
       console.log('Lesson ID:', this.lessonId);
     });
   }
-
+  exportToExcel() {}
 }
