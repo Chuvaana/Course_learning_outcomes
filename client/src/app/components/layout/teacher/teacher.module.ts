@@ -4,11 +4,12 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule, Routes } from '@angular/router';
 
 import { ExamQuestionListComponent } from '../exam/exam-question-list/exam-question-list.component';
+import { ExamImportComponent } from '../exam/import/exam-import.component';
 import { QuestionListComponent } from '../exam/list/list.component';
 import { QuestionComponent } from '../exam/question/question.component';
 import { SharedComponent } from '../shared/shared.component';
-import { BdGradeComponent } from './course-grades/bd-grade/bd-grade.component';
 import { LabGradeComponent } from './course-grades/lab-grade/lab-grade.component';
+import { SemGradeComponent } from './course-grades/sem-grade/sem-grade.component';
 import { CurriculumComponent } from './curriculum/curriculum.component';
 import { LessonListComponent } from './lesson-list/lesson-list.component';
 import { AttendanceComponent } from './lesson-list/lesson/attendance/attendance.component';
@@ -19,7 +20,6 @@ import { LesStudentListComponent } from './lesson-list/lesson/les-student-list/l
 import { LesStudentComponent } from './lesson-list/lesson/les-student/les-student.component';
 import { LessonComponent } from './lesson-list/lesson/lesson.component';
 import { TeacherComponent } from './teacher.component';
-import { ExamImportComponent } from '../exam/import/exam-import.component';
 
 const routes: Routes = [
   {
@@ -31,7 +31,7 @@ const routes: Routes = [
         path: 'lesson/:id',
         component: LessonComponent,
         children: [
-          { path: 'student', component: LesStudentComponent, },
+          { path: 'student', component: LesStudentComponent },
           { path: 'studentList', component: LesStudentListComponent },
           { path: 'clo-point', component: CloPointComponent },
           { path: 'clo-tree', component: CloTreeComponent },
@@ -39,32 +39,32 @@ const routes: Routes = [
           { path: 'attendance', component: AttendanceComponent },
           { path: 'curriculum', component: CurriculumComponent },
           { path: 'lab-grade', component: LabGradeComponent },
-          { path: 'bd-grade', component: BdGradeComponent },
+          { path: 'sem-grade', component: SemGradeComponent },
           { path: 'exam-import', component: ExamImportComponent },
-        ]
+        ],
       },
       {
         path: 'curriculum/:id',
-        component: CurriculumComponent
+        component: CurriculumComponent,
       },
       {
         path: 'curriculum',
-        component: CurriculumComponent
+        component: CurriculumComponent,
       },
       {
         path: 'question-create',
-        component: QuestionComponent
+        component: QuestionComponent,
       },
       {
         path: 'questionlist',
-        component: QuestionListComponent
+        component: QuestionListComponent,
       },
       {
         path: 'exam-questionlist',
-        component: ExamQuestionListComponent
-      }
-    ]
-  }
+        component: ExamQuestionListComponent,
+      },
+    ],
+  },
 ];
 
 @NgModule({
@@ -85,9 +85,9 @@ const routes: Routes = [
     CloTreeComponent,
     AttendanceComponent,
     CurriculumComponent,
-    SharedComponent
+    SharedComponent,
   ],
   exports: [RouterModule, FormsModule, ReactiveFormsModule],
-  declarations: []
+  declarations: [],
 })
-export class TeacherModule { }
+export class TeacherModule {}

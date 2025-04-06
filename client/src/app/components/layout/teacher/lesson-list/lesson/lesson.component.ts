@@ -64,7 +64,7 @@ export class LessonComponent {
       {
         label: 'Шалгалт оруулах',
         icon: 'pi pi-plus',
-        routerLink: ['/main/teacher/lesson', this.lessonId, 'exam-import']
+        routerLink: ['/main/teacher/lesson', this.lessonId, 'exam-import'],
       },
       {
         label: 'Дүн',
@@ -76,9 +76,9 @@ export class LessonComponent {
             routerLink: ['/main/teacher/lesson', this.lessonId, 'lab-grade'],
           },
           {
-            label: 'Бие даалтын дүн',
+            label: 'Семинарын дүн',
             icon: 'pi pi-graduation-cap',
-            routerLink: ['/main/teacher/lesson', this.lessonId, 'bd-grade'],
+            routerLink: ['/main/teacher/lesson', this.lessonId, 'sem-grade'],
           },
         ],
       },

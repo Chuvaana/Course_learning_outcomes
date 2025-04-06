@@ -1,6 +1,6 @@
 <div class="p-fluid">
   <p-toast />
-  <h2>Лабораторийн дүн</h2>
+  <h2>Семинарын дүн</h2>
   <div class="filter-section">
     <p-dropdown
       [options]="weekdays"
@@ -9,13 +9,6 @@
       placeholder="Гариг"
     >
     </p-dropdown>
-    <!-- <p-dropdown
-      [options]="classTypes"
-      [(ngModel)]="selectedClassType"
-      (onChange)="onSelectionChange()"
-      placeholder="Төрөл"
-    >
-    </p-dropdown> -->
     <p-dropdown
       [options]="times"
       [(ngModel)]="selectedTimes"

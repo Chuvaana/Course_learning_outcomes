@@ -3,9 +3,9 @@ const LabGrade = require('../models/labGrade.model');
 // ✅ Create a new labGrade record
 exports.createLabGrade = async (req, res) => {
   try {
-    const { lessonId, weekDay, weekNumber, type, time, labGrade } = req.body;
+    const { lessonId, weekDay, weekNumber, type, time, labGrades } = req.body;
 
-    // Check if labGrade record exists for the given parameters (lessonId, weekDay, etc.)
+    // Check if a lab grade record already exists
     const existingLabGrade = await LabGrade.findOne({
       lessonId,
       weekDay,
@@ -15,59 +15,60 @@ exports.createLabGrade = async (req, res) => {
     });
 
     if (existingLabGrade) {
-      // Loop through each student's labGrade and update the status
-      for (let i = 0; i < labGrade.length; i++) {
-        const { studentId, grade1, grade2 } = labGrade[i];
-        const studentIndex = existingLabGrade.labGrade.findIndex((record) => record.studentId.toString() === studentId);
+      // Update or add each student's grades
+      for (let i = 0; i < labGrades.length; i++) {
+        const { studentId, grade1, grade2 } = labGrades[i];
 
-        if (studentIndex !== -1) {
-          // If the student exists, update their status
-          existingLabGrade.labGrade[studentIndex].grade1 = grade1;
-          existingLabGrade.labGrade[studentIndex].grade2 = grade2;
+        const index = existingLabGrade.labGrade.findIndex((record) => record.studentId.toString() === studentId);
+
+        if (index !== -1) {
+          existingLabGrade.labGrade[index].grade1 = grade1;
+          existingLabGrade.labGrade[index].grade2 = grade2;
         } else {
-          // If the student does not exist, add them
-          existingLabGrade.labGrade.push({
-            studentId,
-            grade1,
-            grade2,
-          });
+          existingLabGrade.labGrade.push({ studentId, grade1, grade2 });
         }
       }
 
-      // Save the updated labGrade record
       await existingLabGrade.save();
       return res.status(200).json(existingLabGrade);
     } else {
-      // If no record exists, create a new labGrade record
-      const newLabGrade = new LabGrade(req.body);
+      // Create new document with labGrade field
+      const newLabGrade = new LabGrade({
+        lessonId,
+        weekDay,
+        weekNumber,
+        type,
+        time,
+        labGrade: labGrades, // Set labGrade field from request
+      });
       await newLabGrade.save();
       return res.status(201).json(newLabGrade);
     }
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    console.error('Error:', error);
+    return res.status(400).json({ message: error.message });
   }
 };
 
 exports.createLabGradeAll = async (req, res) => {
   try {
+    // const { lessonId, weekDay, weekNumber, type, time, labGradeDatas } = req.body;
+
     const labGradeDatas = req.body.labGradeDatas; // The data array sent from frontend
 
-    // Prepare an array for bulk write operations
     const bulkOperations = [];
 
-    // Iterate through each attendanceData for each week
     for (let i = 0; i < labGradeDatas.length; i++) {
-      const { lessonId, weekDay, weekNumber, type, time, labGrade } = labGradeDatas[i];
+      const { lessonId, weekDay, weekNumber, type, time, labGrades } = labGradeDatas[i];
 
-      // Build the update or insert operation for this labGrade data
       bulkOperations.push({
         updateOne: {
           filter: { lessonId, weekDay, weekNumber, type, time },
           update: {
             $set: { lessonId, weekDay, weekNumber, type, time },
             $addToSet: {
-              // Ensure we do not add duplicate student labGrade
-              labGrade: { $each: labGrade },
+              // Ensure we do not add duplicate student attendance
+              labGrade: { $each: labGrades },
             },
           },
           upsert: true, // If no record exists, create a new one
@@ -75,11 +76,25 @@ exports.createLabGradeAll = async (req, res) => {
       });
     }
 
-    // Perform the bulk write operation
     const result = await LabGrade.bulkWrite(bulkOperations);
 
-    // Return the result to the client
-    return res.status(200).json({ message: 'LabGrade updated successfully', result });
+    // const filter = { lessonId, weekDay, weekNumber, type, time };
+
+    // const update = {
+    //   $set: { lessonId, weekDay, weekNumber, type, time },
+    //   $addToSet: {
+    //     labGrades: { $each: labGrades }, // Avoid duplicate student entries
+    //   },
+    // };
+
+    // console.log(update);
+
+    // const result = await LabGrade.updateOne(filter, update, { upsert: true });
+
+    return res.status(200).json({
+      message: 'Lab grades saved successfully',
+      result,
+    });
   } catch (error) {
     return res.status(400).json({ message: error.message });
   }

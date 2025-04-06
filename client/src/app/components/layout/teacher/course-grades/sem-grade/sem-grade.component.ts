@@ -10,7 +10,7 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { InputTextModule } from 'primeng/inputtext';
 import { TableModule } from 'primeng/table';
 import { ToastModule } from 'primeng/toast';
-import { LabGradeService } from '../../../../../services/labGradeService';
+import { SemGradeService } from '../../../../../services/semGradeService';
 import { StudentService } from '../../../../../services/studentService';
 
 interface GradeRecord {
@@ -24,7 +24,7 @@ interface GradeRecord {
 }
 
 @Component({
-  selector: 'app-lab-grade',
+  selector: 'app-bd-grade',
   standalone: true,
   imports: [
     CommonModule,
@@ -38,12 +38,12 @@ interface GradeRecord {
     InputNumberModule,
   ],
   providers: [MessageService],
-  templateUrl: './lab-grade.component.html',
-  styleUrl: './lab-grade.component.scss',
+  templateUrl: './sem-grade.component.html',
+  styleUrl: './sem-grade.component.scss',
 })
-export class LabGradeComponent {
+export class SemGradeComponent {
   selectedWeekday: string = '';
-  selectedClassType = 'lab';
+  selectedClassType = 'sem';
   selectedTimes!: number;
   searchQuery: string = '';
   students: any[] = [];
@@ -82,7 +82,7 @@ export class LabGradeComponent {
   constructor(
     private studentService: StudentService,
     private route: ActivatedRoute,
-    private labGradeService: LabGradeService,
+    private semGradeService: SemGradeService,
     private msgService: MessageService
   ) {}
 
@@ -91,7 +91,7 @@ export class LabGradeComponent {
       this.lessonId = params.get('id')!;
     });
 
-    this.labGradeService.getConfig('First_day_of_school').subscribe((res) => {
+    this.semGradeService.getConfig('First_day_of_school').subscribe((res) => {
       if (res) {
         this.startDate = new Date(res.itemValue);
       }
@@ -103,8 +103,8 @@ export class LabGradeComponent {
       return;
 
     try {
-      const res = await this.labGradeService
-        .getlabGrade(
+      const res = await this.semGradeService
+        .getSemGrade(
           this.lessonId,
           this.selectedWeekday,
           this.selectedClassType,
@@ -268,7 +268,7 @@ export class LabGradeComponent {
         }),
       };
 
-      this.labGradeService.createLabGrade(gradeData).subscribe(
+      this.semGradeService.createSemGrade(gradeData).subscribe(
         (response) => {
           this.msgService.add({
             severity: 'success',
@@ -309,7 +309,7 @@ export class LabGradeComponent {
         };
       });
 
-      this.labGradeService.createLabGradeAll(gradeDatas).subscribe(
+      this.semGradeService.createSemGradeAll(gradeDatas).subscribe(
         (response) => {
           this.msgService.add({
             severity: 'success',
