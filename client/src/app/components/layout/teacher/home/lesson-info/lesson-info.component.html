@@ -1,24 +1,24 @@
-<p-table [value]="courseDetails" class="p-fluid">
+<p-table [value]="courseDetail" class="p-fluid" *ngIf="data">
   <ng-template pTemplate="body" let-course>
     <tr>
       <td><strong>Хичээлийн нэр</strong></td>
-      <td>{{ course.name }}</td>
+      <td>{{ course.lessonName }}</td>
     </tr>
     <tr>
       <td><strong>Хичээлийн код</strong></td>
-      <td>{{ course.code }}</td>
+      <td>{{ course.lessonCode }}</td>
     </tr>
     <tr>
       <td><strong>Хичээлийн кредит</strong></td>
-      <td>{{ course.credits }}</td>
+      <td>{{ course.lessonCredit }}</td>
     </tr>
     <tr>
       <td><strong>Хичээлийн төрөл</strong></td>
-      <td>{{ course.type }}</td>
+      <td>{{ course.lessonType }}</td>
     </tr>
     <tr>
       <td><strong>Хичээл заасан багш</strong></td>
-      <td>{{ course.teacher }}</td>
+      <td>{{ course.teacher.name }}</td>
     </tr>
     <tr>
       <td><strong>Харьяалагдах салбар/Тэнхим</strong></td>
@@ -26,15 +26,21 @@
     </tr>
     <tr>
       <td><strong>Хичээл заасан улирал</strong></td>
-      <td>{{ course.semester }}</td>
+      <td>{{ course.schoolYear }} {{ course.recommendedSemester }}</td>
     </tr>
     <tr>
       <td><strong>Хичээл судалсан оюутны тоо</strong></td>
-      <td>{{ course.studentCount }}</td>
+      <td>{{ studentCount }}</td>
     </tr>
     <tr>
       <td><strong>Сургалтын нийт цагийн задаргаа</strong></td>
-      <td>{{ course.schedule }}</td>
+      <td>
+        Задаргаа: (), Нийт сургалтын цаг: ({{ totalHour }}цаг) Лекц ({{
+          course.totalHours.lecture
+        }}цаг), Семинар ({{ course.totalHours.seminar }} цаг), Лаборатори ({{
+          course.totalHours.lab
+        }}цаг), Бие даан суралцах ({{ course.totalHours.assignment }} цаг)
+      </td>
     </tr>
   </ng-template>
 </p-table>

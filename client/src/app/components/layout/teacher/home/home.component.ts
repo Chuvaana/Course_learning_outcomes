@@ -13,6 +13,8 @@ import { LessonPollAnalysisComponent } from './lesson-poll-analysis/lesson-poll-
 import { TeacherService } from '../../../../services/teacherService';
 import { CurriculumService } from '../../../../services/curriculum.service';
 import { ActivatedRoute } from '@angular/router';
+import { StudentService } from '../../../../services/studentService';
+import { CLOService } from '../../../../services/cloService';
 
 @Component({
   selector: 'app-home',
@@ -35,11 +37,22 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class HomeComponent {
   lessonId!: string;
+  teacherId!: string;
+  mainInfo = [];
+  studentCount!: number;
+  clos = [];
+
+  types = [
+    { label: 'Лекц семинар', value: 'LEC_SEM' },
+    { label: 'Лаборатори', value: 'LAB' },
+  ];
 
   constructor(
     private route: ActivatedRoute,
     private teacherService: TeacherService,
-    private service: CurriculumService
+    private studentService: StudentService,
+    private service: CurriculumService,
+    private cloService: CLOService
   ) {}
 
   ngOnInit() {
@@ -48,8 +61,42 @@ export class HomeComponent {
       this.lessonId = params.get('id')!;
       console.log('Lesson ID:', this.lessonId); // This should now print the correct ID
     });
+    this.teacherId = (localStorage.getItem('teacherId') as string) || '';
+    this.readMainInfo();
+    this.readClos();
   }
 
-  readMainInfo() {}
+  readMainInfo() {
+    this.service.getMainInfo(this.lessonId).subscribe((response: any) => {
+      if (response) {
+        this.mainInfo = response;
+      }
+    });
+
+    this.studentService.getStudents(this.lessonId).subscribe((res) => {
+      this.studentCount = res.length;
+    });
+  }
+
+  readClos() {
+    this.cloService.getCloList(this.lessonId).subscribe((data: any) => {
+      this.clos = data.map((item: any) => {
+        const typeLabel = this.types.find(
+          (type) => type.value === item.type
+        )?.label;
+
+        return {
+          id: item.id,
+          type: typeLabel,
+          cloName: item.cloName,
+          knowledge: item.knowledge || false,
+          skill: item.skill || false,
+          attitude: item.attitude || false,
+        };
+      });
+
+      console.log(this.clos);
+    });
+  }
   exportToExcel() {}
 }

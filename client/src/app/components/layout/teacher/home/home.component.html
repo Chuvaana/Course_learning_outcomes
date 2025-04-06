@@ -28,10 +28,13 @@
     </p-tablist>
     <p-tabpanels>
       <p-tabpanel value="0">
-        <app-lesson-info></app-lesson-info>
+        <app-lesson-info
+          [data]="mainInfo"
+          [studentCount]="studentCount"
+        ></app-lesson-info>
       </p-tabpanel>
       <p-tabpanel value="1">
-        <app-lesson-clo></app-lesson-clo>
+        <app-lesson-clo [data]="clos"></app-lesson-clo>
       </p-tabpanel>
       <p-tabpanel value="2">
         <app-lesson-plan></app-lesson-plan>
