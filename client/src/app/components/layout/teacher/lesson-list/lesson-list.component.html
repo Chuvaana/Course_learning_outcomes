@@ -1,18 +1,36 @@
 <div class="lesson-list-container">
   <div>
-    <button pButton label="Хичээл нэмэх" icon="pi pi-plus" (click)="addLesson()"></button>
-    <p-dropdown [options]="yearIntervals" [(ngModel)]="selectedInterval" placeholder="Select a Year Interval"
-      (onChange)="onYearChange($event.value)"></p-dropdown>
-    <p-dropdown [(ngModel)]="selectedSeason" [options]="recommendedSemester"
-      (onChange)="onSeasonChange($event.value)" />
+    <button
+      pButton
+      label="Хичээл нэмэх"
+      icon="pi pi-plus"
+      (click)="addLesson()"
+      *ngIf="create"
+    ></button>
+    <p-dropdown
+      [options]="yearIntervals"
+      [(ngModel)]="selectedInterval"
+      placeholder="Select a Year Interval"
+      (onChange)="onYearChange($event.value)"
+    ></p-dropdown>
+    <p-dropdown
+      [(ngModel)]="selectedSeason"
+      [options]="recommendedSemester"
+      (onChange)="onSeasonChange($event.value)"
+    />
   </div>
-
 
   <div class="lesson-cards">
     <div *ngFor="let lesson of courses" class="lesson-card">
       <p-card [style]="{ width: '100%', overflow: 'hidden' }">
         <ng-template #title> {{ lesson.department }}</ng-template>
-        <a [routerLink]="['/main/teacher/lesson', lesson.id, 'curriculum']">
+        <a
+          [routerLink]="['/main/teacher/lesson', lesson.id, 'curriculum']"
+          *ngIf="create"
+        >
+          {{ lesson.lessonCode }} - {{ lesson.lessonName }}
+        </a>
+        <a [routerLink]="['/main/teacher/report', lesson.id]" *ngIf="!create">
           {{ lesson.lessonCode }} - {{ lesson.lessonName }}
         </a>
       </p-card>

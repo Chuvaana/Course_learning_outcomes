@@ -11,6 +11,7 @@ import { SharedComponent } from '../shared/shared.component';
 import { LabGradeComponent } from './course-grades/lab-grade/lab-grade.component';
 import { SemGradeComponent } from './course-grades/sem-grade/sem-grade.component';
 import { CurriculumComponent } from './curriculum/curriculum.component';
+import { HomeComponent } from './home/home.component';
 import { LessonListComponent } from './lesson-list/lesson-list.component';
 import { AttendanceComponent } from './lesson-list/lesson/attendance/attendance.component';
 import { CloPlanComponent } from './lesson-list/lesson/clo-plan/clo-plan.component';
@@ -20,13 +21,16 @@ import { LesStudentListComponent } from './lesson-list/lesson/les-student-list/l
 import { LesStudentComponent } from './lesson-list/lesson/les-student/les-student.component';
 import { LessonComponent } from './lesson-list/lesson/lesson.component';
 import { TeacherComponent } from './teacher.component';
+import { ReportLessonListComponent } from './report-lesson-list/report-lesson-list.component';
 
 const routes: Routes = [
   {
     path: '',
     component: TeacherComponent,
     children: [
+      { path: 'report-lesson-list', component: ReportLessonListComponent },
       { path: 'lessonList', component: LessonListComponent },
+      { path: 'report/:id', component: HomeComponent },
       {
         path: 'lesson/:id',
         component: LessonComponent,
@@ -75,6 +79,8 @@ const routes: Routes = [
     ReactiveFormsModule,
     LessonListComponent, // ✅ Explicitly importing standalone components
     LessonComponent,
+    ReportLessonListComponent,
+    HomeComponent,
     TeacherComponent,
     LessonListComponent,
     LessonComponent,

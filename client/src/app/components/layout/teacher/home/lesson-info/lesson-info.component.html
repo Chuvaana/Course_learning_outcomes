@@ -1,1 +1,40 @@
-<p>lesson-info works!</p>
+<p-table [value]="courseDetails" class="p-fluid">
+  <ng-template pTemplate="body" let-course>
+    <tr>
+      <td><strong>Хичээлийн нэр</strong></td>
+      <td>{{ course.name }}</td>
+    </tr>
+    <tr>
+      <td><strong>Хичээлийн код</strong></td>
+      <td>{{ course.code }}</td>
+    </tr>
+    <tr>
+      <td><strong>Хичээлийн кредит</strong></td>
+      <td>{{ course.credits }}</td>
+    </tr>
+    <tr>
+      <td><strong>Хичээлийн төрөл</strong></td>
+      <td>{{ course.type }}</td>
+    </tr>
+    <tr>
+      <td><strong>Хичээл заасан багш</strong></td>
+      <td>{{ course.teacher }}</td>
+    </tr>
+    <tr>
+      <td><strong>Харьяалагдах салбар/Тэнхим</strong></td>
+      <td>{{ course.department }}</td>
+    </tr>
+    <tr>
+      <td><strong>Хичээл заасан улирал</strong></td>
+      <td>{{ course.semester }}</td>
+    </tr>
+    <tr>
+      <td><strong>Хичээл судалсан оюутны тоо</strong></td>
+      <td>{{ course.studentCount }}</td>
+    </tr>
+    <tr>
+      <td><strong>Сургалтын нийт цагийн задаргаа</strong></td>
+      <td>{{ course.schedule }}</td>
+    </tr>
+  </ng-template>
+</p-table>

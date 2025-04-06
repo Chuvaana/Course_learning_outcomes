@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
@@ -20,11 +20,22 @@ interface Lesson {
 @Component({
   selector: 'app-lesson-list',
   standalone: true,
-  imports: [CommonModule, ButtonModule, InputTextModule, CardModule, RippleModule, DropdownModule, RouterModule, ReactiveFormsModule, FormsModule],
+  imports: [
+    CommonModule,
+    ButtonModule,
+    InputTextModule,
+    CardModule,
+    RippleModule,
+    DropdownModule,
+    RouterModule,
+    ReactiveFormsModule,
+    FormsModule,
+  ],
   templateUrl: './lesson-list.component.html',
-  styleUrls: ['./lesson-list.component.scss']
+  styleUrls: ['./lesson-list.component.scss'],
 })
 export class LessonListComponent implements OnInit {
+  @Input() create = true;
   isFormVisible = false;
   lessons: Lesson[] = [];
   courses: any[] = [];
@@ -52,60 +63,74 @@ export class LessonListComponent implements OnInit {
   season!: string;
   teacherId!: string;
 
-  constructor(private fb: FormBuilder, private service: TeacherService, private router: Router) { }
+  constructor(
+    private fb: FormBuilder,
+    private service: TeacherService,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
-    this.teacherId = localStorage.getItem("teacherId") || '';
+    this.teacherId = localStorage.getItem('teacherId') || '';
 
     // Load both schoolYear and season in parallel and wait for them
     forkJoin({
-      schoolYear: this.service.getConfig("School_year"),
-      season: this.service.getConfig("season")
+      schoolYear: this.service.getConfig('School_year'),
+      season: this.service.getConfig('season'),
     }).subscribe(({ schoolYear, season }) => {
       if (schoolYear) {
         this.selectedInterval = schoolYear.itemValue;
       }
       if (season) {
         this.selectedSeason = season.itemValue;
+        console.log(this.selectedSeason);
       }
 
       this.readData(this.teacherId, this.selectedInterval, this.selectedSeason);
       // Now fetch teacher lessons after both values are set
-
     });
 
-    this.generateYearIntervals(new Date().getFullYear() - 5, new Date().getFullYear());
+    this.generateYearIntervals(
+      new Date().getFullYear() - 5,
+      new Date().getFullYear()
+    );
   }
 
   readData(teacherId: string, year: string, season: string) {
-    this.service.getTeacherLessons(teacherId, year, season).subscribe((data) => {
-      if (data) {
-        const courseObservables: Observable<any>[] = data.lessons.map((item: any) => {
-          if (item.department) {
-            return this.service.getDepartments(item.school).pipe(
-              map((departments: any[]) => {
-                const selectedDept = departments.find(dept => dept.id === item.department);
-                return {
-                  ...item,
-                  department: selectedDept ? selectedDept.name : item.department
-                };
-              })
-            );
-          } else {
-            return new Observable(observer => {
-              observer.next(item);
-              observer.complete();
-            });
-          }
-        });
+    this.service
+      .getTeacherLessons(teacherId, year, season)
+      .subscribe((data) => {
+        if (data) {
+          const courseObservables: Observable<any>[] = data.lessons.map(
+            (item: any) => {
+              if (item.department) {
+                return this.service.getDepartments(item.school).pipe(
+                  map((departments: any[]) => {
+                    const selectedDept = departments.find(
+                      (dept) => dept.id === item.department
+                    );
+                    return {
+                      ...item,
+                      department: selectedDept
+                        ? selectedDept.name
+                        : item.department,
+                    };
+                  })
+                );
+              } else {
+                return new Observable((observer) => {
+                  observer.next(item);
+                  observer.complete();
+                });
+              }
+            }
+          );
 
-        forkJoin(courseObservables).subscribe((updatedCourses: any[]) => {
-          this.courses = updatedCourses;
-        });
-      }
-    });
+          forkJoin(courseObservables).subscribe((updatedCourses: any[]) => {
+            this.courses = updatedCourses;
+          });
+        }
+      });
   }
-
 
   generateYearIntervals(startYear: number, endYear: number) {
     for (let year = startYear; year < endYear; year++) {
@@ -115,7 +140,7 @@ export class LessonListComponent implements OnInit {
   }
 
   addLesson() {
-    this.router.navigate(['/main/teacher/curriculum'])
+    this.router.navigate(['/main/teacher/curriculum']);
   }
 
   onCourseChange(courseId: string) {

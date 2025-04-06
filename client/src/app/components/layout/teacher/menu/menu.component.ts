@@ -29,14 +29,14 @@ export class MenuComponent implements OnInit {
   ngOnInit() {
     this.items = [
       {
-        label: 'Home',
-        icon: 'pi pi-home',
-        url: '/',
-      },
-      {
         label: 'Хичээл',
         icon: 'pi pi-book',
         url: '/main/teacher/lessonList',
+      },
+      {
+        label: 'Тайлан',
+        icon: 'pi pi-home',
+        url: '/main/teacher/report-lesson-list',
       },
       {
         label: 'Шалгалт',
