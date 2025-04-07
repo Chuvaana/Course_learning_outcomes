@@ -11,7 +11,7 @@ import { ActivatedRoute } from '@angular/router';
 import { saveAs } from 'file-saver'; // file-saver сан
 import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
-import { InputNumber } from 'primeng/inputnumber';
+import { InputNumber, InputNumberModule } from 'primeng/inputnumber';
 import { InputTextModule } from 'primeng/inputtext';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { SelectModule } from 'primeng/select';
@@ -38,7 +38,7 @@ import { TeacherService } from '../../../../../../services/teacherService';
     InputTextModule,
     FormsModule,
     ReactiveFormsModule,
-    InputNumber,
+    InputNumberModule,
     ProgressSpinnerModule,
   ],
   providers: [MessageService],
@@ -157,30 +157,7 @@ export class CloPlanComponent {
       })),
     ];
     this.sampleData[1].forEach((data: any) => {
-      this.cloRows.push(
-        this.fb.group({
-          id: [data.id],
-          lessonId: [data.lessonId],
-          cloId: [data.cloId],
-          cloName: [data.cloName],
-          cloType: [data.cloType],
-          timeManagement: [data.timeManagement],
-          engagement: [data.engagement],
-          recall: [data.recall],
-          problemSolving: [data.problemSolving],
-          recall2: [data.recall2],
-          problemSolving2: [data.problemSolving2],
-          toExp: [data.toExp],
-          processing: [data.processing],
-          decisionMaking: [data.decisionMaking],
-          formulation: [data.formulation],
-          analysis: [data.analysis],
-          implementation: [data.implementation],
-          understandingLevel: [data.understandingLevel],
-          analysisLevel: [data.analysisLevel],
-          creationLevel: [data.creationLevel],
-        })
-      );
+      this.cloRows.push(this.fb.group(this.wrapRow(data)));
     });
   }
 
@@ -188,31 +165,33 @@ export class CloPlanComponent {
     this.sampleData = [[this.pointPlan], this.cloPlan];
 
     this.sampleData[1].forEach((data: any) => {
-      this.cloRows.push(
-        this.fb.group({
-          id: [data.id],
-          lessonId: [data.lessonId],
-          cloId: [data.cloId],
-          cloName: [data.cloName],
-          cloType: [data.cloType],
-          timeManagement: [data.timeManagement],
-          engagement: [data.engagement],
-          recall: [data.recall],
-          problemSolving: [data.problemSolving],
-          recall2: [data.recall2],
-          problemSolving2: [data.problemSolving2],
-          toExp: [data.toExp],
-          processing: [data.processing],
-          decisionMaking: [data.decisionMaking],
-          formulation: [data.formulation],
-          analysis: [data.analysis],
-          implementation: [data.implementation],
-          understandingLevel: [data.understandingLevel],
-          analysisLevel: [data.analysisLevel],
-          creationLevel: [data.creationLevel],
-        })
-      );
+      this.cloRows.push(this.fb.group(this.wrapRow(data)));
     });
+  }
+
+  private wrapRow(data: any) {
+    return {
+      id: [data.id],
+      lessonId: [data.lessonId],
+      cloId: [data.cloId],
+      cloName: [data.cloName],
+      cloType: [data.cloType],
+      timeManagement: [data.timeManagement],
+      engagement: [data.engagement],
+      recall: [data.recall],
+      problemSolving: [data.problemSolving],
+      recall2: [data.recall2],
+      problemSolving2: [data.problemSolving2],
+      toExp: [data.toExp],
+      processing: [data.processing],
+      decisionMaking: [data.decisionMaking],
+      formulation: [data.formulation],
+      analysis: [data.analysis],
+      implementation: [data.implementation],
+      understandingLevel: [data.understandingLevel],
+      analysisLevel: [data.analysisLevel],
+      creationLevel: [data.creationLevel],
+    };
   }
 
   validateColumnTotals(): boolean {

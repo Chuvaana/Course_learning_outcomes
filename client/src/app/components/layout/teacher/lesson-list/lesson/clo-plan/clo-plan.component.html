@@ -31,10 +31,10 @@
       <p-table
         *ngIf="!isLoading"
         [value]="cloRows.controls"
-        [paginator]="true"
         [rows]="10"
         [sortMode]="'multiple'"
         rowGroupMode="subheader"
+        groupRowsBy="cloType"
         class="custom-table"
       >
         <ng-template pTemplate="header">
@@ -136,9 +136,7 @@
                   ? 'rgb(170, 255, 136)'
                   : 'transparent'
               "
-              [style.color]="
-                row.value.timeManagement > 0 ? 'black' : 'transparent'
-              "
+              [style.color]="row.value.timeManagement > 0 ? 'black' : 'white'"
             >
               <p-cellEditor>
                 <ng-template pTemplate="input">
@@ -156,7 +154,7 @@
               [style.background-color]="
                 row.value.engagement > 0 ? 'rgb(170, 255, 136)' : 'transparent'
               "
-              [style.color]="row.value.engagement > 0 ? 'black' : 'transparent'"
+              [style.color]="row.value.engagement > 0 ? 'black' : 'white'"
             >
               <p-cellEditor>
                 <ng-template pTemplate="input">
@@ -172,7 +170,7 @@
               [style.background-color]="
                 row.value.recall > 0 ? 'rgb(170, 255, 136)' : 'transparent'
               "
-              [style.color]="row.value.recall > 0 ? 'black' : 'transparent'"
+              [style.color]="row.value.recall > 0 ? 'black' : 'white'"
             >
               <p-cellEditor>
                 <ng-template pTemplate="input">
@@ -190,9 +188,7 @@
                   ? 'rgb(170, 255, 136)'
                   : 'transparent'
               "
-              [style.color]="
-                row.value.problemSolving > 0 ? 'black' : 'transparent'
-              "
+              [style.color]="row.value.problemSolving > 0 ? 'black' : 'white'"
             >
               <p-cellEditor>
                 <ng-template pTemplate="input">
@@ -210,7 +206,7 @@
               [style.background-color]="
                 row.value.recall2 > 0 ? 'rgb(170, 255, 136)' : 'transparent'
               "
-              [style.color]="row.value.recall2 > 0 ? 'black' : 'transparent'"
+              [style.color]="row.value.recall2 > 0 ? 'black' : 'white'"
             >
               <p-cellEditor>
                 <ng-template pTemplate="input">
@@ -228,9 +224,7 @@
                   ? 'rgb(170, 255, 136)'
                   : 'transparent'
               "
-              [style.color]="
-                row.value.problemSolving2 > 0 ? 'black' : 'transparent'
-              "
+              [style.color]="row.value.problemSolving2 > 0 ? 'black' : 'white'"
             >
               <p-cellEditor>
                 <ng-template pTemplate="input">
@@ -248,7 +242,7 @@
               [style.background-color]="
                 row.value.toExp > 0 ? 'rgb(170, 255, 136)' : 'transparent'
               "
-              [style.color]="row.value.toExp > 0 ? 'black' : 'transparent'"
+              [style.color]="row.value.toExp > 0 ? 'black' : 'white'"
             >
               <p-cellEditor>
                 <ng-template pTemplate="input">
@@ -264,7 +258,7 @@
               [style.background-color]="
                 row.value.processing > 0 ? 'rgb(170, 255, 136)' : 'transparent'
               "
-              [style.color]="row.value.processing > 0 ? 'black' : 'transparent'"
+              [style.color]="row.value.processing > 0 ? 'black' : 'white'"
             >
               <p-cellEditor>
                 <ng-template pTemplate="input">
@@ -282,9 +276,7 @@
                   ? 'rgb(170, 255, 136)'
                   : 'transparent'
               "
-              [style.color]="
-                row.value.decisionMaking > 0 ? 'black' : 'transparent'
-              "
+              [style.color]="row.value.decisionMaking > 0 ? 'black' : 'white'"
             >
               <p-cellEditor>
                 <ng-template pTemplate="input">
@@ -302,9 +294,7 @@
               [style.background-color]="
                 row.value.formulation > 0 ? 'rgb(170, 255, 136)' : 'transparent'
               "
-              [style.color]="
-                row.value.formulation > 0 ? 'black' : 'transparent'
-              "
+              [style.color]="row.value.formulation > 0 ? 'black' : 'white'"
             >
               <p-cellEditor>
                 <ng-template pTemplate="input">
@@ -320,7 +310,7 @@
               [style.background-color]="
                 row.value.analysis > 0 ? 'rgb(170, 255, 136)' : 'transparent'
               "
-              [style.color]="row.value.analysis > 0 ? 'black' : 'transparent'"
+              [style.color]="row.value.analysis > 0 ? 'black' : 'white'"
             >
               <p-cellEditor>
                 <ng-template pTemplate="input">
@@ -338,9 +328,7 @@
                   ? 'rgb(170, 255, 136)'
                   : 'transparent'
               "
-              [style.color]="
-                row.value.implementation > 0 ? 'black' : 'transparent'
-              "
+              [style.color]="row.value.implementation > 0 ? 'black' : 'white'"
             >
               <p-cellEditor>
                 <ng-template pTemplate="input">
@@ -377,7 +365,7 @@
                   : 'transparent'
               "
               [style.color]="
-                row.value.understandingLevel > 0 ? 'black' : 'transparent'
+                row.value.understandingLevel > 0 ? 'black' : 'white'
               "
             >
               <p-cellEditor>
@@ -398,9 +386,7 @@
                   ? 'rgb(170, 255, 136)'
                   : 'transparent'
               "
-              [style.color]="
-                row.value.analysisLevel > 0 ? 'black' : 'transparent'
-              "
+              [style.color]="row.value.analysisLevel > 0 ? 'black' : 'white'"
             >
               <p-cellEditor>
                 <ng-template pTemplate="input">
@@ -420,9 +406,7 @@
                   ? 'rgb(170, 255, 136)'
                   : 'transparent'
               "
-              [style.color]="
-                row.value.creationLevel > 0 ? 'black' : 'transparent'
-              "
+              [style.color]="row.value.creationLevel > 0 ? 'black' : 'white'"
             >
               <p-cellEditor>
                 <ng-template pTemplate="input">
