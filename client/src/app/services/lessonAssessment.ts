@@ -12,14 +12,14 @@ export class lessonAssessmentService {
     constructor(private http: HttpClient) { }
 
     createLesAssessment(data: any): Observable<any> {
-        return this.http.post(`${this.apiUrl}/lessonAssessment`, data);
+        return this.http.post(`${this.apiUrl}/lessonAssessments`, data);
     }
 
     updateLesAssessment(id: string, data: any): Observable<any> {
-        return this.http.put(`${this.apiUrl}/lessonAssessment/${id}`, data);
+        return this.http.put(`${this.apiUrl}/lessonAssessments/${id}`, data);
     }
 
     getLesAssessment(id: string): Observable<any> {
-        return this.http.get(`${this.apiUrl}/lessonAssessment/${id}`);
+        return this.http.get(`${this.apiUrl}/lessonAssessments/${id}`);
     }
 }

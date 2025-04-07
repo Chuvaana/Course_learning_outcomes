@@ -8,7 +8,7 @@ import { Observable } from 'rxjs';
 export class AssessmentService {
   private apiUrl = 'http://localhost:3000/api'; // Update with your actual API URL
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   createAssessment(data: any): Observable<any> {
     return this.http.post(`${this.apiUrl}/assessments`, data);
@@ -36,5 +36,41 @@ export class AssessmentService {
 
   getAssessFooter(id: string): Observable<any> {
     return this.http.get(`${this.apiUrl}/assessFooters/${id}`);
+  }
+
+  getSchedules(lessonCode: string): Observable<any> {
+    return this.http.get(`${this.apiUrl}/schedules/${lessonCode}`);
+  }
+
+  getScheduleSems(lessonCode: string): Observable<any> {
+    return this.http.get(`${this.apiUrl}/scheduleSems/${lessonCode}`);
+  }
+
+  getScheduleLabs(lessonCode: string): Observable<any> {
+    return this.http.get(`${this.apiUrl}/scheduleLabs/${lessonCode}`);
+  }
+
+  getScheduleBds(lessonCode: string): Observable<any> {
+    return this.http.get(`${this.apiUrl}/scheduleBds/${lessonCode}`);
+  }
+
+  getAdditional(lessonCode: string) {
+    return this.http.get(`${this.apiUrl}/additionals/${lessonCode}`);
+  }
+  getMainInfo(id: string) {
+    return this.http.get(`${this.apiUrl}/lesson/${id}`)
+  }
+
+  getMaterials(lessonCode: string) {
+    console.log(lessonCode + "fff");
+    return this.http.get(`${this.apiUrl}/materials/${lessonCode}`);
+  }
+
+  getMethod(id: string): Observable<any> {
+      return this.http.get(`${this.apiUrl}/methodologys/${id}`);
+  }
+
+  getDefinition(lessonId: string) {
+    return this.http.get(`${this.apiUrl}/definitions/${lessonId}`);
   }
 }

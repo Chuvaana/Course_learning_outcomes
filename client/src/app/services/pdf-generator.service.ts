@@ -13,12 +13,53 @@ export class PdfGeneratorService {
   constructor() {
     (pdfMake as any).vfs = vfs;
   }
-  generatePdfTest(data: any[][]) {
-    const dataType = [
-      {
-        name: 'asdfasdfa',
-        type: 'asdfasdfa',
-      },
+  generatePdfTest(data: any) {
+
+    let lessonLevel = '';
+    if (data.mainInfo.lessonLevel === 'MAGISTER') {
+      lessonLevel = 'Магистр';
+    } else if (data.mainInfo.lessonLevel === 'BACHELOR') {
+      lessonLevel = 'Бакалавр';
+    } else if (data.mainInfo.lessonLevel === 'DOCTOR') {
+      lessonLevel = 'Доктор';
+    } else {
+      // sonar aldaa..
+    }
+    let lessonType = '';
+    if (data.mainInfo.lessonType === 'REQ') {
+      lessonType = 'Заавал';
+    } else if (data.mainInfo.lessonType === 'CHO') {
+      lessonType = 'Сонгон';
+    } else {
+      // sonar aldaa..
+    }
+    let recommendedSemester = '';
+    if (data.mainInfo.recommendedSemester === 'autumn') {
+      recommendedSemester = 'Намар';
+    } else if (data.mainInfo.recommendedSemester === 'spring') {
+      recommendedSemester = 'Хавар';
+    } else if (data.mainInfo.recommendedSemester === 'any') {
+      recommendedSemester = 'Дурын';
+    } else if (data.mainInfo.recommendedSemester === 'winter') {
+      recommendedSemester = 'Өвлийн';
+    } else {
+      // sonar aldaa..
+    }
+    const mainInfo = data.mainInfo;
+
+    const deliveryModes =
+      [
+        { label: 'Тонгоруу анги', value: 'CLASS' },
+        { label: 'Төсөлд суурилсан сургалт', value: 'PROJECT' },
+        { label: 'Туршилтад суурилсан сургалт', value: 'EXPERIMENT' },
+        { label: 'Асуудалд суурилсан сургалт', value: 'PROBLEM' }
+      ];
+
+    const pedagogyOptions = [
+      { label: 'Лекц', value: 'Lecture' },
+      { label: 'Хэлэлцүүлэг, семинар', value: 'Discussion' },
+      { label: 'Лаборатори, туршилт', value: 'Laboratory' },
+      { label: 'Практик', value: 'Practice' }
     ];
     const lessonAddition = [
       {
@@ -32,40 +73,6 @@ export class PdfGeneratorService {
       {
         order: 3,
         detail: 'zxczxczx',
-      },
-      // {
-      //   order: 4,
-      //   detail: 'zxczxczx',
-      // },
-      // {
-      //   order: 5,
-      //   detail: 'zxczxczx',
-      // },
-    ];
-    const cloDetail = [
-      {
-        order: 1,
-        title: 'Алгоритм ойлгох, хэрэглэх',
-        knowledgeLvl: '☐',
-        abilityLvl: '☐',
-        attitudeLvl: '☐',
-        cloLessonType: 'LEKTS',
-      },
-      {
-        order: 2,
-        title: 'Программчлалын энгийн бодлогуудыг шийдвэрлэх',
-        knowledgeLvl: '☑',
-        abilityLvl: '☑',
-        attitudeLvl: '☑',
-        cloLessonType: 'LEKTS',
-      },
-      {
-        order: 3,
-        title: 'Блок схем загварчлах',
-        knowledgeLvl: '☑',
-        abilityLvl: '☐',
-        attitudeLvl: '☑',
-        cloLessonType: 'LAB',
       },
     ];
     const cloTableData = [
@@ -103,68 +110,6 @@ export class PdfGeneratorService {
         finalExam: '☑',
       },
     ]
-    const lessonDetailWeak = [
-      {
-        order: 1,
-        orderRomb: 'I',
-        lessonDetailWeakId: 1,
-        lessonCode: 'CF-101',
-        lessonName: 'Програмчлалын үндэс',
-        title: 'Компьютерийн системийн удиртгал-1',
-        lektsTime: '2',
-        labTime: '2',
-      },
-      {
-        order: 2,
-        orderRomb: 'II',
-        lessonDetailWeakId: 2,
-        lessonCode: 'CF-101',
-        lessonName: 'Програмчлалын үндэс',
-        title: 'Блок схем түүнийг дүрслэх, хэрэглэх',
-        lektsTime: '2',
-        labTime: '2',
-      },
-      {
-        order: 3,
-        orderRomb: 'III',
-        lessonDetailWeakId: 3,
-        lessonCode: 'CF-101',
-        lessonName: 'Програмчлалын үндэс',
-        title: 'Компьютерийн удиртгал - 2 ',
-        lektsTime: '2',
-        labTime: '2',
-      },
-      {
-        order: 4,
-        orderRomb: 'IV',
-        lessonDetailWeakId: 4,
-        lessonCode: 'CF-101',
-        lessonName: 'Програмчлалын үндэс',
-        title: 'Программын удирдлага',
-        lektsTime: '2',
-        labTime: '2',
-      },
-      {
-        order: 5,
-        orderRomb: 'V',
-        lessonDetailWeakId: 5,
-        lessonCode: 'CF-101',
-        lessonName: 'Програмчлалын үндэс',
-        title: 'Бүтцээр Си програм хөгжүүлэх ',
-        lektsTime: '2',
-        labTime: '2',
-      },
-      // {
-      //   order: 6,
-      //   orderRomb: 'VI',
-      //   lessonDetailWeakId: 5,
-      //   lessonCode: 'CF-101',
-      //   lessonName: 'Програмчлалын үндэс',
-      //   title: 'Бүтцээр Си програм хөгжүүлэх ',
-      //   lektsTime: '2',
-      //   labTime: '2',
-      // },
-    ];
     const tableBody = [
       // Header row
       [
@@ -194,7 +139,7 @@ export class PdfGeneratorService {
       [
         { text: 'Хичээлийн нэр:', colSpan: 2, alignment: 'left', style: 'tableHeader' },
         {},
-        { text: 'Програмчлалын үндэс', colSpan: 8, alignment: 'left', style: 'tableData' },
+        { text: mainInfo.lessonName, colSpan: 8, alignment: 'left', style: 'tableData' },
         {}, // Empty cell because of colSpan (consumed)
         {},
         {},
@@ -206,11 +151,11 @@ export class PdfGeneratorService {
       [
         { text: 'Хичээлийн код:', colSpan: 2, alignment: 'left', style: 'tableHeader' },
         {},
-        { text: 'S.CFM100', colSpan: 2, alignment: 'left', style: 'colorTable' },
+        { text: mainInfo.lessonCode, colSpan: 2, alignment: 'left', style: 'colorTable' },
         {},
         { text: 'Хичээлийн кредит:', colSpan: 2, alignment: 'left', style: 'tableHeader' },
         {},
-        { text: '3', colSpan: 4, alignment: 'left', style: 'tableData' },
+        { text: mainInfo.lessonCredit, colSpan: 4, alignment: 'left', style: 'tableData' },
         {},
         {},
         {}
@@ -218,11 +163,11 @@ export class PdfGeneratorService {
       [
         { text: 'Салбар/Тэнхим:', colSpan: 2, alignment: 'left', style: 'tableHeader' },
         {},
-        { text: 'Компьютерын ухаан', colSpan: 2, alignment: 'left', style: 'tableData' },
+        { text: mainInfo.department, colSpan: 2, alignment: 'left', style: 'tableData' },
         {},
         { text: 'Сургууль:', colSpan: 2, alignment: 'left', style: 'tableHeader' },
         {},
-        { text: 'МХТС', colSpan: 4, alignment: 'left', style: 'tableData' },
+        { text: mainInfo.school, colSpan: 4, alignment: 'left', style: 'tableData' },
         {},
         {},
         {}
@@ -230,11 +175,11 @@ export class PdfGeneratorService {
       [
         { text: 'Үндсэн багшийн нэр:', colSpan: 2, alignment: 'left', style: 'tableHeader' },
         {},
-        { text: 'Ж.Алимаа', colSpan: 2, alignment: 'left', style: 'tableData' },
+        { text: mainInfo.teacher.name, colSpan: 2, alignment: 'left', style: 'tableData' },
         {},
         { text: 'Өрөөний дугаар:', colSpan: 2, alignment: 'left', style: 'tableHeader' },
         {},
-        { text: '304', colSpan: 4, alignment: 'left', style: 'tableData' },
+        { text: mainInfo.teacher.room, colSpan: 4, alignment: 'left', style: 'tableData' },
         {},
         {},
         {}
@@ -242,11 +187,11 @@ export class PdfGeneratorService {
       [
         { text: 'E-мэйл хаяг:', colSpan: 2, alignment: 'left', style: 'tableHeader' },
         {},
-        { text: 'alimaa@must.edu.mn', colSpan: 2, alignment: 'left', style: 'tableData' },
+        { text: mainInfo.teacher.email, colSpan: 2, alignment: 'left', style: 'tableData' },
         {},
         { text: 'Утасны дугаар:', colSpan: 2, alignment: 'left', style: 'tableHeader' },
         {},
-        { text: '70159111', colSpan: 4, alignment: 'left', style: 'tableData' },
+        { text: mainInfo.teacher.phone, colSpan: 4, alignment: 'left', style: 'tableData' },
         {},
         {},
         {}
@@ -254,11 +199,11 @@ export class PdfGeneratorService {
       [
         { text: 'Туслах багшийн нэр:', colSpan: 2, alignment: 'left', style: 'tableHeader' },
         {},
-        { text: ' ', colSpan: 2, alignment: 'left', style: 'tableData' },
+        { text: mainInfo.assistantTeacher.name, colSpan: 2, alignment: 'left', style: 'tableData' },
         {},
         { text: 'Өрөөний дугаар:', colSpan: 2, alignment: 'left', style: 'tableHeader' },
         {},
-        { text: ' ', colSpan: 4, alignment: 'left', style: 'tableData' },
+        { text: mainInfo.assistantTeacher.room, colSpan: 4, alignment: 'left', style: 'tableData' },
         {},
         {},
         {}
@@ -266,11 +211,11 @@ export class PdfGeneratorService {
       [
         { text: 'E-мэйл хаяг:', colSpan: 2, alignment: 'left', style: 'tableHeader' },
         {},
-        { text: 'alimaa@must.edu.mn', colSpan: 2, alignment: 'left', style: 'tableData' },
+        { text: mainInfo.assistantTeacher.email, colSpan: 2, alignment: 'left', style: 'tableData' },
         {},
         { text: 'Утасны дугаар:', colSpan: 2, alignment: 'left', style: 'tableHeader' },
         {},
-        { text: '70159111', colSpan: 4, alignment: 'left', style: 'tableData' },
+        { text: mainInfo.assistantTeacher.phone, colSpan: 4, alignment: 'left', style: 'tableData' },
         {},
         {},
         {}
@@ -292,23 +237,23 @@ export class PdfGeneratorService {
         {},
         { text: 'Лекц', alignment: 'center', style: 'tableData' },
         { text: 'Семинар', alignment: 'center', style: 'tableData' },
-        { text: 'Лаборатори', colSpan: 2,alignment: 'center', style: 'tableData' },
+        { text: 'Лаборатори', colSpan: 2, alignment: 'center', style: 'tableData' },
         {},
-        { text: 'Бие даалт', colSpan: 2,alignment: 'center', style: 'tableData' },
+        { text: 'Бие даалт', colSpan: 2, alignment: 'center', style: 'tableData' },
         {},
-        { text: 'Практик',colSpan: 2, alignment: 'center', style: 'tableData' },
+        { text: 'Практик', colSpan: 2, alignment: 'center', style: 'tableData' },
         {}
       ],
       [
         {},
         {},
-        { text: '1', alignment: 'center', style: 'tableData' },
-        { text: '0', alignment: 'center', style: 'tableData' },
-        { text: '2',colSpan: 2, alignment: 'center', style: 'tableData' },
+        { text: mainInfo.weeklyHours.lecture, alignment: 'center', style: 'tableData' },
+        { text: mainInfo.weeklyHours.seminar, alignment: 'center', style: 'tableData' },
+        { text: mainInfo.weeklyHours.lab, colSpan: 2, alignment: 'center', style: 'tableData' },
         {},
-        { text: '4',colSpan: 2, alignment: 'center', style: 'tableData' },
+        { text: mainInfo.weeklyHours.assignment, colSpan: 2, alignment: 'center', style: 'tableData' },
         {},
-        { text: '0',colSpan: 2, alignment: 'center', style: 'tableData' },
+        { text: mainInfo.weeklyHours.practice, colSpan: 2, alignment: 'center', style: 'tableData' },
         {}
       ],
       [
@@ -316,35 +261,35 @@ export class PdfGeneratorService {
         {},
         { text: 'Лекц', alignment: 'center', style: 'tableData' },
         { text: 'Семинар', alignment: 'center', style: 'tableData' },
-        { text: 'Лаборатори',colSpan: 2, alignment: 'center', style: 'tableData' },
+        { text: 'Лаборатори', colSpan: 2, alignment: 'center', style: 'tableData' },
         {},
-        { text: 'Бие даалт',colSpan: 2, alignment: 'center', style: 'tableData' },
+        { text: 'Бие даалт', colSpan: 2, alignment: 'center', style: 'tableData' },
         {},
-        { text: 'Практик',colSpan: 2, alignment: 'center', style: 'tableData' },
+        { text: 'Практик', colSpan: 2, alignment: 'center', style: 'tableData' },
         {}
       ],
       [
         {},
         {},
-        { text: '32', alignment: 'center', style: 'tableData' },
-        { text: '0', alignment: 'center', style: 'tableData' },
-        { text: '32',colSpan: 2, alignment: 'center', style: 'tableData' },
+        { text: mainInfo.totalHours.lecture, alignment: 'center', style: 'tableData' },
+        { text: mainInfo.totalHours.seminar, alignment: 'center', style: 'tableData' },
+        { text: mainInfo.totalHours.lab, colSpan: 2, alignment: 'center', style: 'tableData' },
         {},
-        { text: '16',colSpan: 2, alignment: 'center', style: 'tableData' },
+        { text: mainInfo.totalHours.assignment, colSpan: 2, alignment: 'center', style: 'tableData' },
         {},
-        { text: ' ',colSpan: 2, alignment: 'center', style: 'tableData' },
+        { text: mainInfo.totalHours.practice, colSpan: 2, alignment: 'center', style: 'tableData' },
         {}
       ],
       [
         { text: 'Бие даан суралцах цаг:', colSpan: 2, alignment: 'left', style: 'tableHeader' },
         {},
-        { text: '16', alignment: 'center', style: 'tableData' },
-        { text: '32', alignment: 'center', style: 'tableData' },
-        { text: '32',colSpan: 2, alignment: 'center', style: 'tableData' },
+        { text: mainInfo.selfStudyHours.lecture, alignment: 'center', style: 'tableData' },
+        { text: mainInfo.selfStudyHours.seminar, alignment: 'center', style: 'tableData' },
+        { text: mainInfo.selfStudyHours.lab, colSpan: 2, alignment: 'center', style: 'tableData' },
         {},
-        { text: '80',colSpan: 2, alignment: 'center', style: 'tableData' },
+        { text: mainInfo.selfStudyHours.assignment, colSpan: 2, alignment: 'center', style: 'tableData' },
         {},
-        { text: ' ',colSpan: 2, alignment: 'center', style: 'tableData' },
+        { text: mainInfo.selfStudyHours.practice, colSpan: 2, alignment: 'center', style: 'tableData' },
         {}
       ],
       [
@@ -409,7 +354,7 @@ export class PdfGeneratorService {
       ],
       [
         {
-          ul: dataType.map((row) => row.type),
+          ul: data.materials.mainBooks.map((row: any) => row),
           colSpan: 10,
           style: 'tableData'
         },
@@ -437,7 +382,7 @@ export class PdfGeneratorService {
       ],
       [
         {
-          ul: dataType.map((row) => row.type),
+          ul: data.materials.extraMaterials.map((row: any) => row),
           colSpan: 10,
           style: 'tableData'
         },
@@ -465,7 +410,7 @@ export class PdfGeneratorService {
       ],
       [
         {
-          ul: dataType.map((row) => row.type),
+          text: data.materials.webLinks,
           colSpan: 10,
           style: 'tableData'
         },
@@ -493,7 +438,7 @@ export class PdfGeneratorService {
       ],
       [
         {
-          ul: dataType.map((row) => row.type),
+          text: data.materials.libraryLink,
           colSpan: 10,
           style: 'tableData'
         },
@@ -521,7 +466,7 @@ export class PdfGeneratorService {
       ],
       [
         {
-          ul: dataType.map((row) => row.type),
+          ul: data.materials.softwareTools.map((row: any) => row),
           colSpan: 10,
           style: 'tableData'
         },
@@ -548,11 +493,35 @@ export class PdfGeneratorService {
         {}
       ],
       [
+        { text: data.definition[0].description, colSpan: 10, alignment: 'left', style: 'tableTitle' },
+        {},
+        {},
+        {},
+        {},
+        {},
+        {},
+        {},
+        {},
+        {}
+      ],
+      [
         {
           text: 'Уг хичээлээр програмчлалын Си хэлэн дээр тулгуурлан бүтэцлэгдсэн программ хөгжүүлэх арга техникүүдийг үзнэ. Сэдвүүд: Си хэл дээрх бүтэцлэгдсэн программчлал, функц, массив, заагч, тэмдэгт мөр, хэлбэржүүлсэн оролт/гаралт, бүтэц, нэгдэл, тоочих төрөл, файл боловсруулалт, үндсэн өгөгдлийн бүтцүүд, хөрвүүлэгчийн директив судлах болно.',
           colSpan: 10,
           style: 'tableData'
         },
+        {},
+        {},
+        {},
+        {},
+        {},
+        {},
+        {},
+        {},
+        {}
+      ],
+      [
+        { text: data.definition[0].goal, colSpan: 10, alignment: 'left', style: 'tableTitle' },
         {},
         {},
         {},
@@ -624,12 +593,12 @@ export class PdfGeneratorService {
         {},
         {},
         {},
-        { text: 'Цаг',colSpan: 2, alignment: 'center', style: 'tableHeader' },
+        { text: 'Цаг', colSpan: 2, alignment: 'center', style: 'tableHeader' },
         {}
       ],
-      ...lessonDetailWeak.map((row, index) => [
+      ...data.schedules.map((row: { week: any; title: any; time: any; }, index: any) => [
         {
-          text: row.orderRomb,
+          text: row.week,
           alignment: 'center',
           style: 'tableData'
 
@@ -647,7 +616,7 @@ export class PdfGeneratorService {
         {},
         {},
         {
-          text: row.labTime,
+          text: row.time,
           colSpan: 2,
           alignment: 'center',
           style: 'tableData'
@@ -675,12 +644,12 @@ export class PdfGeneratorService {
         {},
         {},
         {},
-        { text: 'Цаг',colSpan: 2, alignment: 'center', style: 'tableHeader' },
+        { text: 'Цаг', colSpan: 2, alignment: 'center', style: 'tableHeader' },
         {}
       ],
-      ...lessonDetailWeak.map((row, index) => [
+      ...data.scheduleSems.map((row: { week: any; title: any; time: any; }, index: any) => [
         {
-          text: row.orderRomb,
+          text: row.week,
           alignment: 'center',
           style: 'tableData'
 
@@ -698,7 +667,7 @@ export class PdfGeneratorService {
         {},
         {},
         {
-          text: row.labTime,
+          text: row.time,
           colSpan: 2,
           alignment: 'center',
           style: 'tableData'
@@ -726,12 +695,12 @@ export class PdfGeneratorService {
         {},
         {},
         {},
-        { text: 'Цаг',colSpan: 2, alignment: 'center', style: 'tableHeader' },
+        { text: 'Цаг', colSpan: 2, alignment: 'center', style: 'tableHeader' },
         {}
       ],
-      ...lessonDetailWeak.map((row, index) => [
+      ...data.scheduleLabs.map((row: { week: any; title: any; time: any; }, index: any) => [
         {
-          text: row.orderRomb,
+          text: row.week,
           alignment: 'center',
           style: 'tableData'
 
@@ -749,7 +718,7 @@ export class PdfGeneratorService {
         {},
         {},
         {
-          text: row.labTime,
+          text: row.time,
           colSpan: 2,
           alignment: 'center',
           style: 'tableData'
@@ -780,14 +749,14 @@ export class PdfGeneratorService {
         {},
         {},
         {},
-        { text: 'Танхимд зөвлөгөө авах, үнэлүүлэх цаг',colSpan: 2, alignment: 'center', style: 'tableHeader' },
+        { text: 'Танхимд зөвлөгөө авах, үнэлүүлэх цаг', colSpan: 2, alignment: 'center', style: 'tableHeader' },
         {},
-        { text: 'Бие даан суралцах цаг', colSpan: 2,alignment: 'center', style: 'tableHeader' },
+        { text: 'Бие даан суралцах цаг', colSpan: 2, alignment: 'center', style: 'tableHeader' },
         {}
       ],
-      ...lessonDetailWeak.map((row, index) => [
+      ...data.scheduleBds.map((row: { week: any; title: any; adviceTime: any; time: any; }, index: any) => [
         {
-          text: row.orderRomb,
+          text: row.week,
           alignment: 'center',
           style: 'tableData'
 
@@ -803,14 +772,14 @@ export class PdfGeneratorService {
         {},
         {},
         {
-          text: row.lektsTime,
+          text: row.adviceTime,
           colSpan: 2,
           alignment: 'center',
           style: 'tableData'
         },
         {},
         {
-          text: row.labTime,
+          text: row.time,
           colSpan: 2,
           alignment: 'center',
           style: 'tableData'
@@ -818,10 +787,12 @@ export class PdfGeneratorService {
         {}
       ]),
       [
-        { text: [
-          { text: 'ХИЧЭЭЛИЙН СУРАЛЦАХУЙН ҮР ДҮНГҮҮД (Course Learning Outcomes)\n' },
-          { text: 'Оюутан энэ хичээлийг амжилттай судалж дууссанаар дараах мэдлэг, чадвар, хандлагыг эзэмшсэн байна', bold: false }
-        ], colSpan: 10, alignment: 'left', style: 'tableTitle' },
+        {
+          text: [
+            { text: 'ХИЧЭЭЛИЙН СУРАЛЦАХУЙН ҮР ДҮНГҮҮД (Course Learning Outcomes)\n' },
+            { text: 'Оюутан энэ хичээлийг амжилттай судалж дууссанаар дараах мэдлэг, чадвар, хандлагыг эзэмшсэн байна', bold: false }
+          ], colSpan: 10, alignment: 'left', style: 'tableTitle'
+        },
         {},
         {},
         {},
@@ -849,14 +820,14 @@ export class PdfGeneratorService {
         { text: 'Суралцахуйн үр дүнгүүд', colSpan: 3, alignment: 'center', style: 'tableHeader' },
         {},
         {},
-        { text: 'Мэдлэг', colSpan: 2,alignment: 'center', style: 'colorTable' },
+        { text: 'Мэдлэг', colSpan: 2, alignment: 'center', style: 'colorTable' },
         {},
         { text: 'Чадвар', colSpan: 2, alignment: 'center', style: 'colorTable' },
         {},
         { text: 'Хандлага', colSpan: 2, alignment: 'center', style: 'colorTable' },
         {}
       ],
-      ...cloDetail.map((row, index) => [
+      ...data.cloList.filter((row: { type: string; }) => row.type === 'LEC_SEM').map((row: { order: any; cloName: any; knowledge: boolean; skill: boolean; attitude: boolean; }, index: any) => [
         {
           text: row.order,
           alignment: 'center',
@@ -864,7 +835,7 @@ export class PdfGeneratorService {
 
         },
         {
-          text: row.title,
+          text: row.cloName,
           alignment: 'left',
           colSpan: 3,
           style: 'tableData'
@@ -872,21 +843,21 @@ export class PdfGeneratorService {
         {},
         {},
         {
-          text: row.knowledgeLvl,
+          text: row.knowledge == true ? 'true' : 'false',
           colSpan: 2,
           alignment: 'center',
           style: 'tableData'
         },
         {},
         {
-          text: row.abilityLvl,
+          text: row.skill == true ? 'true' : 'false',
           colSpan: 2,
           alignment: 'center',
           style: 'tableData'
         },
         {},
         {
-          text: row.attitudeLvl,
+          text: row.attitude == true ? 'true' : 'false',
           colSpan: 2,
           alignment: 'center',
           style: 'tableData'
@@ -906,21 +877,19 @@ export class PdfGeneratorService {
         {},
         {}
       ],
-      // -------------------- Zasvar ----------------------
-
       [
         { text: 'д/д', alignment: 'center', style: 'tableHeader' },
         { text: 'Суралцахуйн үр дүнгүүд', colSpan: 3, alignment: 'center', style: 'tableHeader' },
         {},
         {},
-        { text: 'Мэдлэг', colSpan: 2,alignment: 'center', style: 'colorTable' },
+        { text: 'Мэдлэг', colSpan: 2, alignment: 'center', style: 'colorTable' },
         {},
         { text: 'Чадвар', colSpan: 2, alignment: 'center', style: 'colorTable' },
         {},
         { text: 'Хандлага', colSpan: 2, alignment: 'center', style: 'colorTable' },
         {}
       ],
-      ...cloDetail.map((row, index) => [
+      ...data.cloList.filter((row: { type: string; }) => row.type === 'LAB').map((row: { order: any; cloName: any; knowledge: boolean; skill: boolean; attitude: boolean; }, index: any) => [
         {
           text: row.order,
           alignment: 'center',
@@ -928,7 +897,7 @@ export class PdfGeneratorService {
 
         },
         {
-          text: row.title,
+          text: row.cloName,
           alignment: 'left',
           colSpan: 3,
           style: 'tableData'
@@ -936,21 +905,21 @@ export class PdfGeneratorService {
         {},
         {},
         {
-          text: row.knowledgeLvl,
+          text: row.knowledge == true ? 'true' : 'false',
           colSpan: 2,
           alignment: 'center',
           style: 'tableData'
         },
         {},
         {
-          text: row.abilityLvl,
+          text: row.skill == true ? 'true' : 'false',
           colSpan: 2,
           alignment: 'center',
           style: 'tableData'
         },
         {},
         {
-          text: row.attitudeLvl,
+          text: row.attitude == true ? 'true' : 'false',
           colSpan: 2,
           alignment: 'center',
           style: 'tableData'
@@ -994,54 +963,48 @@ export class PdfGeneratorService {
         {},
         {}
       ],
-      [
-        { text: 'Лекц', colSpan: 2, alignment: 'center', style: 'tableData' },
+
+      ...data.method.map((row: {
+        cloRelevance: any; classroom: boolean; electronic: boolean; combined: boolean; pedagogy: string; deliveryMode: any; title: any; time: any;
+}, index: any) => [
+        {
+          text: (pedagogyOptions.find(e => e.value === row.pedagogy)?.label) || '',
+          colSpan: 2,
+          alignment: 'center',
+          style: 'tableData'
+        },
         {},
-        { text: 'Тонгоруу анги', colSpan: 3, alignment: 'center', style: 'tableData' },
+        {
+          text: (deliveryModes.find(e => e.value === row.deliveryMode)?.label) || '',
+          colSpan: 3,
+          alignment: 'center',
+          style: 'tableData'
+        },
         {},
         {},
-        { text: '☒', alignment: 'center', style: 'tableData' },
-        { text: '☐', alignment: 'center', style: 'tableData' },
-        { text: '☐', alignment: 'center', style: 'tableData' },
-        { text: '7,8', colSpan: 2, alignment: 'center', style: 'tableData' },
+        {
+          text: row.classroom == true ? 'True' : 'false',
+          alignment: 'center',
+          style: 'tableData'
+        },
+        {
+          text: row.electronic == true ? 'True' : 'false',
+          alignment: 'center',
+          style: 'tableData'
+        },
+        {
+          text: row.combined == true ? 'True' : 'false',
+          alignment: 'center',
+          style: 'tableData'
+        },
+        {
+          text: row.cloRelevance.map((item: any) => item.cloName).join(', '),
+          colSpan: 2,
+          alignment: 'center',
+          style: 'tableData'
+        },
         {}
-      ],
-      [
-        { text: 'Хэлэлцүүлэг,\nсеминар', colSpan: 2, alignment: 'center', style: 'tableData' },
-        {},
-        { text: 'Төсөлд суурилсан сургалт', colSpan: 3, alignment: 'center', style: 'tableData' },
-        {},
-        {},
-        { text: '☒', alignment: 'center', style: 'tableData' },
-        { text: '☐', alignment: 'center', style: 'tableData' },
-        { text: '☐', alignment: 'center', style: 'tableData' },
-        { text: '1,2', colSpan: 2, alignment: 'center', style: 'tableData' },
-        {}
-      ],
-      [
-        { text: 'Лаборатори,\nтуршилт', colSpan: 2, alignment: 'center', style: 'tableData' },
-        {},
-        { text: 'Туршилтад суурилсан сургалт', colSpan: 3, alignment: 'center', style: 'tableData' },
-        {},
-        {},
-        { text: '☒', alignment: 'center', style: 'tableData' },
-        { text: '☒', alignment: 'center', style: 'tableData' },
-        { text: '☐', alignment: 'center', style: 'tableData' },
-        { text: '1,2,4', colSpan: 2, alignment: 'center', style: 'tableData' },
-        {}
-      ],
-      [
-        { text: 'Практик', colSpan: 2, alignment: 'center', style: 'tableData' },
-        {},
-        { text: 'Асуудалд суурилсан сургалт', colSpan: 3, alignment: 'center', style: 'tableData' },
-        {},
-        {},
-        { text: '☐', alignment: 'center', style: 'tableData' },
-        { text: '☐', alignment: 'center', style: 'tableData' },
-        { text: '☒', alignment: 'center', style: 'tableData' },
-        { text: '5,6', colSpan: 2, alignment: 'center', style: 'tableData' },
-        {}
-      ],
+      ]),
       [
         { text: 'ХИЧЭЭЛИЙН ҮНЭЛГЭЭ (Course assessment)', colSpan: 10, alignment: 'left', style: 'tableTitle' },
         {},
@@ -1055,8 +1018,8 @@ export class PdfGeneratorService {
         {}
       ],
       [
-        { text: 'д/д', rowSpan: 3 ,alignment: 'center', style: 'tableHeader' },
-        { text: 'Суралцахуйн үр дүнгүүд', colSpan: 3, rowSpan: 3 , alignment: 'center', style: 'tableHeader' },
+        { text: 'д/д', rowSpan: 3, alignment: 'center', style: 'tableHeader' },
+        { text: 'Суралцахуйн үр дүнгүүд', colSpan: 3, rowSpan: 3, alignment: 'center', style: 'tableHeader' },
         {},
         {},
         { text: 'Үнэлгээнийй аргууд', colSpan: 6, alignment: 'center', style: 'tableHeader' },
@@ -1102,54 +1065,54 @@ export class PdfGeneratorService {
         {},
         {}
       ],
-      ...cloTableData
-      .filter(row => row.cloLessonType === 'LEKTS').map((row, index) => [
-        {
-          text: index + 1,
-          alignment: 'center',
-          style: 'tableData'
+      ...data.assessment
+        .filter((row: { clo: { type: any; }; }) => row.clo.type === 'LEC_SEM').map((row: { clo: { cloName: any; }; attendance: boolean; assignment: boolean; quiz: boolean; project: boolean; lab: boolean; exam: boolean; }, index: number) => [
+          {
+            text: index + 1,
+            alignment: 'center',
+            style: 'tableData'
 
-        },
-        {
-          text: row.title,
-          colSpan: 3,
-          alignment: 'center',
-          style: 'tableData'
+          },
+          {
+            text: row.clo.cloName,
+            colSpan: 3,
+            alignment: 'center',
+            style: 'tableData'
 
-        },
-        {},
-        {},
-        {
-          text: row.lessonActive,
-          alignment: 'center',
-          style: 'tableData'
-        },
-        {
-          text: row.homework,
-          alignment: 'center',
-          style: 'tableData'
-        },
-        {
-          text: row.progressTest,
-          alignment: 'center',
-          style: 'tableData'
-        },
-        {
-          text: row.kursProject,
-          alignment: 'center',
-          style: 'tableData'
-        },
-        {
-          text: row.labWork,
-          alignment: 'center',
-          style: 'tableData'
-        },
-        {
-          text: row.finalExam,
-          alignment: 'center',
-          style: 'tableData'
-        }
-      ]),
+          },
+          {},
+          {},
+          {
+            text: row.attendance == true ? 'True' : 'False',
+            alignment: 'center',
+            style: 'tableData'
+          },
+          {
+            text: row.assignment == true ? 'True' : 'False',
+            alignment: 'center',
+            style: 'tableData'
+          },
+          {
+            text: row.quiz == true ? 'True' : 'False',
+            alignment: 'center',
+            style: 'tableData'
+          },
+          {
+            text: row.project == true ? 'True' : 'False',
+            alignment: 'center',
+            style: 'tableData'
+          },
+          {
+            text: row.lab == true ? 'True' : 'False',
+            alignment: 'center',
+            style: 'tableData'
+          },
+          {
+            text: row.exam == true ? 'True' : 'False',
+            alignment: 'center',
+            style: 'tableData'
+          }
+        ]),
       [
         { text: 'Лаборатори/практикийн хичээлийн суралцахуйн үр дүнгүүд:', colSpan: 10, alignment: 'left', style: 'tableHeader' },
         {},
@@ -1162,56 +1125,56 @@ export class PdfGeneratorService {
         {},
         {}
       ],
-      ...cloTableData
-      .filter(row => row.cloLessonType === 'LAB').map((row, index) => [
-        {
-          text: index+1,
-          alignment: 'center',
-          style: 'tableData'
+      ...data.assessment
+        .filter((row: { clo: { type: any; }; }) => row.clo.type === 'LAB').map((row: { clo: { cloName: any; }; attendance: boolean; assignment: boolean; quiz: boolean; project: boolean; lab: boolean; exam: boolean; }, index: number) => [
+          {
+            text: index + 1,
+            alignment: 'center',
+            style: 'tableData'
 
-        },
-        {
-          text: row.title,
-          colSpan: 3,
-          alignment: 'center',
-          style: 'tableData'
+          },
+          {
+            text: row.clo.cloName,
+            colSpan: 3,
+            alignment: 'center',
+            style: 'tableData'
 
-        },
-        {},
-        {},
-        {
-          text: row.lessonActive,
-          alignment: 'center',
-          style: 'tableData'
-        },
-        {
-          text: row.homework,
-          alignment: 'center',
-          style: 'tableData'
-        },
-        {
-          text: row.progressTest,
-          alignment: 'center',
-          style: 'tableData'
-        },
-        {
-          text: row.kursProject,
-          alignment: 'center',
-          style: 'tableData'
-        },
-        {
-          text: row.labWork,
-          alignment: 'center',
-          style: 'tableData'
-        },
-        {
-          text: row.finalExam,
-          alignment: 'center',
-          style: 'tableData'
-        }
-      ]),
+          },
+          {},
+          {},
+          {
+            text: row.attendance == true ? 'True' : 'False',
+            alignment: 'center',
+            style: 'tableData'
+          },
+          {
+            text: row.assignment == true ? 'True' : 'False',
+            alignment: 'center',
+            style: 'tableData'
+          },
+          {
+            text: row.quiz == true ? 'True' : 'False',
+            alignment: 'center',
+            style: 'tableData'
+          },
+          {
+            text: row.project == true ? 'True' : 'False',
+            alignment: 'center',
+            style: 'tableData'
+          },
+          {
+            text: row.lab == true ? 'True' : 'False',
+            alignment: 'center',
+            style: 'tableData'
+          },
+          {
+            text: row.exam == true ? 'True' : 'False',
+            alignment: 'center',
+            style: 'tableData'
+          }
+        ]),
       [
-        { text: ' ',colSpan: 10, alignment: 'left', style: 'tableData' },
+        { text: ' ', colSpan: 10, alignment: 'left', style: 'tableData' },
         {},
         {},
         {},
@@ -1223,28 +1186,28 @@ export class PdfGeneratorService {
         {},
       ],
       [
-        { text: 'Үнэлгээний эзлэх хувь',colSpan: 4, alignment: 'center', style: 'tableData' },
+        { text: data.assessFooter[0].name, colSpan: 4, alignment: 'center', style: 'tableData' },
         {},
         {},
         {},
-        { text: '5%', alignment: 'center', style: 'tableData' },
-        { text: '10%', alignment: 'center', style: 'tableData' },
-        { text: '20%', alignment: 'center', style: 'tableData' },
-        { text: '20%', alignment: 'center', style: 'tableData' },
-        { text: '15%', alignment: 'center', style: 'tableData' },
-        { text: '30%', alignment: 'center', style: 'tableData' }
+        { text: data.assessFooter[0].attendanceValue, alignment: 'center', style: 'tableData' },
+        { text: data.assessFooter[0].assignmentValue, alignment: 'center', style: 'tableData' },
+        { text: data.assessFooter[0].quizValue, alignment: 'center', style: 'tableData' },
+        { text: data.assessFooter[0].projectValue, alignment: 'center', style: 'tableData' },
+        { text: data.assessFooter[0].labValue, alignment: 'center', style: 'tableData' },
+        { text: data.assessFooter[0].examValue, alignment: 'center', style: 'tableData' }
       ],
       [
-        { text: 'Үнэлгээ хийх давтамж',colSpan: 4, alignment: 'center', style: 'tableData' },
+        { text: data.assessFooter[1].name, colSpan: 4, alignment: 'center', style: 'tableData' },
         {},
         {},
         {},
-        { text: '16', alignment: 'center', style: 'tableData' },
-        { text: '3', alignment: 'center', style: 'tableData' },
-        { text: '2', alignment: 'center', style: 'tableData' },
-        { text: '1', alignment: 'center', style: 'tableData' },
-        { text: '3', alignment: 'center', style: 'tableData' },
-        { text: '1', alignment: 'center', style: 'tableData' }
+        { text: data.assessFooter[1].attendanceValue, alignment: 'center', style: 'tableData' },
+        { text: data.assessFooter[1].assignmentValue, alignment: 'center', style: 'tableData' },
+        { text: data.assessFooter[1].quizValue, alignment: 'center', style: 'tableData' },
+        { text: data.assessFooter[1].projectValue, alignment: 'center', style: 'tableData' },
+        { text: data.assessFooter[1].labValue, alignment: 'center', style: 'tableData' },
+        { text: data.assessFooter[1].examValue, alignment: 'center', style: 'tableData' }
       ],
       [
         { text: 'ХИЧЭЭЛД ТАВИГДАХ НЭМЭЛТ ШААРДЛАГУУД:', colSpan: 10, alignment: 'left', style: 'tableTitle' },
@@ -1260,7 +1223,7 @@ export class PdfGeneratorService {
       ],
       [
         {
-          ul: lessonAddition.map((row, index) => `${String.fromCharCode(97 + index)}. ${row.detail}`),
+          ul: data.additional.additional.map((row: { [x: string]: any; }, index: number) => `${row}`),
           colSpan: 10,
           style: 'tableData'
         },

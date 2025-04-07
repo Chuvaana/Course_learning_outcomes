@@ -3,64 +3,47 @@
   <div style="font-size: 50px; margin-left: 5%; margin-top: 20px">
     <span>Хичээлд сурагчдыг бүртгэх</span>
   </div>
-  <div
-    style="
+  <div style="
       display: flex;
       justify-content: space-between;
       padding: 0px 10%;
       margin-top: 50px;
-    "
-  >
-    <div
-      *ngIf="clos.length > 0"
-      style="display: flex; flex-direction: row; flex-wrap: wrap"
-    >
+      ">
+
+    <div class="action-btn">
+      <button (click)="save()">SAVE</button>
+    </div>
+    <div class="action-btn">
+      <button (click)="resetInputs()">Цэвэрлэх</button>
+    </div>
+  </div>
+  <div style="
+      display: flex;
+      justify-content: space-between;
+      padding: 0px 10%;
+      margin-top: 50px;
+    ">
+    <div *ngIf="clos.length > 0" style="display: flex; flex-direction: row; flex-wrap: wrap">
       <div *ngFor="let clo of clos; let i = index" class="clo-row">
         <p class="span">{{ clo.cloName }}</p>
         <div class="flex-auto">
-          <!-- <p-inputnumber
-            [(ngModel)]="value2"
-            mode="decimal"
-            [showButtons]="true"
-            inputId="minmax-buttons"
-            [min]="0"
-            [max]="questionAmount"
-          /> -->
         </div>
-        <input
-        #minV
-          class="input"
-          type="number"
-          placeholder="0"
-          max="questionAmount"
-          (change)="checkValue(clo.id, minV.value, 'min')"
-        />
+        <input #minV class="input" type="number" placeholder="0" max="questionAmount"
+          (change)="checkValue(clo.id, minV.value, 'min')" />
         <span> - </span>
-        <input
-        #maxV
-          class="input"
-          type="number"
-          [attr.placeholder]="questionAmount"
-          max="questionAmount"
-          (change)="checkValue(clo.id, maxV.value, 'max')"
-        />
+        <input #maxV class="input" type="number" [attr.placeholder]="questionAmount" [max]="questionAmount"
+          (change)="checkValue(clo.id, maxV.value, 'max')" />
       </div>
     </div>
   </div>
-  <div
-    style="
+  <div style="
       display: flex;
       justify-content: space-between;
       padding: 0px 10%;
       margin-top: 50px;
-    "
-  >
+    ">
     <div class="action-btn">
       <input type="file" (change)="onFileChange($event)" accept=".xls,.xlsx" />
-    </div>
-    
-    <div class="action-btn">
-      <button (click)="save()" >SAVE</button>
     </div>
     <!-- <div class="action-btn">
       <p-fileupload mode="basic" chooseLabel="Choose" chooseIcon="pi pi-upload" name="file"
@@ -74,9 +57,7 @@
       <!-- <button mat-raised-button (click)="submit()">Create New Student</button> -->
     </div>
   </div>
-  <div
-    style="display: flex; padding: 0px 10%; margin-top: 20px; font-weight: bold"
-  >
+  <div style="display: flex; padding: 0px 10%; margin-top: 20px; font-weight: bold">
     <div>
       <span>Нийт сурагчдын тоо</span>
     </div>
@@ -84,8 +65,8 @@
       <span>{{ this.studentCount }}</span>
     </div>
   </div>
-  <div style="margin-top: 2%">
-    <table *ngIf="tableData.length > 0" class="custom-table">
+  <div style="margin-top: 2%; overflow-x: auto; max-width: 100%;">
+    <table *ngIf="tableData.length > 0" class="custom-table" style="min-width: 800px;">
       <thead>
         <tr>
           <th>#</th>

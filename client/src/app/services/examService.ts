@@ -22,6 +22,10 @@ export class ExamService {
   getDetails(cloId: string): Observable<any> {
     return this.http.get(`${this.apiUrl}/clos/${cloId}`);
   }
+
+  getAllLessonAssments(lessonId: string): Observable<any> {
+    return this.http.get(`${this.apiUrl}/lessonAssessments/${lessonId}`);
+  }
   // Fetch departments by branch ID
   registerExam(branchId: string): Observable<any> {
     return this.http.get(`${this.apiUrl}/branches/${branchId}/departments`);
