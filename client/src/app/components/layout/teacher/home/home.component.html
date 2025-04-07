@@ -37,7 +37,11 @@
         <app-lesson-clo [data]="clos"></app-lesson-clo>
       </p-tabpanel>
       <p-tabpanel value="2">
-        <app-lesson-plan></app-lesson-plan>
+        <app-lesson-plan
+          [cloList]="cloList"
+          [pointPlan]="pointPlan"
+          [cloPlan]="cloPlan"
+        ></app-lesson-plan>
       </p-tabpanel>
       <p-tabpanel value="3">
         <app-lesson-assessment></app-lesson-assessment>

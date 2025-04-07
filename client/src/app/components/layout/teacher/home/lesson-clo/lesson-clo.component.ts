@@ -23,9 +23,9 @@ export class LessonCloComponent {
   getGroupHeaderLabel(cloType: string): string {
     switch (cloType) {
       case 'Лекц семинар':
-        return 'Лекц, семинарын хичээлээр эзэмшсэн суралцахуйн үр дүнгүүд';
+        return 'Оюутан лекц, семинарын хичээлийг судалснаар дараах чадваруудыг эзэмшинэ:';
       case 'Лаборатори':
-        return 'Лабораторийн хичээлээр эзэмшсэн суралцахуйн үр дүнгүүд';
+        return 'Оюутан лабораторийн хичээлийг судалснаар дараах чадваруудыг эзэмшинэ:';
       default:
         return cloType;
     }

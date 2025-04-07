@@ -42,7 +42,6 @@ export class LessonInfoComponent implements OnChanges, OnInit {
         this.data.totalHours.seminar;
 
       this.courseDetail = [this.data];
-      console.log('Processed lesson info:', this.courseDetail);
     }
   }
 }

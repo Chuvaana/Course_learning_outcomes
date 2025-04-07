@@ -7,13 +7,6 @@
     groupRowsBy="type"
     [tableStyle]="{ 'min-width': '50rem' }"
   >
-    <ng-template #header>
-      <tr>
-        <th style="width: 10%">№</th>
-        <th style="width: 20%">Төрөл</th>
-        <th style="width: 20%">Суралцахуйн үр дүн</th>
-      </tr>
-    </ng-template>
     <ng-template #groupheader let-clo>
       <tr pRowGroupHeader>
         <td colspan="6">
@@ -29,9 +22,6 @@
       <tr>
         <td>
           {{ ri + 1 }}
-        </td>
-        <td>
-          {{ clo.type }}
         </td>
         <td>
           {{ clo.cloName }}
