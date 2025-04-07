@@ -80,7 +80,7 @@ export class AssessmentComponent {
     private service: AssessmentService,
     private msgService: MessageService,
     private tabRefreshService: TabRefreshService
-  ) {}
+  ) { }
 
   ngOnInit() {
     if (this.lessonId) {
@@ -144,22 +144,24 @@ export class AssessmentComponent {
   }
 
   setDefaultValues() {
-    this.service.getCloList(this.lessonId).subscribe((data: any) => {
-      // Map the returned data and create the assessment objects.
-      this.assessments = data.map((item: any) => {
-        return {
-          lessonId: this.lessonId,
-          clo: item,
-          attendance: 0,
-          assignment: 0,
-          quiz: 0,
-          project: 0,
-          lab: 0,
-          exam: 0,
-        };
+    if (this.assessments.length == 0) {
+      this.service.getCloList(this.lessonId).subscribe((data: any) => {
+        // Map the returned data and create the assessment objects.
+        this.assessments = data.map((item: any) => {
+          return {
+            lessonId: this.lessonId,
+            clo: item,
+            attendance: 0,
+            assignment: 0,
+            quiz: 0,
+            project: 0,
+            lab: 0,
+            exam: 0,
+          };
+        });
+        console.log(this.assessments);
       });
-      console.log(this.assessments);
-    });
+    }
   }
   setDefaultFooterValues() {
     this.assessFooter.push(

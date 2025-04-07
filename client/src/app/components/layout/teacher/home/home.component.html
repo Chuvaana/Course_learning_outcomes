@@ -44,7 +44,11 @@
         ></app-lesson-plan>
       </p-tabpanel>
       <p-tabpanel value="3">
-        <app-lesson-assessment></app-lesson-assessment>
+        <app-lesson-assessment  
+        [cloList]="cloList"
+        [pointPlan]="pointPlan"
+        [cloPlan]="cloPlan"
+        [students]="students"></app-lesson-assessment>
       </p-tabpanel>
       <p-tabpanel value="4">
         <app-lesson-overall-assess></app-lesson-overall-assess>

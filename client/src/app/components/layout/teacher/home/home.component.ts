@@ -52,6 +52,10 @@ export class HomeComponent {
   pointPlan = [];
   cloPlan = [];
 
+  // clo дүн
+  tabDatas!: [{ title: string, content: any, value: any }];
+  students!: any;
+
   types = [
     { label: 'Лекц семинар', value: 'LEC_SEM' },
     { label: 'Лаборатори', value: 'LAB' },
@@ -83,6 +87,7 @@ export class HomeComponent {
     });
 
     this.studentService.getStudents(this.lessonId).subscribe((res) => {
+      this.students = res;
       this.studentCount = res.length;
     });
   }

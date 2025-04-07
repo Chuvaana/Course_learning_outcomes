@@ -19,21 +19,6 @@ export class LessonPlanComponent implements OnChanges {
   @Input() cloPlan: any;
 
   ngOnChanges(changes: SimpleChanges) {
-    // if (changes['cloList'] && changes['cloList'].currentValue) {
-    //   if (this.cloList) {
-    //     console.log(this.cloList);
-    //   }
-    // }
-    // if (changes['pointPlan'] && changes['pointPlan'].currentValue) {
-    //   if (this.pointPlan) {
-    //     console.log(this.pointPlan);
-    //   }
-    // }
-    // if (changes['cloPlan'] && changes['cloPlan'].currentValue) {
-    //   if (this.cloPlan) {
-    //     console.log(this.cloPlan);
-    //   }
-    // }
     this.proccessedData();
   }
 
