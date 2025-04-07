@@ -11,6 +11,10 @@ import { ScheduleComponent } from './schedule/schedule.component';
 import { OtherComponent } from './other/other.component';
 import { MethodologyComponent } from './methodology/methodology.component';
 import { ButtonModule } from 'primeng/button';
+import { PdfGeneratorService } from '../../../../services/pdf-generator.service';
+import { AssessmentService } from '../../../../services/assessmentService';
+import { CLOService } from '../../../../services/cloService';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-curriculum',
@@ -33,8 +37,29 @@ import { ButtonModule } from 'primeng/button';
 })
 export class CurriculumComponent {
   lessonId!: string;
+  body: any;
+  resultData: any;
 
-  constructor(private route: ActivatedRoute) {}
+  assessmentData: any;
+  additionalData: any;
+  cloListData: any;
+  mainInfoData: any;
+  materialsData: any;
+  methodData: any;
+  definitionData: any;
+  schedulesData: any;
+  scheduleSemsData: any;
+  scheduleLabsData: any;
+  scheduleBdsData: any;
+  cloPlanData: any;
+  assessFooter: any;
+
+
+  constructor(private route: ActivatedRoute,
+    private pdfService: PdfGeneratorService,
+    private cloService: CLOService,
+    private service: AssessmentService
+  ) { }
 
   ngOnInit() {
     this.route.parent?.paramMap.subscribe((params) => {
@@ -42,5 +67,46 @@ export class CurriculumComponent {
       console.log('Lesson ID:', this.lessonId);
     });
   }
-  exportToExcel() {}
+  loadLessonAllData() {
+    forkJoin({
+      assessment: this.service.getAssessment(this.lessonId),
+      additional: this.service.getAdditional(this.lessonId),
+      cloList: this.service.getCloList(this.lessonId),
+      mainInfo: this.service.getMainInfo(this.lessonId),
+      materials: this.service.getMaterials(this.lessonId),
+      method: this.service.getMethod(this.lessonId),
+      definition: this.service.getDefinition(this.lessonId),
+      schedules: this.service.getSchedules(this.lessonId),
+      scheduleSems: this.service.getScheduleSems(this.lessonId),
+      scheduleLabs: this.service.getScheduleLabs(this.lessonId),
+      scheduleBds: this.service.getScheduleBds(this.lessonId),
+      cloPlan: this.cloService.getCloPlan(this.lessonId),
+      assessFooter : this.service.getAssessFooter(this.lessonId)
+    }).subscribe((results) => {
+      // 🎯 Энд бүх үр дүн хадгалагдсан байна
+
+      this.assessmentData = results.assessment;
+      this.additionalData = results.additional;
+      this.cloListData = results.cloList;
+      this.mainInfoData = results.mainInfo;
+      this.materialsData = results.materials;
+      this.methodData = results.method;
+      this.definitionData = results.definition;
+      this.schedulesData = results.schedules;
+      this.scheduleSemsData = results.scheduleSems;
+      this.scheduleLabsData = results.scheduleLabs;
+      this.scheduleBdsData = results.scheduleBds;
+      this.cloPlanData = results.cloPlan;
+      this.assessFooter = results.assessFooter;
+
+      console.log('Бүх өгөгдөл:', results);
+      this.resultData = results;
+    });
+  }
+
+  exportToExcel() {
+    this.loadLessonAllData();
+    this.pdfService.generatePdfTest(this.resultData);
+    console.log('test');
+  }
 }

@@ -1,30 +1,57 @@
-const LessonAssessment = require('../models/lessonAssessment.model');
+const LessonAssessments = require('../models/LessonAssessments.model');
 
 // Create new assessment
 exports.createAssessment = async (req, res) => {
+  console.log('req.body');
   try {
-    const assessment = new LessonAssessment(req.body);
+    console.log(req.body);
+    const assessment = new LessonAssessments(req.body);
+    console.log(assessment)
     const saved = await assessment.save();
     res.status(201).json(saved);
   } catch (err) {
     res.status(400).json({ message: 'Үнэлгээ үүсгэхэд алдаа гарлаа', error: err.message });
   }
+  
+  // const LessonAssessments = new LessonAssessments(req.body);
+  // console.log(LessonAssessments);
+  // // const LessonAssessments = req.body;
+
+  // LessonAssessments
+  //   .save(LessonAssessments)
+  //   .then(data => res.send(data))
+  //   .catch(err => res.status(500).send({ message: err.message || "Үнэлгээ үүсгэхэд алдаа гарлаа" }));
 };
 
 // Get all assessments
 exports.getAllAssessments = async (req, res) => {
+  console.log('active');
   try {
-    const assessments = await LessonAssessment.find();
+    const assessments = await LessonAssessments.find();
     res.json(assessments);
   } catch (err) {
     res.status(500).json({ message: 'Үнэлгээнүүдийг авахад алдаа гарлаа', error: err.message });
   }
 };
 
+exports.getAllLessonAssments = async (req, res) => {
+  const { lessonId } = req.params;
+
+  try {
+    const assessments = await LessonAssessments.find({ lessonId });
+    res.json(assessments);
+  } catch (err) {
+    res.status(500).json({ 
+      message: 'Үнэлгээнүүдийг авахад алдаа гарлаа', 
+      error: err.message 
+    });
+  }
+};
+
 // Get assessment by ID
 exports.getAssessmentById = async (req, res) => {
   try {
-    const assessment = await LessonAssessment.findById(req.params.id);
+    const assessment = await LessonAssessments.findById(req.params.id);
     if (!assessment) return res.status(404).json({ message: 'Үнэлгээ олдсонгүй' });
     res.json(assessment);
   } catch (err) {
@@ -35,7 +62,7 @@ exports.getAssessmentById = async (req, res) => {
 // Update assessment
 exports.updateAssessment = async (req, res) => {
   try {
-    const updated = await LessonAssessment.findByIdAndUpdate(
+    const updated = await LessonAssessments.findByIdAndUpdate(
       req.params.id,
       req.body,
       { new: true }
@@ -50,7 +77,7 @@ exports.updateAssessment = async (req, res) => {
 // Delete assessment
 exports.deleteAssessment = async (req, res) => {
   try {
-    const deleted = await LessonAssessment.findByIdAndDelete(req.params.id);
+    const deleted = await LessonAssessments.findByIdAndDelete(req.params.id);
     if (!deleted) return res.status(404).json({ message: 'Үнэлгээ олдсонгүй' });
     res.json({ message: 'Үнэлгээг амжилттай устгалаа' });
   } catch (err) {

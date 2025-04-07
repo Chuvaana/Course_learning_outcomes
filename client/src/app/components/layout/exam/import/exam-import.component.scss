@@ -45,3 +45,13 @@ th {
     border-radius: 5px;
   }
 }
+
+.scrollable-table {
+  margin-top: 2%;
+  overflow-x: auto;
+  max-width: 100%;
+}
+
+.custom-table {
+  min-width: 800px;
+}

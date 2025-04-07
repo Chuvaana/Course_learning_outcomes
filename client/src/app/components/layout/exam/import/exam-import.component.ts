@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -41,8 +41,9 @@ export class ExamImportComponent {
   error = 'ERROR';
   questionAmount = 0;
   cloCount: any;
-  activeAction = false;
+  activeAction = true;
   activeFileLogic = false;
+  checkCloCount = false;
   studentCount: any;
   onlyName: string[] = [];
   onlyId: string[] = [];
@@ -50,7 +51,10 @@ export class ExamImportComponent {
   onlyDepartment: string[] = [];
   lessonId!: string;
   tableData: any[][] = [];
+  missingNumberCount: any;
 
+  @ViewChild('minV') minV!: ElementRef;
+  @ViewChild('maxV') maxV!: ElementRef;
   cloQuestion = {
     cloId: null,
     cloName: null,
@@ -67,7 +71,7 @@ export class ExamImportComponent {
     private dialog: MatDialog,
     private route: ActivatedRoute,
     private msgService: MessageService,
-    // private lessonAssessmentService: lessonAssessmentService
+    private lessonAssessmentService: lessonAssessmentService
   ) {
     this.assesstmentForm = this.fb.group({
       lessonId: ['', Validators.required],
@@ -222,47 +226,102 @@ export class ExamImportComponent {
     }
   }
 
+
+  resetInputs() {
+    this.clos.forEach(clo => {
+      clo.minValue = null;
+      clo.maxValue = null;
+    });
+  }
+
   checkValue(cloId: any, value: any, type: 'min' | 'max') {
-    // min/max утгыг шинэчилж байна
-    this.cloQuestionData.forEach(i => {
-      if (i.cloId === cloId) {
-        if (type === 'min') {
-          i.min = Number(value);
-        } else {
-          i.max = Number(value);
+    // 3. Орхигдсон утгууд шалгах
+
+    if (this.questionAmount > 0) {
+      // if (this.questionAmount >= value && type === 'max') {
+      const allSelectedNumbers: Set<number> = new Set();
+
+
+      // min/max утгыг шинэчилж байна
+      this.cloQuestionData.forEach(i => {
+        if (i.cloId === cloId) {
+          if (type === 'max') {
+            if (value == '') {
+              i.max = 0;
+            } else {
+              i.max = Number(value);
+            }
+          } else {
+            if (value == '') {
+              i.min = 0;
+            } else {
+              i.min = Number(value);
+            }
+          }
+        }
+
+        if (this.isValidRange(i.min, i.max)) {
+          for (let n = i.min; n <= i.max; n++) {
+            allSelectedNumbers.add(n);
+          }
+          console.log(allSelectedNumbers);
+        }
+      });
+
+      const missingNumbers: number[] = [];
+      for (let i = 1; i <= this.questionAmount; i++) {
+        if (!allSelectedNumbers.has(i)) {
+          missingNumbers.push(i);
         }
       }
-    });
 
-    // 1. MIN > MAX шалгах
-    this.cloQuestionData.forEach(i => {
-      if (this.isValidRange(i.min, i.max) && i.min >= i.max) {
+      if (missingNumbers.length > 0) {
+        this.checkCloCount = false;
         this.msgService.add({
-          severity: 'error',
-          summary: 'Алдаа',
-          detail: `MIN = '${i.min}' утга MAX = '${i.max}' утгаас их байна.`,
+          severity: 'warn',
+          summary: 'Анхааруулга',
+          detail: `Дараах тоонууд хамрагдаагүй байна: ${missingNumbers.join(', ')}`,
+        });
+        this.missingNumberCount = missingNumbers;
+      } else {
+        this.checkCloCount = true;
+        this.msgService.add({
+          severity: 'success',
+          summary: 'Амжилттай',
+          detail: 'Бүх асуултууд CLO бүрд агуулагдсан байна.',
         });
       }
-    });
-
-    // 2. Davhtsaj bui range шалгах
-    for (let i = 0; i < this.cloQuestionData.length; i++) {
-      const a = this.cloQuestionData[i];
-      if (!this.isValidRange(a.min, a.max)) continue;
-
-      for (let j = 0; j < this.cloQuestionData.length; j++) {
-        const b = this.cloQuestionData[j];
-        if (i === j || !this.isValidRange(b.min, b.max)) continue;
-
-        if (this.isOverlap(a.min, a.max, b.min, b.max)) {
+      // 1. MIN > MAX шалгах
+      this.cloQuestionData.forEach(i => {
+        if (this.isValidRange(i.min, i.max) && i.min >= i.max) {
           this.msgService.add({
             severity: 'error',
             summary: 'Алдаа',
-            detail: `CLO '${a.cloName}' = [${a.min} - ${a.max}] нь '${b.cloName}' = [${b.min} - ${b.max}] хүрээтэй давхцаж байна.`,
+            detail: `MIN = '${i.min}' утга MAX = '${i.max}' утгаас их байна.`,
           });
-        } else {
-          this.activeAction = true;
         }
+      });
+
+      // 2. Davhtsaj bui range шалгах
+      for (let i = 0; i < this.cloQuestionData.length; i++) {
+        const a = this.cloQuestionData[i];
+        if (!this.isValidRange(a.min, a.max)) continue;
+
+        for (let j = 0; j < this.cloQuestionData.length; j++) {
+          const b = this.cloQuestionData[j];
+          if (i === j || !this.isValidRange(b.min, b.max)) continue;
+
+          if (this.isOverlap(a.min, a.max, b.min, b.max)) {
+            this.msgService.add({
+              severity: 'error',
+              summary: 'Алдаа',
+              detail: `CLO '${a.cloName}' = [${a.min} - ${a.max}] нь '${b.cloName}' = [${b.min} - ${b.max}] хүрээтэй давхцаж байна.`,
+            });
+          } else {
+            this.activeAction = true;
+          }
+        }
+        // }
       }
     }
   }
@@ -278,6 +337,9 @@ export class ExamImportComponent {
   }
 
   save() {
+    let countQWEwe = 0;
+    let allreadyInStudent = 0;
+    let newStudent = 0;
     // Асуулт бүрийн мэдээллийг хадгалах объект
     let questions = {
       questionId: 0,
@@ -298,76 +360,137 @@ export class ExamImportComponent {
     }[] = [];
 
 
+    this.cloQuestionData.map((data) => {
+
+    });
+
     // Логикийг шалгаж эхэлнэ
-    if (this.activeFileLogic && this.activeAction) {
+    if (!this.activeFileLogic) {
+      this.msgService.add({
+        severity: 'error',
+        summary: 'Алдаа',
+        detail: `Алдаатай Файл оруулсан байна зөв файлаа оруулж хадгалах товчоо дарна уу!`,
+      });
+    } else {
+      if (!this.checkCloCount) {
+        this.msgService.add({
+          severity: 'error',
+          summary: 'Алдаа',
+          detail: `Дараах тоонууд хамрагдаагүй байна: ${this.missingNumberCount.join(', ')}`,
+        });
+      } else {
 
+        if (!this.activeAction) {
+          this.msgService.add({
+            severity: 'error',
+            summary: 'Алдаа',
+            detail: `Clo бүрт асуултуудыг зөв харгалзуулж оруулна уу!`,
+          });
+        } else {
+          // tableData-д ажиллана
+          this.tableData.forEach((e, index) => {
+            if (index !== 0) { // Хоёрдугаар мөрөөс эхэлнэ
+              const assessmentFormData = {
+                lessonId: '',
+                studentId: '',
+                allPoint: 0,
+                takePoint: '',
+                startDate: '',
+                endDate: '',
+                durationDate: '',
+                question: [] as {
+                  questionId: number;
+                  cloId: string;
+                  allPoint: number;
+                  takePoint: number;
+                }[],
+              };
+              assessmentFormData.lessonId = this.lessonId;
 
-      // tableData-д ажиллана
-      this.tableData.forEach((e, index) => {
-        if (index !== 0) { // Хоёрдугаар мөрөөс эхэлнэ
-          const assessmentFormData = {
-            lessonId: '',
-            studentId: '',
-            allPoint: 0,
-            takePoint: '',
-            startDate: '',
-            endDate: '',
-            durationDate: '',
-            question: [] as {
-              questionId: number;
-              cloId: string;
-              allPoint: number;
-              takePoint: number;
-            }[],
-          };
-          assessmentFormData.lessonId = this.lessonId;
+              // allPoint-г эхний мөрөөс гаргаж авна
+              assessmentFormData.allPoint = Number(this.tableData[0][8].substring(6, 8));
+              // Хэрэглэгчийн мэдээлэл
+              assessmentFormData.studentId = e[2]; // Оюутны ID (e[2])
+              assessmentFormData.takePoint = e[8]; // Оногдсон оноо
+              assessmentFormData.startDate = e[5]; // Эхлэх огноо
+              assessmentFormData.endDate = e[6]; // Дуусах огноо
+              assessmentFormData.durationDate = e[7]; // Тогтоосон хугацаа
 
-          // allPoint-г эхний мөрөөс гаргаж авна
-          assessmentFormData.allPoint = Number(this.tableData[0][8].substring(6, 8));
-          // Хэрэглэгчийн мэдээлэл
-          assessmentFormData.studentId = e[2]; // Оюутны ID (e[2])
-          assessmentFormData.takePoint = e[8]; // Оногдсон оноо
-          assessmentFormData.startDate = e[5]; // Эхлэх огноо
-          assessmentFormData.endDate = e[6]; // Дуусах огноо
-          assessmentFormData.durationDate = e[7]; // Тогтоосон хугацаа
+              // Шинэчилсэн 'questions' массив
+              let questions: {
+                questionId: number; // Асуулт ID (row index)
+                cloId: any; // CLO ID
+                allPoint: number; // Цэгийн оноо
+                takePoint: any;
+              }[] = []; // Бүх асуултыг хадгалах массив
 
-          // Шинэчилсэн 'questions' массив
-          let questions: {
-            questionId: number; // Асуулт ID (row index)
-            cloId: any; // CLO ID
-            allPoint: number; // Цэгийн оноо
-            takePoint: any;
-          }[] = []; // Бүх асуултыг хадгалах массив
+              // Table-ын 11 болон түүнээс дээш индекстэй элементийн мэдээллийг гаргана
+              let countQuetion = 1;
+              for (let j = 9; j < e.length; j++) {
+                // CLO-ийн шугамд оноо тохирч байгаа эсэхийг шалгах
+                this.cloQuestionData.map((data) => {
+                  if (data.min <= countQuetion && data.max >= countQuetion) {
+                    const question = {
+                      questionId: countQuetion, // Асуулт ID (row index)
+                      cloId: data.cloId, // CLO ID
+                      allPoint: countQuetion > 9 ? Number(this.tableData[0][j].substring(8, 12)) : Number(this.tableData[0][j].substring(6, 12)), // Цэгийн оноо
+                      takePoint: e[j], // Хэрэглэгчийн оноо
+                    };
 
-          // Table-ын 11 болон түүнээс дээш индекстэй элементийн мэдээллийг гаргана
-          let countQuetion = 1;
-          for (let j = 9; j < e.length; j++) {
-            // CLO-ийн шугамд оноо тохирч байгаа эсэхийг шалгах
-            this.cloQuestionData.map((data) => {
-              if (data.min <= countQuetion && data.max >= countQuetion) {
-                const question = {
-                  questionId: countQuetion, // Асуулт ID (row index)
-                  cloId: data.cloId, // CLO ID
-                  allPoint: countQuetion > 9 ? Number(this.tableData[0][j].substring(6, 12)) : Number(this.tableData[0][j].substring(7, 12)), // Цэгийн оноо
-                  takePoint: e[j], // Хэрэглэгчийн оноо
-                };
-
-                // `questions` массивт асуултыг нэмэх
-                questions.push(question);
+                    // `questions` массивт асуултыг нэмэх
+                    questions.push(question);
+                  }
+                });
+                countQuetion++;
               }
-            });
-            countQuetion++;
-          }
 
-          // `assessmentFormData` объект руу асуулт нэмэх
-          assessmentFormData.question = questions;
-          assessmentFormDataParam.push(assessmentFormData);
-          // Лог
+              // `assessmentFormData` объект руу асуулт нэмэх
+              assessmentFormData.question = questions;
+              assessmentFormDataParam.push(assessmentFormData);
+              if (countQWEwe <= 3) {
+                this.service.getAllLessonAssments(this.lessonId).subscribe((res) => {
+                  let checkData = false;
+                  console.log(res);
+                  res.map((beforeData: any) => {
+                    if (assessmentFormData.studentId !== beforeData.studentId) {
+                      checkData = true;
+                    }
+                  });
+                  if(checkData){
+                    this.lessonAssessmentService.createLesAssessment(assessmentFormData).subscribe((res) => {
+                      console.log(res);
+                    })
+                    allreadyInStudent++;
+                  }else{
+                    newStudent++;
+                  }
+                })
+                countQWEwe = countQWEwe + 1;
+              }
+              this.serviceAfterMsg(newStudent, allreadyInStudent);
+            }
+          });
         }
+        console.log(assessmentFormDataParam);
+      }
+
+    }
+  }
+  serviceAfterMsg(newStudent: any, allreadyInStudent: any){
+
+    if (newStudent != 0) {
+      this.msgService.add({
+        severity: 'success',
+        summary: 'Амжилттай',
+        detail: `Шинээр '${newStudent}' сурагчийн дүн амжилттай бүртгэгдлээ.`,
       });
     }
-    console.log(assessmentFormDataParam);
-
+    if (allreadyInStudent != 0) {
+      this.msgService.add({
+        severity: 'warn',
+        summary: 'Анхааруулга',
+        detail: `Өмнө аль хэдийн нийт :'${allreadyInStudent}' сурагчдын дүн бүртгэгдсэн байна.`,
+      });
+    }
   }
-
 }
