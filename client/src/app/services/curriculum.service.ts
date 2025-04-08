@@ -45,4 +45,20 @@ export class CurriculumService {
   addLessonToTeacher(id: string, teacherData: any): Observable<any> {
     return this.http.put(`${this.apiUrl}/teachers/addLesson/${id}`, teacherData);
   }
+
+  getCurriculumByLessonId(id: string) {
+    return this.http.get(`${this.apiUrl}/lessoncurriculum/${id}`)
+  }
+
+  createLessonCurriculum(data: any) {
+    return this.http.post(`${this.apiUrl}/lessoncurriculum`, data);
+  }
+
+  updateLessonCurriculum(id: string, data: any) {
+    return this.http.put(`${this.apiUrl}/lessoncurriculum/${id}`, data);
+  }
+
+  getAllLessonCurriculums() {
+    return this.http.get(`${this.apiUrl}/lessoncurriculum`);
+  }
 }

@@ -81,7 +81,7 @@ export class CurriculumComponent {
       scheduleLabs: this.service.getScheduleLabs(this.lessonId),
       scheduleBds: this.service.getScheduleBds(this.lessonId),
       cloPlan: this.cloService.getCloPlan(this.lessonId),
-      assessFooter : this.service.getAssessFooter(this.lessonId)
+      assessFooter: this.service.getAssessFooter(this.lessonId)
     }).subscribe((results) => {
       // 🎯 Энд бүх үр дүн хадгалагдсан байна
 
@@ -101,12 +101,11 @@ export class CurriculumComponent {
 
       console.log('Бүх өгөгдөл:', results);
       this.resultData = results;
+      this.pdfService.generatePdfTest(this.resultData);
     });
   }
 
   exportToExcel() {
     this.loadLessonAllData();
-    this.pdfService.generatePdfTest(this.resultData);
-    console.log('test');
   }
 }
