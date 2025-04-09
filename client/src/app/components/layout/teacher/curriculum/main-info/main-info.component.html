@@ -343,6 +343,54 @@
             <label for="weeklyPractice">Практик</label>
           </p-floatlabel>
         </div>
+
+
+
+        <h3 class="text-lg font-semibold text-gray-800 border-b pb-2 mt-6">
+          Бие даан суралцах цаг
+        </h3>
+        <div class="col2">
+          <p-floatlabel variant="on" class="w-full">
+            <input
+              pInputText
+              formControlName="createdTeacherBy"
+              id="createdTeacherBy"
+              autocomplete="off"
+              class="w-full"
+            />
+            <label for="createdTeacherBy">Боловсруулсан багш:</label>
+          </p-floatlabel>
+          <p-floatlabel variant="on" class="w-full">
+            <p-calendar
+              formControlName="createdTeacherDatetime"
+              id="createdTeacherDatetime"
+              class="w-full"
+              [showIcon]="true"
+              dateFormat="yy-mm-dd"
+            />
+            <label for="createdTeacherDatetime">Огноо:</label>
+          </p-floatlabel>
+          <p-floatlabel variant="on" class="w-full">
+            <input
+              pInputText
+              formControlName="checkManagerBy"
+              id="checkManagerBy"
+              autocomplete="off"
+              class="w-full"
+            />
+            <label for="checkManagerBy">Хянасан салбарын эрхлэгч:</label>
+          </p-floatlabel>
+          <p-floatlabel variant="on" class="w-full">
+            <p-calendar
+              formControlName="checkManagerDatetime"
+              id="checkManagerDatetime"
+              class="w-full"
+              [showIcon]="true"
+              dateFormat="yy-mm-dd"
+            />
+            <label for="checkManagerDatetime">Огноо:</label>
+          </p-floatlabel>
+        </div>
       </div>
     </div>
     <div class="flex justify-end mt-6">

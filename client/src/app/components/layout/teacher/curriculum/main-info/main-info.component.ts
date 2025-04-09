@@ -13,6 +13,7 @@ import { TeacherService } from '../../../../../services/teacherService';
 import { Router } from '@angular/router';
 import { TabRefreshService } from '../tabRefreshService';
 import { SharedService } from '../../../../../services/sharedService';
+import { CalendarModule } from 'primeng/calendar';
 
 @Component({
   selector: 'app-main-info',
@@ -26,6 +27,7 @@ import { SharedService } from '../../../../../services/sharedService';
     FloatLabelModule,
     InputTextModule,
     InputNumberModule,
+    CalendarModule,
     ToastModule],
   providers: [MessageService],
   templateUrl: './main-info.component.html',
@@ -44,6 +46,9 @@ export class MainInfoComponent {
   teacherId!: string;
   schoolYear!: string;
 
+  guaranteeData = {
+
+  };
   constructor(
     private fb: FormBuilder,
     private service: CurriculumService,
@@ -52,6 +57,7 @@ export class MainInfoComponent {
     private router: Router,
     private tabRefreshService: TabRefreshService,
     private sharedService: SharedService) {
+
     this.mainInfoForm = this.fb.group({
       lessonId: [],
       lessonName: ['', Validators.required],
@@ -87,6 +93,10 @@ export class MainInfoComponent {
       selfStudyLab: ['', Validators.required],
       selfStudyAssignment: ['', Validators.required],
       selfStudyPractice: ['', Validators.required],
+      createdTeacherBy: [''],
+      createdTeacherDatetime: [''],
+      checkManagerBy: [''],
+      checkManagerDatetime: [''],
     });
 
     this.teacherId = (localStorage.getItem('teacherId') as string) || '';
@@ -136,6 +146,10 @@ export class MainInfoComponent {
     this.service.getMainInfo(this.lessonId).subscribe((response: any) => {
       if (response) {
         this.isNew = false;
+        this.service.getCurriculumByLessonId(this.lessonId).subscribe((response: any) => {
+          console.log(response);
+        });
+
         this.mainInfoForm.patchValue({
           lessonId: this.lessonId,
           lessonName: response.lessonName,
@@ -247,7 +261,31 @@ export class MainInfoComponent {
       selfStudyPractice: Number(formData.selfStudyPractice) || 0,
     };
 
+    const lessoncurriculumsData = {
+      lessonId: this.lessonId,
+      createdTeacherBy: String(formData.createdTeacherBy),
+      createdTeacherDatetime: new Date(formData.createdTeacherDatetime), // Array хэлбэртэй
+      checkManagerBy: String(formData.checkManagerBy), // Array хэлбэртэй
+      checkManagerDatetime: new Date(formData.checkManagerDatetime), // Array хэлбэртэй
+    };
     if (this.isNew) {
+      this.service.createLessonCurriculum(lessoncurriculumsData).subscribe({
+        next: (response: any) => {
+          const data = response;
+          this.msgService.add({
+            severity: 'success',
+            summary: 'Амжилттай',
+            detail: 'Амжилттай хадгалагдлаа!',
+          });
+        },
+        error: (error) => {
+          this.msgService.add({
+            severity: 'error',
+            summary: 'Алдаа',
+            detail: 'Алдаа гарлаа: ' + error.message,
+          });
+        }
+      });
       this.service.saveLesson(cleanedData).subscribe({
         next: (response: any) => {
           const data = { lessonId: response.lesson.id, teacherId: this.teacherId }
@@ -271,6 +309,24 @@ export class MainInfoComponent {
       });
 
     } else {
+
+      this.service.updateLessonCurriculum(this.lessonId, lessoncurriculumsData).subscribe({
+        next: (response: any) => {
+          const data = response;
+          this.msgService.add({
+            severity: 'success',
+            summary: 'Амжилттай',
+            detail: 'Амжилттай хадгалагдлаа!',
+          });
+        },
+        error: (error) => {
+          this.msgService.add({
+            severity: 'error',
+            summary: 'Алдаа',
+            detail: 'Алдаа гарлаа: ' + error.message,
+          });
+        }
+      });
       this.service.updateLesson(this.lessonId, cleanedData).subscribe({
         next: (response) => {
           this.msgService.add({
