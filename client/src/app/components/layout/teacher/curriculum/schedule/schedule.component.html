@@ -58,7 +58,7 @@
         </p-table>
       </p-accordion-content>
     </p-accordion-panel>
-    <p-accordion-panel value="1">
+    <p-accordion-panel value="1" *ngIf="hasLec">
       <p-accordion-header>Лекцийн агуулга</p-accordion-header>
       <p-accordion-content>
         <p-toast></p-toast>
@@ -117,23 +117,17 @@
               <td [pEditableColumn]>
                 <p-cellEditor>
                   <ng-template pTemplate="input">
-                    <p-multiselect
-                      [options]="closLecSem"
+                    <p-dropdown
+                      [options]="closLec"
                       formControlName="cloRelevance"
                       optionLabel="cloName"
                       optionValue="id"
-                      [maxSelectedLabels]="3"
-                      styleClass="w-full md:w-80"
                       appendTo="body"
-                    >
-                    </p-multiselect>
+                      placeholder="Сонгох"
+                    ></p-dropdown>
                   </ng-template>
                   <ng-template pTemplate="output">
-                    <p-tag
-                      *ngFor="let cloId of lesson.get('cloRelevance')?.value"
-                      [value]="getCloName(cloId)"
-                    >
-                    </p-tag>
+                    {{ getCloName(lesson.get("cloRelevance")?.value) }}
                   </ng-template>
                 </p-cellEditor>
               </td>
@@ -143,7 +137,7 @@
       </p-accordion-content>
     </p-accordion-panel>
 
-    <p-accordion-panel value="2">
+    <p-accordion-panel value="2" *ngIf="hasSem">
       <p-accordion-header>Семинарын агуулга</p-accordion-header>
       <p-accordion-content>
         <p-toast></p-toast>
@@ -164,6 +158,7 @@
               <th>Семинарын сэдэв</th>
               <th>Семинарын цаг</th>
               <th>CLOs хамаарал</th>
+              <th>Оноо</th>
             </tr>
           </ng-template>
           <ng-template pTemplate="body" let-lesson>
@@ -201,23 +196,27 @@
               <td [pEditableColumn]>
                 <p-cellEditor>
                   <ng-template pTemplate="input">
-                    <p-multiselect
-                      [options]="closLecSem"
+                    <p-dropdown
+                      [options]="closSem"
                       formControlName="cloRelevance"
                       optionLabel="cloName"
                       optionValue="id"
-                      [maxSelectedLabels]="3"
-                      styleClass="w-full md:w-80"
                       appendTo="body"
-                    >
-                    </p-multiselect>
+                      placeholder="Сонгох"
+                    ></p-dropdown>
                   </ng-template>
                   <ng-template pTemplate="output">
-                    <p-tag
-                      *ngFor="let cloId of lesson.get('cloRelevance')?.value"
-                      [value]="getCloName(cloId)"
-                    >
-                    </p-tag>
+                    {{ getCloName(lesson.get("cloRelevance")?.value) }}
+                  </ng-template>
+                </p-cellEditor>
+              </td>
+              <td [pEditableColumn]>
+                <p-cellEditor>
+                  <ng-template pTemplate="input">
+                    <p-inputNumber formControlName="point"></p-inputNumber>
+                  </ng-template>
+                  <ng-template pTemplate="output">
+                    {{ lesson.get("point").value }}
                   </ng-template>
                 </p-cellEditor>
               </td>
@@ -227,7 +226,7 @@
       </p-accordion-content>
     </p-accordion-panel>
 
-    <p-accordion-panel value="3">
+    <p-accordion-panel value="3" *ngIf="hasLab">
       <p-accordion-header
         >Лаборатори/практикийн хичээлийн агуулга</p-accordion-header
       >
@@ -250,6 +249,7 @@
               <th>Лаборатори/практикийн сэдэв</th>
               <th>Цаг</th>
               <th>CLOs хамаарал</th>
+              <th>Оноо</th>
             </tr>
           </ng-template>
 
@@ -288,23 +288,26 @@
               <td [pEditableColumn]>
                 <p-cellEditor>
                   <ng-template pTemplate="input">
-                    <p-multiselect
+                    <p-dropdown
                       [options]="closLab"
                       formControlName="cloRelevance"
                       optionLabel="cloName"
                       optionValue="id"
-                      [maxSelectedLabels]="3"
-                      styleClass="w-full md:w-80"
                       appendTo="body"
-                    >
-                    </p-multiselect>
+                    ></p-dropdown>
                   </ng-template>
                   <ng-template pTemplate="output">
-                    <p-tag
-                      *ngFor="let cloId of lesson.get('cloRelevance')?.value"
-                      [value]="getCloName(cloId)"
-                    >
-                    </p-tag>
+                    {{ getCloName(lesson.get("cloRelevance")?.value) }}
+                  </ng-template>
+                </p-cellEditor>
+              </td>
+              <td [pEditableColumn]>
+                <p-cellEditor>
+                  <ng-template pTemplate="input">
+                    <p-inputNumber formControlName="point"></p-inputNumber>
+                  </ng-template>
+                  <ng-template pTemplate="output">
+                    {{ lesson.get("point").value }}
                   </ng-template>
                 </p-cellEditor>
               </td>
@@ -314,7 +317,7 @@
       </p-accordion-content>
     </p-accordion-panel>
 
-    <p-accordion-panel value="4">
+    <p-accordion-panel value="4" *ngIf="hasBd">
       <p-accordion-header>Бие даан судлах агуулга</p-accordion-header>
       <p-accordion-content>
         <p-toast></p-toast>
@@ -336,6 +339,7 @@
               <th>Танхимд зөвлөгөө авах, үнэлүүлэх цаг</th>
               <th>Бие даан суралцах цаг</th>
               <th>CLOs хамаарал</th>
+              <th>Оноо</th>
             </tr>
           </ng-template>
 
@@ -384,23 +388,26 @@
               <td [pEditableColumn]>
                 <p-cellEditor>
                   <ng-template pTemplate="input">
-                    <p-multiselect
+                    <p-dropdown
                       [options]="clos"
                       formControlName="cloRelevance"
                       optionLabel="cloName"
                       optionValue="id"
-                      [maxSelectedLabels]="3"
-                      styleClass="w-full md:w-80"
                       appendTo="body"
-                    >
-                    </p-multiselect>
+                    ></p-dropdown>
                   </ng-template>
                   <ng-template pTemplate="output">
-                    <p-tag
-                      *ngFor="let cloId of lesson.get('cloRelevance')?.value"
-                      [value]="getCloName(cloId)"
-                    >
-                    </p-tag>
+                    {{ getCloName(lesson.get("cloRelevance")?.value) }}
+                  </ng-template>
+                </p-cellEditor>
+              </td>
+              <td [pEditableColumn]>
+                <p-cellEditor>
+                  <ng-template pTemplate="input">
+                    <p-inputNumber formControlName="point"></p-inputNumber>
+                  </ng-template>
+                  <ng-template pTemplate="output">
+                    {{ lesson.get("point").value }}
                   </ng-template>
                 </p-cellEditor>
               </td>

@@ -34,10 +34,20 @@ interface Clo1 {
 @Component({
   selector: 'app-clo',
   standalone: true,
-  imports: [TableModule, ToastModule, CommonModule, TagModule, SelectModule, ButtonModule, InputTextModule, FormsModule, CheckboxModule],
+  imports: [
+    TableModule,
+    ToastModule,
+    CommonModule,
+    TagModule,
+    SelectModule,
+    ButtonModule,
+    InputTextModule,
+    FormsModule,
+    CheckboxModule,
+  ],
   providers: [MessageService],
   templateUrl: './clo.component.html',
-  styleUrls: ['./clo.component.scss']
+  styleUrls: ['./clo.component.scss'],
 })
 export class CloComponent {
   @Input() lessonId: string = '';
@@ -54,7 +64,7 @@ export class CloComponent {
     private methodService: MethodService,
     private scheduleService: ScheduleService,
     private tabRefreshService: TabRefreshService
-  ) { }
+  ) {}
 
   ngOnInit() {
     if (this.lessonId) {
@@ -62,8 +72,9 @@ export class CloComponent {
     }
 
     this.types = [
-      { label: 'Лекц семинар', value: 'LEC_SEM' },
-      { label: 'Лаборатори', value: 'LAB' }
+      { label: 'Лекц', value: 'LEC' },
+      { label: 'Семинар', value: 'SEM' },
+      { label: 'Лаборатори', value: 'LAB' },
     ];
   }
 
@@ -71,11 +82,13 @@ export class CloComponent {
     this.service.getCloList(this.lessonId).subscribe((data: any) => {
       this.clos = data.map((item: any) => {
         // Find the label corresponding to item.type
-        const typeLabel = this.types.find(type => type.value === item.type)?.label;
+        const typeLabel = this.types.find(
+          (type) => type.value === item.type
+        )?.label;
 
         return {
           id: item.id,
-          type: typeLabel,  // keep the value as it is
+          type: typeLabel, // keep the value as it is
           cloName: item.cloName,
           knowledge: item.knowledge || false,
           skill: item.skill || false,
@@ -85,7 +98,6 @@ export class CloComponent {
     });
   }
 
-
   onRowEditInit(clo: Clo, index: number) {
     this.index = index + 1;
     this.clonedClos[clo.id] = { ...clo };
@@ -93,7 +105,14 @@ export class CloComponent {
   }
 
   newRow() {
-    return { lessonId: this.lessonId, type: '', cloName: '', knowledge: false, skill: false, attitude: false };
+    return {
+      lessonId: this.lessonId,
+      type: '',
+      cloName: '',
+      knowledge: false,
+      skill: false,
+      attitude: false,
+    };
   }
 
   onRowEditSave(clo: Clo) {
@@ -152,15 +171,16 @@ export class CloComponent {
 
   getGroupHeaderLabel(cloType: string): string {
     switch (cloType) {
-      case 'Лекц семинар':
-        return 'Лекц, семинарын хичээлээр эзэмшсэн суралцахуйн үр дүнгүүд';
+      case 'Лекц':
+        return 'Лекцийн хичээлээр эзэмшсэн суралцахуйн үр дүнгүүд';
+      case 'Семинар':
+        return 'Семинарын хичээлээр эзэмшсэн суралцахуйн үр дүнгүүд';
       case 'Лаборатори':
         return 'Лабораторийн хичээлээр эзэмшсэн суралцахуйн үр дүнгүүд';
       default:
         return cloType;
     }
   }
-
 
   addClo() {
     const newClo: Clo1 = {
@@ -179,46 +199,50 @@ export class CloComponent {
   }
 
   saveAssess(data: any) {
-    const assessments = [{
-      lessonId: this.lessonId,
-      clo: data,
-      attendance: false,
-      assignment: false,
-      quiz: false,
-      project: false,
-      lab: false,
-      exam: false
-    }]
+    const assessments = [
+      {
+        lessonId: this.lessonId,
+        clo: data,
+        attendance: false,
+        assignment: false,
+        quiz: false,
+        project: false,
+        lab: false,
+        exam: false,
+      },
+    ];
     this.assessmentService.createAssessment(assessments).subscribe((res) => {
       console.log(res);
-    })
+    });
   }
 
   saveCloPlan(clo: any) {
-    const plan = [{
-      id: '',
-      cloId: clo.id,
-      cloName: clo.cloName,
-      cloType: clo.type,
-      lessonId: this.lessonId,
-      timeManagement: 0,
-      engagement: 0,
-      recall: 0,
-      problemSolving: 0,
-      recall2: 0,
-      problemSolving2: 0,
-      toExp: 0,
-      processing: 0,
-      decisionMaking: 0,
-      formulation: 0,
-      analysis: 0,
-      implementation: 0,
-      understandingLevel: 0,
-      analysisLevel: 0,
-      creationLevel: 0
-    }]
+    const plan = [
+      {
+        id: '',
+        cloId: clo.id,
+        cloName: clo.cloName,
+        cloType: clo.type,
+        lessonId: this.lessonId,
+        timeManagement: 0,
+        engagement: 0,
+        recall: 0,
+        problemSolving: 0,
+        recall2: 0,
+        problemSolving2: 0,
+        toExp: 0,
+        processing: 0,
+        decisionMaking: 0,
+        formulation: 0,
+        analysis: 0,
+        implementation: 0,
+        understandingLevel: 0,
+        analysisLevel: 0,
+        creationLevel: 0,
+      },
+    ];
     this.service.saveCloPlan(plan).subscribe((res) => {
       console.log(res);
-    })
+    });
   }
 }

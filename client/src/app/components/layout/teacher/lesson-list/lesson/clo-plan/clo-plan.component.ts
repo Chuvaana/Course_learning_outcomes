@@ -11,7 +11,7 @@ import { ActivatedRoute } from '@angular/router';
 import { saveAs } from 'file-saver'; // file-saver сан
 import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
-import { InputNumber, InputNumberModule } from 'primeng/inputnumber';
+import { InputNumberModule } from 'primeng/inputnumber';
 import { InputTextModule } from 'primeng/inputtext';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { SelectModule } from 'primeng/select';

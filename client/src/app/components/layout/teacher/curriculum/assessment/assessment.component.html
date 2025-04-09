@@ -265,6 +265,29 @@
           </p-cellEditor>
         </td>
       </tr>
+      <!-- <tr *ngFor="let footerWeek of assessFooter || []">
+        <td colspan="2" class="text-right font-bold pr-12">
+          {{ footerWeek.name }}
+        </td>
+        <td [pEditableColumn]>
+          <p-cellEditor>
+            <ng-template pTemplate="input">
+              <p-multiselect
+                [options]="weeks"
+                [(ngModel)]="footerWeek.attendanceValue"
+                optionLabel="name"
+                optionValue="code"
+                placeholder="Select Cities"
+                styleClass="w-full md:w-80"
+                appendTo="body"
+              />
+            </ng-template>
+            <ng-template pTemplate="output">
+              {{ footerWeek.attendanceValue }}
+            </ng-template>
+          </p-cellEditor>
+        </td>
+      </tr> -->
     </ng-template>
   </p-table>
 </div>

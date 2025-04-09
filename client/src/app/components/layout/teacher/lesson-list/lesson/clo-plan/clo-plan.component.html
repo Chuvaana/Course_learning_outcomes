@@ -54,8 +54,6 @@
               Шалгалтын үнэлгээний харгалзах нийлбэр оноо
             </th>
             <th rowspan="3">Нийлбэр оноо</th>
-            <th rowspan="3">Хувьд шилжүүлсэн оноо</th>
-            <th rowspan="3">Үсгэн үнэлгээ</th>
           </tr>
           <tr>
             <th>Цаг төлөвлөлт, хариуцлага</th>
@@ -114,8 +112,10 @@
             <td colspan="22">
               <strong>
                 {{
-                  row.value.cloType == "LEC_SEM"
-                    ? "Лекц, семинарын хичээлээр эзэмшсэн суралцахуйн үр дүнгүүд"
+                  row.value.cloType == "LEC"
+                    ? "Лекцийн хичээлээр эзэмшсэн суралцахуйн үр дүнгүүд"
+                    : row.value.cloType == "SEM"
+                    ? "Семинарын хичээлээр эзэмшсэн суралцахуйн үр дүнгүүд"
                     : row.value.cloType == "LAB"
                     ? "Лабораторийн хичээлээр эзэмшсэн суралцахуйн үр дүнгүүд"
                     : row.value.cloType
@@ -445,26 +445,6 @@
                   (row.value.creationLevel || 0)
               }}
             </td>
-            <td>
-              {{
-                (row.value.timeManagement || 0) +
-                  (row.value.engagement || 0) +
-                  (row.value.recall || 0) +
-                  (row.value.problemSolving || 0) +
-                  (row.value.recall2 || 0) +
-                  (row.value.problemSolving2 || 0) +
-                  (row.value.toExp || 0) +
-                  (row.value.processing || 0) +
-                  (row.value.decisionMaking || 0) +
-                  (row.value.formulation || 0) +
-                  (row.value.analysis || 0) +
-                  (row.value.implementation || 0) +
-                  (row.value.understandingLevel || 0) +
-                  (row.value.analysisLevel || 0) +
-                  (row.value.creationLevel || 0)
-              }}%
-            </td>
-            <td>nitt</td>
           </tr>
         </ng-template>
       </p-table>

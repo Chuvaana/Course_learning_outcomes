@@ -156,8 +156,10 @@ export class LessonPlanComponent implements OnChanges {
 
   getGroupHeaderLabel(cloType: string): string {
     switch (cloType) {
-      case 'LEC_SEM':
-        return 'Лекц, семинарын хичээлээр эзэмшсэн суралцахуйн үр дүнгүүд';
+      case 'LEC':
+        return 'Лекцийн хичээлээр эзэмшсэн суралцахуйн үр дүнгүүд';
+      case 'SEM':
+        return 'Семинарын хичээлээр эзэмшсэн суралцахуйн үр дүнгүүд';
       case 'LAB':
         return 'Лабораторийн хичээлээр эзэмшсэн суралцахуйн үр дүнгүүд';
       default:

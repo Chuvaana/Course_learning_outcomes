@@ -14,6 +14,7 @@ import { ToastModule } from 'primeng/toast';
 import { AssessmentService } from '../../../../../services/assessmentService';
 import { TabRefreshService } from '../tabRefreshService';
 import { Subscription } from 'rxjs';
+import { MultiSelectModule } from 'primeng/multiselect';
 interface Assessment {
   id: string;
   lessonId: string;
@@ -53,6 +54,7 @@ interface AssessFooter {
     DropdownModule,
     InputTextModule,
     InputNumberModule,
+    MultiSelectModule,
   ],
   providers: [MessageService],
   templateUrl: './assessment.component.html',
@@ -72,6 +74,13 @@ export class AssessmentComponent {
   isNew = true;
   isNewFooter = true;
 
+  // weeks = {
+  //   id: '',
+  //   name: '',
+  // };
+
+  weeks: any;
+
   clonedClos: { [s: string]: Assessment } = {};
   editingRowId: number | null = null;
   private refreshSubscription!: Subscription;
@@ -80,7 +89,7 @@ export class AssessmentComponent {
     private service: AssessmentService,
     private msgService: MessageService,
     private tabRefreshService: TabRefreshService
-  ) { }
+  ) {}
 
   ngOnInit() {
     if (this.lessonId) {
@@ -90,6 +99,13 @@ export class AssessmentComponent {
         }
       );
     }
+    this.weeks = [
+      { name: 'New York', code: 'NY' },
+      { name: 'Rome', code: 'RM' },
+      { name: 'London', code: 'LDN' },
+      { name: 'Istanbul', code: 'IST' },
+      { name: 'Paris', code: 'PRS' },
+    ];
   }
 
   ngOnDestroy() {
@@ -122,9 +138,9 @@ export class AssessmentComponent {
     });
 
     this.service.getAssessFooter(this.lessonId).subscribe((res) => {
-      if (res && res.length) {
+      if (res.assessFooter && res.assessFooter.length) {
         this.isNewFooter = false;
-        this.assessFooter = res.map((item: any) => {
+        this.assessFooter = res.assessFooter.map((item: any) => {
           return {
             id: item._id,
             lessonId: item.lessonId,
@@ -164,28 +180,30 @@ export class AssessmentComponent {
     }
   }
   setDefaultFooterValues() {
-    this.assessFooter.push(
-      {
-        lessonId: this.lessonId,
-        name: 'Үнэлгээний эзлэх хувь',
-        attendanceValue: 0,
-        assignmentValue: 0,
-        quizValue: 0,
-        projectValue: 0,
-        labValue: 0,
-        examValue: 0,
-      },
-      {
-        lessonId: this.lessonId,
-        name: 'Үнэлгээний хийх давтамж',
-        attendanceValue: 0,
-        assignmentValue: 0,
-        quizValue: 0,
-        projectValue: 0,
-        labValue: 0,
-        examValue: 0,
-      }
-    );
+    if (this.assessFooter.length == 0) {
+      this.assessFooter.push(
+        {
+          lessonId: this.lessonId,
+          name: 'Үнэлгээний эзлэх хувь',
+          attendanceValue: 0,
+          assignmentValue: 0,
+          quizValue: 0,
+          projectValue: 0,
+          labValue: 0,
+          examValue: 0,
+        },
+        {
+          lessonId: this.lessonId,
+          name: 'Үнэлгээний хийх давтамж',
+          attendanceValue: 0,
+          assignmentValue: 0,
+          quizValue: 0,
+          projectValue: 0,
+          labValue: 0,
+          examValue: 0,
+        }
+      );
+    }
   }
 
   save() {
@@ -301,8 +319,10 @@ export class AssessmentComponent {
 
   getGroupHeaderLabel(cloType: string): string {
     switch (cloType) {
-      case 'LEC_SEM':
-        return 'Лекц, семинарын хичээлээр эзэмшсэн суралцахуйн үр дүнгүүд';
+      case 'LEC':
+        return 'Лекцийн хичээлээр эзэмшсэн суралцахуйн үр дүнгүүд';
+      case 'SEM':
+        return 'Семинарын хичээлээр эзэмшсэн суралцахуйн үр дүнгүүд';
       case 'LAB':
         return 'Лабораторийн хичээлээр эзэмшсэн суралцахуйн үр дүнгүүд';
       default:

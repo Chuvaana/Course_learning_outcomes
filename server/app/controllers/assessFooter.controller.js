@@ -1,5 +1,6 @@
 // controllers/assessFooterController.js
 const AssessFooter = require('../models/assessFooter.model');
+const AssessFooterWeek = require('../models/assessFooterWeek.model');
 
 // Create a new AssessFooter record
 const createAssessFooter = async (req, res) => {
@@ -30,10 +31,11 @@ const getAllAssessFooters = async (req, res) => {
 const getAssessFooterByLessonId = async (req, res) => {
   try {
     const assessFooter = await AssessFooter.find({ lessonId: req.params.lessonId });
-    if (!assessFooter) {
+    const assessFooterWeek = await AssessFooterWeek.find({ lessonId: req.params.lessonId });
+    if (!assessFooter && !assessFooterWeek) {
       return res.json([]);
     }
-    res.status(200).json(assessFooter);
+    res.status(200).json({ assessFooter, assessFooterWeek });
   } catch (error) {
     res.status(500).json({ message: 'Error fetching AssessFooter', error });
   }
