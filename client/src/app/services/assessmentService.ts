@@ -8,7 +8,19 @@ import { Observable } from 'rxjs';
 export class AssessmentService {
   private apiUrl = 'http://localhost:3000/api'; // Update with your actual API URL
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
+
+  saveAssessmentMethod(data: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/assessment-plan`, data);
+  }
+
+  updateAssessmentMethod(lessonId: string, data: any): Observable<any> {
+    return this.http.put(`${this.apiUrl}/assessment-plan/${lessonId}`, data);
+  }
+
+  getAssessmentByLesson(lessonId: any) {
+    return this.http.get(`${this.apiUrl}/assessment-plan/${lessonId}`);
+  }
 
   createAssessment(data: any): Observable<any> {
     return this.http.post(`${this.apiUrl}/assessments`, data);
@@ -58,16 +70,16 @@ export class AssessmentService {
     return this.http.get(`${this.apiUrl}/additionals/${lessonCode}`);
   }
   getMainInfo(id: string) {
-    return this.http.get(`${this.apiUrl}/lesson/${id}`)
+    return this.http.get(`${this.apiUrl}/lesson/${id}`);
   }
 
   getMaterials(lessonCode: string) {
-    console.log(lessonCode + "fff");
+    console.log(lessonCode + 'fff');
     return this.http.get(`${this.apiUrl}/materials/${lessonCode}`);
   }
 
   getMethod(id: string): Observable<any> {
-      return this.http.get(`${this.apiUrl}/methodologys/${id}`);
+    return this.http.get(`${this.apiUrl}/methodologys/${id}`);
   }
 
   getDefinition(lessonId: string) {

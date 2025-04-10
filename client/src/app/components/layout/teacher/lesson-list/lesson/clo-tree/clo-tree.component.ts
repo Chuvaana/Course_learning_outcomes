@@ -1,343 +1,156 @@
-import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { Component, inject } from '@angular/core';
+import {
+  FormArray,
+  FormControl,
+  FormGroup,
+  NonNullableFormBuilder,
+  ReactiveFormsModule,
+} from '@angular/forms';
+import { ButtonModule } from 'primeng/button';
+import { InputNumberModule } from 'primeng/inputnumber';
 import { InputTextModule } from 'primeng/inputtext';
-import { TreeTableModule } from 'primeng/treetable';
+import { AssessmentService } from '../../../../../../services/assessmentService';
+import { ActivatedRoute } from '@angular/router';
 
-interface Column {
-  field: string;
-  header: string;
-}
+type FormAssessment = FormGroup<{
+  id: FormControl<string>;
+  subMethod: FormControl<string>;
+  point: FormControl<number>;
+}>;
+
+type FormMethod = FormGroup<{
+  id: FormControl<string>;
+  methodName: FormControl<string>;
+  subMethods: FormArray<FormAssessment>;
+}>;
+
+type Form = FormGroup<{
+  plans: FormArray<FormMethod>;
+}>;
 
 @Component({
   selector: 'app-clo-tree',
   standalone: true,
-  imports: [TreeTableModule, CommonModule, FormsModule, InputTextModule],
+  imports: [
+    ReactiveFormsModule,
+    InputTextModule,
+    InputNumberModule,
+    ButtonModule,
+  ],
   templateUrl: './clo-tree.component.html',
-  styleUrl: './clo-tree.component.scss'
+  styleUrl: './clo-tree.component.scss',
 })
 export class CloTreeComponent {
-  files = [
-    {
-      "data": {
-        "name": "Applications",
-        "size": "200mb",
-        "type": "Folder"
-      },
-      "children": [
-        {
-          "data": {
-            "name": "Angular",
-            "size": "25mb",
-            "type": "Folder"
-          },
-          "children": [
-            {
-              "data": {
-                "name": "angular.app",
-                "size": "10mb",
-                "type": "Application"
-              }
-            },
-            {
-              "data": {
-                "name": "cli.app",
-                "size": "10mb",
-                "type": "Application"
-              }
-            },
-            {
-              "data": {
-                "name": "mobile.app",
-                "size": "5mb",
-                "type": "Application"
-              }
-            }
-          ]
-        },
-        {
-          "data": {
-            "name": "editor.app",
-            "size": "25mb",
-            "type": "Application"
-          }
-        },
-        {
-          "data": {
-            "name": "settings.app",
-            "size": "50mb",
-            "type": "Application"
-          }
-        }
-      ]
-    },
-    {
-      "data": {
-        "name": "Cloud",
-        "size": "20mb",
-        "type": "Folder"
-      },
-      "children": [
-        {
-          "data": {
-            "name": "backup-1.zip",
-            "size": "10mb",
-            "type": "Zip"
-          }
-        },
-        {
-          "data": {
-            "name": "backup-2.zip",
-            "size": "10mb",
-            "type": "Zip"
-          }
-        }
-      ]
-    },
-    {
-      "data": {
-        "name": "Desktop",
-        "size": "150kb",
-        "type": "Folder"
-      },
-      "children": [
-        {
-          "data": {
-            "name": "note-meeting.txt",
-            "size": "50kb",
-            "type": "Text"
-          }
-        },
-        {
-          "data": {
-            "name": "note-todo.txt",
-            "size": "100kb",
-            "type": "Text"
-          }
-        }
-      ]
-    },
-    {
-      "data": {
-        "name": "Documents",
-        "size": "75kb",
-        "type": "Folder"
-      },
-      "children": [
-        {
-          "data": {
-            "name": "Work",
-            "size": "55kb",
-            "type": "Folder"
-          },
-          "children": [
-            {
-              "data": {
-                "name": "Expenses.doc",
-                "size": "30kb",
-                "type": "Document"
-              }
-            },
-            {
-              "data": {
-                "name": "Resume.doc",
-                "size": "25kb",
-                "type": "Resume"
-              }
-            }
-          ]
-        },
-        {
-          "data": {
-            "name": "Home",
-            "size": "20kb",
-            "type": "Folder"
-          },
-          "children": [
-            {
-              "data": {
-                "name": "Invoices",
-                "size": "20kb",
-                "type": "Text"
-              }
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "data": {
-        "name": "Downloads",
-        "size": "25mb",
-        "type": "Folder"
-      },
-      "children": [
-        {
-          "data": {
-            "name": "Spanish",
-            "size": "10mb",
-            "type": "Folder"
-          },
-          "children": [
-            {
-              "data": {
-                "name": "tutorial-a1.txt",
-                "size": "5mb",
-                "type": "Text"
-              }
-            },
-            {
-              "data": {
-                "name": "tutorial-a2.txt",
-                "size": "5mb",
-                "type": "Text"
-              }
-            }
-          ]
-        },
-        {
-          "data": {
-            "name": "Travel",
-            "size": "15mb",
-            "type": "Text"
-          },
-          "children": [
-            {
-              "data": {
-                "name": "Hotel.pdf",
-                "size": "10mb",
-                "type": "PDF"
-              }
-            },
-            {
-              "data": {
-                "name": "Flight.pdf",
-                "size": "5mb",
-                "type": "PDF"
-              }
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "data": {
-        "name": "Main",
-        "size": "50mb",
-        "type": "Folder"
-      },
-      "children": [
-        {
-          "data": {
-            "name": "bin",
-            "size": "50kb",
-            "type": "Link"
-          }
-        },
-        {
-          "data": {
-            "name": "etc",
-            "size": "100kb",
-            "type": "Link"
-          }
-        },
-        {
-          "data": {
-            "name": "var",
-            "size": "100kb",
-            "type": "Link"
-          }
-        }
-      ]
-    },
-    {
-      "data": {
-        "name": "Other",
-        "size": "5mb",
-        "type": "Folder"
-      },
-      "children": [
-        {
-          "data": {
-            "name": "todo.txt",
-            "size": "3mb",
-            "type": "Text"
-          }
-        },
-        {
-          "data": {
-            "name": "logo.png",
-            "size": "2mb",
-            "type": "Picture"
-          }
-        }
-      ]
-    },
-    {
-      "data": {
-        "name": "Pictures",
-        "size": "150kb",
-        "type": "Folder"
-      },
-      "children": [
-        {
-          "data": {
-            "name": "barcelona.jpg",
-            "size": "90kb",
-            "type": "Picture"
-          }
-        },
-        {
-          "data": {
-            "name": "primeng.png",
-            "size": "30kb",
-            "type": "Picture"
-          }
-        },
-        {
-          "data": {
-            "name": "prime.jpg",
-            "size": "30kb",
-            "type": "Picture"
-          }
-        }
-      ]
-    },
-    {
-      "data": {
-        "name": "Videos",
-        "size": "1500mb",
-        "type": "Folder"
-      },
-      "children": [
-        {
-          "data": {
-            "name": "primefaces.mkv",
-            "size": "1000mb",
-            "type": "Video"
-          }
-        },
-        {
-          "data": {
-            "name": "intro.avi",
-            "size": "500mb",
-            "type": "Video"
-          }
-        }
-      ]
-    }
-  ];
+  constructor(
+    private service: AssessmentService,
+    private route: ActivatedRoute
+  ) {}
+  lessonId!: string;
+  fb = inject(NonNullableFormBuilder);
+  planForm: Form = this.fb.group({
+    plans: this.fb.array<FormMethod>([this.generateQuestion()]),
+  });
 
-  cols!: Column[];
-
-  constructor() { }
+  isNew = false;
 
   ngOnInit() {
-    // this.nodeService.getFilesystem().then((files) => (this.files = files));
-    this.cols = [
-      { field: 'name', header: 'Name' },
-      { field: 'size', header: 'Size' },
-      { field: 'type', header: 'Type' }
-    ];
+    this.route.parent?.paramMap.subscribe((params) => {
+      this.lessonId = params.get('id')!;
+    });
+
+    this.service.getAssessmentByLesson(this.lessonId).subscribe((res: any) => {
+      if (res) {
+        const plansArray = this.fb.array<FormMethod>([]);
+
+        res.plans.forEach((plan: any) => {
+          const subMethodsArray = this.fb.array<FormAssessment>(
+            plan.subMethods.map((sub: any) =>
+              this.fb.group({
+                id: this.fb.control<string>(sub._id),
+                subMethod: this.fb.control<string>(sub.subMethod),
+                point: this.fb.control<number>(sub.point),
+              })
+            )
+          );
+
+          const planGroup = this.fb.group({
+            id: this.fb.control<string>(plan._id),
+            methodName: this.fb.control<string>(plan.methodName),
+            subMethods: subMethodsArray,
+          });
+
+          plansArray.push(planGroup);
+        });
+
+        this.planForm.setControl('plans', plansArray);
+        this.isNew = false;
+      } else {
+        this.isNew = true;
+      }
+    });
+  }
+
+  generateQuestion(): FormMethod {
+    return this.fb.group({
+      id: '',
+      methodName: '',
+      subMethods: this.fb.array<FormAssessment>([]),
+    });
+  }
+
+  addMethod(): void {
+    this.planForm.controls.plans.push(this.generateQuestion());
+  }
+
+  removeMethod(planIndex: number): void {
+    this.planForm.controls.plans.removeAt(planIndex);
+  }
+
+  addSubMethod(planIndex: number): void {
+    const newAnswer: FormAssessment = this.fb.group({
+      id: '',
+      subMethod: '',
+      point: 0,
+    });
+    this.planForm.controls.plans
+      .at(planIndex)
+      ?.controls?.subMethods?.push(newAnswer);
+  }
+
+  removeSubMethod(planIndex: number, answerIndex: number): void {
+    this.planForm.controls.plans
+      .at(planIndex)
+      ?.controls?.subMethods?.removeAt(answerIndex);
+  }
+
+  onSubmit() {
+    console.log(this.planForm.getRawValue());
+    const formData = this.planForm.getRawValue();
+    const payload = formData.plans.map((plan) => ({
+      id: plan.id, // Include plan id
+      methodName: plan.methodName,
+      subMethods: plan.subMethods.map((sub) => ({
+        id: sub.id, // Include subMethod id
+        subMethod: sub.subMethod,
+        point: sub.point,
+      })),
+    }));
+
+    if (this.isNew) {
+      this.service
+        .saveAssessmentMethod({ plans: payload, lessonId: this.lessonId })
+        .subscribe((res) => {
+          console.log('Амжилттай хадгалагдлаа!', res);
+        });
+    } else {
+      this.service
+        .updateAssessmentMethod(this.lessonId, {
+          plans: payload,
+          lessonId: this.lessonId,
+        })
+        .subscribe((res) => {
+          console.log('Амжилттай шинэчлэгдлээ!', res);
+        });
+    }
   }
 }

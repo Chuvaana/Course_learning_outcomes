@@ -1,30 +1,89 @@
-<div class="card">
-    <p-treeTable 
-        [value]="files" 
-        [columns]="cols" 
-        [scrollable]="true" 
-        [tableStyle]="{'min-width':'50rem'}">
-            <ng-template pTemplate="header" let-columns>
-                <tr>
-                    <th *ngFor="let col of columns">
-                        {{ col.header }}
-                    </th>
-                </tr>
-            </ng-template>
-            <ng-template pTemplate="body" let-rowNode let-rowData="rowData" let-columns="columns">
-                <tr [ttRow]="rowNode">
-                    <td *ngFor="let col of columns; let i = index" ttEditableColumn [ttEditableColumnDisabled]="i == 0" [ngClass]="{ 'p-toggler-column': i === 0 }">
-                        <p-treeTableToggler [rowNode]="rowNode" *ngIf="i === 0" />
-                        <p-treeTableCellEditor>
-                            <ng-template pTemplate="input">
-                                <input pInputText type="text" [(ngModel)]="rowData[col.field]" />
-                            </ng-template>
-                            <ng-template pTemplate="output">
-                                {{ rowData[col.field] }}
-                            </ng-template>
-                        </p-treeTableCellEditor>
-                    </td>
-                </tr>
-        </ng-template>
-    </p-treeTable>
-</div>  
+<form [formGroup]="planForm" (ngSubmit)="onSubmit()" class="p-fluid">
+  <h1>Үнэлгээний арга</h1>
+
+  <div formArrayName="plans">
+    @for (plan of planForm.controls.plans.controls; track planIndex; let
+    planIndex = $index) {
+    <div
+      class="question p-3 mb-3 border-round surface-border"
+      [formGroupName]="planIndex"
+    >
+      <div class="p-inputgroup mb-2">
+        <input
+          pInputText
+          type="text"
+          formControlName="methodName"
+          placeholder="Үнэлгээний арга"
+        />
+        <button
+          pButton
+          type="button"
+          icon="pi pi-times"
+          class="p-button-danger"
+          (click)="removeMethod(planIndex)"
+        ></button>
+      </div>
+
+      <div formArrayName="subMethods" class="answers mb-3">
+        <div class="font-bold mb-2">Үнэлгээний дэд арга</div>
+
+        @for (answer of
+        planForm.controls.plans.controls.at(planIndex)?.controls?.subMethods?.controls;
+        track answerIndex; let answerIndex = $index) {
+        <div [formGroupName]="answerIndex" class="answer p-inputgroup mb-2">
+          <input
+            pInputText
+            type="text"
+            placeholder="Дэд арга"
+            formControlName="subMethod"
+          />
+          <p-inputNumber
+            formControlName="point"
+            [showButtons]="true"
+            [min]="0"
+            placeholder="Оноо"
+          ></p-inputNumber>
+          <button
+            pButton
+            type="button"
+            icon="pi pi-times"
+            class="p-button-text p-button-danger"
+            (click)="removeSubMethod(planIndex, answerIndex)"
+          ></button>
+        </div>
+        }
+
+        <button
+          pButton
+          type="button"
+          label="Дэд үнэлгээ нэмэх"
+          icon="pi pi-plus"
+          class="p-button-sm p-button-outlined"
+          (click)="addSubMethod(planIndex)"
+        ></button>
+      </div>
+    </div>
+    }
+  </div>
+
+  <div class="add-question mb-3">
+    <button
+      pButton
+      type="button"
+      label="Үнэлгээ нэмэх"
+      icon="pi pi-plus"
+      class="p-button-info"
+      (click)="addMethod()"
+    ></button>
+  </div>
+
+  <div>
+    <button
+      pButton
+      type="submit"
+      label="Хадгалах"
+      icon="pi pi-save"
+      class="p-button-success"
+    ></button>
+  </div>
+</form>

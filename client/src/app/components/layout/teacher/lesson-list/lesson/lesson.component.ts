@@ -35,11 +35,11 @@ export class LessonComponent {
         routerLink: ['/main/teacher/lesson', this.lessonId, 'clo-plan'],
       },
 
-      // {
-      //   label: 'Дүнгийн төлөвлөлт3',
-      //   icon: 'pi pi-check',
-      //   routerLink: ['/main/teacher/lesson', this.lessonId, 'clo-tree']
-      // },
+      {
+        label: 'Дүнгийн төлөвлөлт3',
+        icon: 'pi pi-check',
+        routerLink: ['/main/teacher/lesson', this.lessonId, 'clo-tree'],
+      },
       {
         label: 'Оюутан',
         icon: 'pi pi-graduation-cap',

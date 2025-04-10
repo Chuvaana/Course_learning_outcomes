@@ -61,6 +61,7 @@ require('./app/routes/assessFooter.routes')(app);
 require('./app/routes/lessonAssessments.routes')(app);
 require('./app/routes/labGrade.routes')(app);
 require('./app/routes/lessonCurriculums.routes')(app);
+require('./app/routes/plan.routes')(app);
 
 // set port, listen for requests
 const PORT = process.env.PORT || 3000;
