@@ -24,6 +24,7 @@ import { CLOService } from '../../../../../../services/cloService';
 import { PdfCloGeneratorService } from '../../../../../../services/pdf-clo-generator.service';
 import { PdfGeneratorService } from '../../../../../../services/pdf-generator.service';
 import { TeacherService } from '../../../../../../services/teacherService';
+import { AssessmentService } from '../../../../../../services/assessmentService';
 
 @Component({
   selector: 'app-clo-plan',
@@ -48,6 +49,9 @@ import { TeacherService } from '../../../../../../services/teacherService';
 export class CloPlanComponent {
   cloForm!: FormGroup;
   sampleData!: any;
+
+  assessPlan: any;
+
   cloList!: any;
   pointPlan!: any;
   cloPlan!: any;
@@ -59,6 +63,7 @@ export class CloPlanComponent {
     private fb: FormBuilder,
     private service: TeacherService,
     private cloService: CLOService,
+    private assessService: AssessmentService,
     private pdfService: PdfGeneratorService,
     private msgService: MessageService,
     private route: ActivatedRoute,
@@ -85,7 +90,8 @@ export class CloPlanComponent {
       this.service.getCloList(this.lessonId),
       this.cloService.getPointPlan(this.lessonId),
       this.cloService.getCloPlan(this.lessonId),
-    ]).subscribe(([cloList, pointPlan, cloPlan]) => {
+      this.assessService.getAssessmentByLesson(this.lessonId),
+    ]).subscribe(([cloList, pointPlan, cloPlan, assessPlan]) => {
       this.cloList = cloList;
       this.pointPlan = pointPlan || {
         timeManagement: 0,
@@ -105,6 +111,8 @@ export class CloPlanComponent {
         creationLevel: 0,
       };
 
+      this.assessPlan = assessPlan;
+      console.log(assessPlan);
       this.cloPlan = cloPlan;
       // if ((Array.isArray(this.cloPlan[0]) && this.cloPlan[0].length === 0)) {
       //   this.cloPlan[0] = [this.pointPlan];

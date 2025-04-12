@@ -5,6 +5,7 @@ const MethodSchema = new mongoose.Schema({
   plans: [
     {
       methodName: { type: String, required: true },
+      methodType: { type: String, required: true },
       subMethods: [
         {
           type: mongoose.Schema.Types.ObjectId,

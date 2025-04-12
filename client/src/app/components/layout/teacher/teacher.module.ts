@@ -22,6 +22,7 @@ import { LesStudentComponent } from './lesson-list/lesson/les-student/les-studen
 import { LessonComponent } from './lesson-list/lesson/lesson.component';
 import { TeacherComponent } from './teacher.component';
 import { ReportLessonListComponent } from './report-lesson-list/report-lesson-list.component';
+import { CloPointPlanComponent } from './lesson-list/lesson/clo-point-plan/clo-point-plan.component';
 
 const routes: Routes = [
   {
@@ -39,7 +40,8 @@ const routes: Routes = [
           { path: 'studentList', component: LesStudentListComponent },
           { path: 'clo-point', component: CloPointComponent },
           { path: 'clo-tree', component: CloTreeComponent },
-          { path: 'clo-plan', component: CloPlanComponent },
+          // { path: 'clo-plan', component: CloPlanComponent },
+          { path: 'clo-point-plan', component: CloPointPlanComponent },
           { path: 'attendance', component: AttendanceComponent },
           { path: 'curriculum', component: CurriculumComponent },
           { path: 'lab-grade', component: LabGradeComponent },
