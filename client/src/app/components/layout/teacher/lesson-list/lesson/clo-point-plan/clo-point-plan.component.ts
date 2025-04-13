@@ -8,7 +8,6 @@ import {
   ReactiveFormsModule,
 } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { saveAs } from 'file-saver'; // file-saver сан
 import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { InputNumberModule } from 'primeng/inputnumber';
@@ -18,14 +17,10 @@ import { SelectModule } from 'primeng/select';
 import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { ToastModule } from 'primeng/toast';
-import { forkJoin, map } from 'rxjs';
-import * as XLSX from 'xlsx';
-import { CLOService } from '../../../../../../services/cloService';
-import { PdfCloGeneratorService } from '../../../../../../services/pdf-clo-generator.service';
-import { PdfGeneratorService } from '../../../../../../services/pdf-generator.service';
-import { TeacherService } from '../../../../../../services/teacherService';
+import { forkJoin } from 'rxjs';
 import { AssessmentService } from '../../../../../../services/assessmentService';
 import { CloPointPlanService } from '../../../../../../services/cloPointPlanService';
+import { TeacherService } from '../../../../../../services/teacherService';
 
 @Component({
   selector: 'app-clo-plan',
@@ -62,7 +57,6 @@ export class CloPointPlanComponent {
   constructor(
     private fb: FormBuilder,
     private service: TeacherService,
-    private cloService: CLOService,
     private cloPointPlanService: CloPointPlanService,
     private assessService: AssessmentService,
     private msgService: MessageService,
@@ -178,8 +172,72 @@ export class CloPointPlanComponent {
   populateCLOForm() {
     const cloRowsArray = this.fb.array<FormGroup>([]);
 
+    // 1. Gather all valid subMethodIds from assessPlan
+    const validSubMethodIds = this.assessPlan.plans
+      .flatMap((pl: any) => pl.subMethods)
+      .map((sub: any) => sub._id);
+
+    // 2. Update cloPlan: remove subMethodId entries that are no longer valid
     this.cloPlan.forEach((clo: any) => {
-      const procPointsArray = this.fb.array<FormGroup>(
+      clo.procPoints = clo.procPoints.filter((p: any) =>
+        validSubMethodIds.includes(p.subMethodId)
+      );
+
+      clo.examPoints = clo.examPoints.filter((e: any) =>
+        validSubMethodIds.includes(e.subMethodId)
+      );
+    });
+
+    // 3. Then proceed with syncing new subMethods like before
+    this.assessPlan.plans.forEach((pl: any) => {
+      pl.subMethods.forEach((sub: any) => {
+        this.cloPlan.forEach((clo: any) => {
+          const inProc = clo.procPoints.some(
+            (p: any) => p.subMethodId === sub._id
+          );
+          const inExam = clo.examPoints.some(
+            (e: any) => e.subMethodId === sub._id
+          );
+
+          if (!inProc && pl.methodType === 'PROC') {
+            // insert to original position (optional: keep order)
+            const insertIndex = clo.procPoints.findIndex(
+              (p: any) =>
+                validSubMethodIds.indexOf(sub._id) <
+                validSubMethodIds.indexOf(p.subMethodId)
+            );
+            if (insertIndex === -1) {
+              clo.procPoints.push({ subMethodId: sub._id, point: 0 });
+            } else {
+              clo.procPoints.splice(insertIndex, 0, {
+                subMethodId: sub._id,
+                point: 0,
+              });
+            }
+          }
+
+          if (!inExam && pl.methodType === 'EXAM') {
+            const insertIndex = clo.examPoints.findIndex(
+              (e: any) =>
+                validSubMethodIds.indexOf(sub._id) <
+                validSubMethodIds.indexOf(e.subMethodId)
+            );
+            if (insertIndex === -1) {
+              clo.examPoints.push({ subMethodId: sub._id, point: 0 });
+            } else {
+              clo.examPoints.splice(insertIndex, 0, {
+                subMethodId: sub._id,
+                point: 0,
+              });
+            }
+          }
+        });
+      });
+    });
+
+    // 4. Form group үүсгэх хэсэг
+    this.cloPlan.forEach((clo: any) => {
+      const procPointsArray = this.fb.array(
         clo.procPoints.map((p: any) =>
           this.fb.group({
             subMethodId: [p.subMethodId],
@@ -188,7 +246,7 @@ export class CloPointPlanComponent {
         )
       );
 
-      const examPointsArray = this.fb.array<FormGroup>(
+      const examPointsArray = this.fb.array(
         clo.examPoints.map((e: any) =>
           this.fb.group({
             subMethodId: [e.subMethodId],
@@ -214,41 +272,48 @@ export class CloPointPlanComponent {
 
     this.cloPoint = this.cloPlan; // Table-д харуулах
   }
-  checkPointsConsistency() {
-    const formData = this.cloForm.value.cloRows;
-    const j = this.assessPlan;
 
-    this.assessPlan.plans.map((pl: any) => {
-      pl.subMethods.map((sub: any) => {
+  checkPointsConsistency(): boolean {
+    const formData = this.cloForm.value.cloRows;
+    let isValid = true;
+
+    this.assessPlan.plans.forEach((pl: any) => {
+      pl.subMethods.forEach((sub: any) => {
         let points = 0;
-        formData.map((row: any) => {
-          row.examPoints.map((item: any) => {
-            if (sub._id == item.subMethodId) {
+        formData.forEach((row: any) => {
+          row.examPoints.forEach((item: any) => {
+            if (sub._id === item.subMethodId) {
               points += item.point;
             }
           });
-          row.procPoints.map((item: any) => {
-            if (sub._id == item.subMethodId) {
+          row.procPoints.forEach((item: any) => {
+            if (sub._id === item.subMethodId) {
               points += item.point;
             }
           });
         });
 
-        if (sub.point != points) {
+        if (sub.point !== points) {
           this.msgService.add({
             severity: 'warn',
             summary: 'Анхааруулга',
             detail: `${sub.subMethod} баганын нийт оноо (${sub.point}) байх ёстой. Одоогийн нийлбэр оноо (${points})!`,
           });
-          return;
+          isValid = false;
         }
       });
     });
+
+    return isValid;
   }
 
   onSubmit() {
     const formData = this.cloForm.value.cloRows;
-    this.checkPointsConsistency();
+
+    const isValid = this.checkPointsConsistency();
+    if (!isValid) {
+      return;
+    }
     const request = this.isUpdate
       ? this.cloPointPlanService.updateCloPlan(formData)
       : this.cloPointPlanService.saveCloPlan(formData);

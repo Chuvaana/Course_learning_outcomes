@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, inject } from '@angular/core';
 import {
   FormArray,
   FormControl,
@@ -15,6 +15,7 @@ import { FloatLabelModule } from 'primeng/floatlabel';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { DropdownModule } from 'primeng/dropdown';
+import { CommonModule } from '@angular/common';
 
 type FormAssessment = FormGroup<{
   id: FormControl<string>;
@@ -44,6 +45,7 @@ type Form = FormGroup<{
     FloatLabelModule,
     ToastModule,
     DropdownModule,
+    CommonModule,
   ],
   providers: [MessageService],
   templateUrl: './clo-tree.component.html',
@@ -53,7 +55,8 @@ export class CloTreeComponent {
   constructor(
     private service: AssessmentService,
     private route: ActivatedRoute,
-    private msgService: MessageService
+    private msgService: MessageService,
+    private cd: ChangeDetectorRef
   ) {}
   lessonId!: string;
   fb = inject(NonNullableFormBuilder);
@@ -264,9 +267,22 @@ export class CloTreeComponent {
   }
 
   removeSubMethod(planIndex: number, answerIndex: number): void {
-    this.planForm.controls.plans
-      .at(planIndex)
-      ?.controls?.subMethods?.removeAt(answerIndex);
+    const planGroup = this.planForm.get('plans') as FormArray;
+    const subMethodsControl = planGroup.at(planIndex).get('subMethods');
+
+    if (subMethodsControl instanceof FormArray) {
+      console.log('Before remove:', subMethodsControl.value);
+      subMethodsControl.removeAt(answerIndex);
+      console.log('After remove:', subMethodsControl.value);
+    } else {
+      console.error('subMethods is not a FormArray', subMethodsControl);
+    }
+
+    this.cd.detectChanges();
+  }
+
+  trackByIndex(index: number, _: any): number {
+    return index;
   }
 
   checkSum(data: any): number {

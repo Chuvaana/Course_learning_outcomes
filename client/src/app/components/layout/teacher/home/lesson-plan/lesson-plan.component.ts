@@ -11,11 +11,11 @@ import { TableModule } from 'primeng/table';
 })
 export class LessonPlanComponent implements OnChanges {
   isLoading = false;
-  cloRows: any[] = [];
+  cloPoint: any[] = [];
   sampleData: any;
 
   @Input() cloList: any;
-  @Input() pointPlan: any;
+  @Input() assessPlan: any;
   @Input() cloPlan: any;
 
   ngOnChanges(changes: SimpleChanges) {
@@ -23,7 +23,7 @@ export class LessonPlanComponent implements OnChanges {
   }
 
   proccessedData() {
-    this.cloRows = []; // clear previous rows
+    this.cloPoint = []; // clear previous rows
     this.sampleData = [];
 
     if (Array.isArray(this.cloPlan) && this.cloPlan.length === 0) {
@@ -32,126 +32,154 @@ export class LessonPlanComponent implements OnChanges {
       this.populateCLOForm();
     }
 
-    this.cloRows = this.cloRows.map((row) => ({
-      ...row,
-      procTotal:
-        (row.timeManagement || 0) +
-        (row.engagement || 0) +
-        (row.recall || 0) +
-        (row.problemSolving || 0) +
-        (row.recall2 || 0) +
-        (row.problemSolving2 || 0) +
-        (row.toExp || 0) +
-        (row.processing || 0) +
-        (row.decisionMaking || 0) +
-        (row.formulation || 0) +
-        (row.analysis || 0) +
-        (row.implementation || 0),
-      examTotal:
-        (row.understandingLevel || 0) +
-        (row.analysisLevel || 0) +
-        (row.creationLevel || 0),
-      total:
-        (row.timeManagement || 0) +
-        (row.engagement || 0) +
-        (row.recall || 0) +
-        (row.problemSolving || 0) +
-        (row.recall2 || 0) +
-        (row.problemSolving2 || 0) +
-        (row.toExp || 0) +
-        (row.processing || 0) +
-        (row.decisionMaking || 0) +
-        (row.formulation || 0) +
-        (row.analysis || 0) +
-        (row.implementation || 0) +
-        (row.understandingLevel || 0) +
-        (row.analysisLevel || 0) +
-        (row.creationLevel || 0),
-    }));
-
     this.isLoading = false;
   }
 
   createRows() {
-    this.sampleData = [
-      [
-        this.pointPlan, // Ensure this is an array
-      ],
-      this.cloList.map((clo: any) => ({
-        id: '',
-        cloId: clo.id,
-        cloName: clo.cloName,
-        cloType: clo.type,
-        lessonId: 0,
-        timeManagement: 0,
-        engagement: 0,
-        recall: 0,
-        problemSolving: 0,
-        recall2: 0,
-        problemSolving2: 0,
-        toExp: 0,
-        processing: 0,
-        decisionMaking: 0,
-        formulation: 0,
-        analysis: 0,
-        implementation: 0,
-        understandingLevel: 0,
-        analysisLevel: 0,
-        creationLevel: 0,
-      })),
-    ];
-    this.sampleData[1].forEach((data: any) => {
-      this.cloRows.push(this.wrapRow(data));
+    this.cloPoint = [];
+
+    this.cloList.map((item: any) => {
+      const procPointsArray: any[] = [];
+      const examPointsArray: any[] = [];
+
+      this.cloPlan.forEach((plan: any) => {
+        plan.subMethods.forEach((sub: any) => {
+          const pointGroup = {
+            subMethodId: sub._id,
+            point: [0],
+          };
+
+          if (plan.methodType === 'PROC') {
+            procPointsArray.push(pointGroup);
+          } else if (plan.methodType === 'EXAM') {
+            examPointsArray.push(pointGroup);
+          }
+        });
+      });
+
+      this.cloPoint.push({
+        lessonId: '',
+        cloId: item.id,
+        cloType: item.type,
+        procPoints: procPointsArray,
+        examPoints: examPointsArray,
+      });
     });
   }
+
   populateCLOForm() {
-    this.sampleData = [[this.pointPlan], this.cloPlan];
+    const cloRowsArray = [];
 
-    this.sampleData[1].forEach((data: any) => {
-      this.cloRows.push(this.wrapRow(data));
+    // 1. Gather all valid subMethodIds from assessPlan
+    const validSubMethodIds = this.assessPlan.plans
+      .flatMap((pl: any) => pl.subMethods)
+      .map((sub: any) => sub._id);
+
+    // 2. Update cloPlan: remove subMethodId entries that are no longer valid
+    this.cloPlan.forEach((clo: any) => {
+      clo.procPoints = clo.procPoints.filter((p: any) =>
+        validSubMethodIds.includes(p.subMethodId)
+      );
+
+      clo.examPoints = clo.examPoints.filter((e: any) =>
+        validSubMethodIds.includes(e.subMethodId)
+      );
     });
+
+    // 3. Then proceed with syncing new subMethods like before
+    this.assessPlan.plans.forEach((pl: any) => {
+      pl.subMethods.forEach((sub: any) => {
+        this.cloPlan.forEach((clo: any) => {
+          const inProc = clo.procPoints.some(
+            (p: any) => p.subMethodId === sub._id
+          );
+          const inExam = clo.examPoints.some(
+            (e: any) => e.subMethodId === sub._id
+          );
+
+          if (!inProc && pl.methodType === 'PROC') {
+            // insert to original position (optional: keep order)
+            const insertIndex = clo.procPoints.findIndex(
+              (p: any) =>
+                validSubMethodIds.indexOf(sub._id) <
+                validSubMethodIds.indexOf(p.subMethodId)
+            );
+            if (insertIndex === -1) {
+              clo.procPoints.push({ subMethodId: sub._id, point: 0 });
+            } else {
+              clo.procPoints.splice(insertIndex, 0, {
+                subMethodId: sub._id,
+                point: 0,
+              });
+            }
+          }
+
+          if (!inExam && pl.methodType === 'EXAM') {
+            const insertIndex = clo.examPoints.findIndex(
+              (e: any) =>
+                validSubMethodIds.indexOf(sub._id) <
+                validSubMethodIds.indexOf(e.subMethodId)
+            );
+            if (insertIndex === -1) {
+              clo.examPoints.push({ subMethodId: sub._id, point: 0 });
+            } else {
+              clo.examPoints.splice(insertIndex, 0, {
+                subMethodId: sub._id,
+                point: 0,
+              });
+            }
+          }
+        });
+      });
+    });
+
+    // 4. Form group үүсгэх хэсэг
+    this.cloPlan.forEach((clo: any) => {
+      const procPointsArray = clo.procPoints.map((p: any) => ({
+        subMethodId: [p.subMethodId],
+        point: [p.point],
+      }));
+
+      const examPointsArray = clo.examPoints.map((e: any) => ({
+        subMethodId: [e.subMethodId],
+        point: [e.point],
+      }));
+
+      cloRowsArray.push({
+        lessonId: [clo.lessonId],
+        cloId: [clo.cloId],
+        cloType: [clo.cloType],
+        procPoints: procPointsArray,
+        examPoints: examPointsArray,
+      });
+    });
+
+    this.cloPoint = this.cloPlan;
   }
 
-  private wrapRow(data: any) {
-    return {
-      id: data.id,
-      lessonId: data.lessonId,
-      cloId: data.cloId,
-      cloName: data.cloName,
-      cloType: data.cloType,
-      timeManagement: data.timeManagement,
-      engagement: data.engagement,
-      recall: data.recall,
-      problemSolving: data.problemSolving,
-      recall2: data.recall2,
-      problemSolving2: data.problemSolving2,
-      toExp: data.toExp,
-      processing: data.processing,
-      decisionMaking: data.decisionMaking,
-      formulation: data.formulation,
-      analysis: data.analysis,
-      implementation: data.implementation,
-      understandingLevel: data.understandingLevel,
-      analysisLevel: data.analysisLevel,
-      creationLevel: data.creationLevel,
-    };
+  getTotalProgressScore(rowIndex: number): number {
+    const row = this.cloPoint[rowIndex];
+    return row.procPoints
+      .map((p: any) => Number(p.point) || 0)
+      .reduce((sum: number, val: number) => sum + val, 0);
   }
 
-  getTotalScore(row: any): number {
+  getTotalExamScore(rowIndex: number): number {
+    const row = this.cloPoint[rowIndex];
+    return row.examPoints
+      .map((e: any) => Number(e.point) || 0)
+      .reduce((sum: number, val: number) => sum + val, 0);
+  }
+
+  getTotalScore(rowIndex: number): number {
     return (
-      (row.timeManagement || 0) +
-      (row.engagement || 0) +
-      (row.recall || 0) +
-      (row.problemSolving || 0) +
-      (row.recall2 || 0) +
-      (row.problemSolving2 || 0) +
-      (row.toExp || 0) +
-      (row.processing || 0) +
-      (row.decisionMaking || 0) +
-      (row.formulation || 0) +
-      (row.analysis || 0) +
-      (row.implementation || 0)
+      this.getTotalProgressScore(rowIndex) + this.getTotalExamScore(rowIndex)
     );
+  }
+
+  getCloName(cloId: string): string {
+    const clo = this.cloList.find((c: { id: string }) => c.id === cloId);
+    return clo ? clo.cloName : 'Unknown';
   }
 
   getGroupHeaderLabel(cloType: string): string {

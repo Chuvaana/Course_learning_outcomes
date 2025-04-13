@@ -43,20 +43,30 @@ exports.getCloPlansByLessonId = async (req, res) => {
   }
 };
 
-// ✅ Update single CLO plan by _id
 exports.updateCloPlan = async (req, res) => {
   try {
-    const { id } = req.params;
-    const updated = await CloPlan.findByIdAndUpdate(id, req.body, { new: true });
+    const cloRows = req.body;
 
-    if (!updated) {
-      return res.status(404).json({ message: 'CLO plan not found.' });
-    }
+    const bulkOps = cloRows.map((clo) => ({
+      updateOne: {
+        filter: { lessonId: clo.lessonId, cloId: clo.cloId },
+        update: {
+          $set: {
+            cloType: clo.cloType,
+            procPoints: clo.procPoints,
+            examPoints: clo.examPoints,
+          },
+        },
+        upsert: true, // Хэрвээ байхгүй бол шинээр үүсгэнэ
+      },
+    }));
 
-    res.json(updated);
+    const result = await CloPlan.bulkWrite(bulkOps);
+
+    res.json({ message: 'CLO plans updated successfully.', result });
   } catch (err) {
-    console.error('Error updating CLO plan:', err);
-    res.status(500).json({ message: 'Server error' });
+    console.error('Error updating CLO plans:', err);
+    res.status(500).json({ message: 'Server error while updating CLO plans.' });
   }
 };
 

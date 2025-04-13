@@ -1,21 +1,46 @@
 <div class="additional">
-    <p-toast />
-    <form [formGroup]="additionalForm" (ngSubmit)="onSubmit()">
-        <p-button label="Хадгалах" icon="pi pi-check" iconPos="right" type="submit" />
+  <p-toast />
+  <form [formGroup]="additionalForm" (ngSubmit)="onSubmit()">
+    <p-button
+      label="Хадгалах"
+      icon="pi pi-check"
+      iconPos="right"
+      type="submit"
+    />
 
-        <div class="first">
-            <div class="sub" formArrayName="additional">
-                <div *ngFor="let book of additional.controls; let i = index" class="w-full line">
-                    <p-floatlabel variant="on">
-                        <input pInputText [formControlName]="i" [id]="'additional' + i" autocomplete="off"
-                            class=" p-3 border border-gray-300 rounded-lg focus:border-blue-500" />
-                        <label [for]="'additional' + i">Хичээлд тавигдах нэмэлт шаардлага {{i + 1}}</label>
-                    </p-floatlabel>
-                    <p-button icon="pi pi-trash" [rounded]="true" [text]="true" severity="danger"
-                        (click)="removeAdditional(i)" />
-                </div>
-                <p-button label="Нэмэх" icon="pi pi-plus" iconPos="right" (click)="addAdditional()" />
-            </div>
+    <div class="first">
+      <div class="sub" formArrayName="additional">
+        <div
+          *ngFor="let book of additional.controls; let i = index"
+          class="w-full line"
+        >
+          <p-floatlabel variant="on">
+            <input
+              pInputText
+              [formControlName]="i"
+              [id]="'additional' + i"
+              autocomplete="off"
+              class="p-3 border border-gray-300 rounded-lg focus:border-blue-500"
+            />
+            <label [for]="'additional' + i"
+              >Хичээлд тавигдах нэмэлт шаардлага {{ i + 1 }}</label
+            >
+          </p-floatlabel>
+          <p-button
+            icon="pi pi-trash"
+            [rounded]="true"
+            [text]="true"
+            severity="danger"
+            (click)="removeAdditional(i)"
+          />
         </div>
-    </form>
+        <p-button
+          label="Нэмэх"
+          icon="pi pi-plus"
+          iconPos="right"
+          (click)="addAdditional()"
+        />
+      </div>
+    </div>
+  </form>
 </div>

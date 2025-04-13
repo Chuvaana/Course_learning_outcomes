@@ -1,7 +1,7 @@
 <p-toast />
 <form [formGroup]="planForm" (ngSubmit)="onSubmit()" class="p-fluid">
   <div formArrayName="plans">
-    @for (plan of planForm.controls.plans.controls; track planIndex; let
+    @for (plan of planForm.controls.plans.controls; track trackByIndex; let
     planIndex = $index) {
     <div
       class="p-4 border-1 border-round surface-border shadow-1"
@@ -11,14 +11,6 @@
         <div style="display: flex">
           <p-floatlabel variant="on">
             <input pInputText type="text" formControlName="methodName" />
-            <p-dropdown
-              formControlName="methodType"
-              [options]="methodTypes"
-              optionLabel="name"
-              optionValue="id"
-              placeholder="Төрөл"
-              class="form-dropdown"
-            />
             <label for="methodName">Үнэлгээний арга</label>
           </p-floatlabel>
           <button
@@ -32,33 +24,38 @@
       </div>
 
       <div formArrayName="subMethods" class="answers mb-3">
-        @for (answer of
-        planForm.controls.plans.controls.at(planIndex)?.controls?.subMethods?.controls;
-        track answerIndex; let answerIndex = $index) {
-        <div [formGroupName]="answerIndex" class="answer p-inputgroup mb-2">
-          <div style="display: flex">
-            <p-floatlabel variant="on">
-              <input pInputText type="text" formControlName="subMethod" />
-              <label for="subMethod">Дэд арга</label>
-            </p-floatlabel>
-            <p-floatlabel variant="on">
-              <p-inputNumber
-                formControlName="point"
-                id="point"
-                autocomplete="off"
-              ></p-inputNumber>
-              <label for="point">Оноо</label>
-            </p-floatlabel>
-            <button
-              pButton
-              type="button"
-              icon="pi pi-times"
-              class="p-button-text p-button-danger"
-              (click)="removeSubMethod(planIndex, answerIndex)"
-            ></button>
+        <div
+          *ngFor="
+            let answer of planForm.controls.plans.controls[planIndex].controls
+              .subMethods.controls;
+            let answerIndex = index;
+            trackBy: trackByIndex
+          "
+        >
+          <div [formGroupName]="answerIndex" class="answer p-inputgroup mb-2">
+            <div style="display: flex">
+              <p-floatlabel variant="on">
+                <input pInputText type="text" formControlName="subMethod" />
+                <label for="subMethod">Дэд арга</label>
+              </p-floatlabel>
+              <p-floatlabel variant="on">
+                <p-inputNumber
+                  formControlName="point"
+                  id="point"
+                  autocomplete="off"
+                ></p-inputNumber>
+                <label for="point">Оноо</label>
+              </p-floatlabel>
+              <button
+                pButton
+                type="button"
+                icon="pi pi-times"
+                class="p-button-text p-button-danger"
+                (click)="removeSubMethod(planIndex, answerIndex)"
+              ></button>
+            </div>
           </div>
         </div>
-        }
 
         <button
           pButton
