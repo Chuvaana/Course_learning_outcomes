@@ -12,6 +12,7 @@ import { TableModule } from 'primeng/table';
 import { ToastModule } from 'primeng/toast';
 import { LabGradeService } from '../../../../../services/labGradeService';
 import { StudentService } from '../../../../../services/studentService';
+import { AssessmentService } from '../../../../../services/assessmentService';
 
 interface GradeRecord {
   student: {
@@ -70,20 +71,17 @@ export class LabGradeComponent {
     { label: 'Баасан', value: 'Friday' },
   ];
 
-  classTypes = [
-    { label: 'Лекц', value: 'lec' },
-    { label: 'Семинар', value: 'sem' },
-    { label: 'Лаборатори', value: 'lab' },
-  ];
-
   showPreviousWeeks = false;
   showEdit = false;
+
+  subMethods = [];
 
   constructor(
     private studentService: StudentService,
     private route: ActivatedRoute,
     private labGradeService: LabGradeService,
-    private msgService: MessageService
+    private msgService: MessageService,
+    private assessService: AssessmentService
   ) {}
 
   ngOnInit() {
@@ -96,6 +94,10 @@ export class LabGradeComponent {
         this.startDate = new Date(res.itemValue);
       }
     });
+
+    // this.assessService.getAssessmentByLesson(this.lessonId).subscribe((res) => {
+    //   this.subMethods = res
+    // })
   }
 
   async onSelectionChange(): Promise<void> {

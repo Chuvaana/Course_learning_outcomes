@@ -1,7 +1,6 @@
 :host ::ng-deep .p-datatable {
   width: 100%;
   border-collapse: collapse;
-  font-size: 14px;
 }
 
 :host ::ng-deep .p-datatable th,
@@ -9,15 +8,4 @@
   padding: 10px;
   text-align: center;
   border: 1px solid #ddd;
-}
-
-:host ::ng-deep .p-frozen-column {
-  font-weight: bold;
-}
-:host ::ng-deep .p-datatable-frozen-tbody {
-  font-weight: bold;
-}
-
-.cloTable {
-  padding: 10px;
 }

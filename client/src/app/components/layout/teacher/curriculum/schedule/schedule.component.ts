@@ -103,7 +103,7 @@ export class ScheduleComponent {
           this.closSem = this.clos.filter((item: any) => item.type === 'SEM');
           this.closLab = this.clos.filter((item: any) => item.type === 'LAB');
         });
-        this.readData(); // Датаг дахин ачаалах функц
+        // this.readData(); // Датаг дахин ачаалах функц
       });
     }
 
