@@ -300,23 +300,6 @@ export class MainInfoComponent {
       checkManagerDatetime: new Date(formData.checkManagerDatetime), // Array хэлбэртэй
     };
     if (this.isNew) {
-      this.service.createLessonCurriculum(lessoncurriculumsData).subscribe({
-        next: (response: any) => {
-          const data = response;
-          this.msgService.add({
-            severity: 'success',
-            summary: 'Амжилттай',
-            detail: 'Амжилттай хадгалагдлаа!',
-          });
-        },
-        error: (error) => {
-          this.msgService.add({
-            severity: 'error',
-            summary: 'Алдаа',
-            detail: 'Алдаа гарлаа: ' + error.message,
-          });
-        },
-      });
       this.service.saveLesson(cleanedData).subscribe({
         next: (response: any) => {
           const data = {
@@ -348,25 +331,6 @@ export class MainInfoComponent {
         },
       });
     } else {
-      this.service
-        .updateLessonCurriculum(this.lessonId, lessoncurriculumsData)
-        .subscribe({
-          next: (response: any) => {
-            const data = response;
-            this.msgService.add({
-              severity: 'success',
-              summary: 'Амжилттай',
-              detail: 'Амжилттай хадгалагдлаа!',
-            });
-          },
-          error: (error) => {
-            this.msgService.add({
-              severity: 'error',
-              summary: 'Алдаа',
-              detail: 'Алдаа гарлаа: ' + error.message,
-            });
-          },
-        });
       this.service.updateLesson(this.lessonId, cleanedData).subscribe({
         next: (response) => {
           this.msgService.add({
