@@ -18,6 +18,9 @@ import { ExamService } from '../../../../services/examService';
 import { ActivatedRoute } from '@angular/router';
 import { FileUploadModule } from 'primeng/fileupload';
 import { lessonAssessmentService } from '../../../../services/lessonAssessment';
+import { InputNumberModule } from 'primeng/inputnumber';
+import { TableModule } from 'primeng/table';
+import { FloatLabelModule } from 'primeng/floatlabel';
 
 @Component({
   selector: 'app-exam-import',
@@ -31,7 +34,10 @@ import { lessonAssessmentService } from '../../../../services/lessonAssessment';
     ToastModule,
     CommonModule,
     InputTextModule,
-    FileUploadModule
+    FileUploadModule,
+    InputNumberModule,
+    TableModule,
+    FloatLabelModule,
   ],
   templateUrl: './exam-import.component.html',
   styleUrls: ['./exam-import.component.scss'],
@@ -59,9 +65,9 @@ export class ExamImportComponent {
     cloId: null,
     cloName: null,
     max: null,
-    min: null
+    min: null,
   };
-  cloQuestionData: { cloId: any; cloName: any, max: any; min: any }[] = [];
+  cloQuestionData: { cloId: any; cloName: any; max: any; min: any }[] = [];
 
   clos: any[] = []; // Initialize to avoid undefined issues
   formGroup: any;
@@ -81,19 +87,19 @@ export class ExamImportComponent {
       startDate: ['', Validators.required],
       endDate: ['', Validators.required],
       durationDate: ['', Validators.required],
-      question: this.fb.array([{
-        questionId: ['', Validators.required],
-        cloId: ['', Validators.required],
-        allPoint: ['', Validators.required],
-        takePoint: ['', Validators.required],
-      }
+      question: this.fb.array([
+        {
+          questionId: ['', Validators.required],
+          cloId: ['', Validators.required],
+          allPoint: ['', Validators.required],
+          takePoint: ['', Validators.required],
+        },
       ]),
     });
   }
 
   ngOnInit(): void {
-
-    this.route.parent?.paramMap.subscribe(params => {
+    this.route.parent?.paramMap.subscribe((params) => {
       this.lessonId = params.get('id')!;
     });
 
@@ -113,12 +119,12 @@ export class ExamImportComponent {
             cloId: i.id,
             cloName: i.cloName,
             max: null,
-            min: null
+            min: null,
           };
 
           this.cloQuestionData.push(cloQuestion);
         }
-      })
+      });
       this.clos = closData;
     });
   }
@@ -129,13 +135,11 @@ export class ExamImportComponent {
     });
   }
   onFileChange(event: any) {
-    const target: DataTransfer = <DataTransfer>event.target;
-    if (target.files.length !== 1) {
-      console.error('Cannot use multiple files');
+    const file = event.files[0];
+    if (!file) {
+      console.error('No file selected');
       return;
     }
-
-    const file = target.files[0];
 
     const reader: FileReader = new FileReader();
     reader.onload = (e: any) => {
@@ -219,16 +223,16 @@ export class ExamImportComponent {
       this.msgService.add({
         severity: 'error',
         summary: 'Алдаа',
-        detail: `Алдаа гарлаа: Дүнгийн файл зөрсөн байна! Алдаа -> '${data[mismatchedIndex]
-          }' (${mismatchedIndex + 1}-р багана)`,
+        detail: `Алдаа гарлаа: Дүнгийн файл зөрсөн байна! Алдаа -> '${
+          data[mismatchedIndex]
+        }' (${mismatchedIndex + 1}-р багана)`,
       });
       return false;
     }
   }
 
-
   resetInputs() {
-    this.clos.forEach(clo => {
+    this.clos.forEach((clo) => {
       clo.minValue = null;
       clo.maxValue = null;
     });
@@ -241,9 +245,8 @@ export class ExamImportComponent {
       // if (this.questionAmount >= value && type === 'max') {
       const allSelectedNumbers: Set<number> = new Set();
 
-
       // min/max утгыг шинэчилж байна
-      this.cloQuestionData.forEach(i => {
+      this.cloQuestionData.forEach((i) => {
         if (i.cloId === cloId) {
           if (type === 'max') {
             if (value == '') {
@@ -280,7 +283,9 @@ export class ExamImportComponent {
         this.msgService.add({
           severity: 'warn',
           summary: 'Анхааруулга',
-          detail: `Дараах тоонууд хамрагдаагүй байна: ${missingNumbers.join(', ')}`,
+          detail: `Дараах тоонууд хамрагдаагүй байна: ${missingNumbers.join(
+            ', '
+          )}`,
         });
         this.missingNumberCount = missingNumbers;
       } else {
@@ -292,7 +297,7 @@ export class ExamImportComponent {
         });
       }
       // 1. MIN > MAX шалгах
-      this.cloQuestionData.forEach(i => {
+      this.cloQuestionData.forEach((i) => {
         if (this.isValidRange(i.min, i.max) && i.min >= i.max) {
           this.msgService.add({
             severity: 'error',
@@ -332,7 +337,12 @@ export class ExamImportComponent {
   }
 
   // ✅ Давхцал шалгах функц
-  private isOverlap(min1: number, max1: number, min2: number, max2: number): boolean {
+  private isOverlap(
+    min1: number,
+    max1: number,
+    min2: number,
+    max2: number
+  ): boolean {
     return min1 <= max2 && max1 >= min2;
   }
 
@@ -351,7 +361,14 @@ export class ExamImportComponent {
     let questionTakePoint: number;
     // Үндсэн assessmentFormDat\
     let assessmentFormDataParam: {
-      lessonId: string; studentId: string; allPoint: number; takePoint: string; startDate: string; endDate: string; durationDate: string; question: {
+      lessonId: string;
+      studentId: string;
+      allPoint: number;
+      takePoint: string;
+      startDate: string;
+      endDate: string;
+      durationDate: string;
+      question: {
         questionId: number;
         cloId: string;
         allPoint: number;
@@ -359,10 +376,7 @@ export class ExamImportComponent {
       }[];
     }[] = [];
 
-
-    this.cloQuestionData.map((data) => {
-
-    });
+    this.cloQuestionData.map((data) => {});
 
     // Логикийг шалгаж эхэлнэ
     if (!this.activeFileLogic) {
@@ -376,10 +390,11 @@ export class ExamImportComponent {
         this.msgService.add({
           severity: 'error',
           summary: 'Алдаа',
-          detail: `Дараах тоонууд хамрагдаагүй байна: ${this.missingNumberCount.join(', ')}`,
+          detail: `Дараах тоонууд хамрагдаагүй байна: ${this.missingNumberCount.join(
+            ', '
+          )}`,
         });
       } else {
-
         if (!this.activeAction) {
           this.msgService.add({
             severity: 'error',
@@ -389,7 +404,8 @@ export class ExamImportComponent {
         } else {
           // tableData-д ажиллана
           this.tableData.forEach((e, index) => {
-            if (index !== 0) { // Хоёрдугаар мөрөөс эхэлнэ
+            if (index !== 0) {
+              // Хоёрдугаар мөрөөс эхэлнэ
               const assessmentFormData = {
                 lessonId: '',
                 studentId: '',
@@ -408,7 +424,9 @@ export class ExamImportComponent {
               assessmentFormData.lessonId = this.lessonId;
 
               // allPoint-г эхний мөрөөс гаргаж авна
-              assessmentFormData.allPoint = Number(this.tableData[0][8].substring(6, 8));
+              assessmentFormData.allPoint = Number(
+                this.tableData[0][8].substring(6, 8)
+              );
               // Хэрэглэгчийн мэдээлэл
               assessmentFormData.studentId = e[2]; // Оюутны ID (e[2])
               assessmentFormData.takePoint = e[8]; // Оногдсон оноо
@@ -433,7 +451,10 @@ export class ExamImportComponent {
                     const question = {
                       questionId: countQuetion, // Асуулт ID (row index)
                       cloId: data.cloId, // CLO ID
-                      allPoint: countQuetion > 9 ? Number(this.tableData[0][j].substring(8, 12)) : Number(this.tableData[0][j].substring(6, 12)), // Цэгийн оноо
+                      allPoint:
+                        countQuetion > 9
+                          ? Number(this.tableData[0][j].substring(8, 12))
+                          : Number(this.tableData[0][j].substring(6, 12)), // Цэгийн оноо
                       takePoint: e[j], // Хэрэглэгчийн оноо
                     };
 
@@ -448,23 +469,29 @@ export class ExamImportComponent {
               assessmentFormData.question = questions;
               assessmentFormDataParam.push(assessmentFormData);
               if (countQWEwe <= 3) {
-                this.service.getAllLessonAssments(this.lessonId).subscribe((res) => {
-                  let checkData = false;
-                  console.log(res);
-                  res.map((beforeData: any) => {
-                    if (assessmentFormData.studentId !== beforeData.studentId) {
-                      checkData = true;
+                this.service
+                  .getAllLessonAssments(this.lessonId)
+                  .subscribe((res) => {
+                    let checkData = false;
+                    console.log(res);
+                    res.map((beforeData: any) => {
+                      if (
+                        assessmentFormData.studentId !== beforeData.studentId
+                      ) {
+                        checkData = true;
+                      }
+                    });
+                    if (checkData) {
+                      this.lessonAssessmentService
+                        .createLesAssessment(assessmentFormData)
+                        .subscribe((res) => {
+                          console.log(res);
+                        });
+                      allreadyInStudent++;
+                    } else {
+                      newStudent++;
                     }
                   });
-                  if(checkData){
-                    this.lessonAssessmentService.createLesAssessment(assessmentFormData).subscribe((res) => {
-                      console.log(res);
-                    })
-                    allreadyInStudent++;
-                  }else{
-                    newStudent++;
-                  }
-                })
                 countQWEwe = countQWEwe + 1;
               }
               this.serviceAfterMsg(newStudent, allreadyInStudent);
@@ -473,11 +500,9 @@ export class ExamImportComponent {
         }
         console.log(assessmentFormDataParam);
       }
-
     }
   }
-  serviceAfterMsg(newStudent: any, allreadyInStudent: any){
-
+  serviceAfterMsg(newStudent: any, allreadyInStudent: any) {
     if (newStudent != 0) {
       this.msgService.add({
         severity: 'success',
