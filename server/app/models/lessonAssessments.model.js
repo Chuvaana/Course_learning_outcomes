@@ -14,6 +14,8 @@ const LessonAssessmentsSchema = new mongoose.Schema({
   takePoint: { type: String, required: true },
   startDate: { type: String, required: true },
   endDate: { type: String, required: true },
+  examType: { type: String, required: true },
+  examTypeName: { type: String, required: true },
   durationDate: { type: String, required: true },
   question: [QuestionSchema],
 }, { timestamps: true });

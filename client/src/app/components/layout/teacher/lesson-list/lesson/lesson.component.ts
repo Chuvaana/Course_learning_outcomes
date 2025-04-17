@@ -72,6 +72,11 @@ export class LessonComponent {
         routerLink: ['/main/teacher/lesson', this.lessonId, 'exam-import'],
       },
       {
+        label: 'Явцын үнэлгээ',
+        icon: 'pi pi-plus',
+        routerLink: ['/main/teacher/lesson', this.lessonId, 'progress-poll'],
+      },
+      {
         label: 'Дүн',
         icon: 'pi pi-graduation-cap',
         items: [

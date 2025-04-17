@@ -1,0 +1,38 @@
+<div class="lesson-body">
+  <div class="question">
+    <div class="header-title">
+
+      <div class="title">
+        <p-iftalabel>
+          <input pInputText id="username" [(ngModel)]="value" autocomplete="off" class="custom-width" />
+          <label for="username">Username</label>
+        </p-iftalabel>
+      </div>
+      <div class="">
+        <!-- <p-multiselect [options]="cities" [(ngModel)]="selectedCities" optionLabel="name" placeholder="Select Cities" [maxSelectedLabels]="3" styleClass="w-full md:w-80" /> -->
+        <p-dropdown [options]="cities" [(ngModel)]="selectedCity" optionLabel="name" placeholder="Select a City"
+          class="custom-dropdown" />
+      </div>
+    </div>
+    <div class="main-questoin">
+      <div class="answer-check-box">
+        1
+      </div>
+      <div class="answer-check-box">
+        <p-checkbox
+        [(ngModel)]="checked"
+        [binary]="true"
+        inputId="binary" />
+      </div>
+      <div class="">
+        <p-iftalabel>
+          <input pInputText id="username" [(ngModel)]="value" autocomplete="off" class="custom-width" />
+          <label for="username">Username</label>
+        </p-iftalabel>
+      </div>
+      <div class="answer-check-box">
+        <i class="pi pi-times" style="color: green"></i>
+      </div>
+    </div>
+  </div>
+</div>

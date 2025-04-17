@@ -5,8 +5,8 @@ module.exports = app => {
 
     router.post("/", additionalController.createLessonCurriculum);
     router.get("/", additionalController.getAllLessonCurriculum);
-    // router.get("/:id", additionalController.getCurriculumByLessonId);
     router.get("/:id", additionalController.getLessonCurriculumById);
+    router.get("/lessonId/:id", additionalController.getCurriculumByLessonId);
     router.put("/:id", additionalController.updateLessonCurriculum);
     router.delete("/:id", additionalController.deleteLessonCurriculum);
 

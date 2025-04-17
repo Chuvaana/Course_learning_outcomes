@@ -47,18 +47,18 @@ export class CurriculumService {
   }
 
   getCurriculumByLessonId(id: string) {
-    return this.http.get(`${this.apiUrl}/lessoncurriculum/${id}`)
+    return this.http.get(`${this.apiUrl}/lessoncurriculums/lessonId/${id}`)
   }
 
   createLessonCurriculum(data: any) {
-    return this.http.post(`${this.apiUrl}/lessoncurriculum`, data);
+    return this.http.post(`${this.apiUrl}/lessoncurriculums/`, data);
   }
 
   updateLessonCurriculum(id: string, data: any) {
-    return this.http.put(`${this.apiUrl}/lessoncurriculum/${id}`, data);
+    return this.http.put(`${this.apiUrl}/lessoncurriculums/${id}`, data);
   }
 
   getAllLessonCurriculums() {
-    return this.http.get(`${this.apiUrl}/lessoncurriculum`);
+    return this.http.get(`${this.apiUrl}/lessoncurriculums/`);
   }
 }

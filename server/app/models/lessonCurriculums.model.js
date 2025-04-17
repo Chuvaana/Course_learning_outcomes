@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const LessonCurriculumSchema = new mongoose.Schema({
-    lessonId: { type: mongoose.Schema.Types.ObjectId, ref: "Lesson", required: true },
+    lessonId: { type: String },
     createdTeacherBy: { type: String },
     createdTeacherDatetime: { type: Date },
     checkManagerBy: { type: String },
