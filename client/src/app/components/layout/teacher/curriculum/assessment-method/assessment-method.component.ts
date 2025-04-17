@@ -1,38 +1,105 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
-import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { Component, Input, SimpleChanges } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { MessageService, SelectItem } from 'primeng/api';
+import { ButtonModule } from 'primeng/button';
+import { CheckboxModule } from 'primeng/checkbox';
+import { DropdownModule } from 'primeng/dropdown';
+import { InputNumberModule } from 'primeng/inputnumber';
+import { InputTextModule } from 'primeng/inputtext';
+import { SelectModule } from 'primeng/select';
 import { TableModule } from 'primeng/table';
+import { TagModule } from 'primeng/tag';
+import { ToastModule } from 'primeng/toast';
+import { AssessmentService } from '../../../../../services/assessmentService';
+import { TabRefreshService } from '../tabRefreshService';
+import { forkJoin, Subscription } from 'rxjs';
+import { MultiSelectModule } from 'primeng/multiselect';
+import { TeacherService } from '../../../../../services/teacherService';
+import { CloPointPlanService } from '../../../../../services/cloPointPlanService';
+interface Assessment {
+  id: string;
+  lessonId: string;
+  clo: any;
+  attendance: boolean;
+  assignment: boolean;
+  quiz: boolean;
+  project: boolean;
+  lab: boolean;
+  exam: boolean;
+}
+
+interface AssessFooter {
+  id?: string;
+  lessonId: string;
+  name: string;
+  attendanceValue: number;
+  assignmentValue: number;
+  quizValue: number;
+  projectValue: number;
+  labValue: number;
+  examValue: number;
+}
 
 @Component({
-  selector: 'app-lesson-plan',
-  imports: [CommonModule, TableModule, ProgressSpinnerModule],
-  templateUrl: './lesson-plan.component.html',
-  styleUrl: './lesson-plan.component.scss',
+  selector: 'app-assessment-method',
+  standalone: true,
+  imports: [
+    CommonModule,
+    TableModule,
+    FormsModule,
+    ToastModule,
+    TagModule,
+    ButtonModule,
+    SelectModule,
+    CheckboxModule,
+    DropdownModule,
+    InputTextModule,
+    InputNumberModule,
+    MultiSelectModule,
+  ],
+  providers: [MessageService],
+  templateUrl: './assessment-method.component.html',
+  styleUrl: './assessment-method.component.scss',
 })
-export class LessonPlanComponent implements OnChanges {
+export class AssessmentMethodComponent {
   isLoading = false;
   cloPoint: any[] = [];
   sampleData: any;
+  cloList: any;
+  assessPlan: any;
+  cloPlan: any;
 
-  @Input() cloList: any;
-  @Input() assessPlan: any;
-  @Input() cloPlan: any;
+  @Input() lessonId: any;
+
+  constructor(
+    private teacherService: TeacherService,
+    private assessService: AssessmentService,
+    private cloPointPlanService: CloPointPlanService
+  ) {}
 
   ngOnChanges(changes: SimpleChanges) {
     this.proccessedData();
   }
 
   proccessedData() {
-    this.cloPoint = []; // clear previous rows
-    this.sampleData = [];
+    forkJoin([
+      this.teacherService.getCloList(this.lessonId),
+      this.cloPointPlanService.getPointPlan(this.lessonId),
+      this.assessService.getAssessmentByLesson(this.lessonId),
+    ]).subscribe(([cloList, cloPlan, assessPlan]) => {
+      this.cloList = cloList;
+      this.assessPlan = assessPlan;
+      this.cloPlan = cloPlan;
+      this.cloPoint = []; // clear previous rows
+      this.sampleData = [];
 
-    if (Array.isArray(this.cloPlan) && this.cloPlan.length === 0) {
-      this.createRows();
-    } else {
-      this.populateCLOForm();
-    }
-
-    this.isLoading = false;
+      if (Array.isArray(this.cloPlan) && this.cloPlan.length === 0) {
+        this.createRows();
+      } else {
+        this.populateCLOForm();
+      }
+    });
   }
 
   createRows() {
@@ -68,7 +135,7 @@ export class LessonPlanComponent implements OnChanges {
   }
 
   populateCLOForm() {
-    const cloRowsArray = [];
+    // const cloRowsArray = [];
 
     // 1. Gather all valid subMethodIds from assessPlan
     const validSubMethodIds = this.assessPlan.plans
@@ -90,6 +157,11 @@ export class LessonPlanComponent implements OnChanges {
     this.assessPlan.plans.forEach((pl: any) => {
       pl.subMethods.forEach((sub: any) => {
         this.cloPlan.forEach((clo: any) => {
+          pl.methodPoint = pl.subMethods.reduce(
+            (sum: number, sub: any) => sum + (sub.point || 0),
+            0
+          );
+          console.log(pl.methodPoint);
           const inProc = clo.procPoints.some(
             (p: any) => p.subMethodId === sub._id
           );
@@ -132,6 +204,7 @@ export class LessonPlanComponent implements OnChanges {
         });
       });
     });
+
     this.cloPoint = this.cloPlan;
   }
 

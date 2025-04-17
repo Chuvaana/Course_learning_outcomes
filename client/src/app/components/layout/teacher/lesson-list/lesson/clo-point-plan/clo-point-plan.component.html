@@ -1,7 +1,14 @@
 <div class="cloTable">
   <p-toast />
   <form [formGroup]="cloForm" (ngSubmit)="onSubmit()">
-    <div style="display: flex; justify-content: flex-start; gap: 10px">
+    <div
+      style="
+        display: flex;
+        justify-content: flex-start;
+        gap: 10px;
+        margin-bottom: 10px;
+      "
+    >
       <p-button
         severity="info"
         icon="pi pi-save"

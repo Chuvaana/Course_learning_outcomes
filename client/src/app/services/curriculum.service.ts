@@ -3,12 +3,12 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class CurriculumService {
   private apiUrl = 'http://localhost:3000/api'; // Update with your actual API URL
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
   getBranches(): Observable<any> {
     return this.http.get(`${this.apiUrl}/branches`);
@@ -39,26 +39,29 @@ export class CurriculumService {
   }
 
   getMainInfo(id: string) {
-    return this.http.get(`${this.apiUrl}/lesson/${id}`)
+    return this.http.get(`${this.apiUrl}/lesson/${id}`);
   }
 
   addLessonToTeacher(id: string, teacherData: any): Observable<any> {
-    return this.http.put(`${this.apiUrl}/teachers/addLesson/${id}`, teacherData);
+    return this.http.put(
+      `${this.apiUrl}/teachers/addLesson/${id}`,
+      teacherData
+    );
   }
 
   getCurriculumByLessonId(id: string) {
-    return this.http.get(`${this.apiUrl}/lessoncurriculums/lessonId/${id}`)
+    return this.http.get(`${this.apiUrl}/lessonCurriculum/${id}`);
   }
 
   createLessonCurriculum(data: any) {
-    return this.http.post(`${this.apiUrl}/lessoncurriculums/`, data);
+    return this.http.post(`${this.apiUrl}/lessonCurriculum`, data);
   }
 
   updateLessonCurriculum(id: string, data: any) {
-    return this.http.put(`${this.apiUrl}/lessoncurriculums/${id}`, data);
+    return this.http.put(`${this.apiUrl}/lessonCurriculum/${id}`, data);
   }
 
   getAllLessonCurriculums() {
-    return this.http.get(`${this.apiUrl}/lessoncurriculums/`);
+    return this.http.get(`${this.apiUrl}/lessonCurriculum`);
   }
 }
