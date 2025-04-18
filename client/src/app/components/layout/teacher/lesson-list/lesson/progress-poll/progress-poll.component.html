@@ -1,58 +1,55 @@
 <div class="lesson-body">
+  <div class="action-btn">
+    <p-button label="Хадгалах" (onClick)="save()"></p-button>
+  </div>
   <div *ngFor="let question of questions; let qIndex = index" class="question">
-    <div class="header-title">
-      <div class="title">
-        <p-iftalabel>
-          <textarea rows="2" cols="30" pTextarea [(ngModel)]="question.value"></textarea>
-          <label for="username">Username</label>
-        </p-iftalabel>
-      </div>
-      <div class="">
-        <p-dropdown
-          [options]="cities"
-          [(ngModel)]="question.selectedCity"
-          optionLabel="name"
-          placeholder="Select a City"
-          class="custom-dropdown"
-        ></p-dropdown>
-      </div>
+    <div class="header-sub-title">
+      <p-iftalabel>
+        <textarea pSize="large" rows="2" cols="40" pTextarea [(ngModel)]="question.questionSubName"></textarea>
+        <label for="username">Дэд нэр</label>
+      </p-iftalabel>
     </div>
-
-    <div *ngFor="let answer of question.answers; let i = index" class="main-questoin">
-      <div class="answer-box">
-        <div class="answer-check-box">
-          <p-checkbox
-            [(ngModel)]="answer.checked"
-            [binary]="true"
-            [inputId]="'binary' + qIndex + '-' + i"
-          ></p-checkbox>
-        </div>
-        <div class="">
+    <div *ngFor="let answer of question.answers; let i = index">
+      <div class="header-title">
+        <div class="title">
           <p-iftalabel>
-            <textarea
-              rows="1"
-              cols="30"
-              pTextarea
-              [(ngModel)]="answer.text"
-              (input)="onTextInput(i, qIndex)"
-            ></textarea>
-            <label for="username">Username</label>
+            <textarea rows="3" cols="65" pTextarea [(ngModel)]="answer.answerName"></textarea>
+            <label for="username">Асуулт</label>
           </p-iftalabel>
         </div>
       </div>
-      <button class="answer-button" (click)="onRemove(i, qIndex)" type="button">
-        <i class="pi pi-times" style="color: green"></i>
-      </button>
+      <div class="main-questoin">
+        <div class="answer-box">
+          <div class="answer-value">
+            <span>Муу</span>
+            <p-rating [(ngModel)]="answer.answerValue" stars="5">
+              <ng-template #cancelicon>
+                <img src="https://primefaces.org/cdn/primeng/images/demo/rating/cancel.png" height="24" width="24" />
+              </ng-template>
+              <ng-template #onicon>
+                <img src="https://primefaces.org/cdn/primeng/images/demo/rating/custom-icon-active.png" height="24"
+                  width="24" />
+              </ng-template>
+              <ng-template #officon>
+                <img src="https://primefaces.org/cdn/primeng/images/demo/rating/custom-icon.png" height="24"
+                  width="24" />
+              </ng-template>
+            </p-rating>
+            <span>Сайн</span>
+          </div>
+        </div>
+        <button class="answer-button" (click)="onRemove(i, qIndex)" type="button">
+          <i class="pi pi-times" style="color: green"></i>
+        </button>
+      </div>
     </div>
-
-    <!-- Хэрвээ хариулт нэмэх товч хэрэгтэй бол -->
-    <button class="answer-add-button" (click)="addAnswer(qIndex)" type="button">
-      <i class="pi pi-plus" style="color: blue"></i> Хариулт нэмэх
-    </button>
+    <!-- Асуулт нэмэх товч -->
+    <div class="add-answer">
+      <p-button label="Дэд Асуулт нэмэх" (onClick)="addAnswer(qIndex)"></p-button>
+    </div>
   </div>
-
   <!-- Асуулт нэмэх товч -->
-  <button class="queston-add-button" (click)="addQuestion()" type="button">
-    <i class="pi pi-plus" style="color: green"></i> Асуулт нэмэх
-  </button>
+  <div class="action-btn">
+    <p-button label="Асуулт нэмэх" (onClick)="addQuestion()"></p-button>
+  </div>
 </div>
