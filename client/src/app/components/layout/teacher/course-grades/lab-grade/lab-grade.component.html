@@ -49,6 +49,14 @@
       type="button"
       label="Дүн засах"
       (click)="toggleShowEdit()"
+      *ngIf="!showEdit"
+    ></button>
+    <button
+      pButton
+      type="button"
+      label="Болих"
+      (click)="toggleShowEdit()"
+      *ngIf="showEdit"
     ></button>
     <button pButton type="button" label="Хадгалах" (click)="save()"></button>
   </div>

@@ -1,63 +1,5 @@
 <div class="card">
   <p-accordion value="0">
-    <p-accordion-panel value="0">
-      <p-accordion-header>Оноо</p-accordion-header>
-      <p-accordion-content>
-        <p-table [value]="mergedCloRelevanceCountsArray">
-          <ng-template pTemplate="header">
-            <tr>
-              <th>CLO</th>
-              <th>Семинарын хүрээнд үзэх 7 хоног</th>
-              <th>Лекцийн хүрээнд үзэх 7 хоног</th>
-              <th>Нийт цуглуулах оноо</th>
-            </tr>
-          </ng-template>
-          <ng-template pTemplate="body" let-rowData>
-            <tr>
-              <td>{{ getCloName(rowData.key) }}</td>
-              <td>{{ rowData.semCount }}</td>
-              <td>{{ rowData.count }}</td>
-              <td>{{ rowData.point }}</td>
-            </tr>
-          </ng-template>
-        </p-table>
-
-        <p-table [value]="cloRelevanceCountsLabArray">
-          <ng-template pTemplate="header">
-            <tr>
-              <th>CLO</th>
-              <th>Лабораторийн хүрээнд үзэх 7 хоног</th>
-              <th>Нийт цуглуулах лекцийн оноо</th>
-              <th>Нийт цуглуулах лабийн оноо</th>
-            </tr>
-          </ng-template>
-          <ng-template pTemplate="body" let-rowData>
-            <tr>
-              <td>{{ getCloName(rowData.key) }}</td>
-              <td>{{ rowData.count }}</td>
-              <td>{{ rowData.lecPoint }}</td>
-              <td>{{ rowData.labPoint }}</td>
-            </tr>
-          </ng-template>
-        </p-table>
-        <p-table [value]="cloRelevanceCountsBdArray">
-          <ng-template pTemplate="header">
-            <tr>
-              <th>CLO</th>
-              <th>Бие даалтын хүрээнд үзэх 7 хоног</th>
-              <th>Нийт цуглуулах оноо</th>
-            </tr>
-          </ng-template>
-          <ng-template pTemplate="body" let-rowData>
-            <tr>
-              <td>{{ getCloName(rowData.key) }}</td>
-              <td>{{ rowData.count }}</td>
-              <td>{{ rowData.point }}</td>
-            </tr>
-          </ng-template>
-        </p-table>
-      </p-accordion-content>
-    </p-accordion-panel>
     <p-accordion-panel value="1" *ngIf="hasLec">
       <p-accordion-header>Лекцийн агуулга</p-accordion-header>
       <p-accordion-content>
@@ -124,10 +66,13 @@
                       optionValue="id"
                       appendTo="body"
                       placeholder="Сонгох"
+                      [required]="true"
                     ></p-dropdown>
                   </ng-template>
                   <ng-template pTemplate="output">
-                    {{ getCloName(lesson.get("cloRelevance")?.value) }}
+                    <p-tag
+                      [value]="getCloName(lesson.get('cloRelevance')?.value)"
+                    ></p-tag>
                   </ng-template>
                 </p-cellEditor>
               </td>
@@ -203,22 +148,48 @@
                       optionValue="id"
                       appendTo="body"
                       placeholder="Сонгох"
+                      [required]="true"
                     ></p-dropdown>
                   </ng-template>
                   <ng-template pTemplate="output">
-                    {{ getCloName(lesson.get("cloRelevance")?.value) }}
+                    <p-tag
+                      [value]="getCloName(lesson.get('cloRelevance')?.value)"
+                    ></p-tag>
                   </ng-template>
                 </p-cellEditor>
               </td>
-              <td [pEditableColumn]>
+              <!-- <td [pEditableColumn]>
                 <p-cellEditor>
                   <ng-template pTemplate="input">
                     <p-inputNumber formControlName="point"></p-inputNumber>
                   </ng-template>
                   <ng-template pTemplate="output">
-                    {{ lesson.get("point").value }}
+                    <ng-container
+                      *ngIf="lesson.get('point')?.value > 0; else zeroPoint"
+                    >
+                      <p-tag [value]="lesson.get('point').value"></p-tag>
+                    </ng-container>
+                    <ng-template #zeroPoint>0</ng-template>
                   </ng-template>
                 </p-cellEditor>
+              </td> -->
+              <td>
+                <div
+                  *ngFor="
+                    let pCtrl of lesson.get('point')['controls'];
+                    let i = index
+                  "
+                  [formGroup]="pCtrl"
+                  class="point-row"
+                >
+                  <span
+                    >{{ getSemMethodNameById(pCtrl.get("id").value) }}:</span
+                  >
+                  <p-inputNumber
+                    formControlName="point"
+                    [min]="0"
+                  ></p-inputNumber>
+                </div>
               </td>
             </tr>
           </ng-template>
@@ -294,22 +265,46 @@
                       optionLabel="cloName"
                       optionValue="id"
                       appendTo="body"
+                      [required]="true"
                     ></p-dropdown>
                   </ng-template>
                   <ng-template pTemplate="output">
-                    {{ getCloName(lesson.get("cloRelevance")?.value) }}
+                    <p-tag
+                      [value]="getCloName(lesson.get('cloRelevance')?.value)"
+                    ></p-tag>
                   </ng-template>
                 </p-cellEditor>
               </td>
-              <td [pEditableColumn]>
+              <!-- <td [pEditableColumn]>
                 <p-cellEditor>
                   <ng-template pTemplate="input">
                     <p-inputNumber formControlName="point"></p-inputNumber>
                   </ng-template>
                   <ng-template pTemplate="output">
-                    {{ lesson.get("point").value }}
+                    <ng-container
+                      *ngIf="lesson.get('point')?.value > 0; else zeroPoint"
+                    >
+                      <p-tag [value]="lesson.get('point').value"></p-tag>
+                    </ng-container>
+                    <ng-template #zeroPoint>0</ng-template>
                   </ng-template>
                 </p-cellEditor>
+              </td> -->
+              <td>
+                <div
+                  *ngFor="
+                    let pCtrl of lesson.get('point')['controls'];
+                    let i = index
+                  "
+                  [formGroup]="pCtrl"
+                  class="point-row"
+                >
+                  <span>{{ getMethodNameById(pCtrl.get("id").value) }}:</span>
+                  <p-inputNumber
+                    formControlName="point"
+                    [min]="0"
+                  ></p-inputNumber>
+                </div>
               </td>
             </tr>
           </ng-template>
@@ -394,22 +389,46 @@
                       optionLabel="cloName"
                       optionValue="id"
                       appendTo="body"
+                      [required]="true"
                     ></p-dropdown>
                   </ng-template>
                   <ng-template pTemplate="output">
-                    {{ getCloName(lesson.get("cloRelevance")?.value) }}
+                    <p-tag
+                      [value]="getCloName(lesson.get('cloRelevance')?.value)"
+                    ></p-tag>
                   </ng-template>
                 </p-cellEditor>
               </td>
-              <td [pEditableColumn]>
+              <!-- <td [pEditableColumn]>
                 <p-cellEditor>
                   <ng-template pTemplate="input">
                     <p-inputNumber formControlName="point"></p-inputNumber>
                   </ng-template>
                   <ng-template pTemplate="output">
-                    {{ lesson.get("point").value }}
+                    <ng-container
+                      *ngIf="lesson.get('point')?.value > 0; else zeroPoint"
+                    >
+                      <p-tag [value]="lesson.get('point').value"></p-tag>
+                    </ng-container>
+                    <ng-template #zeroPoint>0</ng-template>
                   </ng-template>
                 </p-cellEditor>
+              </td> -->
+              <td>
+                <div
+                  *ngFor="
+                    let pCtrl of lesson.get('point')['controls'];
+                    let i = index
+                  "
+                  [formGroup]="pCtrl"
+                  class="point-row"
+                >
+                  <span>{{ getBdMethodNameById(pCtrl.get("id").value) }}:</span>
+                  <p-inputNumber
+                    formControlName="point"
+                    [min]="0"
+                  ></p-inputNumber>
+                </div>
               </td>
             </tr>
           </ng-template>

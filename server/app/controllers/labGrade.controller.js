@@ -52,8 +52,6 @@ exports.createLabGrade = async (req, res) => {
 
 exports.createLabGradeAll = async (req, res) => {
   try {
-    // const { lessonId, weekDay, weekNumber, type, time, labGradeDatas } = req.body;
-
     const labGradeDatas = req.body.labGradeDatas; // The data array sent from frontend
 
     const bulkOperations = [];
@@ -65,31 +63,21 @@ exports.createLabGradeAll = async (req, res) => {
         updateOne: {
           filter: { lessonId, weekDay, weekNumber, type, time },
           update: {
-            $set: { lessonId, weekDay, weekNumber, type, time },
-            $addToSet: {
-              // Ensure we do not add duplicate student attendance
-              labGrade: { $each: labGrades },
+            $set: {
+              lessonId,
+              weekDay,
+              weekNumber,
+              type,
+              time,
+              labGrades, // overwrite labGrades entirely
             },
           },
-          upsert: true, // If no record exists, create a new one
+          upsert: true,
         },
       });
     }
 
     const result = await LabGrade.bulkWrite(bulkOperations);
-
-    // const filter = { lessonId, weekDay, weekNumber, type, time };
-
-    // const update = {
-    //   $set: { lessonId, weekDay, weekNumber, type, time },
-    //   $addToSet: {
-    //     labGrades: { $each: labGrades }, // Avoid duplicate student entries
-    //   },
-    // };
-
-    // console.log(update);
-
-    // const result = await LabGrade.updateOne(filter, update, { upsert: true });
 
     return res.status(200).json({
       message: 'Lab grades saved successfully',
@@ -111,7 +99,7 @@ exports.getLabGradeByFilter = async (req, res) => {
     if (type) filter.type = type;
     if (time) filter.time = time;
 
-    const attendanceRecords = await LabGrade.find(filter).populate('labGrade.studentId', 'studentName studentCode');
+    const attendanceRecords = await LabGrade.find(filter).populate('labGrades.studentId', 'studentName studentCode');
     res.json(attendanceRecords);
   } catch (error) {
     res.status(500).json({ message: error.message });

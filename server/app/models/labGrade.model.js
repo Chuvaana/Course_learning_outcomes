@@ -25,21 +25,19 @@ const LabGradeSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    labGrade: [
+    labGrades: [
       {
         studentId: {
           type: mongoose.Schema.Types.ObjectId,
           ref: 'LesStudent',
           required: true,
         },
-        grade1: {
-          type: Number,
-          required: true,
-        },
-        grade2: {
-          type: Number,
-          required: true,
-        },
+        grades: [
+          {
+            id: String,
+            point: Number,
+          },
+        ],
       },
     ],
   },

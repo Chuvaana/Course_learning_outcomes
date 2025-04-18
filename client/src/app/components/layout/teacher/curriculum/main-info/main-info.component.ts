@@ -162,12 +162,6 @@ export class MainInfoComponent {
     this.service.getMainInfo(this.lessonId).subscribe((response: any) => {
       if (response) {
         this.isNew = false;
-        // this.service
-        //   .getCurriculumByLessonId(this.lessonId)
-        //   .subscribe((response: any) => {
-        //     console.log(response);
-        //   });
-
         this.mainInfoForm.patchValue({
           lessonId: this.lessonId,
           lessonName: response.lessonName,

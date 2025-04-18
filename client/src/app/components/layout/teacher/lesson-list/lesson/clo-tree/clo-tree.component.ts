@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, inject } from '@angular/core';
 import {
   FormArray,
@@ -6,16 +7,15 @@ import {
   NonNullableFormBuilder,
   ReactiveFormsModule,
 } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
+import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
+import { DropdownChangeEvent, DropdownModule } from 'primeng/dropdown';
+import { FloatLabelModule } from 'primeng/floatlabel';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { InputTextModule } from 'primeng/inputtext';
-import { AssessmentService } from '../../../../../../services/assessmentService';
-import { ActivatedRoute } from '@angular/router';
-import { FloatLabelModule } from 'primeng/floatlabel';
-import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
-import { DropdownModule } from 'primeng/dropdown';
-import { CommonModule } from '@angular/common';
+import { AssessmentService } from '../../../../../../services/assessmentService';
 
 type FormAssessment = FormGroup<{
   id: FormControl<string>;
@@ -27,6 +27,8 @@ type FormMethod = FormGroup<{
   id: FormControl<string>;
   methodName: FormControl<string>;
   methodType: FormControl<string>;
+  secondMethodType: FormControl<string>;
+  frequency: FormControl<number>;
   subMethods: FormArray<FormAssessment>;
 }>;
 
@@ -65,10 +67,18 @@ export class CloTreeComponent {
   });
 
   isNew = false;
+  hideArray: boolean[] = [];
 
   methodTypes = [
     { id: 'EXAM', name: 'Шалгалт' },
+    { id: 'QUIZ', name: 'Сорил' },
+    { id: 'PARTI', name: 'Ирц, идэвх' },
     { id: 'PROC', name: 'Явц' },
+  ];
+  secondMethodTypes = [
+    { id: 'LAB', name: 'Лаборатори' },
+    { id: 'SEM', name: 'Семинар' },
+    { id: 'BD', name: 'Бие даалт' },
   ];
 
   ngOnInit() {
@@ -80,7 +90,7 @@ export class CloTreeComponent {
       if (JSON.stringify(res) !== '{}') {
         const plansArray = this.fb.array<FormMethod>([]);
 
-        res.plans.forEach((plan: any) => {
+        res.plans.forEach((plan: any, index: number) => {
           const subMethodsArray = this.fb.array<FormAssessment>(
             plan.subMethods.map((sub: any) =>
               this.fb.group({
@@ -95,19 +105,32 @@ export class CloTreeComponent {
             id: this.fb.control<string>(plan._id),
             methodName: this.fb.control<string>(plan.methodName),
             methodType: this.fb.control<string>(plan.methodType),
+            secondMethodType: this.fb.control<string>(plan.secondMethodType),
+            frequency: this.fb.control<number>(plan.frequency),
             subMethods: subMethodsArray,
           });
 
           plansArray.push(planGroup);
+          this.hideArray[index] = plan.methodType === 'PROC';
+
+          // ✅ Optional: react to user changes too
+          planGroup.get('methodType')?.valueChanges.subscribe((value) => {
+            this.hideArray[index] = value === 'PROC';
+          });
         });
 
         this.planForm.setControl('plans', plansArray);
+
         this.isNew = false;
       } else {
         this.getDefaultValue();
         this.isNew = true;
       }
     });
+  }
+
+  changedMethodType(event: DropdownChangeEvent, index: number) {
+    this.hideArray[index] = event.value === 'PROC';
   }
 
   getDefaultValue() {
@@ -119,7 +142,8 @@ export class CloTreeComponent {
       plans: [
         {
           methodName: 'Хичээлийн идэвх, оролцоо',
-          methodType: 'PROC',
+          methodType: 'PARTI',
+          frequency: 16,
           subMethods: [
             {
               _id: '',
@@ -136,7 +160,8 @@ export class CloTreeComponent {
         },
         {
           methodName: 'Явцын сорил 1',
-          methodType: 'PROC',
+          methodType: 'QUIZ',
+          frequency: 1,
           subMethods: [
             {
               _id: '',
@@ -154,7 +179,8 @@ export class CloTreeComponent {
         },
         {
           methodName: 'Явцын сорил 2',
-          methodType: 'PROC',
+          methodType: 'QUIZ',
+          frequency: 1,
           subMethods: [
             {
               _id: '',
@@ -173,6 +199,7 @@ export class CloTreeComponent {
         {
           methodName: 'Лабораторийн ажил, туршилт',
           methodType: 'PROC',
+          frequency: 3,
           subMethods: [
             {
               _id: '',
@@ -191,6 +218,7 @@ export class CloTreeComponent {
         {
           methodName: 'Улирлын шалгалт',
           methodType: 'EXAM',
+          frequency: 1,
           subMethods: [
             {
               _id: '',
@@ -229,6 +257,8 @@ export class CloTreeComponent {
         id: this.fb.control<string>(plan._id),
         methodName: this.fb.control<string>(plan.methodName),
         methodType: this.fb.control<string>(plan.methodType),
+        secondMethodType: this.fb.control<string>(plan.secondMethodType),
+        frequency: this.fb.control<number>(plan.frequency),
         subMethods: subMethodsArray,
       });
 
@@ -242,7 +272,9 @@ export class CloTreeComponent {
     return this.fb.group({
       id: '',
       methodName: '',
-      methodType: 'PROC',
+      methodType: '',
+      secondMethodType: '',
+      frequency: 0,
       subMethods: this.fb.array<FormAssessment>([]),
     });
   }
@@ -289,7 +321,7 @@ export class CloTreeComponent {
     let sum = 0;
 
     data.map((element: any) => {
-      if (element.methodType === 'PROC') {
+      if (element.methodType !== 'EXAM') {
         element.subMethods.map((item: any) => {
           sum += item.point;
         });
@@ -317,6 +349,8 @@ export class CloTreeComponent {
       id: plan.id, // Include plan id
       methodName: plan.methodName,
       methodType: plan.methodType,
+      secondMethodType: plan?.secondMethodType,
+      frequency: plan.frequency,
       subMethods: plan.subMethods.map((sub) => ({
         id: sub.id, // Include subMethod id
         subMethod: sub.subMethod,

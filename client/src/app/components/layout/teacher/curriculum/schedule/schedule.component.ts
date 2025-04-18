@@ -10,7 +10,8 @@ import {
 import { AccordionModule } from 'primeng/accordion';
 import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
-import { InputNumber, InputNumberModule } from 'primeng/inputnumber';
+import { DropdownModule } from 'primeng/dropdown';
+import { InputNumberModule } from 'primeng/inputnumber';
 import { InputTextModule } from 'primeng/inputtext';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
@@ -18,11 +19,11 @@ import { SelectModule } from 'primeng/select';
 import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { ToastModule } from 'primeng/toast';
+import { AssessmentService } from '../../../../../services/assessmentService';
 import { CLOService } from '../../../../../services/cloService';
+import { CurriculumService } from '../../../../../services/curriculum.service';
 import { ScheduleService } from '../../../../../services/schedule.service';
 import { TabRefreshService } from '../tabRefreshService';
-import { DropdownModule } from 'primeng/dropdown';
-import { CurriculumService } from '../../../../../services/curriculum.service';
 
 @Component({
   selector: 'app-schedule',
@@ -53,6 +54,7 @@ export class ScheduleComponent {
   scheduleSemForm!: FormGroup;
   scheduleLabForm!: FormGroup;
   scheduleBdForm!: FormGroup;
+
   isNewLec = false;
   isNewSem = false;
   isNewLab = false;
@@ -69,21 +71,18 @@ export class ScheduleComponent {
   closSem: any;
   closLab: any;
   cloPlan: any;
-  mergedCloRelevanceCountsArray: any;
-  cloRelevanceCountsLabArray: any;
-  cloRelevanceCountsBdArray: any;
-  // point: { [key: string]: number } = {};
 
-  cloRelevanceCounts: { [key: string]: number } = {};
-  cloRelevanceCountsSem: { [key: string]: number } = {};
-  cloRelevanceCountsLab: {
-    [key: string]: { count: number; lecPoint: number; labPoint: number };
-  } = {};
-  cloRelevanceCountsBd: { [key: string]: { count: number; point: number } } =
-    {};
-  mergedCloRelevanceCounts: {
-    [key: string]: { semCount: number; count: number; point: number };
-  } = {};
+  labSumPoint = 0;
+  semSumPoint = 0;
+  bdSumPoint = 0;
+
+  labFreq = 0;
+  semFreq = 0;
+  bdFreq = 0;
+
+  labData: any;
+  semData: any;
+  bdData: any;
 
   constructor(
     private fb: FormBuilder,
@@ -91,7 +90,8 @@ export class ScheduleComponent {
     private cloService: CLOService,
     private msgService: MessageService,
     private tabRefreshService: TabRefreshService,
-    private mainService: CurriculumService
+    private mainService: CurriculumService,
+    private assessService: AssessmentService
   ) {}
 
   async ngOnInit() {
@@ -149,6 +149,38 @@ export class ScheduleComponent {
           this.hasBd = response.weeklyHours.assignment == 0 ? false : true;
         }
       });
+
+      this.labSumPoint = 0;
+      this.semSumPoint = 0;
+      this.bdSumPoint = 0;
+      this.assessService
+        .getAssessmentByLesson(this.lessonId)
+        .subscribe((res: any) => {
+          res.plans.forEach((element: any) => {
+            if (element.methodType === 'PROC') {
+              if (element.secondMethodType === 'LAB') {
+                element.subMethods.forEach((item: any) => {
+                  this.labSumPoint += item.point;
+                });
+                this.labData = element;
+                this.labFreq = element.frequency;
+              } else if (element.secondMethodType === 'SEM') {
+                element.subMethods.forEach((item: any) => {
+                  this.semSumPoint += item.point;
+                });
+                this.semData = element;
+                this.semFreq = element.frequency;
+              } else if (element.secondMethodType === 'BD') {
+                element.subMethods.forEach((item: any) => {
+                  this.bdSumPoint += item.point;
+                });
+                this.bdData = element;
+                this.bdFreq = element.frequency;
+              }
+            }
+          });
+        });
+
       const resLec = await this.service.getSchedules(this.lessonId).toPromise();
       const resSem = await this.service
         .getScheduleSems(this.lessonId)
@@ -206,64 +238,10 @@ export class ScheduleComponent {
         this.setDefaultBdSchedules();
         this.isNewBd = true;
       }
-
-      // let point: { [key: string]: number } = {}; // Initialize point as an empty object
-
-      // for (const cloKey in this.cloPlan) {
-      //   if (this.cloPlan.hasOwnProperty(cloKey)) {
-      //     // Check if the property belongs to the object
-      //     const clo = this.cloPlan[cloKey]; // Access the object using the key
-      //     point[clo.cloId] = clo.timeManagement + clo.engagement; // Now you can access cloId
-      //   }
-      // }
-
-      // console.log(point);
-
-      // // Merge cloRelevanceCounts
-      // for (const key in this.cloRelevanceCounts) {
-      //   if (this.cloRelevanceCounts.hasOwnProperty(key)) {
-      //     this.mergedCloRelevanceCounts[key] = {
-      //       semCount: 0, // Initialize semCount to 0
-      //       count: this.cloRelevanceCounts[key],
-      //       point: point[key], // Set the count from the first object
-      //     };
-      //   }
-      // }
-
-      // // Merge cloRelevanceCountsSem
-      // for (const key in this.cloRelevanceCountsSem) {
-      //   if (this.cloRelevanceCountsSem.hasOwnProperty(key)) {
-      //     if (this.mergedCloRelevanceCounts[key]) {
-      //       // If the key exists, sum the counts
-      //       this.mergedCloRelevanceCounts[key].semCount =
-      //         this.cloRelevanceCountsSem[key];
-      //     } else {
-      //       // If the key does not exist, initialize it
-      //       this.mergedCloRelevanceCounts[key] = {
-      //         semCount: this.cloRelevanceCountsSem[key],
-      //         count: 0,
-      //         point: point[key],
-      //       };
-      //     }
-      //   }
-      // }
-
-      // // Now mergedCloRelevanceCounts contains the merged data
-      // console.log(this.mergedCloRelevanceCounts);
-
-      // // Convert mergedCloRelevanceCounts to an array for display
-      // this.mergedCloRelevanceCountsArray = Object.keys(
-      //   this.mergedCloRelevanceCounts
-      // ).map((key) => ({
-      //   key: key,
-      //   semCount: this.mergedCloRelevanceCounts[key].semCount,
-      //   count: this.mergedCloRelevanceCounts[key].count,
-      //   point: this.mergedCloRelevanceCounts[key].point,
-      // }));
     } catch (error) {
       console.error('Алдаа:', error);
     } finally {
-      this.isLoading = false; // 👈 Дата ирсний дараа false болгоно
+      this.isLoading = false;
     }
   }
 
@@ -274,7 +252,7 @@ export class ScheduleComponent {
         id: [schedule._id],
         lessonId: [schedule.lessonId],
         cloRelevance: [
-          schedule.cloRelevance?.id || schedule.cloRelevance || '',
+          schedule.cloRelevance?.id || schedule.cloRelevance || null,
         ],
         week: [{ value: schedule.week, disabled: true }],
         title: [schedule.title],
@@ -303,26 +281,22 @@ export class ScheduleComponent {
         id: [schedule._id],
         lessonId: [schedule.lessonId],
         cloRelevance: [
-          schedule.cloRelevance?.id || schedule.cloRelevance || '',
+          schedule.cloRelevance?.id || schedule.cloRelevance || null,
         ], // Ensure it is always an array
         week: [{ value: schedule.week, disabled: true }],
         title: [schedule.title],
         time: [schedule.time],
-        point: [schedule.point],
+        point: this.fb.array(
+          schedule.point.map((mp: any) =>
+            this.fb.group({
+              id: [mp.id],
+              point: [mp.point],
+            })
+          )
+        ),
       });
       scheduleSemArray.push(lessonGroup);
     });
-    // let cloRelevanceCounts: { [key: string]: number } = {};
-    // const data = scheduleSemArray.value;
-    // data.forEach((item: any) => {
-    //   const clo = item.cloRelevance;
-    //   if (clo) {
-    //     cloRelevanceCounts[clo] = (cloRelevanceCounts[clo] || 0) + 1;
-    //   }
-    // });
-
-    // this.cloRelevanceCountsSem = cloRelevanceCounts;
-    // console.log(this.cloRelevanceCountsSem);
   }
 
   setScheduleLabs(res: any[]): void {
@@ -339,56 +313,17 @@ export class ScheduleComponent {
         week: [schedule.week],
         title: [schedule.title],
         time: [schedule.time],
-        point: [schedule.point],
+        point: this.fb.array(
+          schedule.point.map((mp: any) =>
+            this.fb.group({
+              id: [mp.id],
+              point: [mp.point],
+            })
+          )
+        ),
       });
       scheduleLabArray.push(lessonGroup);
     });
-    // let cloRelevanceCounts: {
-    //   [key: string]: { count: number; lecPoint: number; labPoint: number };
-    // } = {};
-    // const data = scheduleLabArray.value;
-    // let lecPoint: { [key: string]: number } = {};
-    // let labPoint: { [key: string]: number } = {};
-
-    // for (const cloKey in this.cloPlan) {
-    //   if (this.cloPlan.hasOwnProperty(cloKey)) {
-    //     // Check if the property belongs to the object
-    //     const clo = this.cloPlan[cloKey]; // Access the object using the key
-    //     lecPoint[clo.cloId] = clo.timeManagement + clo.engagement; // Now you can access cloId
-    //     labPoint[clo.cloId] = clo.toExp + clo.processing; // Now you can access cloId
-    //   }
-    // }
-
-    // data.forEach((item: any) => {
-    //   item.cloRelevance.forEach((clo: any) => {
-    //     // Initialize the cloRelevanceCounts entry if it doesn't exist
-    //     if (!cloRelevanceCounts[clo]) {
-    //       cloRelevanceCounts[clo] = { count: 0, lecPoint: 0, labPoint: 0 }; // Initialize count and point
-    //     }
-
-    //     // Increment the count
-    //     cloRelevanceCounts[clo].count += 1;
-
-    //     // Add the point from the previously calculated points
-    //     if (lecPoint[clo]) {
-    //       cloRelevanceCounts[clo].lecPoint = lecPoint[clo]; // Increment the point
-    //     }
-    //     // Add the point from the previously calculated points
-    //     if (labPoint[clo]) {
-    //       cloRelevanceCounts[clo].labPoint = labPoint[clo]; // Increment the point
-    //     }
-    //   });
-    // });
-
-    // this.cloRelevanceCountsLab = cloRelevanceCounts;
-    // this.cloRelevanceCountsLabArray = Object.keys(
-    //   this.cloRelevanceCountsLab
-    // ).map((key) => ({
-    //   key: key,
-    //   count: this.cloRelevanceCountsLab[key].count,
-    //   lecPoint: this.cloRelevanceCountsLab[key].lecPoint,
-    //   labPoint: this.cloRelevanceCountsLab[key].labPoint,
-    // }));
   }
 
   setScheduleBds(res: any[]): void {
@@ -398,59 +333,23 @@ export class ScheduleComponent {
         id: [schedule._id],
         lessonId: [schedule.lessonId],
         cloRelevance: [
-          schedule.cloRelevance?.id || schedule.cloRelevance || '',
+          schedule.cloRelevance?.id || schedule.cloRelevance || null,
         ], // Ensure it is always an array
         week: [schedule.week],
         title: [schedule.title],
         adviceTime: [schedule.adviceTime],
         time: [schedule.time],
-        point: [schedule.point],
+        point: this.fb.array(
+          schedule.point.map((mp: any) =>
+            this.fb.group({
+              id: [mp.id],
+              point: [mp.point],
+            })
+          )
+        ),
       });
       scheduleBdArray.push(lessonGroup);
     });
-    // let cloRelevanceCounts: {
-    //   [key: string]: { count: number; point: number };
-    // } = {};
-    // const data = scheduleBdArray.value;
-    // let point: { [key: string]: number } = {};
-
-    // for (const cloKey in this.cloPlan) {
-    //   if (this.cloPlan.hasOwnProperty(cloKey)) {
-    //     // Check if the property belongs to the object
-    //     const clo = this.cloPlan[cloKey]; // Access the object using the key
-    //     point[clo.cloId] =
-    //       clo.decisionMaking +
-    //       clo.formulation +
-    //       clo.analysis +
-    //       clo.implementation; // Now you can access cloId
-    //   }
-    // }
-
-    // data.forEach((item: any) => {
-    //   item.cloRelevance.forEach((clo: any) => {
-    //     // Initialize the cloRelevanceCounts entry if it doesn't exist
-    //     if (!cloRelevanceCounts[clo]) {
-    //       cloRelevanceCounts[clo] = { count: 0, point: 0 }; // Initialize count and point
-    //     }
-
-    //     // Increment the count
-    //     cloRelevanceCounts[clo].count += 1;
-
-    //     // Add the point from the previously calculated points
-    //     if (point[clo]) {
-    //       cloRelevanceCounts[clo].point = point[clo]; // Increment the point
-    //     }
-    //   });
-    // });
-
-    // this.cloRelevanceCountsBd = cloRelevanceCounts;
-    // this.cloRelevanceCountsBdArray = Object.keys(this.cloRelevanceCountsBd).map(
-    //   (key) => ({
-    //     key: key,
-    //     count: this.cloRelevanceCountsBd[key].count,
-    //     point: this.cloRelevanceCountsBd[key].point,
-    //   })
-    // );
   }
 
   setDefaultLecSchedules(): void {
@@ -481,22 +380,103 @@ export class ScheduleComponent {
     const scheduleSemArray = this.scheduleSemForm.get(
       'scheduleSems'
     ) as FormArray;
+    let methodPoint: { id: any; point: number }[] = [];
+    if (this.semData) {
+      this.semData.subMethods.forEach((item: any) => {
+        methodPoint.push({
+          id: item._id,
+          point: 0,
+        });
+      });
+    }
     const defaultSemLessons = [
-      { week: 'I', title: '', time: 2, cloRelevance: null, point: 0 },
-      { week: 'II', title: '', time: 2, cloRelevance: null, point: 0 },
-      { week: 'III', title: '', time: 2, cloRelevance: null, point: 0 },
-      { week: 'IV', title: '', time: 2, cloRelevance: null, point: 0 },
-      { week: 'V', title: '', time: 2, cloRelevance: null, point: 0 },
-      { week: 'VI', title: '', time: 2, cloRelevance: null, point: 0 },
-      { week: 'VII', title: '', time: 2, cloRelevance: null, point: 0 },
-      { week: 'IX', title: '', time: 2, cloRelevance: null, point: 0 },
-      { week: 'X', title: '', time: 2, cloRelevance: null, point: 0 },
-      { week: 'XI', title: '', time: 2, cloRelevance: null, point: 0 },
-      { week: 'XII', title: '', time: 2, cloRelevance: null, point: 0 },
-      { week: 'XIII', title: '', time: 2, cloRelevance: null, point: 0 },
-      { week: 'XIV', title: '', time: 2, cloRelevance: null, point: 0 },
-      { week: 'XV', title: '', time: 2, cloRelevance: null, point: 0 },
-      { week: 'XVI', title: '', time: 2, cloRelevance: null, point: 0 },
+      { week: 'I', title: '', time: 2, cloRelevance: null, point: methodPoint },
+      {
+        week: 'II',
+        title: '',
+        time: 2,
+        cloRelevance: null,
+        point: methodPoint,
+      },
+      {
+        week: 'III',
+        title: '',
+        time: 2,
+        cloRelevance: null,
+        point: methodPoint,
+      },
+      {
+        week: 'IV',
+        title: '',
+        time: 2,
+        cloRelevance: null,
+        point: methodPoint,
+      },
+      { week: 'V', title: '', time: 2, cloRelevance: null, point: methodPoint },
+      {
+        week: 'VI',
+        title: '',
+        time: 2,
+        cloRelevance: null,
+        point: methodPoint,
+      },
+      {
+        week: 'VII',
+        title: '',
+        time: 2,
+        cloRelevance: null,
+        point: methodPoint,
+      },
+      {
+        week: 'IX',
+        title: '',
+        time: 2,
+        cloRelevance: null,
+        point: methodPoint,
+      },
+      { week: 'X', title: '', time: 2, cloRelevance: null, point: methodPoint },
+      {
+        week: 'XI',
+        title: '',
+        time: 2,
+        cloRelevance: null,
+        point: methodPoint,
+      },
+      {
+        week: 'XII',
+        title: '',
+        time: 2,
+        cloRelevance: null,
+        point: methodPoint,
+      },
+      {
+        week: 'XIII',
+        title: '',
+        time: 2,
+        cloRelevance: null,
+        point: methodPoint,
+      },
+      {
+        week: 'XIV',
+        title: '',
+        time: 2,
+        cloRelevance: null,
+        point: methodPoint,
+      },
+      {
+        week: 'XV',
+        title: '',
+        time: 2,
+        cloRelevance: null,
+        point: methodPoint,
+      },
+      {
+        week: 'XVI',
+        title: '',
+        time: 2,
+        cloRelevance: null,
+        point: methodPoint,
+      },
     ];
     defaultSemLessons.forEach((lesson) => {
       scheduleSemArray.push(this.createLessonV(lesson));
@@ -507,23 +487,110 @@ export class ScheduleComponent {
     const scheduleLabArray = this.scheduleLabForm.get(
       'scheduleLabs'
     ) as FormArray;
+    let methodPoint: { id: any; point: number }[] = [];
+    if (this.labData) {
+      this.labData.subMethods.forEach((item: any) => {
+        methodPoint.push({
+          id: item._id,
+          point: 0,
+        });
+      });
+    }
     const defaultLessons = [
-      { week: 'I', title: '', time: 2, cloRelevance: null, point: 0 },
-      { week: 'II', title: '', time: 2, cloRelevance: null, point: 0 },
-      { week: 'III', title: '', time: 2, cloRelevance: null, point: 0 },
-      { week: 'IV', title: '', time: 2, cloRelevance: null, point: 0 },
-      { week: 'V', title: '', time: 2, cloRelevance: null, point: 0 },
-      { week: 'VI', title: '', time: 2, cloRelevance: null, point: 0 },
-      { week: 'VII', title: '', time: 2, cloRelevance: null, point: 0 },
-      { week: 'VIII', title: '', time: 2, cloRelevance: null, point: 0 },
-      { week: 'IX', title: '', time: 2, cloRelevance: null, point: 0 },
-      { week: 'X', title: '', time: 2, cloRelevance: null, point: 0 },
-      { week: 'XI', title: '', time: 2, cloRelevance: null, point: 0 },
-      { week: 'XII', title: '', time: 2, cloRelevance: null, point: 0 },
-      { week: 'XIII', title: '', time: 2, cloRelevance: null, point: 0 },
-      { week: 'XIV', title: '', time: 2, cloRelevance: null, point: 0 },
-      { week: 'XV', title: '', time: 2, cloRelevance: null, point: 0 },
-      { week: 'XVI', title: '', time: 2, cloRelevance: null, point: 0 },
+      { week: 'I', title: '', time: 2, cloRelevance: null, point: methodPoint },
+      {
+        week: 'II',
+        title: '',
+        time: 2,
+        cloRelevance: null,
+        point: methodPoint,
+      },
+      {
+        week: 'III',
+        title: '',
+        time: 2,
+        cloRelevance: null,
+        point: methodPoint,
+      },
+      {
+        week: 'IV',
+        title: '',
+        time: 2,
+        cloRelevance: null,
+        point: methodPoint,
+      },
+      { week: 'V', title: '', time: 2, cloRelevance: null, point: methodPoint },
+      {
+        week: 'VI',
+        title: '',
+        time: 2,
+        cloRelevance: null,
+        point: methodPoint,
+      },
+      {
+        week: 'VII',
+        title: '',
+        time: 2,
+        cloRelevance: null,
+        point: methodPoint,
+      },
+      {
+        week: 'VIII',
+        title: '',
+        time: 2,
+        cloRelevance: null,
+        point: methodPoint,
+      },
+      {
+        week: 'IX',
+        title: '',
+        time: 2,
+        cloRelevance: null,
+        point: methodPoint,
+      },
+      { week: 'X', title: '', time: 2, cloRelevance: null, point: methodPoint },
+      {
+        week: 'XI',
+        title: '',
+        time: 2,
+        cloRelevance: null,
+        point: methodPoint,
+      },
+      {
+        week: 'XII',
+        title: '',
+        time: 2,
+        cloRelevance: null,
+        point: methodPoint,
+      },
+      {
+        week: 'XIII',
+        title: '',
+        time: 2,
+        cloRelevance: null,
+        point: methodPoint,
+      },
+      {
+        week: 'XIV',
+        title: '',
+        time: 2,
+        cloRelevance: null,
+        point: methodPoint,
+      },
+      {
+        week: 'XV',
+        title: '',
+        time: 2,
+        cloRelevance: null,
+        point: methodPoint,
+      },
+      {
+        week: 'XVI',
+        title: '',
+        time: 2,
+        cloRelevance: null,
+        point: methodPoint,
+      },
     ];
     defaultLessons.forEach((lesson) => {
       scheduleLabArray.push(this.createLessonV(lesson));
@@ -532,6 +599,15 @@ export class ScheduleComponent {
 
   setDefaultBdSchedules(): void {
     const scheduleBdArray = this.scheduleBdForm.get('scheduleBds') as FormArray;
+    let methodPoint: { id: any; point: number }[] = [];
+    if (this.bdData) {
+      this.bdData.subMethods.forEach((item: any) => {
+        methodPoint.push({
+          id: item._id,
+          point: 0,
+        });
+      });
+    }
     const defaultBdLessons = [
       {
         week: 'I',
@@ -539,7 +615,7 @@ export class ScheduleComponent {
         adviceTime: 0,
         time: 0,
         cloRelevance: null,
-        point: 0,
+        point: methodPoint,
       },
       {
         week: 'II',
@@ -547,7 +623,7 @@ export class ScheduleComponent {
         adviceTime: 0,
         time: 0,
         cloRelevance: null,
-        point: 0,
+        point: methodPoint,
       },
       {
         week: 'III',
@@ -555,7 +631,7 @@ export class ScheduleComponent {
         adviceTime: 0,
         time: 0,
         cloRelevance: null,
-        point: 0,
+        point: methodPoint,
       },
       {
         week: 'IV',
@@ -563,7 +639,7 @@ export class ScheduleComponent {
         adviceTime: 0,
         time: 0,
         cloRelevance: null,
-        point: 0,
+        point: methodPoint,
       },
       {
         week: 'V',
@@ -571,7 +647,7 @@ export class ScheduleComponent {
         adviceTime: 0,
         time: 0,
         cloRelevance: null,
-        point: 0,
+        point: methodPoint,
       },
       {
         week: 'VI',
@@ -579,7 +655,7 @@ export class ScheduleComponent {
         adviceTime: 0,
         time: 0,
         cloRelevance: null,
-        point: 0,
+        point: methodPoint,
       },
       {
         week: 'VII',
@@ -587,7 +663,7 @@ export class ScheduleComponent {
         adviceTime: 0,
         time: 0,
         cloRelevance: null,
-        point: 0,
+        point: methodPoint,
       },
       {
         week: 'VIII',
@@ -595,7 +671,7 @@ export class ScheduleComponent {
         adviceTime: 0,
         time: 0,
         cloRelevance: null,
-        point: 0,
+        point: methodPoint,
       },
       {
         week: 'IX',
@@ -603,7 +679,7 @@ export class ScheduleComponent {
         adviceTime: 0,
         time: 0,
         cloRelevance: null,
-        point: 0,
+        point: methodPoint,
       },
       {
         week: 'X',
@@ -611,7 +687,7 @@ export class ScheduleComponent {
         adviceTime: 0,
         time: 0,
         cloRelevance: null,
-        point: 0,
+        point: methodPoint,
       },
       {
         week: 'XI',
@@ -619,7 +695,7 @@ export class ScheduleComponent {
         adviceTime: 0,
         time: 0,
         cloRelevance: null,
-        point: 0,
+        point: methodPoint,
       },
       {
         week: 'XII',
@@ -627,7 +703,7 @@ export class ScheduleComponent {
         adviceTime: 0,
         time: 0,
         cloRelevance: null,
-        point: 0,
+        point: methodPoint,
       },
       {
         week: 'XIII',
@@ -635,7 +711,7 @@ export class ScheduleComponent {
         adviceTime: 0,
         time: 0,
         cloRelevance: null,
-        point: 0,
+        point: methodPoint,
       },
       {
         week: 'XIV',
@@ -643,7 +719,7 @@ export class ScheduleComponent {
         adviceTime: 0,
         time: 0,
         cloRelevance: null,
-        point: 0,
+        point: methodPoint,
       },
       {
         week: 'XV',
@@ -651,7 +727,7 @@ export class ScheduleComponent {
         adviceTime: 0,
         time: 0,
         cloRelevance: null,
-        point: 0,
+        point: methodPoint,
       },
       {
         week: 'XVI',
@@ -659,7 +735,7 @@ export class ScheduleComponent {
         adviceTime: 0,
         time: 0,
         cloRelevance: null,
-        point: 0,
+        point: methodPoint,
       },
     ];
     defaultBdLessons.forEach((lesson) => {
@@ -673,6 +749,21 @@ export class ScheduleComponent {
       return clo ? clo.cloName : '';
     }
     return '';
+  }
+
+  getMethodNameById(id: string): string {
+    const method = this.labData?.subMethods.find((m: any) => m._id === id);
+    return method ? method.subMethod : 'Unknown';
+  }
+
+  getBdMethodNameById(id: string): string {
+    const method = this.bdData?.subMethods.find((m: any) => m._id === id);
+    return method ? method.subMethod : 'Unknown';
+  }
+
+  getSemMethodNameById(id: string): string {
+    const method = this.semData?.subMethods.find((m: any) => m._id === id);
+    return method ? method.subMethod : 'Unknown';
   }
 
   createLesson(lesson: any) {
@@ -692,7 +783,14 @@ export class ScheduleComponent {
       title: [lesson.title],
       time: [lesson.time],
       cloRelevance: [lesson.cloRelevance],
-      point: [lesson.point],
+      point: this.fb.array(
+        lesson.point.map((mp: any) =>
+          this.fb.group({
+            id: [mp.id],
+            point: [0],
+          })
+        )
+      ),
     });
   }
 
@@ -704,7 +802,14 @@ export class ScheduleComponent {
       adviceTime: [lesson.adviceTime],
       time: [lesson.time],
       cloRelevance: [lesson.cloRelevance],
-      point: [lesson.point],
+      point: this.fb.array(
+        lesson.point.map((mp: any) =>
+          this.fb.group({
+            id: [mp.id],
+            point: [0],
+          })
+        )
+      ),
     });
   }
 
@@ -770,6 +875,27 @@ export class ScheduleComponent {
     }
   }
   saveSemSchedule() {
+    const data = this.scheduleSemForm.value;
+    const sum = this.checkData(data.scheduleSems);
+
+    if (sum != this.semSumPoint) {
+      this.msgService.add({
+        severity: 'warn',
+        summary: 'Анхааруулга',
+        detail: `Семинарын нийлбэр оноо ${this.semSumPoint} байх ёстой. Одоогийн нийлбэр: ${sum}`,
+      });
+      return;
+    }
+
+    const freq = this.checkFreq(data.scheduleSems);
+    if (freq != this.semFreq) {
+      this.msgService.add({
+        severity: 'warn',
+        summary: 'Анхааруулга',
+        detail: `Семинарын үзлэг хийх давтамж ${this.semFreq} байх ёстой. Одоогийн давтамж: ${freq}`,
+      });
+      return;
+    }
     if (this.isNewSem) {
       this.service.addScheduleSems(this.scheduleSemForm.value).subscribe(
         (res: any) => {
@@ -811,7 +937,54 @@ export class ScheduleComponent {
     }
   }
 
+  checkData(data: any): number {
+    let sum = 0;
+    data.map((item: any) => {
+      item.point.map((point: any) => {
+        sum += point.point;
+      });
+    });
+    return sum;
+  }
+
+  checkFreq(data: any): number {
+    let sum = 0;
+    data.map((item: any) => {
+      let is = false;
+      item.point.map((point: any) => {
+        if (point.point && point.point != 0) {
+          is = true;
+        }
+      });
+      if (is) {
+        sum += 1;
+      }
+    });
+    return sum;
+  }
+
   saveLabSchedule() {
+    const data = this.scheduleLabForm.value;
+    const sum = this.checkData(data.scheduleLabs);
+
+    if (sum != this.labSumPoint) {
+      this.msgService.add({
+        severity: 'warn',
+        summary: 'Анхааруулга',
+        detail: `Лабораторийн нийлбэр оноо ${this.labSumPoint} байх ёстой. Одоогийн нийлбэр: ${sum}`,
+      });
+      return;
+    }
+
+    const freq = this.checkFreq(data.scheduleLabs);
+    if (freq != this.labFreq) {
+      this.msgService.add({
+        severity: 'warn',
+        summary: 'Анхааруулга',
+        detail: `Лабораторийн үзлэг хийх давтамж ${this.labFreq} байх ёстой. Одоогийн давтамж: ${freq}`,
+      });
+      return;
+    }
     if (this.isNewLab) {
       this.service.addScheduleLabs(this.scheduleLabForm.value).subscribe(
         (res: any) => {
@@ -854,6 +1027,27 @@ export class ScheduleComponent {
   }
 
   saveBdSchedule() {
+    const data = this.scheduleBdForm.value;
+    const sum = this.checkData(data.scheduleBds);
+
+    if (sum != this.bdSumPoint) {
+      this.msgService.add({
+        severity: 'warn',
+        summary: 'Анхааруулга',
+        detail: `Бие даалтын нийлбэр оноо ${this.bdSumPoint} байх ёстой. Одоогийн нийлбэр: ${sum}`,
+      });
+      return;
+    }
+
+    const freq = this.checkFreq(data.scheduleBds);
+    if (freq != this.bdFreq) {
+      this.msgService.add({
+        severity: 'warn',
+        summary: 'Анхааруулга',
+        detail: `Бие даалтын үзлэг хийх давтамж ${this.bdFreq} байх ёстой. Одоогийн давтамж: ${freq}`,
+      });
+      return;
+    }
     if (this.isNewBd) {
       this.service.addScheduleBds(this.scheduleBdForm.value).subscribe(
         (res: any) => {

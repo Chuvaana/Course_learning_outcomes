@@ -106,7 +106,7 @@ export class LabGradeComponent {
 
     try {
       const res = await this.labGradeService
-        .getlabGrade(
+        .getLabGrade(
           this.lessonId,
           this.selectedWeekday,
           this.selectedClassType,

@@ -36,7 +36,7 @@ export class LabGradeService {
   }
 
   // ✅ Get labGrade records by filters (lessonId, weekNumber, type)
-  getlabGrade(
+  getLabGrade(
     lessonId: string,
     weekDay?: string,
     type?: string,

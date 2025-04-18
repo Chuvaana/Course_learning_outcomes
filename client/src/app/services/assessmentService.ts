@@ -22,6 +22,12 @@ export class AssessmentService {
     return this.http.get(`${this.apiUrl}/assessment-plan/${lessonId}`);
   }
 
+  getAssessmentByLessonAndId(lessonId: string, planId: string) {
+    return this.http.get(
+      `${this.apiUrl}/assessment-plan/${lessonId}/planId/${planId}`
+    );
+  }
+
   createAssessment(data: any): Observable<any> {
     return this.http.post(`${this.apiUrl}/assessments`, data);
   }

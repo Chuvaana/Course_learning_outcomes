@@ -75,16 +75,33 @@
         <th colspan="2">Үнэлгээний эзлэх хувь</th>
         <ng-container *ngFor="let col of assessPlan.plans">
           <ng-container *ngIf="col.methodType === 'PROC'">
-            <th [attr.colspan]="col.subMethods.length">
+            <td [attr.colspan]="col.subMethods.length">
               {{ col.methodPoint }}
-            </th>
+            </td>
           </ng-container>
         </ng-container>
         <ng-container *ngFor="let col of assessPlan.plans">
           <ng-container *ngIf="col.methodType === 'EXAM'">
-            <th [attr.colspan]="col.subMethods.length">
+            <td [attr.colspan]="col.subMethods.length">
               {{ col.methodPoint }}
-            </th>
+            </td>
+          </ng-container>
+        </ng-container>
+      </tr>
+      <tr>
+        <th colspan="2">Үнэлгээ хийх давтамж</th>
+        <ng-container *ngFor="let col of assessPlan.plans">
+          <ng-container *ngIf="col.methodType === 'PROC'">
+            <td [attr.colspan]="col.subMethods.length">
+              {{ col.frequency }}
+            </td>
+          </ng-container>
+        </ng-container>
+        <ng-container *ngFor="let col of assessPlan.plans">
+          <ng-container *ngIf="col.methodType === 'EXAM'">
+            <td [attr.colspan]="col.subMethods.length">
+              {{ col.frequency }}
+            </td>
           </ng-container>
         </ng-container>
       </tr>

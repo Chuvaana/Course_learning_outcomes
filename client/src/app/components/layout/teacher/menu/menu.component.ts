@@ -7,6 +7,7 @@ import { BadgeModule } from 'primeng/badge';
 import { InputTextModule } from 'primeng/inputtext';
 import { MenubarModule } from 'primeng/menubar';
 import { RippleModule } from 'primeng/ripple';
+import { AssessmentService } from '../../../../services/assessmentService';
 
 @Component({
   selector: 'app-menu',
@@ -24,113 +25,24 @@ import { RippleModule } from 'primeng/ripple';
   styleUrl: './menu.component.scss',
 })
 export class MenuComponent implements OnInit {
-  // items: MenuItem[] | undefined;
-
-  // ngOnInit() {
-  //   this.items = [
-  //     {
-  //       label: 'Хичээл',
-  //       icon: 'pi pi-book',
-  //       url: '/main/teacher/lessonList',
-  //     },
-  //     {
-  //       label: 'Тайлан',
-  //       icon: 'pi pi-home',
-  //       url: '/main/teacher/report-lesson-list',
-  //     },
-  //     {
-  //       label: 'Шалгалт',
-  //       icon: 'pi pi-star',
-  //       url: '/main/teacher/question-create',
-  //     },
-  //     {
-  //       label: 'Санал асуулга',
-  //       icon: 'pi pi-star',
-  //       url: '/',
-  //     },
-  //     {
-  //       label: 'Асуултын жагсаалт',
-  //       icon: 'pi pi-star',
-  //       url: '/main/teacher/questionlist',
-  //     },
-  //     // {
-  //     //   label: 'Шалгалт',
-  //     //   icon: 'pi pi-search',
-  //     //   items: [
-  //     //     {
-  //     //       label: 'Core',
-  //     //       icon: 'pi pi-bolt',
-  //     //       shortcut: '⌘+S'
-  //     //     },
-  //     //     {
-  //     //       label: 'Blocks',
-  //     //       icon: 'pi pi-server',
-  //     //       shortcut: '⌘+B'
-  //     //     },
-  //     //     {
-  //     //       label: 'UI Kit',
-  //     //       icon: 'pi pi-pencil',
-  //     //       shortcut: '⌘+U'
-  //     //     },
-  //     //     {
-  //     //       separator: true
-  //     //     },
-  //     //     {
-  //     //       label: 'Templates',
-  //     //       icon: 'pi pi-palette',
-  //     //       items: [
-  //     //         {
-  //     //           label: 'Apollo',
-  //     //           icon: 'pi pi-palette',
-  //     //           badge: '2'
-  //     //         },
-  //     //         {
-  //     //           label: 'Ultima',
-  //     //           icon: 'pi pi-palette',
-  //     //           badge: '3'
-  //     //         }
-  //     //       ]
-  //     //     }
-  //     //   ]
-  //     // },
-  //     // {
-  //     //   label: 'Contact',
-  //     //   icon: 'pi pi-envelope',
-  //     //   badge: '3'
-  //     // }
-  //   ];
-  // }
-
   lessonId: string = '';
   items: MenuItem[] | undefined;
 
-  constructor(private route: ActivatedRoute) {}
+  constructor(
+    private route: ActivatedRoute,
+    private service: AssessmentService
+  ) {}
 
   ngOnInit(): void {
     this.lessonId = this.route.snapshot.paramMap.get('id') || '';
 
     this.items = [
       {
-        label: 'Хичээлийн хөтөлбөр',
-        icon: 'pi pi-book',
-        routerLink: ['/main/teacher/lesson', this.lessonId, 'curriculum'],
-      },
-      {
         label: 'Төлөвлөгөө',
         icon: 'pi pi-book',
         items: [
-          // {
-          //   label: 'Дүнгийн ерөнхий төлөвлөлт',
-          //   icon: 'pi pi-check',
-          //   routerLink: ['/main/teacher/lesson', this.lessonId, 'clo-point'],
-          // },
-          // {
-          //   label: 'Дүнгийн төлөвлөлт',
-          //   icon: 'pi pi-check',
-          //   routerLink: ['/main/teacher/lesson', this.lessonId, 'clo-plan'],
-          // },
           {
-            label: 'Дүнгийн төлөвлөлт3',
+            label: 'Дүнгийн төлөвлөлт',
             icon: 'pi pi-check',
             routerLink: ['/main/teacher/lesson', this.lessonId, 'clo-tree'],
           },
@@ -144,6 +56,11 @@ export class MenuComponent implements OnInit {
             ],
           },
         ],
+      },
+      {
+        label: 'Хичээлийн хөтөлбөр',
+        icon: 'pi pi-book',
+        routerLink: ['/main/teacher/lesson', this.lessonId, 'curriculum'],
       },
       {
         label: 'Оюутан',
@@ -171,22 +88,34 @@ export class MenuComponent implements OnInit {
         icon: 'pi pi-plus',
         routerLink: ['/main/teacher/lesson', this.lessonId, 'exam-import'],
       },
-      {
-        label: 'Дүн',
-        icon: 'pi pi-graduation-cap',
-        items: [
-          {
-            label: 'Лабораторийн дүн',
-            icon: 'pi pi-graduation-cap',
-            routerLink: ['/main/teacher/lesson', this.lessonId, 'lab-grade'],
-          },
-          {
-            label: 'Семинарын дүн',
-            icon: 'pi pi-graduation-cap',
-            routerLink: ['/main/teacher/lesson', this.lessonId, 'sem-grade'],
-          },
-        ],
-      },
     ];
+
+    this.service.getAssessmentByLesson(this.lessonId).subscribe((res: any) => {
+      const plansArray =
+        res?.plans?.filter((item: any) => item.methodType === 'PROC') || [];
+
+      const subMenu: { label: string; icon: string; routerLink: string[] }[] =
+        [];
+      plansArray.forEach((plan: any) => {
+        subMenu.push({
+          label: plan.methodName,
+          icon: 'pi pi-graduation-cap',
+          routerLink: [
+            '/main/teacher/lesson',
+            this.lessonId,
+            'grade',
+            plan._id,
+          ],
+        });
+      });
+      if (subMenu.length > 0) {
+        const newItem = {
+          label: 'Дүн',
+          icon: 'pi pi-graduation-cap',
+          items: subMenu,
+        };
+        this.items = [...this.items!, newItem];
+      }
+    });
   }
 }

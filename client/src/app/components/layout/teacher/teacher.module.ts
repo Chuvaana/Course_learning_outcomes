@@ -23,6 +23,7 @@ import { LessonComponent } from './lesson-list/lesson/lesson.component';
 import { TeacherComponent } from './teacher.component';
 import { ReportLessonListComponent } from './report-lesson-list/report-lesson-list.component';
 import { CloPointPlanComponent } from './lesson-list/lesson/clo-point-plan/clo-point-plan.component';
+import { GradeComponent } from './course-grades/grade/grade.component';
 
 const routes: Routes = [
   {
@@ -46,6 +47,7 @@ const routes: Routes = [
           { path: 'curriculum', component: CurriculumComponent },
           { path: 'lab-grade', component: LabGradeComponent },
           { path: 'sem-grade', component: SemGradeComponent },
+          { path: 'grade/:planId', component: GradeComponent },
           { path: 'exam-import', component: ExamImportComponent },
         ],
       },
