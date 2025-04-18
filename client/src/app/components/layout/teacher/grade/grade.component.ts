@@ -10,9 +10,9 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { InputTextModule } from 'primeng/inputtext';
 import { TableModule } from 'primeng/table';
 import { ToastModule } from 'primeng/toast';
-import { AssessmentService } from '../../../../../services/assessmentService';
-import { GradeService } from '../../../../../services/gradeService';
-import { StudentService } from '../../../../../services/studentService';
+import { AssessmentService } from '../../../../services/assessmentService';
+import { GradeService } from '../../../../services/gradeService';
+import { StudentService } from '../../../../services/studentService';
 
 interface GradeRecord {
   student: {
@@ -21,7 +21,7 @@ interface GradeRecord {
     studentId: string;
   };
   grades: {
-    [pointId: string]: number; // key: point.id, value: score
+    [pointId: string]: number;
   };
 }
 
@@ -69,17 +69,15 @@ export class GradeComponent {
   selectedTimes!: number;
   searchQuery: string = '';
   students: any[] = [];
-  labGradeRecords: GradeRecord[] = [];
+  gradeRecords: GradeRecord[] = [];
   lessonId!: string;
   startDate!: Date;
   planId!: string;
-
   title!: string;
-
   data: any;
   gradeType!: 'SEM' | 'LAB' | 'BD';
-
   formData: Lesson[] = [];
+  showEdit = false;
 
   times = [
     { value: 1, label: '1-р цаг' },
@@ -100,9 +98,6 @@ export class GradeComponent {
     { label: 'Баасан', value: 'Friday' },
   ];
 
-  showPreviousWeeks = false;
-  showEdit = false;
-
   constructor(
     private studentService: StudentService,
     private route: ActivatedRoute,
@@ -117,7 +112,7 @@ export class GradeComponent {
     });
     this.route.params.subscribe((params) => {
       this.planId = params['planId'];
-      this.refreshData(); // энэ функцээ параметр солигдох болгонд дуудах
+      this.refreshData();
       this.gradeService.getConfig('First_day_of_school').subscribe((res) => {
         if (res) {
           this.startDate = new Date(res.itemValue);
@@ -127,7 +122,7 @@ export class GradeComponent {
   }
 
   refreshData() {
-    this.labGradeRecords = [];
+    this.gradeRecords = [];
     this.service.getAssessmentByLesson(this.lessonId).subscribe((res: any) => {
       this.data =
         res?.plans?.filter((item: any) => item._id === this.planId) || [];
@@ -176,7 +171,7 @@ export class GradeComponent {
         )
         .toPromise();
       if (res?.length) {
-        this.labGradeRecords = this.generateGradeRecordsFromResponse(res);
+        this.gradeRecords = this.generateGradeRecordsFromResponse(res);
       } else {
         const students = await (this.gradeType === 'BD'
           ? this.studentService.getStudents(this.lessonId).toPromise()
@@ -189,7 +184,7 @@ export class GradeComponent {
               .toPromise());
 
         this.students = students;
-        this.labGradeRecords = this.generateEmptyGradeRecords();
+        this.gradeRecords = this.generateEmptyGradeRecords();
       }
 
       this.applySearchFilter();
@@ -202,7 +197,7 @@ export class GradeComponent {
     if (!this.searchQuery) return;
 
     const query = this.searchQuery.toLowerCase();
-    this.labGradeRecords = this.labGradeRecords.filter(
+    this.gradeRecords = this.gradeRecords.filter(
       (item) =>
         item.student.name.toLowerCase().includes(query) ||
         item.student.code.toLowerCase().includes(query)
@@ -217,7 +212,7 @@ export class GradeComponent {
     this.selectedTimes = 0;
     this.selectedWeekday = '';
     this.searchQuery = '';
-    this.labGradeRecords = [];
+    this.gradeRecords = [];
   }
 
   generateEmptyGradeRecords(): any[] {
@@ -318,7 +313,7 @@ export class GradeComponent {
   save(): void {
     const groupedByWeek: { [week: string]: any[] } = {};
 
-    this.labGradeRecords.forEach((record) => {
+    this.gradeRecords.forEach((record) => {
       this.formData.forEach((lesson) => {
         const week = lesson.week;
         if (!groupedByWeek[week]) groupedByWeek[week] = [];
