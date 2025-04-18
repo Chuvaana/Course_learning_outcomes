@@ -6,7 +6,7 @@ import { ButtonModule } from 'primeng/button';
 import { DropdownModule } from 'primeng/dropdown';
 import { InputTextModule } from 'primeng/inputtext';
 import { TableModule } from 'primeng/table';
-import { StudentService } from '../../../../../../services/studentService';
+import { StudentService } from '../../../../../services/studentService';
 import { SelectModule } from 'primeng/select';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
@@ -21,7 +21,7 @@ interface Student {
 }
 
 @Component({
-  selector: 'app-les-student-list',
+  selector: 'app-poll-list',
   standalone: true,
   imports: [
     CommonModule,
@@ -34,10 +34,10 @@ interface Student {
     ToastModule
   ],
   providers: [MessageService],
-  templateUrl: './les-student-list.component.html',
-  styleUrl: './les-student-list.component.scss',
+  templateUrl: './poll-list.component.html',
+  styleUrl: './poll-list.component.scss',
 })
-export class LesStudentListComponent {
+export class PollListComponent {
   students: Student[] = [];
   filteredStudents: Student[] = [];
   searchQuery: string = '';
@@ -219,5 +219,8 @@ export class LesStudentListComponent {
       });
       this.editActive = false;
     })
+  }
+  addLesson(){
+    
   }
 }

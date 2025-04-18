@@ -49,6 +49,44 @@ exports.create = async (req, res) => {
   }
 };
 
+exports.login = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    const studen = await Student.findOne({ email });
+
+    if (!studen) {
+      return res.status(404).json({ message: "Бүртгэлтэй имэйл олдсонгүй" });
+    }
+
+    const isPasswordValid = await bcrypt.compare(password, studen.password);
+
+    if (!isPasswordValid) {
+      return res.status(401).json({ message: "Нууц үг буруу байна" });
+    }
+
+    if (!process.env.JWT_SECRET) {
+      return res.status(500).json({ message: "JWT_SECRET тохируулаагүй байна" });
+    }
+
+    const token = jwt.sign(
+      { id: studen._id, email: studen.email },
+      process.env.JWT_SECRET,
+      { expiresIn: '1h' }
+    );
+
+    res.status(200).json({
+      message: "Амжилттай",
+      studen,
+      token,
+    });
+  } catch (error) {
+    console.error("Нэвтрэхэд алдаа гарлаа:", error);
+    res.status(500).json({ message: "Internal server error", error: error.message });
+  }
+};
+
+
 exports.findAll = async (req, res) => {
   try {
     const students = await Student.find().populate("branch", "name").populate("id", "name");

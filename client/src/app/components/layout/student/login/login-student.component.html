@@ -3,11 +3,6 @@
         <p-image src="assets/img/sict.png" alt="Image" width="340" />
         <h2 class="auth-title">{{ isRegister ? 'Бүртгүүлэх' : 'Нэвтрэх' }}</h2>
         <form [formGroup]="teacherForm" class="auth-form">
-            <p-dropdown *ngIf="isRegister" formControlName="branch" [options]="branches" optionLabel="name"
-                optionValue="id" variant="filled" placeholder="Салбар сургууль"
-                (onChange)="onBranchChange($event.value)" class="form-dropdown" />
-            <p-dropdown *ngIf="isRegister" formControlName="department" [options]="departments" optionLabel="name"
-                optionValue="id" placeholder="Тэнхим" class="form-dropdown" />
             <input type="text" pInputText formControlName="name" *ngIf="isRegister" class="form-input"
                 placeholder="Нэр" />
             <input type="text" pInputText formControlName="code" *ngIf="isRegister" class="form-input"
@@ -17,7 +12,5 @@
                 [style]="{ width: '100%'}" />
             <p-button label="Submit" class="submit-button" (click)="submitButton()" />
         </form>
-        <a (click)="toggleForm()" class="toggle-link">{{ isRegister ? 'Бүртгэлтэй? Нэвтрэх' : "Бүртгэлгүй? Бүртгүүлэх"
-            }}</a>
     </p-card>
 </div>

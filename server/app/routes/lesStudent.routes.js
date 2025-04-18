@@ -7,6 +7,7 @@ module.exports = app => {
     router.post('/', studentController.createStudent);
 
     router.post('/upload', studentController.uploadStudents);
+    router.post('/update', studentController.updateStudents);
 
     // Get all students
     router.get('/', studentController.getAllStudents);

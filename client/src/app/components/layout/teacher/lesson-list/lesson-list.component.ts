@@ -9,6 +9,7 @@ import { RippleModule } from 'primeng/ripple';
 import { TeacherService } from '../../../../services/teacherService';
 import { Router, RouterModule } from '@angular/router';
 import { forkJoin, map, Observable } from 'rxjs';
+import { Image } from 'primeng/image';
 
 interface Lesson {
   id: string;
@@ -21,6 +22,7 @@ interface Lesson {
   selector: 'app-lesson-list',
   standalone: true,
   imports: [
+    Image,
     CommonModule,
     ButtonModule,
     InputTextModule,

@@ -67,6 +67,22 @@ export class LessonComponent {
         routerLink: ['/main/teacher/lesson', this.lessonId, 'exam-import'],
       },
       {
+        label: 'Санал асуулга',
+        icon: 'pi pi-book',
+        items: [
+          {
+            label: 'Санал асуулгын жагсаалт',
+            icon: 'pi pi-plus',
+            routerLink: ['/main/teacher/lesson', this.lessonId, 'poll-craete-list'],
+          },
+          {
+            label: 'Сурагчдын санал асуулга харах',
+            icon: 'pi pi-plus',
+            routerLink: ['/main/teacher/lesson', this.lessonId, 'poll-student-list'],
+          },
+        ],
+      },
+      {
         label: 'Дүн',
         icon: 'pi pi-graduation-cap',
         items: [

@@ -22,6 +22,8 @@ import { LesStudentComponent } from './lesson-list/lesson/les-student/les-studen
 import { LessonComponent } from './lesson-list/lesson/lesson.component';
 import { TeacherComponent } from './teacher.component';
 import { ReportLessonListComponent } from './report-lesson-list/report-lesson-list.component';
+import { PollListComponent } from './poll/poll-list/poll-list.component';
+import { PollCreateComponent } from './poll/poll-create/poll-create.component';
 
 const routes: Routes = [
   {
@@ -45,6 +47,8 @@ const routes: Routes = [
           { path: 'lab-grade', component: LabGradeComponent },
           { path: 'sem-grade', component: SemGradeComponent },
           { path: 'exam-import', component: ExamImportComponent },
+          { path: 'poll-craete-list', component: PollCreateComponent },
+          { path: 'poll-student-list', component: PollListComponent },
         ],
       },
       {

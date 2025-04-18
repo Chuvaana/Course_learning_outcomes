@@ -7,29 +7,31 @@ import { CardModule } from 'primeng/card';
 import { DropdownModule } from 'primeng/dropdown';
 import { PasswordModule } from 'primeng/password';
 import { RegLogService } from '../../../../services/regLogService';
+import { InputTextModule } from 'primeng/inputtext';
 import { Image } from 'primeng/image';
 
 @Component({
-  selector: 'app-register-login',
+  selector: 'login-student',
   standalone: true,
   imports: [
     Image,
-    ReactiveFormsModule, 
-    DropdownModule, 
-    PasswordModule, 
-    ButtonModule, 
-    CommonModule, 
-    FormsModule, 
-    CardModule, 
-    RouterModule],
-  templateUrl: './register-login.component.html',
-  styleUrl: './register-login.component.scss'
+    ReactiveFormsModule,
+    DropdownModule,
+    PasswordModule,
+    ButtonModule,
+    CommonModule,
+    FormsModule,
+    CardModule,
+    RouterModule,
+    InputTextModule],
+  templateUrl: './login-student.component.html',
+  styleUrl: './login-student.component.scss'
 })
-export class RegisterLoginComponent {
+export class LoginStudentComponent {
 
   ingredient!: string;
 
-  isRegister = true;
+  isRegister = false;
   teacherForm: FormGroup;
   branches: any[] = [];
   departments: any[] = [];
@@ -100,11 +102,11 @@ export class RegisterLoginComponent {
         (response: any) => {
           if (response && response.token) {
             console.log("Teacher logged in:", response);
-            
+
             // Store the token in localStorage
             localStorage.setItem('authToken', response.token);
             localStorage.setItem('teacherId', response.teacher.id);
-            
+
             // Optionally, you can navigate the user to a protected route
             this.router.navigate(['/main/teacher/lessonList']);
           }

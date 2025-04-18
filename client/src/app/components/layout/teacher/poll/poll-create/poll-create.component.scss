@@ -1,0 +1,68 @@
+.lesson-add-header {
+    margin: 10px 50px;
+}
+
+.card {
+    justify-items: center;
+
+    .question {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px 50px;
+        width: 100%;
+        height: 20%;
+
+        .questionTitle {
+            width: 70%;
+        }
+
+        .questionType {
+            padding-left: 10px;
+            width: 30%;
+        }
+    }
+}
+
+.question {
+    display: flex;
+    justify-content: space-between;
+    justify-self: center;
+    padding: 10px 50px;
+    width: 70%;
+    height: 20%;
+
+    .questionTitle {
+        width: 70%;
+    }
+
+    .questionType {
+        padding-left: 10px;
+        width: 30%;
+    }
+}
+
+.card-question {
+    border: 1px solid black;
+    border-radius: 10px;
+}
+
+.answers {
+    display: flex;
+    flex-direction: column;
+    width: 70%;
+    justify-self: center;
+
+    .check-box {
+        display: flex;
+        padding: 10px 50px;
+
+        .checkboxs {
+            width: 5%;
+
+        }
+        .answer {
+            padding-left: 10px;
+            width: 75%;
+        }
+    }
+}

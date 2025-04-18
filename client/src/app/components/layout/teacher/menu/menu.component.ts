@@ -46,12 +46,25 @@ export class MenuComponent implements OnInit {
       {
         label: 'Санал асуулга',
         icon: 'pi pi-star',
-        url: '/',
+        url: '/main/teacher/lessonList',
       },
       {
         label: 'Асуултын жагсаалт',
         icon: 'pi pi-star',
-        url: '/main/teacher/questionlist',
+      //     items: [
+      //       {
+      //         label: 'Core',
+      //         icon: 'pi pi-bolt',
+      //         url: '/main/teacher/questionlist',
+      //         shortcut: '⌘+S'
+      //       },
+      //       {
+      //         label: 'Blocks',
+      //         icon: 'pi pi-server',
+      //         url: '/main/teacher/questionlist',
+      //         shortcut: '⌘+B'
+      //       },
+      // ]
       },
       // {
       //   label: 'Шалгалт',
