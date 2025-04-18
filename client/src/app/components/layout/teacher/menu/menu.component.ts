@@ -104,6 +104,11 @@ export class MenuComponent implements OnInit {
         icon: 'pi pi-plus',
         routerLink: ['/main/teacher/lesson', this.lessonId, 'progress-poll'],
       },
+      {
+        label: 'Тайлан',
+        icon: 'pi pi-home',
+        routerLink: ['/main/teacher/lesson', this.lessonId, 'report'],
+      },
     ];
 
     this.service.getAssessmentByLesson(this.lessonId).subscribe((res: any) => {

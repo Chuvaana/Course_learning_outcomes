@@ -30,7 +30,6 @@ const routes: Routes = [
     children: [
       { path: 'report-lesson-list', component: ReportLessonListComponent },
       { path: 'lessonList', component: LessonListComponent },
-      { path: 'report/:id', component: HomeComponent },
       {
         path: 'lesson/:id',
         component: LessonComponent,
@@ -45,6 +44,7 @@ const routes: Routes = [
           { path: 'exam-import', component: ExamImportComponent },
           { path: 'exam-list', component: ExamListComponent },
           { path: 'progress-poll', component: ProgressPollComponent },
+          { path: 'report', component: HomeComponent },
         ],
       },
       {
