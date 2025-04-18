@@ -1,8 +1,9 @@
 <div class="p-fluid">
   <p-toast />
-  <h2>Семинарын дүн</h2>
+  <h2>{{ title }}</h2>
   <div class="filter-section">
     <p-dropdown
+      *ngIf="gradeType !== 'BD'"
       [options]="weekdays"
       [(ngModel)]="selectedWeekday"
       (onChange)="onSelectionChange()"
@@ -10,6 +11,7 @@
     >
     </p-dropdown>
     <p-dropdown
+      *ngIf="gradeType !== 'BD'"
       [options]="times"
       [(ngModel)]="selectedTimes"
       (onChange)="onSelectionChange()"
@@ -44,7 +46,9 @@
       <tr>
         <th rowspan="3">№</th>
         <th rowspan="3">Оюутан</th>
-        <th colspan="2" *ngFor="let col of formData">{{ col.week }}</th>
+        <th [attr.colspan]="data.length" *ngFor="let col of formData">
+          {{ col.week }}
+        </th>
       </tr>
       <tr>
         <ng-container *ngFor="let col of formData">

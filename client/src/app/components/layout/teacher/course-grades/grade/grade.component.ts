@@ -11,8 +11,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { TableModule } from 'primeng/table';
 import { ToastModule } from 'primeng/toast';
 import { AssessmentService } from '../../../../../services/assessmentService';
-import { LabGradeService } from '../../../../../services/labGradeService';
-import { SemGradeService } from '../../../../../services/semGradeService';
+import { GradeService } from '../../../../../services/gradeService';
 import { StudentService } from '../../../../../services/studentService';
 
 interface GradeRecord {
@@ -67,7 +66,6 @@ export interface Lesson {
 })
 export class GradeComponent {
   selectedWeekday: string = '';
-  selectedClassType = 'sem';
   selectedTimes!: number;
   searchQuery: string = '';
   students: any[] = [];
@@ -76,8 +74,10 @@ export class GradeComponent {
   startDate!: Date;
   planId!: string;
 
+  title!: string;
+
   data: any;
-  gradeType!: 'SEM' | 'LAB' | 'BDS';
+  gradeType!: 'SEM' | 'LAB' | 'BD';
 
   formData: Lesson[] = [];
 
@@ -106,18 +106,19 @@ export class GradeComponent {
   constructor(
     private studentService: StudentService,
     private route: ActivatedRoute,
-    private semGradeService: SemGradeService,
-    private labGradeService: LabGradeService,
+    private gradeService: GradeService,
     private msgService: MessageService,
     private service: AssessmentService
   ) {}
 
   ngOnInit() {
+    this.route.parent?.paramMap.subscribe((params) => {
+      this.lessonId = params.get('id')!;
+    });
     this.route.params.subscribe((params) => {
       this.planId = params['planId'];
-      this.lessonId = params['id'];
       this.refreshData(); // энэ функцээ параметр солигдох болгонд дуудах
-      this.semGradeService.getConfig('First_day_of_school').subscribe((res) => {
+      this.gradeService.getConfig('First_day_of_school').subscribe((res) => {
         if (res) {
           this.startDate = new Date(res.itemValue);
         }
@@ -126,22 +127,26 @@ export class GradeComponent {
   }
 
   refreshData() {
+    this.labGradeRecords = [];
     this.service.getAssessmentByLesson(this.lessonId).subscribe((res: any) => {
       this.data =
         res?.plans?.filter((item: any) => item._id === this.planId) || [];
+      this.title = this.data[0].methodName;
       this.gradeType = this.data[0].secondMethodType;
       this.data = this.data[0].subMethods;
 
       this.fetchScheduleData(this.gradeType);
+      if (this.gradeType === 'BD') {
+        this.onSelectionChange();
+      }
     });
   }
 
-  private fetchScheduleData(type: 'SEM' | 'LAB' | 'BDS') {
-    this.selectedClassType = type.toLowerCase();
+  private fetchScheduleData(type: 'SEM' | 'LAB' | 'BD') {
     const serviceMap = {
       SEM: this.service.getScheduleSems.bind(this.service),
       LAB: this.service.getScheduleLabs.bind(this.service),
-      BDS: this.service.getScheduleBds.bind(this.service),
+      BD: this.service.getScheduleBds.bind(this.service),
     };
 
     const fetchService = serviceMap[type];
@@ -151,54 +156,37 @@ export class GradeComponent {
           (item: any) =>
             Array.isArray(item.point) && item.point.some((p: any) => p.point)
         );
-
-        console.log(this.formData);
       });
     }
   }
 
   async onSelectionChange(): Promise<void> {
-    if (!this.selectedWeekday || !this.selectedClassType || !this.selectedTimes)
+    if (
+      (!this.selectedWeekday || !this.selectedTimes) &&
+      this.gradeType !== 'BD'
+    )
       return;
-
     try {
-      const res = await (this.gradeType === 'SEM'
-        ? this.semGradeService
-            .getSemGrade(
-              this.lessonId,
-              this.selectedWeekday,
-              this.selectedClassType,
-              this.selectedTimes
-            )
-            .toPromise()
-        : this.gradeType === 'LAB'
-        ? this.labGradeService
-            .getLabGrade(
-              this.lessonId,
-              this.selectedWeekday,
-              this.selectedClassType,
-              this.selectedTimes
-            )
-            .toPromise()
-        : this.labGradeService
-            .getLabGrade(
-              this.lessonId,
-              this.selectedWeekday,
-              this.selectedClassType,
-              this.selectedTimes
-            )
-            .toPromise());
-
+      const res = await this.gradeService
+        .getGrade(
+          this.lessonId,
+          this.selectedWeekday,
+          this.gradeType.toLowerCase(),
+          this.selectedTimes
+        )
+        .toPromise();
       if (res?.length) {
         this.labGradeRecords = this.generateGradeRecordsFromResponse(res);
       } else {
-        const students = await this.studentService
-          .getStudentByClasstypeAndDayTime(
-            this.selectedClassType,
-            this.selectedWeekday,
-            this.selectedTimes
-          )
-          .toPromise();
+        const students = await (this.gradeType === 'BD'
+          ? this.studentService.getStudents(this.lessonId).toPromise()
+          : this.studentService
+              .getStudentByClasstypeAndDayTime(
+                this.gradeType.toLowerCase(),
+                this.selectedWeekday,
+                this.selectedTimes
+              )
+              .toPromise());
 
         this.students = students;
         this.labGradeRecords = this.generateEmptyGradeRecords();
@@ -243,14 +231,6 @@ export class GradeComponent {
         });
       });
 
-      console.log({
-        student: {
-          name: stu.studentName,
-          code: stu.studentCode,
-          studentId: stu.id,
-        },
-        grades: gradeMap,
-      });
       return {
         student: {
           name: stu.studentName,
@@ -265,7 +245,6 @@ export class GradeComponent {
   generateGradeRecordsFromResponse(res: any[]): any[] {
     const studentMap: { [studentId: string]: any } = {};
 
-    // 1. FormData-аар бүх week_point key-үүдийг урьдчилан тодорхойлоход ашиглана
     const allWeekPoints: string[] = [];
     this.formData.forEach((col: any) => {
       col.point.forEach((po: any) => {
@@ -274,71 +253,36 @@ export class GradeComponent {
       });
     });
 
-    // 2. Backend-аас ирсэн бүх record-г гүйлгэнэ
     res.forEach((record) => {
       const week = record.weekNumber;
 
-      record.labGrades.forEach((labGrade: any) => {
-        const studentId = labGrade.studentId.id;
+      record.labGrades.forEach((grade: any) => {
+        const studentId = grade.studentId.id;
 
-        // Хэрвээ тухайн оюутан map-д байхгүй бол шинээр нэм
         if (!studentMap[studentId]) {
           studentMap[studentId] = {
             student: {
-              name: labGrade.studentId.studentName,
-              code: labGrade.studentId.studentCode,
+              name: grade.studentId.studentName,
+              code: grade.studentId.studentCode,
               studentId: studentId,
             },
             grades: {},
           };
 
-          // Эхлээд бүх point-уудыг 0-оор initialize хийнэ
           allWeekPoints.forEach((wp) => {
             studentMap[studentId].grades[wp] = 0;
           });
         }
 
-        // Энэ week-ийн оноог оруулна
-        labGrade.grades.forEach((g: any) => {
+        grade.grades.forEach((g: any) => {
           const key = `${week}_${g.id}`;
           studentMap[studentId].grades[key] = g.point;
         });
       });
     });
 
-    // 3. Object map-ийг array болгож буцаана
     return Object.values(studentMap);
   }
-
-  // generateGradeRecords(res: any[]): any[] {
-  //   const records: any[] = [];
-
-  //   res.forEach((record) => {
-  //     record.labGrades.forEach((labGrade: any) => {
-  //       const gradeMap: { [pointId: string]: number } = {};
-
-  //       this.formData.forEach((col: any) => {
-  //         col.point.forEach((po: any) => {
-  //           const uniqueId = `${record.weekNumber}_${po.id}`;
-  //           const found = labGrade.grades.find((g: any) => g.id === po.id);
-  //           gradeMap[uniqueId] = found?.point ?? 0;
-  //         });
-  //       });
-
-  //       records.push({
-  //         student: {
-  //           name: labGrade.studentId.studentName,
-  //           code: labGrade.studentId.studentCode,
-  //           studentId: labGrade.studentId.id,
-  //         },
-  //         grades: gradeMap,
-  //       });
-  //     });
-  //   });
-  //   console.log(records);
-
-  //   return records;
-  // }
 
   getWeekNumberForRecord(record: GradeRecord): string {
     const lesson = this.formData.find((lesson) =>
@@ -368,7 +312,7 @@ export class GradeComponent {
       '15': 'XV',
       '16': 'XVI',
     };
-    return weekMap[week] || week; // Default to original week string if not mapped
+    return weekMap[week] || week;
   }
 
   save(): void {
@@ -397,79 +341,32 @@ export class GradeComponent {
         weekDay: this.selectedWeekday,
         time: this.selectedTimes,
         weekNumber: this.convertWeekToRoman(week),
-        type: this.selectedClassType.toLowerCase(),
+        type: this.gradeType.toLowerCase(),
         labGrades,
       })
     );
 
     console.log('Grade Payload:', gradeData);
 
-    if (this.gradeType === 'SEM') {
-      this.semGradeService.createSemGradeAll(gradeData).subscribe(
-        (res) => {
-          this.msgService.add({
-            severity: 'success',
-            summary: 'Амжилттай',
-            detail: 'Оноо хадгалагдлаа',
-          });
-          if (this.showEdit) {
-            this.toggleShowEdit();
-          }
-        },
-        (err) => {
-          console.error(err);
-          this.msgService.add({
-            severity: 'error',
-            summary: 'Алдаа',
-            detail: 'Хадгалах үед алдаа гарлаа',
-          });
+    this.gradeService.createGradeAll(gradeData).subscribe(
+      (res) => {
+        this.msgService.add({
+          severity: 'success',
+          summary: 'Амжилттай',
+          detail: 'Оноо амжилттай хадгалагдлаа',
+        });
+        if (this.showEdit) {
+          this.toggleShowEdit();
         }
-      );
-    } else if (this.gradeType === 'LAB') {
-      this.labGradeService.createLabGradeAll(gradeData).subscribe(
-        (res) => {
-          this.msgService.add({
-            severity: 'success',
-            summary: 'Амжилттай',
-            detail: 'Оноо хадгалагдлаа',
-          });
-          if (this.showEdit) {
-            this.toggleShowEdit();
-          }
-        },
-        (err) => {
-          console.error(err);
-          this.msgService.add({
-            severity: 'error',
-            summary: 'Алдаа',
-            detail: 'Хадгалах үед алдаа гарлаа',
-          });
-        }
-      );
-    } else {
-    }
-
-    // const saveService =
-    //   this.gradeType === 'SEM'
-    //     ? this.semGradeService.createSemGrade
-    //     : this.labGradeService.createLabGrade;
-
-    // saveService(gradeData).subscribe({
-    //   next: () => {
-    //     this.msgService.add({
-    //       severity: 'success',
-    //       summary: 'Амжилттай',
-    //       detail: 'Оноо хадгалагдлаа',
-    //     });
-    //   },
-    //   error: (err) => {
-    //     console.error(err);
-    //     this.msgService.add({
-    //       severity: 'error',
-    //       summary: 'Алдаа',
-    //       detail: 'Хадгалах үед алдаа гарлаа',
-    //     });
-    //   },
-    // });
+      },
+      (err) => {
+        console.error(err);
+        this.msgService.add({
+          severity: 'error',
+          summary: 'Алдаа',
+          detail: 'Хадгалах үед алдаа гарлаа',
+        });
+      }
+    );
   }
 }

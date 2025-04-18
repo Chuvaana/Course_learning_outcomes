@@ -1,10 +1,10 @@
 const mongoose = require('mongoose');
 
-const LabGradeSchema = new mongoose.Schema(
+const GradeSchema = new mongoose.Schema(
   {
     lessonId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Lesson', // Reference to Lesson model
+      ref: 'Lesson',
       required: true,
     },
     weekDay: {
@@ -14,7 +14,7 @@ const LabGradeSchema = new mongoose.Schema(
     },
     type: {
       type: String,
-      enum: ['lec', 'sem', 'lab'], // Lecture, Seminar, Laboratory
+      enum: ['lec', 'sem', 'lab', 'bd'],
       required: true,
     },
     time: {
@@ -44,4 +44,4 @@ const LabGradeSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-module.exports = mongoose.model('LabGrade', LabGradeSchema);
+module.exports = mongoose.model('Grade', GradeSchema);

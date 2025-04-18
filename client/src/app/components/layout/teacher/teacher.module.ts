@@ -3,29 +3,25 @@ import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule, Routes } from '@angular/router';
 
+import { ExamListComponent } from '../exam/exam-list.component';
 import { ExamQuestionListComponent } from '../exam/exam-question-list/exam-question-list.component';
 import { ExamImportComponent } from '../exam/import/exam-import.component';
 import { QuestionListComponent } from '../exam/list/list.component';
 import { QuestionComponent } from '../exam/question/question.component';
 import { SharedComponent } from '../shared/shared.component';
-import { LabGradeComponent } from './course-grades/lab-grade/lab-grade.component';
-import { SemGradeComponent } from './course-grades/sem-grade/sem-grade.component';
+import { GradeComponent } from './course-grades/grade/grade.component';
 import { CurriculumComponent } from './curriculum/curriculum.component';
 import { HomeComponent } from './home/home.component';
 import { LessonListComponent } from './lesson-list/lesson-list.component';
 import { AttendanceComponent } from './lesson-list/lesson/attendance/attendance.component';
-import { CloPlanComponent } from './lesson-list/lesson/clo-plan/clo-plan.component';
-import { CloPointComponent } from './lesson-list/lesson/clo-point/clo-point.component';
+import { CloPointPlanComponent } from './lesson-list/lesson/clo-point-plan/clo-point-plan.component';
 import { CloTreeComponent } from './lesson-list/lesson/clo-tree/clo-tree.component';
 import { LesStudentListComponent } from './lesson-list/lesson/les-student-list/les-student-list.component';
 import { LesStudentComponent } from './lesson-list/lesson/les-student/les-student.component';
 import { LessonComponent } from './lesson-list/lesson/lesson.component';
-import { TeacherComponent } from './teacher.component';
-import { ReportLessonListComponent } from './report-lesson-list/report-lesson-list.component';
-import { CloPointPlanComponent } from './lesson-list/lesson/clo-point-plan/clo-point-plan.component';
-import { GradeComponent } from './course-grades/grade/grade.component';
 import { ProgressPollComponent } from './lesson-list/lesson/progress-poll/progress-poll.component';
-import { ExamListComponent } from '../exam/exam-list.component';
+import { ReportLessonListComponent } from './report-lesson-list/report-lesson-list.component';
+import { TeacherComponent } from './teacher.component';
 
 const routes: Routes = [
   {
@@ -41,14 +37,10 @@ const routes: Routes = [
         children: [
           { path: 'student', component: LesStudentComponent },
           { path: 'studentList', component: LesStudentListComponent },
-          { path: 'clo-point', component: CloPointComponent },
           { path: 'clo-tree', component: CloTreeComponent },
-          // { path: 'clo-plan', component: CloPlanComponent },
           { path: 'clo-point-plan', component: CloPointPlanComponent },
           { path: 'attendance', component: AttendanceComponent },
           { path: 'curriculum', component: CurriculumComponent },
-          { path: 'lab-grade', component: LabGradeComponent },
-          { path: 'sem-grade', component: SemGradeComponent },
           { path: 'grade/:planId', component: GradeComponent },
           { path: 'exam-import', component: ExamImportComponent },
           { path: 'exam-list', component: ExamListComponent },
@@ -94,8 +86,6 @@ const routes: Routes = [
     LessonComponent,
     LesStudentListComponent,
     LesStudentComponent,
-    CloPointComponent,
-    CloPlanComponent,
     CloTreeComponent,
     AttendanceComponent,
     CurriculumComponent,

@@ -59,7 +59,7 @@ require('./app/routes/lesStudent.routes')(app);
 require('./app/routes/attendance.routes')(app);
 require('./app/routes/assessFooter.routes')(app);
 require('./app/routes/lessonAssessments.routes')(app);
-require('./app/routes/labGrade.routes')(app);
+require('./app/routes/grade.routes')(app);
 require('./app/routes/lessonCurriculums.routes')(app);
 require('./app/routes/plan.routes')(app);
 require('./app/routes/cloPointPlan.routes')(app);

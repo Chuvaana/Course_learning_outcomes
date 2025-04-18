@@ -19,24 +19,24 @@ interface GradeRecord {
 @Injectable({
   providedIn: 'root',
 })
-export class SemGradeService {
-  private apiUrl = 'http://localhost:3000/api/semGrade'; // Update with your backend URL
+export class GradeService {
+  private apiUrl = 'http://localhost:3000/api/grade'; // Update with your backend URL
 
   constructor(private http: HttpClient) {}
 
   // ✅ Create labGrade record
-  createSemGrade(labGrade: any): Observable<any> {
+  createGrade(labGrade: any): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}`, labGrade);
   }
 
-  createSemGradeAll(labGrade: any[]): Observable<any> {
+  createGradeAll(labGrade: any[]): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}/all`, {
       labGradeDatas: labGrade,
     });
   }
 
   // ✅ Get labGrade records by filters (lessonId, weekNumber, type)
-  getSemGrade(
+  getGrade(
     lessonId: string,
     weekDay?: string,
     type?: string,
@@ -50,12 +50,12 @@ export class SemGradeService {
     return this.http.get<GradeRecord[]>(`${this.apiUrl}${queryParams}`);
   }
 
-  getSemGradeByLesson(lessonId: string): Observable<GradeRecord[]> {
+  getGradeByLesson(lessonId: string): Observable<GradeRecord[]> {
     return this.http.get<GradeRecord[]>(`${this.apiUrl}/${lessonId}`);
   }
 
   // ✅ Update an labGrade record
-  updateSemGrade(
+  updateGrade(
     id: string,
     labGrade: Partial<GradeRecord>
   ): Observable<GradeRecord> {
@@ -63,7 +63,7 @@ export class SemGradeService {
   }
 
   // ✅ Delete an labGrade record
-  deleteSemGrade(id: string): Observable<{ message: string }> {
+  deleteGrade(id: string): Observable<{ message: string }> {
     return this.http.delete<{ message: string }>(`${this.apiUrl}/${id}`);
   }
 

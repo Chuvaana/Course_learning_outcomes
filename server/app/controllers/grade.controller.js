@@ -1,12 +1,12 @@
-const LabGrade = require('../models/labGrade.model');
+const Grade = require('../models/grade.model');
 
 // ✅ Create a new labGrade record
-exports.createLabGrade = async (req, res) => {
+exports.createGrade = async (req, res) => {
   try {
     const { lessonId, weekDay, weekNumber, type, time, labGrades } = req.body;
 
     // Check if a lab grade record already exists
-    const existingLabGrade = await LabGrade.findOne({
+    const existingGrade = await Grade.findOne({
       lessonId,
       weekDay,
       weekNumber,
@@ -14,26 +14,26 @@ exports.createLabGrade = async (req, res) => {
       time,
     });
 
-    if (existingLabGrade) {
+    if (existingGrade) {
       // Update or add each student's grades
       for (let i = 0; i < labGrades.length; i++) {
         const { studentId, grade1, grade2 } = labGrades[i];
 
-        const index = existingLabGrade.labGrade.findIndex((record) => record.studentId.toString() === studentId);
+        const index = existingGrade.labGrade.findIndex((record) => record.studentId.toString() === studentId);
 
         if (index !== -1) {
-          existingLabGrade.labGrade[index].grade1 = grade1;
-          existingLabGrade.labGrade[index].grade2 = grade2;
+          existingGrade.labGrade[index].grade1 = grade1;
+          existingGrade.labGrade[index].grade2 = grade2;
         } else {
-          existingLabGrade.labGrade.push({ studentId, grade1, grade2 });
+          existingGrade.labGrade.push({ studentId, grade1, grade2 });
         }
       }
 
-      await existingLabGrade.save();
-      return res.status(200).json(existingLabGrade);
+      await existingGrade.save();
+      return res.status(200).json(existingGrade);
     } else {
       // Create new document with labGrade field
-      const newLabGrade = new LabGrade({
+      const newGrade = new Grade({
         lessonId,
         weekDay,
         weekNumber,
@@ -41,8 +41,8 @@ exports.createLabGrade = async (req, res) => {
         time,
         labGrade: labGrades, // Set labGrade field from request
       });
-      await newLabGrade.save();
-      return res.status(201).json(newLabGrade);
+      await newGrade.save();
+      return res.status(201).json(newGrade);
     }
   } catch (error) {
     console.error('Error:', error);
@@ -50,7 +50,7 @@ exports.createLabGrade = async (req, res) => {
   }
 };
 
-exports.createLabGradeAll = async (req, res) => {
+exports.createGradeAll = async (req, res) => {
   try {
     const labGradeDatas = req.body.labGradeDatas; // The data array sent from frontend
 
@@ -69,7 +69,7 @@ exports.createLabGradeAll = async (req, res) => {
               weekNumber,
               type,
               time,
-              labGrades, // overwrite labGrades entirely
+              labGrades,
             },
           },
           upsert: true,
@@ -77,10 +77,10 @@ exports.createLabGradeAll = async (req, res) => {
       });
     }
 
-    const result = await LabGrade.bulkWrite(bulkOperations);
+    const result = await Grade.bulkWrite(bulkOperations);
 
     return res.status(200).json({
-      message: 'Lab grades saved successfully',
+      message: 'Grades saved successfully',
       result,
     });
   } catch (error) {
@@ -89,7 +89,7 @@ exports.createLabGradeAll = async (req, res) => {
 };
 
 // ✅ Get labGrade records by `lessonId`, `weekNumber`, and `type`
-exports.getLabGradeByFilter = async (req, res) => {
+exports.getGradeByFilter = async (req, res) => {
   try {
     const { lessonId, weekDay, type, time } = req.query;
     const filter = {};
@@ -99,17 +99,17 @@ exports.getLabGradeByFilter = async (req, res) => {
     if (type) filter.type = type;
     if (time) filter.time = time;
 
-    const attendanceRecords = await LabGrade.find(filter).populate('labGrades.studentId', 'studentName studentCode');
+    const attendanceRecords = await Grade.find(filter).populate('labGrades.studentId', 'studentName studentCode');
     res.json(attendanceRecords);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
 
-exports.getLabGradeByLesson = async (req, res) => {
+exports.getGradeByLesson = async (req, res) => {
   try {
     const id = req.params.id;
-    const attendanceRecords = await LabGrade.find({ lessonId: id }).populate(
+    const attendanceRecords = await Grade.find({ lessonId: id }).populate(
       'labGrade.studentId',
       'studentName studentCode'
     );
@@ -120,22 +120,22 @@ exports.getLabGradeByLesson = async (req, res) => {
 };
 
 // ✅ Update labGrade by ID
-exports.updateLabGrade = async (req, res) => {
+exports.updateGrade = async (req, res) => {
   try {
-    const updatedLabGrade = await LabGrade.findByIdAndUpdate(req.params.id, req.body, { new: true });
-    if (!updatedLabGrade) return res.status(404).json({ message: 'LabGrade not found' });
-    res.json(updatedLabGrade);
+    const updatedGrade = await Grade.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    if (!updatedGrade) return res.status(404).json({ message: 'Grade not found' });
+    res.json(updatedGrade);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
 };
 
 // ✅ Delete an labGrade record by ID
-exports.deleteLabGrade = async (req, res) => {
+exports.deleteGrade = async (req, res) => {
   try {
-    const deletedLabGrade = await LabGrade.findByIdAndDelete(req.params.id);
-    if (!deletedLabGrade) return res.status(404).json({ message: 'LabGrade not found' });
-    res.json({ message: 'LabGrade deleted successfully' });
+    const deletedGrade = await Grade.findByIdAndDelete(req.params.id);
+    if (!deletedGrade) return res.status(404).json({ message: 'Grade not found' });
+    res.json({ message: 'Grade deleted successfully' });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
