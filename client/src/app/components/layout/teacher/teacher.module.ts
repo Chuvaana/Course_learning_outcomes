@@ -20,7 +20,6 @@ import { LesStudentListComponent } from './lesson-list/lesson/les-student-list/l
 import { LesStudentComponent } from './lesson-list/lesson/les-student/les-student.component';
 import { LessonComponent } from './lesson-list/lesson/lesson.component';
 import { ProgressPollComponent } from './lesson-list/lesson/progress-poll/progress-poll.component';
-import { ReportLessonListComponent } from './report-lesson-list/report-lesson-list.component';
 import { TeacherComponent } from './teacher.component';
 
 const routes: Routes = [
@@ -28,7 +27,6 @@ const routes: Routes = [
     path: '',
     component: TeacherComponent,
     children: [
-      { path: 'report-lesson-list', component: ReportLessonListComponent },
       { path: 'lessonList', component: LessonListComponent },
       {
         path: 'lesson/:id',
@@ -77,9 +75,8 @@ const routes: Routes = [
     RouterModule.forChild(routes),
     FormsModule,
     ReactiveFormsModule,
-    LessonListComponent, // ✅ Explicitly importing standalone components
+    LessonListComponent,
     LessonComponent,
-    ReportLessonListComponent,
     HomeComponent,
     TeacherComponent,
     LessonListComponent,
