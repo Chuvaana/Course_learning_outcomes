@@ -8,6 +8,8 @@ module.exports = (app) => {
   // Route to get methods by lessonId
   router.get('/:lessonId', methodController.getListByLessonId);
 
+  router.get('/:lessonId/planId/:planId', methodController.getListByLessonIdAndPlanId);
+
   // Route to update an assessment plan (method and subMethods)
   router.put('/:lessonId', methodController.updateAssessmentPlan);
 

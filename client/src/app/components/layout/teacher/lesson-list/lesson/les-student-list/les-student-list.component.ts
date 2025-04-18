@@ -7,6 +7,9 @@ import { DropdownModule } from 'primeng/dropdown';
 import { InputTextModule } from 'primeng/inputtext';
 import { TableModule } from 'primeng/table';
 import { StudentService } from '../../../../../../services/studentService';
+import { SelectModule } from 'primeng/select';
+import { MessageService } from 'primeng/api';
+import { ToastModule } from 'primeng/toast';
 
 interface Student {
   lessonId: string;
@@ -27,7 +30,10 @@ interface Student {
     InputTextModule,
     ButtonModule,
     FormsModule,
+    SelectModule,
+    ToastModule
   ],
+  providers: [MessageService],
   templateUrl: './les-student-list.component.html',
   styleUrl: './les-student-list.component.scss',
 })
@@ -39,6 +45,9 @@ export class LesStudentListComponent {
   selectedTime: number | null = null;
   selectedWeek: string = '';
   lessonId!: string;
+  editActive = false;
+  dataCheckPoint: any;
+  studentSaveDatas: any[] = [];
 
   lessonTypes = [
     { id: 'LEC', name: 'Лекц' },
@@ -46,12 +55,13 @@ export class LesStudentListComponent {
     { id: 'LAB', name: 'Лаборатори' },
   ];
   weeks = [
-    { id: 'Monday', name: 'Даваа' },
-    { id: 'Tuesday', name: 'Мягмар' },
-    { id: 'Wednesday', name: 'Лхагва' },
-    { id: 'Thursday', name: 'Пүрэв' },
-    { id: 'Friday', name: 'Баасан' },
+    { name: 'Даваа', id: 'Monday' },
+    { name: 'Мягмар', id: 'Tuesday' },
+    { name: 'Лхагва', id: 'Wednesday' },
+    { name: 'Пүрэв', id: 'Thursday' },
+    { name: 'Баасан', id: 'Friday' },
   ];
+
 
   timeSlots = Array.from({ length: 8 }, (_, i) => ({
     value: i + 1,
@@ -60,8 +70,9 @@ export class LesStudentListComponent {
 
   constructor(
     private studentService: StudentService,
+    private msgService: MessageService,
     private route: ActivatedRoute
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.route.parent?.paramMap.subscribe((params) => {
@@ -179,5 +190,34 @@ export class LesStudentListComponent {
   getDayInMongolian(day: string): string {
     const found = this.weeks.find((w) => w.id === day);
     return found ? found.name : day; // Return the Mongolian name if found, otherwise return the original day
+  }
+  onWeekChange(data: any) {
+    this.students.map((item: any) => {
+      if (item.id === data.id) {
+        this.studentSaveDatas.push(data);
+      }
+    });
+  }
+
+  edit() {
+    this.editActive = true;
+    this.dataCheckPoint = this.students;
+  }
+
+  cancel() {
+    this.editActive = false;
+    this.students = this.dataCheckPoint;
+    this.filteredStudents = this.students;
+  }
+
+  save() {
+    this.studentService.updateStudents(this.studentSaveDatas).subscribe((res) => {
+      this.msgService.add({
+        severity: 'success',
+        summary: 'Амжилттай',
+        detail: 'Амжилттай хадгалагдлаа!',
+      });
+      this.editActive = false;
+    })
   }
 }

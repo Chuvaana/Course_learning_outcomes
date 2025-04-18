@@ -75,7 +75,7 @@ export class HomeComponent {
   ) {}
 
   ngOnInit() {
-    this.route.paramMap.subscribe((params) => {
+    this.route.parent?.paramMap.subscribe((params) => {
       this.lessonId = params.get('id')!;
     });
     this.teacherId = (localStorage.getItem('teacherId') as string) || '';

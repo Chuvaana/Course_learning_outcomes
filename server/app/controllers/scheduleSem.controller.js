@@ -62,6 +62,10 @@ exports.updateSchedule = async (req, res) => {
     // Use Promise.all for parallel execution of updates
     const updatePromises = scheduleSems.map(async (item) => {
       try {
+        if (!item.cloRelevance || item.cloRelevance === '') {
+          delete item.cloRelevance;
+        }
+
         const updatedSchedule = await ScheduleSem.findByIdAndUpdate(item.id, item, { new: true });
 
         if (!updatedSchedule) {

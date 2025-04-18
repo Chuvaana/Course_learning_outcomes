@@ -44,7 +44,7 @@
             <th rowspan="3">#</th>
             <th pFrozenColumn rowspan="4">CLOs</th>
             <ng-container *ngFor="let col of assessPlan.plans">
-              <ng-container *ngIf="col.methodType === 'PROC'">
+              <ng-container *ngIf="col.methodType !== 'EXAM'">
                 <th [attr.colspan]="col.subMethods.length">
                   {{ col.methodName }}
                 </th>
@@ -68,7 +68,7 @@
           </tr>
           <tr>
             <ng-container *ngFor="let col of assessPlan.plans">
-              <ng-container *ngIf="col.methodType === 'PROC'">
+              <ng-container *ngIf="col.methodType !== 'EXAM'">
                 <th *ngFor="let item of col.subMethods">
                   {{ item.subMethod }}
                 </th>
@@ -84,7 +84,7 @@
           </tr>
           <tr>
             <ng-container *ngFor="let col of assessPlan.plans">
-              <ng-container *ngIf="col.methodType === 'PROC'">
+              <ng-container *ngIf="col.methodType !== 'EXAM'">
                 <th *ngFor="let item of col.subMethods">{{ item.point }}</th>
               </ng-container>
             </ng-container>

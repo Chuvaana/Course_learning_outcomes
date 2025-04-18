@@ -1,22 +1,21 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, SimpleChanges } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { MessageService, SelectItem } from 'primeng/api';
+import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { CheckboxModule } from 'primeng/checkbox';
 import { DropdownModule } from 'primeng/dropdown';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { InputTextModule } from 'primeng/inputtext';
+import { MultiSelectModule } from 'primeng/multiselect';
 import { SelectModule } from 'primeng/select';
 import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { ToastModule } from 'primeng/toast';
+import { forkJoin } from 'rxjs';
 import { AssessmentService } from '../../../../../services/assessmentService';
-import { TabRefreshService } from '../tabRefreshService';
-import { forkJoin, Subscription } from 'rxjs';
-import { MultiSelectModule } from 'primeng/multiselect';
-import { TeacherService } from '../../../../../services/teacherService';
 import { CloPointPlanService } from '../../../../../services/cloPointPlanService';
+import { TeacherService } from '../../../../../services/teacherService';
 interface Assessment {
   id: string;
   lessonId: string;
@@ -161,7 +160,6 @@ export class AssessmentMethodComponent {
             (sum: number, sub: any) => sum + (sub.point || 0),
             0
           );
-          console.log(pl.methodPoint);
           const inProc = clo.procPoints.some(
             (p: any) => p.subMethodId === sub._id
           );

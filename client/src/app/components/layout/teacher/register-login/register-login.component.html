@@ -1,5 +1,6 @@
 <div class="content">
     <p-card class="auth-card">
+        <p-image src="assets/img/sict.png" alt="Image" width="340" />
         <h2 class="auth-title">{{ isRegister ? 'Бүртгүүлэх' : 'Нэвтрэх' }}</h2>
         <form [formGroup]="teacherForm" class="auth-form">
             <p-dropdown *ngIf="isRegister" formControlName="branch" [options]="branches" optionLabel="name"
@@ -12,7 +13,8 @@
             <input type="text" pInputText formControlName="code" *ngIf="isRegister" class="form-input"
                 placeholder="Код" />
             <input type="email" pInputText formControlName="email" class="form-input" placeholder="И-мэйл" />
-            <p-password formControlName="password" class="form-input" placeholder="Нууц үг" />
+            <p-password formControlName="password" styleClass="custom-password" placeholder="Нууц үг"
+                [style]="{ width: '100%'}" />
             <p-button label="Submit" class="submit-button" (click)="submitButton()" />
         </form>
         <a (click)="toggleForm()" class="toggle-link">{{ isRegister ? 'Бүртгэлтэй? Нэвтрэх' : "Бүртгэлгүй? Бүртгүүлэх"

@@ -29,6 +29,10 @@ export class StudentService {
     return this.http.get(`${this.apiUrl}/lesStudents/${lessonCode}`);
   }
 
+  updateStudents(studentData: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/lesStudents/update`, studentData);
+  }
+
   getStudentByClasstypeAndDay(classType: string, day: string): Observable<any> {
     return this.http.get(`${this.apiUrl}/lesStudents/classType/${classType}?day=${day}`);
   }

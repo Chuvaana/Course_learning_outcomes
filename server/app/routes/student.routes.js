@@ -4,6 +4,7 @@ module.exports = app => {
 
   // Create a new student
   router.post("/", students.create);
+  router.post("/login", students.login);
 
   // Retrieve all students
   router.get("/", students.findAll);

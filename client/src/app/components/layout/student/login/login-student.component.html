@@ -1,0 +1,16 @@
+<div class="content">
+    <p-card class="auth-card">
+        <p-image src="assets/img/sict.png" alt="Image" width="340" />
+        <h2 class="auth-title">{{ isRegister ? 'Бүртгүүлэх' : 'Нэвтрэх' }}</h2>
+        <form [formGroup]="teacherForm" class="auth-form">
+            <input type="text" pInputText formControlName="name" *ngIf="isRegister" class="form-input"
+                placeholder="Нэр" />
+            <input type="text" pInputText formControlName="code" *ngIf="isRegister" class="form-input"
+                placeholder="Код" />
+            <input type="email" pInputText formControlName="email" class="form-input" placeholder="И-мэйл" />
+            <p-password formControlName="password" styleClass="custom-password" placeholder="Нууц үг"
+                [style]="{ width: '100%'}" />
+            <p-button label="Submit" class="submit-button" (click)="submitButton()" />
+        </form>
+    </p-card>
+</div>

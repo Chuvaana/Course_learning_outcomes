@@ -1,5 +1,27 @@
 <div class="student-list-container">
+  <p-toast />
   <div class="filter-section">
+    <p-button
+      *ngIf="!editActive"
+      label="Засах"
+      icon="pi pi-file-edit"
+      (click)="edit()"
+      class="refresh-btn"
+    ></p-button>
+    <p-button
+      *ngIf="editActive"
+      label="Хадгалах"
+      icon="pi pi-file-save"
+      (click)="save()"
+      class="refresh-btn"
+    ></p-button>
+    <p-button
+      *ngIf="editActive"
+      label="Болих "
+      icon="pi pi-times"
+      (click)="cancel()"
+      class="refresh-btn"
+    ></p-button>
     <p-dropdown
       [(ngModel)]="selectedLessonType"
       [options]="lessonTypes"
@@ -68,22 +90,85 @@
         <td>{{ student.studentCode }}</td>
         <td>{{ student.studentName }}</td>
         <td>
-          <span *ngIf="student.lec?.day"
-            >{{ getDayInMongolian(student.lec.day) }} -
-            {{ student.lec.time }}пар</span
-          >
+          <div *ngIf="editActive">
+            <span *ngIf="student.lec?.day" style="display: flex">
+              <p-dropdown
+                [options]="weeks"
+                optionLabel="name"
+                optionValue="id"
+                [(ngModel)]="student.lec.day"
+                [style]="{ width: '100%' }"
+                placeholder="Select Lesson Type"
+                (onChange)="onWeekChange(student)"
+              ></p-dropdown>
+              <p-dropdown
+                [options]="timeSlots"
+                [(ngModel)]="student.lec.time"
+                [style]="{ width: '100%' }"
+                placeholder="Select Time Slot"
+              ></p-dropdown>
+            </span>
+          </div>
+          <div *ngIf="!editActive">
+            <span *ngIf="student.lec?.day"
+              >{{ getDayInMongolian(student.lec.day) }} -
+              {{ student.lec.time }}пар</span
+            >
+          </div>
         </td>
         <td>
-          <span *ngIf="student.sem?.day"
-            >{{ getDayInMongolian(student.sem.day) }} -
-            {{ student.sem.time }}пар</span
-          >
+          <div *ngIf="editActive">
+            <span *ngIf="student.sem?.day" style="display: flex">
+              <p-dropdown
+                [options]="weeks"
+                optionLabel="name"
+                optionValue="id"
+                [(ngModel)]="student.sem.day"
+                [style]="{ width: '100%' }"
+                placeholder="Select Lesson Type"
+                (onChange)="onWeekChange(student)"
+              ></p-dropdown>
+              <p-dropdown
+                [options]="timeSlots"
+                [(ngModel)]="student.sem.time"
+                [style]="{ width: '100%' }"
+                placeholder="Select Time Slot"
+              ></p-dropdown>
+            </span>
+          </div>
+          <div *ngIf="!editActive">
+            <span *ngIf="student.sem?.day"
+              >{{ getDayInMongolian(student.sem.day) }} -
+              {{ student.sem.time }}пар</span
+            >
+          </div>
         </td>
         <td>
-          <span *ngIf="student.lab?.day"
-            >{{ getDayInMongolian(student.lab.day) }} -
-            {{ student.lab.time }}пар</span
-          >
+          <div *ngIf="editActive">
+            <span *ngIf="student.lab?.day" style="display: flex">
+              <p-dropdown
+                [options]="weeks"
+                optionLabel="name"
+                optionValue="id"
+                [(ngModel)]="student.lab.day"
+                [style]="{ width: '100%' }"
+                placeholder="Select Lesson Type"
+                (onChange)="onWeekChange(student)"
+              ></p-dropdown>
+              <p-dropdown
+                [options]="timeSlots"
+                [(ngModel)]="student.lab.time"
+                [style]="{ width: '100%' }"
+                placeholder="Select Time Slot"
+              ></p-dropdown>
+            </span>
+          </div>
+          <div *ngIf="!editActive">
+            <span *ngIf="student.lab?.day"
+              >{{ getDayInMongolian(student.lab.day) }} -
+              {{ student.lab.time }}пар</span
+            >
+          </div>
         </td>
       </tr>
     </ng-template>

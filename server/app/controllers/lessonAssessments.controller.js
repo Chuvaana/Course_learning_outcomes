@@ -2,19 +2,15 @@ const LessonAssessments = require('../models/LessonAssessments.model');
 
 // Create new assessment
 exports.createAssessment = async (req, res) => {
-  console.log('req.body');
   try {
-    console.log(req.body);
     const assessment = new LessonAssessments(req.body);
-    console.log(assessment)
     const saved = await assessment.save();
     res.status(201).json(saved);
   } catch (err) {
     res.status(400).json({ message: 'Үнэлгээ үүсгэхэд алдаа гарлаа', error: err.message });
   }
-  
+
   // const LessonAssessments = new LessonAssessments(req.body);
-  // console.log(LessonAssessments);
   // // const LessonAssessments = req.body;
 
   // LessonAssessments
@@ -25,7 +21,6 @@ exports.createAssessment = async (req, res) => {
 
 // Get all assessments
 exports.getAllAssessments = async (req, res) => {
-  console.log('active');
   try {
     const assessments = await LessonAssessments.find();
     res.json(assessments);
@@ -41,9 +36,9 @@ exports.getAllLessonAssments = async (req, res) => {
     const assessments = await LessonAssessments.find({ lessonId });
     res.json(assessments);
   } catch (err) {
-    res.status(500).json({ 
-      message: 'Үнэлгээнүүдийг авахад алдаа гарлаа', 
-      error: err.message 
+    res.status(500).json({
+      message: 'Үнэлгээнүүдийг авахад алдаа гарлаа',
+      error: err.message,
     });
   }
 };
@@ -62,11 +57,7 @@ exports.getAssessmentById = async (req, res) => {
 // Update assessment
 exports.updateAssessment = async (req, res) => {
   try {
-    const updated = await LessonAssessments.findByIdAndUpdate(
-      req.params.id,
-      req.body,
-      { new: true }
-    );
+    const updated = await LessonAssessments.findByIdAndUpdate(req.params.id, req.body, { new: true });
     if (!updated) return res.status(404).json({ message: 'Үнэлгээ олдсонгүй' });
     res.json(updated);
   } catch (err) {

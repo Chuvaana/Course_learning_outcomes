@@ -7,11 +7,13 @@ import { CardModule } from 'primeng/card';
 import { DropdownModule } from 'primeng/dropdown';
 import { PasswordModule } from 'primeng/password';
 import { RegLogService } from '../../../../services/regLogService';
+import { Image } from 'primeng/image';
 
 @Component({
   selector: 'app-register-login',
   standalone: true,
   imports: [
+    Image,
     ReactiveFormsModule, 
     DropdownModule, 
     PasswordModule, 

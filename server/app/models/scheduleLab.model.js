@@ -6,7 +6,12 @@ const ScheduleLabSchema = new mongoose.Schema({
   title: { type: String },
   time: { type: Number, required: true },
   cloRelevance: { type: mongoose.Schema.Types.ObjectId, ref: 'Clo' },
-  point: { type: Number },
+  point: [
+    {
+      id: { type: String },
+      point: { type: Number },
+    },
+  ],
 });
 
 module.exports = mongoose.model('ScheduleLab', ScheduleLabSchema);

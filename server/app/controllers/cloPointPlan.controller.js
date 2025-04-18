@@ -28,8 +28,6 @@ exports.saveCloPlans = async (req, res) => {
 exports.getCloPlansByLessonId = async (req, res) => {
   try {
     const { lessonId } = req.params;
-    console.log(req.params);
-    console.log(lessonId);
     const plans = await CloPlan.find({ lessonId });
 
     if (!plans.length) {

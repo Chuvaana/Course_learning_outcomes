@@ -1,5 +1,6 @@
 const Method = require('../models/plan/method.model');
 const SubMethod = require('../models/plan/subMethod.model');
+
 exports.saveAssessmentPlan = async (req, res) => {
   const { lessonId, plans } = req.body;
 
@@ -34,6 +35,8 @@ exports.saveAssessmentPlan = async (req, res) => {
     const planWithSubMethods = plans.map((plan) => ({
       methodName: plan.methodName,
       methodType: plan.methodType,
+      secondMethodType: plan.secondMethodType,
+      frequency: plan.frequency,
       subMethods: plan.subMethods.map((sub) => {
         const key = `${plan.methodName}-${sub.subMethod}-${sub.point}`;
         return subMethodMap.get(key);
@@ -59,6 +62,28 @@ exports.getListByLessonId = async (req, res) => {
 
   try {
     const lesson = await Method.findOne({ lessonId }).populate({
+      path: 'plans.subMethods',
+      model: 'SubMethod',
+      select: 'subMethod point', // Optional, you can customize the fields to return
+    });
+
+    if (!lesson) {
+      return res.json({});
+    }
+
+    res.status(200).json(lesson);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Error fetching lesson' });
+  }
+};
+// Get lesson by lessonId
+exports.getListByLessonIdAndPlanId = async (req, res) => {
+  const { lessonId } = req.params;
+  const { planId } = req.params;
+
+  try {
+    const lesson = await Method.find({ lessonId }).populate({
       path: 'plans.subMethods',
       model: 'SubMethod',
       select: 'subMethod point', // Optional, you can customize the fields to return
@@ -103,7 +128,6 @@ exports.updateAssessmentPlan = async (req, res) => {
                 planSubMethodIds.push(savedSubMethod._id);
               })
             );
-            console.log('newSubMethod' + newSubMethod);
           }
         } else {
           // Create a new subMethod if no `id` is provided
@@ -113,7 +137,6 @@ exports.updateAssessmentPlan = async (req, res) => {
               planSubMethodIds.push(savedSubMethod._id);
             })
           );
-          console.log('newSubMethod' + newSubMethod);
         }
       }
 
@@ -122,10 +145,18 @@ exports.updateAssessmentPlan = async (req, res) => {
           _id: plan.id,
           methodName: plan.methodName,
           methodType: plan.methodType,
+          secondMethodType: plan.secondMethodType,
+          frequency: plan.frequency,
           subMethods: planSubMethodIds,
         });
       } else {
-        updatedPlans.push({ methodName: plan.methodName, methodType: plan.methodType, subMethods: planSubMethodIds });
+        updatedPlans.push({
+          methodName: plan.methodName,
+          frequency: plan.frequency,
+          methodType: plan.methodType,
+          secondMethodType: plan.secondMethodType,
+          subMethods: planSubMethodIds,
+        });
       }
     }
 

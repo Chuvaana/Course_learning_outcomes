@@ -23,7 +23,6 @@ exports.createSchedules = async (req, res) => {
   try {
     const { schedules } = req.body; // Extract array of schedules from request body
 
-    console.log(schedules);
     // Validate if schedules is an array and not empty
     if (!Array.isArray(schedules) || schedules.length === 0) {
       return res.status(400).json({ message: 'Schedules data must be a non-empty array' });
@@ -37,7 +36,6 @@ exports.createSchedules = async (req, res) => {
       if (!schedule.lessonId || !schedule.week) {
         return res.status(400).json({ message: `Missing required fields in schedule item for week ${schedule.week}` });
       }
-      console.log('sche' + schedule);
 
       // Push valid schedule item to the list
       validSchedules.push(schedule);

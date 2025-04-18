@@ -5,9 +5,15 @@ import { MenuItem } from 'primeng/api';
 import { Menubar } from 'primeng/menubar';
 import { ToastModule } from 'primeng/toast';
 import { NavbarComponent } from '../teacher/lesson-list/lesson/navbar/navbar.component';
+import { MenuModule } from 'primeng/menu';
+import { TabsModule } from 'primeng/tabs';
+import { BadgeModule } from 'primeng/badge';
+import { AvatarModule } from 'primeng/avatar';
+import { Image } from 'primeng/image';
+
 @Component({
   selector: 'app-student',
-  imports: [CommonModule, RouterModule, Menubar, ToastModule , NavbarComponent],
+  imports: [ Image, TabsModule, AvatarModule, BadgeModule, MenuModule, CommonModule, RouterModule, Menubar, ToastModule , NavbarComponent],
   templateUrl: './student.component.html',
   styleUrl: './student.component.scss'
 })
@@ -73,7 +79,10 @@ export class StudentComponent {
       },
       {
         label: 'Contact',
-        icon: 'pi pi-envelope'
+        icon: 'pi pi-envelope',
+        command: () => {
+            this.router.navigate(['/student-login']);
+        }
       }
     ]
   }

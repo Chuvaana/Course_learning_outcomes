@@ -1,4 +1,4 @@
-const LessonCurriculum = require("../models/lessonCurriculums.model");
+const LessonCurriculum = require('../models/lessonCurriculums.model');
 
 // CREATE - Add new lesson curriculum
 exports.createLessonCurriculum = async (req, res) => {
@@ -11,10 +11,10 @@ exports.createLessonCurriculum = async (req, res) => {
   }
 };
 
-// READ - Get all lesson curriculums  
+// READ - Get all lesson curriculums
 exports.getAllLessonCurriculum = async (req, res) => {
   try {
-    const curriculums = await LessonCurriculum.find().populate("lessonId");
+    const curriculums = await LessonCurriculum.find().populate('lessonId');
     res.status(200).json(curriculums);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -22,16 +22,11 @@ exports.getAllLessonCurriculum = async (req, res) => {
 };
 
 exports.getCurriculumByLessonId = async (req, res) => {
-  const { lessonId } = req.params;
-
   try {
-    console.log(lessonId);
-    const assessments = await LessonAssessments.find({ lessonId });
-    res.json(assessments);
-    console.log(assessments);
-
-    // if (!curriculum) return res.status(404).json({ message: "Not found" });
-    // res.status(200).json(curriculum);
+    const { lessonId } = req.params;
+    const curriculums = await LessonCurriculum.find({ lessonId }).populate('lessonId');
+    if (!curriculums) return res.status(404).json({ message: 'Not found' });
+    res.status(200).json(curriculums);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -40,10 +35,8 @@ exports.getCurriculumByLessonId = async (req, res) => {
 // READ - Get one by ID
 exports.getLessonCurriculumById = async (req, res) => {
   try {
-    const curriculum = await LessonCurriculum.findById(req.params.id).populate("lessonId");
-    console.log(req.params.id);
-    console.log(curriculum);
-    if (!curriculum) return res.status(404).json({ message: "Not found" });
+    const curriculum = await LessonCurriculum.findById(req.params.id).populate('lessonId');
+    if (!curriculum) return res.status(404).json({ message: 'Not found' });
     res.status(200).json(curriculum);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -56,7 +49,7 @@ exports.updateLessonCurriculum = async (req, res) => {
     const updated = await LessonCurriculum.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
     });
-    if (!updated) return res.status(404).json({ message: "Not found" });
+    if (!updated) return res.status(404).json({ message: 'Not found' });
     res.status(200).json(updated);
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -67,8 +60,8 @@ exports.updateLessonCurriculum = async (req, res) => {
 exports.deleteLessonCurriculum = async (req, res) => {
   try {
     const deleted = await LessonCurriculum.findByIdAndDelete(req.params.id);
-    if (!deleted) return res.status(404).json({ message: "Not found" });
-    res.status(200).json({ message: "Deleted successfully" });
+    if (!deleted) return res.status(404).json({ message: 'Not found' });
+    res.status(200).json({ message: 'Deleted successfully' });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

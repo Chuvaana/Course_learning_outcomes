@@ -108,6 +108,8 @@ export class AttendanceComponent {
         this.startDate = new Date(res.itemValue);
       }
     });
+
+    this.onSelectionChange();
   }
 
   onSelectionChange(): void {
@@ -135,6 +137,24 @@ export class AttendanceComponent {
               });
           }
         });
+    }else {
+      this.attendanceService.getAttendanceByLesson(this.lessonId).subscribe((res) =>{
+        console.log(res);
+        this.attendanceRecords = this.generateAttendance(res);
+        if (this.attendanceRecords.length == 0) {
+          this.studentService
+            .getStudentByClasstypeAndDayTime(
+              this.selectedClassType,
+              this.selectedWeekday,
+              this.selectedTimes
+            )
+            .subscribe((students: any[]) => {
+              this.students = students;
+              this.attendanceRecords = this.generateAttendanceRecords();
+            });
+        }
+
+      })
     }
   }
 

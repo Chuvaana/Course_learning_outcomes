@@ -6,6 +6,8 @@ const MethodSchema = new mongoose.Schema({
     {
       methodName: { type: String, required: true },
       methodType: { type: String, required: true },
+      secondMethodType: { type: String, required: true },
+      frequency: { type: Number, required: true },
       subMethods: [
         {
           type: mongoose.Schema.Types.ObjectId,
