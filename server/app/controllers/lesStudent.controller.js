@@ -61,6 +61,80 @@ exports.deleteStudent = async (req, res) => {
   }
 };
 
+
+exports.updateStudents = async (req, res) => {
+  try {
+    const studentData = req.body;
+    if (!studentData || !Array.isArray(studentData)) {
+      return res.status(400).json({ message: 'Invalid student data' });
+    }
+
+    console.log(studentData);
+
+    const updatedStudents = [];
+
+    for (const student of studentData) {
+      const { lessonId, studentCode, studentName, lec, sem, lab } = student;
+      const lecDay = lec.day;
+      const lecTime = lec.time;
+      const semDay = sem.day;
+      const semTime = sem.time;
+      const labDay = lab.day;
+      const labTime = lab.time;
+
+      console.log("rr" + lessonId + " " + studentCode + " " + studentName + " " + lecDay + " " + lecTime + " " + semDay + " " + semTime + " " + labDay + " " + labTime)
+      const lesson = await Lesson.findById(lessonId);
+      if (!lesson) {
+        return res.status(400).json({ message: `Lesson ${lessonId} not found` });
+      }
+
+      let existingStudent = await Student.findOne({ studentCode: studentCode, lessonId: lessonId });
+
+      if (existingStudent) {
+        if (labDay && labTime) {
+          existingStudent.lab = { day: labDay, time: labTime };
+        }
+        if (semDay && semTime) {
+          existingStudent.sem = { day: semDay, time: semTime };
+        }
+
+        if (lecDay && lecTime) {
+          existingStudent.lec = { day: lecDay, time: lecTime };
+        }
+
+        await existingStudent.save();
+        updatedStudents.push(existingStudent);
+      } else {
+        const newStudent = new Student({
+          lessonId: lessonId,
+          studentCode: studentCode,
+          studentName: studentName,
+          lec: {
+            day: lecDay,
+            time: lecTime,
+          },
+          sem: {
+            day: semDay,
+            time: semTime,
+          },
+          lab: {
+            day: labDay,
+            time: labTime,
+          },
+        });
+
+        await newStudent.save();
+        updatedStudents.push(newStudent);
+      }
+    }
+
+    return res.status(200).json({ message: 'Students processed successfully', data: updatedStudents });
+  } catch (error) {
+    console.error('Error processing students:', error);
+    return res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
 exports.uploadStudents = async (req, res) => {
   try {
     const studentData = req.body;
@@ -68,11 +142,14 @@ exports.uploadStudents = async (req, res) => {
       return res.status(400).json({ message: 'Invalid student data' });
     }
 
+    console.log(studentData);
+
     const updatedStudents = [];
 
     for (const student of studentData) {
       const { lessonId, studentCode, studentName, lecDay, lecTime, semDay, semTime, labDay, labTime } = student;
 
+      console.log("rr" + lessonId + " " + studentCode + " " + studentName + " " + lecDay + " " + lecTime + " " + semDay + " " + semTime + " " + labDay + " " + labTime)
       const lesson = await Lesson.findById(lessonId);
       if (!lesson) {
         return res.status(400).json({ message: `Lesson ${lessonId} not found` });

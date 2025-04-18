@@ -2,11 +2,12 @@ import { Routes } from '@angular/router';
 import { LayoutComponent } from './components/layout/layout.component';
 import { MainComponent } from './components/layout/shared/main/main.component';
 import { RegisterLoginComponent } from './components/layout/teacher/register-login/register-login.component';
+import { LoginStudentComponent } from './components/layout/student/login/login-student.component';
 
 export const routes: Routes = [
     { path: '', component: MainComponent },
     { path: 'teacher-login', component: RegisterLoginComponent },
-    // { path: 'student-login', component: StudentLoginComponent },
+    { path: 'student-login', component: LoginStudentComponent },
     {
         path: 'main',
         component: LayoutComponent,

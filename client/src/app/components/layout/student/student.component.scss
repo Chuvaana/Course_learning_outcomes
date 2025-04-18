@@ -13,10 +13,70 @@
   background: #93f09f;
 }
 
-form p-dropdown, form p-inputText, form p-password {
+form p-dropdown,
+form p-inputText,
+form p-password {
   width: 100%;
   margin-bottom: 15px;
 }
 
-.card {
+.card {}
+
+
+.footer {
+  background-color: #003391;
+  padding: 1rem;
+  text-align: center;
+  .footer-content {
+    color: #555;
+    font-size: 0.9rem;
+    display: flex;
+    justify-content: center;
+    .footer-content-image {
+      color: #ffffff;
+      width: 30%;
+      justify-items: flex-start;
+      
+      p{
+        font-size: large;
+        font-weight: bold;
+        margin-top: 10px;
+      }
+    }
+    .footer-content-text {
+      color: #ffffff;
+      width: 25%;
+      display: flex;
+      justify-content: space-between;
+
+      .footer-content-text-p1 {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        p{
+          font-size: large;
+          font-weight: bold;
+          margin-top: 10px;
+        }
+        span{
+          margin-bottom: 20px;
+        }
+      }
+      .footer-content-text-p2 {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        p{
+          font-size: large;
+          font-weight: bold;
+          margin-top: 10px;
+        }
+        a{
+          margin-bottom: 20px;
+          text-decoration: none;
+          color: #fcd917;
+        }
+      }
+    }
+  }
 }
