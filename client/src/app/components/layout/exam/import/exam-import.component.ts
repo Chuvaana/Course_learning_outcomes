@@ -21,12 +21,20 @@ import { lessonAssessmentService } from '../../../../services/lessonAssessment';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { TableModule } from 'primeng/table';
 import { FloatLabelModule } from 'primeng/floatlabel';
+import { FormsModule } from '@angular/forms';
+import { Checkbox } from 'primeng/checkbox';
 
+interface City {
+  name: string;
+  code: string;
+}
 @Component({
   selector: 'app-exam-import',
   standalone: true,
   providers: [MessageService],
   imports: [
+    Checkbox,
+    FormsModule,
     ReactiveFormsModule,
     DropdownModule,
     PasswordModule,
@@ -58,6 +66,14 @@ export class ExamImportComponent {
   lessonId!: string;
   tableData: any[][] = [];
   missingNumberCount: any;
+  checked: boolean = false;
+  lessonAllStudents: any;
+
+  cities: City[] | undefined;
+
+  examTypeAction = false;
+  examType: any = null;
+  examTypeData: any = null;
 
   @ViewChild('minV') minV!: ElementRef;
   @ViewChild('maxV') maxV!: ElementRef;
@@ -68,6 +84,14 @@ export class ExamImportComponent {
     min: null,
   };
   cloQuestionData: { cloId: any; cloName: any; max: any; min: any }[] = [];
+
+
+  examTypes = [
+    { label: 'Сорил 1', value: 'exam1' },
+    { label: 'Сорил 2', value: 'exam2' },
+    { label: 'Улирлын шалгалт', value: 'finalExam' },
+  ];
+
 
   clos: any[] = []; // Initialize to avoid undefined issues
   formGroup: any;
@@ -223,9 +247,8 @@ export class ExamImportComponent {
       this.msgService.add({
         severity: 'error',
         summary: 'Алдаа',
-        detail: `Алдаа гарлаа: Дүнгийн файл зөрсөн байна! Алдаа -> '${
-          data[mismatchedIndex]
-        }' (${mismatchedIndex + 1}-р багана)`,
+        detail: `Алдаа гарлаа: Дүнгийн файл зөрсөн байна! Алдаа -> '${data[mismatchedIndex]
+          }' (${mismatchedIndex + 1}-р багана)`,
       });
       return false;
     }
@@ -280,25 +303,25 @@ export class ExamImportComponent {
 
       if (missingNumbers.length > 0) {
         this.checkCloCount = false;
-        this.msgService.add({
-          severity: 'warn',
-          summary: 'Анхааруулга',
-          detail: `Дараах тоонууд хамрагдаагүй байна: ${missingNumbers.join(
-            ', '
-          )}`,
-        });
+        // this.msgService.add({
+        //   severity: 'warn',
+        //   summary: 'Анхааруулга',
+        //   detail: `Дараах тоонууд хамрагдаагүй байна: ${missingNumbers.join(
+        //     ', '
+        //   )}`,
+        // });
         this.missingNumberCount = missingNumbers;
       } else {
         this.checkCloCount = true;
-        this.msgService.add({
-          severity: 'success',
-          summary: 'Амжилттай',
-          detail: 'Бүх асуултууд CLO бүрд агуулагдсан байна.',
-        });
+        // this.msgService.add({
+        //   severity: 'success',
+        //   summary: 'Амжилттай',
+        //   detail: 'Бүх асуултууд CLO бүрд агуулагдсан байна.',
+        // });
       }
       // 1. MIN > MAX шалгах
       this.cloQuestionData.forEach((i) => {
-        if (this.isValidRange(i.min, i.max) && i.min >= i.max) {
+        if (this.isValidRange(i.min, i.max) && i.min > i.max) {
           this.msgService.add({
             severity: 'error',
             summary: 'Алдаа',
@@ -317,11 +340,11 @@ export class ExamImportComponent {
           if (i === j || !this.isValidRange(b.min, b.max)) continue;
 
           if (this.isOverlap(a.min, a.max, b.min, b.max)) {
-            this.msgService.add({
-              severity: 'error',
-              summary: 'Алдаа',
-              detail: `CLO '${a.cloName}' = [${a.min} - ${a.max}] нь '${b.cloName}' = [${b.min} - ${b.max}] хүрээтэй давхцаж байна.`,
-            });
+            // this.msgService.add({
+            //   severity: 'error',
+            //   summary: 'Алдаа',
+            //   detail: `CLO '${a.cloName}' = [${a.min} - ${a.max}] нь '${b.cloName}' = [${b.min} - ${b.max}] хүрээтэй давхцаж байна.`,
+            // });
           } else {
             this.activeAction = true;
           }
@@ -350,6 +373,7 @@ export class ExamImportComponent {
     let countQWEwe = 0;
     let allreadyInStudent = 0;
     let newStudent = 0;
+    let id = 'null';
     // Асуулт бүрийн мэдээллийг хадгалах объект
     let questions = {
       questionId: 0,
@@ -376,7 +400,7 @@ export class ExamImportComponent {
       }[];
     }[] = [];
 
-    this.cloQuestionData.map((data) => {});
+    this.cloQuestionData.map((data) => { });
 
     // Логикийг шалгаж эхэлнэ
     if (!this.activeFileLogic) {
@@ -402,101 +426,130 @@ export class ExamImportComponent {
             detail: `Clo бүрт асуултуудыг зөв харгалзуулж оруулна уу!`,
           });
         } else {
-          // tableData-д ажиллана
-          this.tableData.forEach((e, index) => {
-            if (index !== 0) {
-              // Хоёрдугаар мөрөөс эхэлнэ
-              const assessmentFormData = {
-                lessonId: '',
-                studentId: '',
-                allPoint: 0,
-                takePoint: '',
-                startDate: '',
-                endDate: '',
-                durationDate: '',
-                question: [] as {
-                  questionId: number;
-                  cloId: string;
-                  allPoint: number;
-                  takePoint: number;
-                }[],
-              };
-              assessmentFormData.lessonId = this.lessonId;
+          if (!this.examTypeAction) {
+            this.msgService.add({
+              severity: 'error',
+              summary: 'Алдаа',
+              detail: `Шалгалтын төрлөө сонгоно уу!`,
+            });
+          } else {
 
-              // allPoint-г эхний мөрөөс гаргаж авна
-              assessmentFormData.allPoint = Number(
-                this.tableData[0][8].substring(6, 8)
-              );
-              // Хэрэглэгчийн мэдээлэл
-              assessmentFormData.studentId = e[2]; // Оюутны ID (e[2])
-              assessmentFormData.takePoint = e[8]; // Оногдсон оноо
-              assessmentFormData.startDate = e[5]; // Эхлэх огноо
-              assessmentFormData.endDate = e[6]; // Дуусах огноо
-              assessmentFormData.durationDate = e[7]; // Тогтоосон хугацаа
-
-              // Шинэчилсэн 'questions' массив
-              let questions: {
-                questionId: number; // Асуулт ID (row index)
-                cloId: any; // CLO ID
-                allPoint: number; // Цэгийн оноо
-                takePoint: any;
-              }[] = []; // Бүх асуултыг хадгалах массив
-
-              // Table-ын 11 болон түүнээс дээш индекстэй элементийн мэдээллийг гаргана
-              let countQuetion = 1;
-              for (let j = 9; j < e.length; j++) {
-                // CLO-ийн шугамд оноо тохирч байгаа эсэхийг шалгах
-                this.cloQuestionData.map((data) => {
-                  if (data.min <= countQuetion && data.max >= countQuetion) {
-                    const question = {
-                      questionId: countQuetion, // Асуулт ID (row index)
-                      cloId: data.cloId, // CLO ID
-                      allPoint:
-                        countQuetion > 9
-                          ? Number(this.tableData[0][j].substring(8, 12))
-                          : Number(this.tableData[0][j].substring(6, 12)), // Цэгийн оноо
-                      takePoint: e[j], // Хэрэглэгчийн оноо
+            this.service
+              .getAllLessonAssments(this.lessonId)
+              .subscribe((res) => {
+                this.lessonAllStudents = res;
+                // tableData-д ажиллана
+                this.tableData.forEach((e, index) => {
+                  if (index !== 0) {
+                    // Хоёрдугаар мөрөөс эхэлнэ
+                    const assessmentFormData = {
+                      lessonId: '',
+                      studentId: '',
+                      allPoint: 0,
+                      takePoint: '',
+                      startDate: '',
+                      endDate: '',
+                      durationDate: '',
+                      examType: '',
+                      examTypeName: '',
+                      lastName: '',
+                      firstName: '',
+                      gmail: '',
+                      status: '',
+                      question: [] as {
+                        questionId: number;
+                        cloId: string;
+                        allPoint: number;
+                        takePoint: number;
+                      }[],
                     };
+                    assessmentFormData.lessonId = this.lessonId;
 
-                    // `questions` массивт асуултыг нэмэх
-                    questions.push(question);
-                  }
-                });
-                countQuetion++;
-              }
+                    assessmentFormData.allPoint = Number(
+                      this.tableData[0][8].substring(6, 8)
+                    );
+                    assessmentFormData.lastName = e[0];
+                    assessmentFormData.firstName = e[1];
+                    assessmentFormData.studentId = e[2];
+                    assessmentFormData.gmail = e[3];
+                    assessmentFormData.takePoint = e[8];
+                    assessmentFormData.status = e[4];
+                    assessmentFormData.startDate = e[5];
+                    assessmentFormData.endDate = e[6];
+                    assessmentFormData.durationDate = e[7];
+                    assessmentFormData.examType = this.examTypeData.value;
+                    assessmentFormData.examTypeName = this.examTypeData.label;
+                    let questions: {
+                      questionId: number;
+                      cloId: any;
+                      allPoint: number;
+                      takePoint: any;
+                    }[] = [];
 
-              // `assessmentFormData` объект руу асуулт нэмэх
-              assessmentFormData.question = questions;
-              assessmentFormDataParam.push(assessmentFormData);
-              if (countQWEwe <= 3) {
-                this.service
-                  .getAllLessonAssments(this.lessonId)
-                  .subscribe((res) => {
-                    let checkData = false;
-                    console.log(res);
-                    res.map((beforeData: any) => {
-                      if (
-                        assessmentFormData.studentId !== beforeData.studentId
-                      ) {
-                        checkData = true;
-                      }
-                    });
+                    let countQuetion = 1;
+                    for (let j = 9; j < e.length; j++) {
+                      this.cloQuestionData.map((data) => {
+                        if (data.min <= countQuetion && data.max >= countQuetion) {
+                          const question = {
+                            questionId: countQuetion,
+                            cloId: data.cloId,
+                            allPoint:
+                              countQuetion > 9
+                                ? Number(this.tableData[0][j].substring(8, 12))
+                                : Number(this.tableData[0][j].substring(6, 12)),
+                            takePoint: e[j],
+                          };
+
+                          questions.push(question);
+                        }
+                      });
+                      countQuetion++;
+                    }
+
+                    assessmentFormData.question = questions;
+                    assessmentFormDataParam.push(assessmentFormData);
+                    // if (countQWEwe <= 1) {
+                    let checkData = true;
+                    if (this.lessonAllStudents.length > 0) {
+                      this.lessonAllStudents.map((beforeData: any) => {
+                        if (assessmentFormData.studentId === beforeData.studentId) {
+                          id = beforeData._id;
+                          checkData = false;
+                        }
+                      });
+                    }
+                    if (assessmentFormData.studentId == null && assessmentFormData.studentId == undefined) {
+                      checkData = false;
+                    }
+                    if (assessmentFormData.gmail == null && assessmentFormData.gmail == undefined) {
+                      checkData = false;
+                    }
                     if (checkData) {
                       this.lessonAssessmentService
                         .createLesAssessment(assessmentFormData)
                         .subscribe((res) => {
                           console.log(res);
                         });
-                      allreadyInStudent++;
-                    } else {
                       newStudent++;
+                    } else {
+                      if (this.checked) {
+                        if (id !== null && id !== undefined) {
+                          this.lessonAssessmentService
+                            .updateLesAssessment(id, assessmentFormData)
+                            .subscribe((res) => {
+                              console.log(res);
+                            });
+                        }
+                      }
+                      allreadyInStudent++;
                     }
-                  });
-                countQWEwe = countQWEwe + 1;
-              }
-              this.serviceAfterMsg(newStudent, allreadyInStudent);
-            }
-          });
+                    //   countQWEwe = countQWEwe + 1;
+                    // }
+                  }
+                });
+                this.serviceAfterMsg(newStudent, allreadyInStudent);
+              });
+          }
         }
         console.log(assessmentFormDataParam);
       }
@@ -512,10 +565,20 @@ export class ExamImportComponent {
     }
     if (allreadyInStudent != 0) {
       this.msgService.add({
-        severity: 'warn',
-        summary: 'Анхааруулга',
-        detail: `Өмнө аль хэдийн нийт :'${allreadyInStudent}' сурагчдын дүн бүртгэгдсэн байна.`,
+        severity: 'success',
+        summary: 'Амжилттай',
+        detail: `Нийт :'${allreadyInStudent}' сурагчдын дүнг засаж орууллаа.`,
       });
     }
+  }
+
+  examTypesData(e: any) {
+    if (e.value !== null && e.examType !== undefined) {
+      this.examTypeAction = false;
+    } else {
+      this.examTypeData = e;
+      this.examTypeAction = true;
+    }
+    console.log(e);
   }
 }

@@ -1,38 +1,58 @@
 <div class="lesson-body">
-  <div class="question">
+  <div *ngFor="let question of questions; let qIndex = index" class="question">
     <div class="header-title">
-
       <div class="title">
         <p-iftalabel>
-          <input pInputText id="username" [(ngModel)]="value" autocomplete="off" class="custom-width" />
+          <textarea rows="2" cols="30" pTextarea [(ngModel)]="question.value"></textarea>
           <label for="username">Username</label>
         </p-iftalabel>
       </div>
       <div class="">
-        <!-- <p-multiselect [options]="cities" [(ngModel)]="selectedCities" optionLabel="name" placeholder="Select Cities" [maxSelectedLabels]="3" styleClass="w-full md:w-80" /> -->
-        <p-dropdown [options]="cities" [(ngModel)]="selectedCity" optionLabel="name" placeholder="Select a City"
-          class="custom-dropdown" />
+        <p-dropdown
+          [options]="cities"
+          [(ngModel)]="question.selectedCity"
+          optionLabel="name"
+          placeholder="Select a City"
+          class="custom-dropdown"
+        ></p-dropdown>
       </div>
     </div>
-    <div class="main-questoin">
-      <div class="answer-check-box">
-        1
+
+    <div *ngFor="let answer of question.answers; let i = index" class="main-questoin">
+      <div class="answer-box">
+        <div class="answer-check-box">
+          <p-checkbox
+            [(ngModel)]="answer.checked"
+            [binary]="true"
+            [inputId]="'binary' + qIndex + '-' + i"
+          ></p-checkbox>
+        </div>
+        <div class="">
+          <p-iftalabel>
+            <textarea
+              rows="1"
+              cols="30"
+              pTextarea
+              [(ngModel)]="answer.text"
+              (input)="onTextInput(i, qIndex)"
+            ></textarea>
+            <label for="username">Username</label>
+          </p-iftalabel>
+        </div>
       </div>
-      <div class="answer-check-box">
-        <p-checkbox
-        [(ngModel)]="checked"
-        [binary]="true"
-        inputId="binary" />
-      </div>
-      <div class="">
-        <p-iftalabel>
-          <input pInputText id="username" [(ngModel)]="value" autocomplete="off" class="custom-width" />
-          <label for="username">Username</label>
-        </p-iftalabel>
-      </div>
-      <div class="answer-check-box">
+      <button class="answer-button" (click)="onRemove(i, qIndex)" type="button">
         <i class="pi pi-times" style="color: green"></i>
-      </div>
+      </button>
     </div>
+
+    <!-- Хэрвээ хариулт нэмэх товч хэрэгтэй бол -->
+    <button class="answer-add-button" (click)="addAnswer(qIndex)" type="button">
+      <i class="pi pi-plus" style="color: blue"></i> Хариулт нэмэх
+    </button>
   </div>
+
+  <!-- Асуулт нэмэх товч -->
+  <button class="queston-add-button" (click)="addQuestion()" type="button">
+    <i class="pi pi-plus" style="color: green"></i> Асуулт нэмэх
+  </button>
 </div>

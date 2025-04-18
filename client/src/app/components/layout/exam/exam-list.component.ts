@@ -4,6 +4,7 @@ import {
   FormArray,
   FormBuilder,
   FormGroup,
+  FormsModule,
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
@@ -13,68 +14,70 @@ import { DropdownModule } from 'primeng/dropdown';
 import { PasswordModule } from 'primeng/password';
 import { ExamService } from '../../../services/examService';
 import { TeacherComponent } from '../teacher/teacher.component';
+import { lessonAssessmentService } from '../../../services/lessonAssessment';
+import { TableModule } from 'primeng/table';
+import { ActivatedRoute } from '@angular/router';
+import { InputTextModule } from 'primeng/inputtext';
+interface assessmentList {
+  examType: any;
+  lessonId: string;
+  studentId: string;
+  lastName: string;
+  firstName: string;
+  status: string;
+  gmail: string;
+}
 
 @Component({
   selector: 'app-exam-list',
   standalone: true,
   imports: [
+    TableModule,
     ReactiveFormsModule,
     DropdownModule,
     PasswordModule,
     ButtonModule,
     CommonModule,
+    InputTextModule,
+    FormsModule,
   ],
   templateUrl: './exam-list.component.html',
   styleUrls: ['./exam-list.component.scss'],
 })
 export class ExamListComponent {
+  filteredStudents: assessmentList[] = [];
   studentForm: FormGroup;
   branches: any[] = [];
   departments: any[] = [];
   error = 'ERROR';
   fillData: any[] = [];
-  data = [
-    {
-      text: 'Асуулт 1',
-      questionType: 'manyCheck',
-      answers: ['Хариулт 1', 'Хариулт 2', 'Хариулт 3'],
-      selectedAnswers: [],
-    },
-    {
-      text: 'Асуулт 2',
-      questionType: 'onlyOneCheck',
-      answers: ['Хариулт A', 'Хариулт B', 'Хариулт C'],
-      selectedAnswers: [],
-    },
-    {
-      text: 'Асуулт 3',
-      questionType: 'relatedQuestion',
-      answers: ['Red', 'Blue', 'Green'],
-      relatedQuestions: [
-        {
-          text: 'Why do you like Red?',
-          questionType: 'onlyOneCheck',
-          answers: ['It looks vibrant', 'It feels powerful'],
-        },
-        {
-          text: 'Why do you like Blue?',
-          questionType: 'onlyOneCheck',
-          answers: ['It is calming', 'It reminds me of the ocean'],
-        },
-        {
-          text: 'Why do you like Green?',
-          questionType: 'onlyOneCheck',
-          answers: ['It represents nature', 'It is soothing'],
-        },
-      ],
-    },
+  lessonId: any;
+  searchQuery: string = '';
+  selectedLessonType: string = '';
+  examType: any = null;
+  filterData: any[] = [];
+  examList: assessmentList[] = [];
+  allExamList: assessmentList[] = [];
+
+
+  lessonTypes = [
+    { id: 'LEC', name: 'Лекц' },
+    { id: 'SEM', name: 'Семинар' },
+    { id: 'LAB', name: 'Лаборатори' },
   ];
-  shownQuestions = [...this.data];
+  examTypes = [
+    { label: 'Сорил 1', value: 'exam1' },
+    { label: 'Сорил 2', value: 'exam2' },
+    { label: 'Улирлын шалгалт', value: 'finalExam' },
+  ];
+
 
   constructor(
     private fb: FormBuilder,
     private examService: ExamService,
-    private dialog: MatDialog
+    private route: ActivatedRoute,
+    private dialog: MatDialog,
+    private lessonAssessmentService: lessonAssessmentService
   ) {
     this.studentForm = this.fb.group({
       id: ['', Validators.required],
@@ -95,67 +98,65 @@ export class ExamListComponent {
       createdBy: ['', Validators.required],
     });
   }
-  onRefreshData() {}
-  createQuestions() {
-    return this.data.map((question) =>
-      this.fb.group({
-        questionText: [question.text, Validators.required],
-        answers: this.fb.array(
-          question.answers.map((answer) => this.fb.control(false))
-        ),
-        selectedAnswers: [[]],
-      })
-    );
+  onRefreshData() { }
+
+
+  ngOnInit(): void {
+    this.route.parent?.paramMap.subscribe((params) => {
+      this.lessonId = params.get('id')!;
+    });
+
+    this.selectlessonAssessment();
   }
 
-  get questions(): FormArray {
-    return this.studentForm.get('questions') as FormArray;
-  }
-
-  selectQuestionAnswer(
-    questionIndex: number,
-    answerIndex: number,
-    checked: Event
-  ) {
-    const selectedAnswers = this.data[questionIndex].answers[answerIndex];
-
-    if (checked) {
-      this.fillData.map((e) => {
-        if (e[0] == questionIndex) {
-          const index = this.fillData.findIndex((i) => i[0] === questionIndex);
-          if (index !== -1) {
-            this.fillData.splice(index, 1);
-          }
-        }
-      });
-      const data = [questionIndex, checked, answerIndex];
-      this.fillData.push(data);
-      console.log(this.fillData);
-    } else {
-      const index = this.fillData.findIndex((i) => i[0] === questionIndex);
-      if (index !== -1) {
-        this.fillData.splice(index, 1);
-      }
-    }
-  }
-
-  getSelectedAnswers() {
-    this.questions.controls.forEach((questionGroup, index) => {
-      console.log(
-        `Асуулт ${index + 1}:`,
-        questionGroup.get('selectedAnswers')?.value
-      );
+  selectlessonAssessment() {
+    this.lessonAssessmentService.getLesAssessment(this.lessonId).subscribe((res) => {
+      console.log(res);
+      this.examList = res;
+      this.allExamList = res;
     });
   }
-
-  onQuestionSelect(e: any) {
-    // console.log(e);
+  get questions(): FormArray {
+    return this.studentForm.get('questions') as FormArray;
   }
 
   openPopup() {
     this.dialog.open(TeacherComponent, {
       width: '800px',
       height: '600px',
+    });
+  }
+  loadStudents() {
+    if(this.lessonId !== null && this.lessonId !== undefined){
+      this.lessonAssessmentService.getLesAssessment(this.lessonId).subscribe((res) => {
+        console.log(res);
+        this.examList = res;
+      });
+    }
+    this.examType = '';
+    this.searchQuery = '';
+  }
+  examTypesData(selectedType: string) {
+    this.examType = selectedType;
+    this.applyFilters();
+  }
+
+  filterStudents() {
+    this.applyFilters();
+  }
+
+  applyFilters() {
+    this.examList = this.allExamList.filter((exam) => {
+      const matchesType = this.examType ? exam.examType === this.examType : true;
+      const matchesSearch = this.searchQuery
+        ? (exam.lastName?.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+        exam.firstName?.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+        exam.status?.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+        exam.gmail?.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+           exam.studentId?.toString().includes(this.searchQuery))
+        : true;
+
+      return matchesType && matchesSearch;
     });
   }
 }

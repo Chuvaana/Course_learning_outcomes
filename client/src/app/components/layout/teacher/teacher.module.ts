@@ -24,6 +24,7 @@ import { TeacherComponent } from './teacher.component';
 import { ReportLessonListComponent } from './report-lesson-list/report-lesson-list.component';
 import { CloPointPlanComponent } from './lesson-list/lesson/clo-point-plan/clo-point-plan.component';
 import { ProgressPollComponent } from './lesson-list/lesson/progress-poll/progress-poll.component';
+import { ExamListComponent } from '../exam/exam-list.component';
 
 const routes: Routes = [
   {
@@ -48,6 +49,7 @@ const routes: Routes = [
           { path: 'lab-grade', component: LabGradeComponent },
           { path: 'sem-grade', component: SemGradeComponent },
           { path: 'exam-import', component: ExamImportComponent },
+          { path: 'exam-list', component: ExamListComponent },
           { path: 'progress-poll', component: ProgressPollComponent },
         ],
       },
