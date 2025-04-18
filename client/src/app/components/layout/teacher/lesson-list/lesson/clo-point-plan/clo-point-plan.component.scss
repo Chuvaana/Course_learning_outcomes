@@ -11,14 +11,6 @@
   border: 1px solid #ddd;
 }
 
-// :host ::ng-deep .p-datatable tr:nth-child(even) {
-//     background-color: #f9f9f9;
-// }
-
-// :host ::ng-deep .p-datatable tr:hover {
-//     background-color: #f1f1f1;
-// }
-
 :host ::ng-deep .p-frozen-column {
   font-weight: bold;
 }
@@ -26,7 +18,6 @@
   font-weight: bold;
 }
 
-// .cloTable{
-//     width: calc(100vw - 216px);
-//     padding: 10px;
-// }
+.cloTable {
+  padding: 10px;
+}

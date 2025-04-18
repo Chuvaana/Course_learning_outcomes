@@ -53,13 +53,13 @@ exports.createSchedules = async (req, res) => {
 // Update ScheduleLab
 exports.updateSchedule = async (req, res) => {
   try {
-    const { schedules } = req.body;
-    if (!Array.isArray(schedules)) {
+    const { scheduleLabs } = req.body;
+    if (!Array.isArray(scheduleLabs)) {
       return res.status(400).json({ message: 'Input should be an array of ScheduleLab' });
     }
 
     // Use Promise.all for parallel execution of updates
-    const updatePromises = schedules.map(async (item) => {
+    const updatePromises = scheduleLabs.map(async (item) => {
       try {
         const updatedSchedule = await ScheduleLab.findByIdAndUpdate(item.id, item, { new: true });
 

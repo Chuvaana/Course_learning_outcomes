@@ -14,7 +14,7 @@
     </tr>
     <tr>
       <td><strong>Хичээлийн төрөл</strong></td>
-      <td>{{ course.lessonType }}</td>
+      <td>{{ getLessonTypeName(course.lessonType) }}</td>
     </tr>
     <tr>
       <td><strong>Хичээл заасан багш</strong></td>
@@ -22,11 +22,13 @@
     </tr>
     <tr>
       <td><strong>Харьяалагдах салбар/Тэнхим</strong></td>
-      <td>{{ course.department }}</td>
+      <td>{{ depName }}</td>
     </tr>
     <tr>
       <td><strong>Хичээл заасан улирал</strong></td>
-      <td>{{ course.schoolYear }} {{ course.recommendedSemester }}</td>
+      <td>
+        {{ course.schoolYear }} {{ getSemName(course.recommendedSemester) }}
+      </td>
     </tr>
     <tr>
       <td><strong>Хичээл судалсан оюутны тоо</strong></td>
@@ -35,7 +37,8 @@
     <tr>
       <td><strong>Сургалтын нийт цагийн задаргаа</strong></td>
       <td>
-        Задаргаа: (), Нийт сургалтын цаг: ({{ totalHour }}цаг) Лекц ({{
+        Задаргаа: ({{ lec }}:{{ seminar }}:{{ lab }}:{{ assignment }}), Нийт
+        сургалтын цаг: ({{ totalHour }}цаг) Лекц ({{
           course.totalHours.lecture
         }}цаг), Семинар ({{ course.totalHours.seminar }} цаг), Лаборатори ({{
           course.totalHours.lab

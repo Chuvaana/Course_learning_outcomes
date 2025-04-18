@@ -4,6 +4,8 @@ import { ActivatedRoute } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { TabsModule } from 'primeng/tabs';
 import { forkJoin } from 'rxjs';
+import { AssessmentService } from '../../../../services/assessmentService';
+import { CloPointPlanService } from '../../../../services/cloPointPlanService';
 import { CLOService } from '../../../../services/cloService';
 import { CurriculumService } from '../../../../services/curriculum.service';
 import { StudentService } from '../../../../services/studentService';
@@ -49,15 +51,16 @@ export class HomeComponent {
 
   // төлөвлөгөө
   cloList = [];
-  pointPlan = [];
+  assessPlan: any;
   cloPlan = [];
 
   // clo дүн
-  tabDatas!: [{ title: string, content: any, value: any }];
+  tabDatas!: [{ title: string; content: any; value: any }];
   students!: any;
 
   types = [
-    { label: 'Лекц семинар', value: 'LEC_SEM' },
+    { label: 'Лекц', value: 'LEC' },
+    { label: 'Семинар', value: 'SEM' },
     { label: 'Лаборатори', value: 'LAB' },
   ];
 
@@ -66,11 +69,13 @@ export class HomeComponent {
     private teacherService: TeacherService,
     private studentService: StudentService,
     private service: CurriculumService,
-    private cloService: CLOService
+    private cloService: CLOService,
+    private assessService: AssessmentService,
+    private cloPointPlanService: CloPointPlanService
   ) {}
 
   ngOnInit() {
-    this.route.paramMap.subscribe((params) => {
+    this.route.parent?.paramMap.subscribe((params) => {
       this.lessonId = params.get('id')!;
     });
     this.teacherId = (localStorage.getItem('teacherId') as string) || '';
@@ -114,40 +119,12 @@ export class HomeComponent {
   readPlan() {
     forkJoin([
       this.teacherService.getCloList(this.lessonId),
-      this.cloService.getPointPlan(this.lessonId),
-      this.cloService.getCloPlan(this.lessonId),
-    ]).subscribe(([cloList, pointPlan, cloPlan]) => {
+      this.cloPointPlanService.getPointPlan(this.lessonId),
+      this.assessService.getAssessmentByLesson(this.lessonId),
+    ]).subscribe(([cloList, cloPlan, assessPlan]) => {
       this.cloList = cloList;
-      this.pointPlan = pointPlan || {
-        timeManagement: 0,
-        engagement: 0,
-        recall: 0,
-        problemSolving: 0,
-        recall2: 0,
-        problemSolving2: 0,
-        toExp: 0,
-        processing: 0,
-        decisionMaking: 0,
-        formulation: 0,
-        analysis: 0,
-        implementation: 0,
-        understandingLevel: 0,
-        analysisLevel: 0,
-        creationLevel: 0,
-      };
-
+      this.assessPlan = assessPlan;
       this.cloPlan = cloPlan;
-      // if ((Array.isArray(this.cloPlan[0]) && this.cloPlan[0].length === 0)) {
-      //   this.cloPlan[0] = [this.pointPlan];
-      // }s
-      // if (Array.isArray(this.cloPlan) && this.cloPlan.length === 0) {
-      //   this.createRows();
-      //   this.isLoading = false;
-      // } else {
-      //   this.populateCLOForm();
-      //   this.isUpdate = true;
-      //   this.isLoading = false;
-      // }
     });
   }
 

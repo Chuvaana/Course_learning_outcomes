@@ -1,30 +1,126 @@
-<div class="card">
-    <p-treeTable 
-        [value]="files" 
-        [columns]="cols" 
-        [scrollable]="true" 
-        [tableStyle]="{'min-width':'50rem'}">
-            <ng-template pTemplate="header" let-columns>
-                <tr>
-                    <th *ngFor="let col of columns">
-                        {{ col.header }}
-                    </th>
-                </tr>
-            </ng-template>
-            <ng-template pTemplate="body" let-rowNode let-rowData="rowData" let-columns="columns">
-                <tr [ttRow]="rowNode">
-                    <td *ngFor="let col of columns; let i = index" ttEditableColumn [ttEditableColumnDisabled]="i == 0" [ngClass]="{ 'p-toggler-column': i === 0 }">
-                        <p-treeTableToggler [rowNode]="rowNode" *ngIf="i === 0" />
-                        <p-treeTableCellEditor>
-                            <ng-template pTemplate="input">
-                                <input pInputText type="text" [(ngModel)]="rowData[col.field]" />
-                            </ng-template>
-                            <ng-template pTemplate="output">
-                                {{ rowData[col.field] }}
-                            </ng-template>
-                        </p-treeTableCellEditor>
-                    </td>
-                </tr>
-        </ng-template>
-    </p-treeTable>
-</div>  
+<p-toast />
+<form [formGroup]="planForm" (ngSubmit)="onSubmit()" class="p-fluid">
+  <div formArrayName="plans" class="plans">
+    @for (plan of planForm.controls.plans.controls; track trackByIndex; let
+    planIndex = $index) {
+    <div
+      class="p-4 border-1 border-round surface-border shadow-1"
+      [formGroupName]="planIndex"
+    >
+      <div class="p-inputgroup mb-3">
+        <p-floatlabel variant="on" style="margin-bottom: 10px">
+          <p-dropdown
+            formControlName="methodType"
+            [options]="methodTypes"
+            optionLabel="name"
+            optionValue="id"
+            class="w-full"
+            (onChange)="changedMethodType($event, planIndex)"
+          >
+          </p-dropdown>
+          <label for="methodType">Төрөл</label>
+        </p-floatlabel>
+        <p-floatlabel
+          variant="on"
+          style="margin-bottom: 10px"
+          *ngIf="hideArray[planIndex]"
+        >
+          <p-dropdown
+            formControlName="secondMethodType"
+            [options]="secondMethodTypes"
+            optionLabel="name"
+            optionValue="id"
+            class="w-full"
+          >
+          </p-dropdown>
+          <label for="secondMethodType">Дэд төрөл</label>
+        </p-floatlabel>
+        <div style="display: flex; gap: 10px">
+          <p-floatlabel variant="on">
+            <input pInputText type="text" formControlName="methodName" />
+            <label for="methodName">Үнэлгээний арга</label>
+          </p-floatlabel>
+          <p-floatlabel variant="on">
+            <p-inputNumber
+              formControlName="frequency"
+              id="frequency"
+              [showButtons]="true"
+              [step]="1"
+            ></p-inputNumber>
+            <label for="frequency">Үнэлгээ хийх давтамж /тоо/</label>
+          </p-floatlabel>
+          <button
+            pButton
+            type="button"
+            icon="pi pi-times"
+            class="p-button-danger"
+            (click)="removeMethod(planIndex)"
+          ></button>
+        </div>
+      </div>
+
+      <div formArrayName="subMethods" class="answers mb-3">
+        <div
+          *ngFor="
+            let answer of planForm.controls.plans.controls[planIndex].controls
+              .subMethods.controls;
+            let answerIndex = index
+          "
+        >
+          <div [formGroupName]="answerIndex" class="answer p-inputgroup mb-2">
+            <div style="display: flex; gap: 10px">
+              <p-floatlabel variant="on">
+                <input pInputText type="text" formControlName="subMethod" />
+                <label for="subMethod">Дэд арга</label>
+              </p-floatlabel>
+              <p-floatlabel variant="on">
+                <p-inputNumber
+                  formControlName="point"
+                  id="point"
+                  [showButtons]="true"
+                  [step]="1"
+                ></p-inputNumber>
+                <label for="point">Оноо</label>
+              </p-floatlabel>
+              <button
+                pButton
+                type="button"
+                icon="pi pi-times"
+                class="p-button-text p-button-danger"
+                (click)="removeSubMethod(planIndex, answerIndex)"
+              ></button>
+            </div>
+          </div>
+        </div>
+
+        <button
+          pButton
+          type="button"
+          label="Дэд үнэлгээ нэмэх"
+          icon="pi pi-plus"
+          class="p-button-sm p-button-outlined"
+          (click)="addSubMethod(planIndex)"
+        ></button>
+      </div>
+    </div>
+    }
+  </div>
+
+  <div class="add-question mb-3">
+    <button
+      pButton
+      type="button"
+      label="Үнэлгээ нэмэх"
+      icon="pi pi-plus"
+      class="p-button-info"
+      (click)="addMethod()"
+    ></button>
+    <button
+      pButton
+      type="submit"
+      label="Хадгалах"
+      icon="pi pi-save"
+      class="p-button-success"
+    ></button>
+  </div>
+</form>

@@ -42,7 +42,7 @@
           <p-floatlabel variant="on" class="w-full">
             <p-dropdown
               formControlName="school"
-              id="school"
+              id="id"
               [options]="branches"
               optionLabel="name"
               (onChange)="onBranchChange($event.value)"
@@ -56,7 +56,7 @@
           <p-floatlabel variant="on" class="w-full">
             <p-dropdown
               formControlName="department"
-              id="department"
+              id="id"
               [options]="departments"
               optionLabel="name"
               autocomplete="off"
@@ -211,6 +211,7 @@
               id="weeklyLecture"
               autocomplete="off"
               class="w-full"
+              (onInput)="onValueChange($event)"
             />
             <label for="weeklyLecture">Лекц (7 хоногт)</label>
           </p-floatlabel>
@@ -220,6 +221,7 @@
               id="weeklySeminar"
               autocomplete="off"
               class="w-full"
+              (onInput)="onValueChangeSem($event)"
             />
             <label for="weeklySeminar">Семинар</label>
           </p-floatlabel>
@@ -229,6 +231,7 @@
               id="weeklyLab"
               autocomplete="off"
               class="w-full"
+              (onInput)="onValueChangeLab($event)"
             />
             <label for="weeklyLab">Лаборатори</label>
           </p-floatlabel>
@@ -238,6 +241,7 @@
               id="weeklyAssignment"
               autocomplete="off"
               class="w-full"
+              (onInput)="onValueChangeAssign($event)"
             />
             <label for="weeklyAssignment">Бие даалт</label>
           </p-floatlabel>
@@ -247,6 +251,7 @@
               id="weeklyPractice"
               autocomplete="off"
               class="w-full"
+              (onInput)="onValueChangePrac($event)"
             />
             <label for="weeklyPractice">Практик</label>
           </p-floatlabel>
@@ -343,8 +348,6 @@
             <label for="weeklyPractice">Практик</label>
           </p-floatlabel>
         </div>
-
-
 
         <h3 class="text-lg font-semibold text-gray-800 border-b pb-2 mt-6">
           Бие даан суралцах цаг

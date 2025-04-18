@@ -5,8 +5,13 @@ const ScheduleSemSchema = new mongoose.Schema({
   week: { type: String, required: true },
   title: { type: String },
   time: { type: Number, required: true },
-  cloRelevance: { type: mongoose.Schema.Types.ObjectId, ref: 'Clo' },
-  point: { type: Number },
+  cloRelevance: { type: mongoose.Schema.Types.ObjectId, ref: 'Clo', default: null },
+  point: [
+    {
+      id: { type: String },
+      point: { type: Number },
+    },
+  ],
 });
 
 module.exports = mongoose.model('ScheduleSem', ScheduleSemSchema);

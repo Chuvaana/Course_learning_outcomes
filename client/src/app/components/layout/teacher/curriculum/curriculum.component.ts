@@ -1,20 +1,20 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { ButtonModule } from 'primeng/button';
 import { TabsModule } from 'primeng/tabs';
+import { forkJoin } from 'rxjs';
+import { AssessmentService } from '../../../../services/assessmentService';
+import { CLOService } from '../../../../services/cloService';
+import { PdfGeneratorService } from '../../../../services/pdf-generator.service';
 import { AdditionalComponent } from './additional/additional.component';
-import { AssessmentComponent } from './assessment/assessment.component';
+import { AssessmentMethodComponent } from './assessment-method/assessment-method.component';
 import { CloComponent } from './clo/clo.component';
 import { MainInfoComponent } from './main-info/main-info.component';
 import { MaterialsComponent } from './materials/materials.component';
-import { ScheduleComponent } from './schedule/schedule.component';
-import { OtherComponent } from './other/other.component';
 import { MethodologyComponent } from './methodology/methodology.component';
-import { ButtonModule } from 'primeng/button';
-import { PdfGeneratorService } from '../../../../services/pdf-generator.service';
-import { AssessmentService } from '../../../../services/assessmentService';
-import { CLOService } from '../../../../services/cloService';
-import { forkJoin } from 'rxjs';
+import { OtherComponent } from './other/other.component';
+import { ScheduleComponent } from './schedule/schedule.component';
 
 @Component({
   selector: 'app-curriculum',
@@ -27,7 +27,7 @@ import { forkJoin } from 'rxjs';
     MaterialsComponent,
     CloComponent,
     ScheduleComponent,
-    AssessmentComponent,
+    AssessmentMethodComponent,
     AdditionalComponent,
     MethodologyComponent,
     ButtonModule,
@@ -54,12 +54,12 @@ export class CurriculumComponent {
   cloPlanData: any;
   assessFooter: any;
 
-
-  constructor(private route: ActivatedRoute,
+  constructor(
+    private route: ActivatedRoute,
     private pdfService: PdfGeneratorService,
     private cloService: CLOService,
     private service: AssessmentService
-  ) { }
+  ) {}
 
   ngOnInit() {
     this.route.parent?.paramMap.subscribe((params) => {
@@ -81,7 +81,7 @@ export class CurriculumComponent {
       scheduleLabs: this.service.getScheduleLabs(this.lessonId),
       scheduleBds: this.service.getScheduleBds(this.lessonId),
       cloPlan: this.cloService.getCloPlan(this.lessonId),
-      assessFooter: this.service.getAssessFooter(this.lessonId)
+      assessFooter: this.service.getAssessFooter(this.lessonId),
     }).subscribe((results) => {
       // 🎯 Энд бүх үр дүн хадгалагдсан байна
 

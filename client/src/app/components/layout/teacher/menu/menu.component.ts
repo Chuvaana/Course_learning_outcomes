@@ -1,12 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 import { MenuItem } from 'primeng/api';
 import { AvatarModule } from 'primeng/avatar';
 import { BadgeModule } from 'primeng/badge';
 import { InputTextModule } from 'primeng/inputtext';
 import { MenubarModule } from 'primeng/menubar';
 import { RippleModule } from 'primeng/ripple';
+import { AssessmentService } from '../../../../services/assessmentService';
 
 @Component({
   selector: 'app-menu',
@@ -24,93 +25,118 @@ import { RippleModule } from 'primeng/ripple';
   styleUrl: './menu.component.scss',
 })
 export class MenuComponent implements OnInit {
+  lessonId: string = '';
   items: MenuItem[] | undefined;
 
-  ngOnInit() {
+  constructor(
+    private route: ActivatedRoute,
+    private service: AssessmentService
+  ) {}
+
+  ngOnInit(): void {
+    this.lessonId = this.route.snapshot.paramMap.get('id') || '';
+
     this.items = [
       {
-        label: 'Хичээл',
+        label: 'Төлөвлөгөө',
         icon: 'pi pi-book',
-        url: '/main/teacher/lessonList',
+        items: [
+          {
+            label: 'Дүнгийн төлөвлөлт',
+            icon: 'pi pi-check',
+            routerLink: ['/main/teacher/lesson', this.lessonId, 'clo-tree'],
+          },
+          {
+            label: 'Дүнгийн оноо төлөвлөлт',
+            icon: 'pi pi-check',
+            routerLink: [
+              '/main/teacher/lesson',
+              this.lessonId,
+              'clo-point-plan',
+            ],
+          },
+        ],
+      },
+      {
+        label: 'Хичээлийн хөтөлбөр',
+        icon: 'pi pi-book',
+        routerLink: ['/main/teacher/lesson', this.lessonId, 'curriculum'],
+      },
+      {
+        label: 'Оюутан',
+        icon: 'pi pi-graduation-cap',
+        items: [
+          {
+            label: 'Жагсаалт',
+            icon: 'pi pi-graduation-cap',
+            routerLink: ['/main/teacher/lesson', this.lessonId, 'studentList'],
+          },
+          {
+            label: 'Бүртгэх',
+            icon: 'pi pi-graduation-cap',
+            routerLink: ['/main/teacher/lesson', this.lessonId, 'student'],
+          },
+        ],
+      },
+      {
+        label: 'Ирц',
+        icon: 'pi pi-plus',
+        routerLink: ['/main/teacher/lesson', this.lessonId, 'attendance'],
+      },
+      {
+        label: 'Шалгалт',
+        icon: 'pi pi-plus',
+        items: [
+          {
+            label: 'Шалгалт импорт файл оруулах',
+            icon: 'pi pi-graduation-cap',
+            routerLink: ['/main/teacher/lesson', this.lessonId, 'exam-import'],
+          },
+          {
+            label: 'Шалгалт дүнгийн жагсаалт',
+            icon: 'pi pi-graduation-cap',
+            routerLink: ['/main/teacher/lesson', this.lessonId, 'exam-list'],
+          },
+        ],
+      },
+      {
+        label: 'Явцын үнэлгээ',
+        icon: 'pi pi-plus',
+        routerLink: ['/main/teacher/lesson', this.lessonId, 'progress-poll'],
       },
       {
         label: 'Тайлан',
         icon: 'pi pi-home',
-        url: '/main/teacher/report-lesson-list',
+        routerLink: ['/main/teacher/lesson', this.lessonId, 'report'],
       },
-      {
-        label: 'Шалгалт',
-        icon: 'pi pi-star',
-        url: '/main/teacher/question-create',
-      },
-      {
-        label: 'Санал асуулга',
-        icon: 'pi pi-star',
-        url: '/main/teacher/lessonList',
-      },
-      {
-        label: 'Асуултын жагсаалт',
-        icon: 'pi pi-star',
-      //     items: [
-      //       {
-      //         label: 'Core',
-      //         icon: 'pi pi-bolt',
-      //         url: '/main/teacher/questionlist',
-      //         shortcut: '⌘+S'
-      //       },
-      //       {
-      //         label: 'Blocks',
-      //         icon: 'pi pi-server',
-      //         url: '/main/teacher/questionlist',
-      //         shortcut: '⌘+B'
-      //       },
-      // ]
-      },
-      // {
-      //   label: 'Шалгалт',
-      //   icon: 'pi pi-search',
-      //   items: [
-      //     {
-      //       label: 'Core',
-      //       icon: 'pi pi-bolt',
-      //       shortcut: '⌘+S'
-      //     },
-      //     {
-      //       label: 'Blocks',
-      //       icon: 'pi pi-server',
-      //       shortcut: '⌘+B'
-      //     },
-      //     {
-      //       label: 'UI Kit',
-      //       icon: 'pi pi-pencil',
-      //       shortcut: '⌘+U'
-      //     },
-      //     {
-      //       separator: true
-      //     },
-      //     {
-      //       label: 'Templates',
-      //       icon: 'pi pi-palette',
-      //       items: [
-      //         {
-      //           label: 'Apollo',
-      //           icon: 'pi pi-palette',
-      //           badge: '2'
-      //         },
-      //         {
-      //           label: 'Ultima',
-      //           icon: 'pi pi-palette',
-      //           badge: '3'
-      //         }
-      //       ]
-      //     }
-      //   ]
-      // },
-      // {
-      //   label: 'Contact',
-      //   icon: 'pi pi-envelope',
-      //   badge: '3'
-      // }
     ];
+
+    this.service.getAssessmentByLesson(this.lessonId).subscribe((res: any) => {
+      const plansArray =
+        res?.plans?.filter((item: any) => item.methodType === 'PROC') || [];
+
+      const subMenu: { label: string; icon: string; routerLink: string[] }[] =
+        [];
+      plansArray.forEach((plan: any) => {
+        subMenu.push({
+          label: plan.methodName,
+          icon: 'pi pi-graduation-cap',
+          routerLink: [
+            '/main/teacher/lesson',
+            this.lessonId,
+            'grade',
+            plan._id,
+          ],
+        });
+      });
+      if (subMenu.length > 0) {
+        const newItem = {
+          label: 'Дүн',
+          icon: 'pi pi-graduation-cap',
+          items: subMenu,
+        };
+        this.items = [...this.items!, newItem];
+      }
+    });
   }
 }

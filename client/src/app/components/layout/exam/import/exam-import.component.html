@@ -1,86 +1,80 @@
-<div>
-  <p-toast />
-  <div style="font-size: 50px; margin-left: 5%; margin-top: 20px">
-    <span>Хичээлд сурагчдыг бүртгэх</span>
-  </div>
-  <div style="
-      display: flex;
-      justify-content: space-between;
-      padding: 0px 10%;
-      margin-top: 50px;
-      ">
+<p-toast></p-toast>
 
-    <div class="action-btn">
-      <button (click)="save()">SAVE</button>
+<div class="text-4xl font-bold ml-5 mt-5">Сурагчдын дүнгийн файл оруулах</div>
+
+<div class="flex justify-content-between align-items-center px-6 mt-5 ">
+  <div class="action-btn">
+    <p-button label="Хадгалах" (onClick)="save()"></p-button>
+  </div>
+  <div class="action-btn">
+    <div class="label-txt">
+      <span>Шалгалтын төрөл</span>
+      <div style="margin-top: 10px;">
+      <p-dropdown [options]="examTypes" [(ngModel)]="examType" optionLabel="label" placeholder="Шалгалтын төрөл"
+        (onChange)="examTypesData($event.value)" />
     </div>
-    <div class="action-btn">
-      <button (click)="resetInputs()">Цэвэрлэх</button>
     </div>
   </div>
-  <div style="
-      display: flex;
-      justify-content: space-between;
-      padding: 0px 10%;
-      margin-top: 50px;
-    ">
-    <div *ngIf="clos.length > 0" style="display: flex; flex-direction: row; flex-wrap: wrap">
-      <div *ngFor="let clo of clos; let i = index" class="clo-row">
-        <p class="span">{{ clo.cloName }}</p>
-        <div class="flex-auto">
-        </div>
-        <input #minV class="input" type="number" placeholder="0" max="questionAmount"
-          (change)="checkValue(clo.id, minV.value, 'min')" />
-        <span> - </span>
-        <input #maxV class="input" type="number" [attr.placeholder]="questionAmount" [max]="questionAmount"
-          (change)="checkValue(clo.id, maxV.value, 'max')" />
+  <div class="action-btn">
+    <div class="label-txt">
+      <span>Өмнө бүртгэсэн сурагчдын дүнг шинжилж оруулах</span>
+      <div style="margin-top: 10px;">
+        <p-checkbox [(ngModel)]="checked" [binary]="true"/>
       </div>
     </div>
   </div>
-  <div style="
-      display: flex;
-      justify-content: space-between;
-      padding: 0px 10%;
-      margin-top: 50px;
-    ">
-    <div class="action-btn">
-      <input type="file" (change)="onFileChange($event)" accept=".xls,.xlsx" />
-    </div>
-    <!-- <div class="action-btn">
-      <p-fileupload mode="basic" chooseLabel="Choose" chooseIcon="pi pi-upload" name="file"
-          accept=".xls,.xlsx" (onSelect)="onFileChange($event)" />
-  </div> -->
-    <div class="drop-btn"></div>
-    <div class="action-btn">
-      <!-- <button mat-raised-button (click)="openPopup()">Open Popup</button> -->
-    </div>
-    <div class="action-btn">
-      <!-- <button mat-raised-button (click)="submit()">Create New Student</button> -->
+  <div class="action-btn">
+    <p-button label="Цэвэрлэх" (onClick)="resetInputs()"></p-button>
+  </div>
+</div>
+
+<div class="flex justify-content-between px-6 mt-5">
+  <div *ngIf="clos.length > 0">
+    <div *ngFor="let clo of clos; let i = index" class="flex align-items-center justify-content-end gap-2 mb-2">
+      <span class="font-medium">{{ clo.cloName }}</span>
+      <div class="flex">
+        <p-floatlabel variant="on">
+          <p-inputNumber #minV inputStyleClass="w-6rem" [max]="questionAmount"
+            (onInput)="checkValue(clo.id, minV.value, 'min')" id="start"></p-inputNumber>
+          <label for="start">Эхлэх</label>
+        </p-floatlabel>
+        <p-floatlabel variant="on">
+          <p-inputNumber #maxV inputStyleClass="w-6rem" [max]="questionAmount"
+            (onInput)="checkValue(clo.id, maxV.value, 'max')" id="end"></p-inputNumber>
+          <label for="end">Дуусах</label>
+        </p-floatlabel>
+      </div>
     </div>
   </div>
-  <div style="display: flex; padding: 0px 10%; margin-top: 20px; font-weight: bold">
-    <div>
-      <span>Нийт сурагчдын тоо</span>
-    </div>
-    <div style="padding-left: 20px">
-      <span>{{ this.studentCount }}</span>
-    </div>
+</div>
+
+<div class="flex justify-content-between px-6 mt-5 align-items-center">
+  <div class="action-btn">
+    <p-fileupload mode="basic" chooseLabel="Choose" chooseIcon="pi pi-upload" name="file" accept=".xls,.xlsx"
+      (onSelect)="onFileChange($event)" />
+    <!-- <input type="file" (change)="onFileChange($event)" accept=".xls,.xlsx" /> -->
   </div>
-  <div style="margin-top: 2%; overflow-x: auto; max-width: 100%;">
-    <table *ngIf="tableData.length > 0" class="custom-table" style="min-width: 800px;">
-      <thead>
-        <tr>
-          <th>#</th>
-          <!-- Row count header -->
-          <th *ngFor="let header of tableData[0]">{{ header }}</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let row of tableData.slice(1); let i = index">
-          <td>{{ i + 1 }}</td>
-          <!-- Row count -->
-          <td *ngFor="let cell of row">{{ cell }}</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+  <!-- Future buttons can go here -->
+</div>
+
+<div class="flex px-6 mt-3 font-bold">
+  <div>Нийт сурагчдын тоо:</div>
+  <div class="ml-2">{{ studentCount }}</div>
+</div>
+
+<div class="mt-3 overflow-auto px-6">
+  <p-table *ngIf="tableData.length > 0" [value]="tableData.slice(1)">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>#</th>
+        <th *ngFor="let header of tableData[0]">{{ header }}</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-row let-i="rowIndex">
+      <tr>
+        <td>{{ i + 1 }}</td>
+        <td *ngFor="let cell of row">{{ cell }}</td>
+      </tr>
+    </ng-template>
+  </p-table>
 </div>

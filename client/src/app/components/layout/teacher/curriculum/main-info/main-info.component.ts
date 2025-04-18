@@ -1,6 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { DropdownModule } from 'primeng/dropdown';
 import { FloatLabel, FloatLabelModule } from 'primeng/floatlabel';
@@ -28,13 +33,13 @@ import { CalendarModule } from 'primeng/calendar';
     InputTextModule,
     InputNumberModule,
     CalendarModule,
-    ToastModule],
+    ToastModule,
+  ],
   providers: [MessageService],
   templateUrl: './main-info.component.html',
-  styleUrl: './main-info.component.scss'
+  styleUrl: './main-info.component.scss',
 })
 export class MainInfoComponent {
-
   @Input() lessonId: string = '';
   isNew: boolean = true;
   mainInfoForm: FormGroup;
@@ -46,9 +51,7 @@ export class MainInfoComponent {
   teacherId!: string;
   schoolYear!: string;
 
-  guaranteeData = {
-
-  };
+  guaranteeData = {};
   constructor(
     private fb: FormBuilder,
     private service: CurriculumService,
@@ -56,8 +59,8 @@ export class MainInfoComponent {
     private msgService: MessageService,
     private router: Router,
     private tabRefreshService: TabRefreshService,
-    private sharedService: SharedService) {
-
+    private sharedService: SharedService
+  ) {
     this.mainInfoForm = this.fb.group({
       lessonId: [],
       lessonName: ['', Validators.required],
@@ -69,11 +72,24 @@ export class MainInfoComponent {
       schoolYear: [''],
       assistantTeacherName: [''],
       assistantTeacherRoom: [''],
-      assistantTeacherEmail: ['', [Validators.email, Validators.pattern(/^[a-zA-Z0-9._%+-]+@must\.edu\.mn$/)]],
+      assistantTeacherEmail: [
+        '',
+        [
+          Validators.email,
+          Validators.pattern(/^[a-zA-Z0-9._%+-]+@must\.edu\.mn$/),
+        ],
+      ],
       assistantTeacherPhone: ['', [Validators.pattern('^[0-9]+$')]],
       teacherName: ['', Validators.required],
       teacherRoom: ['', Validators.required],
-      teacherEmail: ['', [Validators.required, Validators.email, Validators.pattern(/^[a-zA-Z0-9._%+-]+@must\.edu\.mn$/)]],
+      teacherEmail: [
+        '',
+        [
+          Validators.required,
+          Validators.email,
+          Validators.pattern(/^[a-zA-Z0-9._%+-]+@must\.edu\.mn$/),
+        ],
+      ],
       teacherPhone: ['', [Validators.required, Validators.pattern('^[0-9]+$')]],
       lessonLevel: ['', Validators.required],
       lessonType: ['', Validators.required],
@@ -105,9 +121,9 @@ export class MainInfoComponent {
         teacherName: res.name,
         teacherRoom: res.room,
         teacherEmail: res.email,
-        teacherPhone: res.phone
+        teacherPhone: res.phone,
       });
-    })
+    });
   }
 
   ngOnInit(): void {
@@ -121,7 +137,7 @@ export class MainInfoComponent {
 
     this.lessonType = [
       { label: 'Заавал', value: 'REQ' },
-      { label: 'Сонгон', value: 'CHO' }
+      { label: 'Сонгон', value: 'CHO' },
     ];
 
     this.recommendedSemester = [
@@ -132,11 +148,11 @@ export class MainInfoComponent {
       { label: 'Зуны улирал', value: 'summer' },
     ];
 
-    this.sharedService.getConfig("School_year").subscribe((res) => {
+    this.sharedService.getConfig('School_year').subscribe((res) => {
       if (res) {
         this.schoolYear = res.itemValue;
       }
-    })
+    });
     if (this.lessonId) {
       this.readData();
     }
@@ -146,10 +162,6 @@ export class MainInfoComponent {
     this.service.getMainInfo(this.lessonId).subscribe((response: any) => {
       if (response) {
         this.isNew = false;
-        this.service.getCurriculumByLessonId(this.lessonId).subscribe((response: any) => {
-          console.log(response);
-        });
-
         this.mainInfoForm.patchValue({
           lessonId: this.lessonId,
           lessonName: response.lessonName,
@@ -159,10 +171,18 @@ export class MainInfoComponent {
           department: response.department,
           prerequisite: response.prerequisite,
 
-          assistantTeacherName: response.assistantTeacher.name ? response.assistantTeacher.name : '',
-          assistantTeacherRoom: response.assistantTeacher.room ? response.assistantTeacher.room : '',
-          assistantTeacherEmail: response.assistantTeacher.email ? response.assistantTeacher.email : '',
-          assistantTeacherPhone: response.assistantTeacher.phone ? response.assistantTeacher.phone : '',
+          assistantTeacherName: response.assistantTeacher.name
+            ? response.assistantTeacher.name
+            : '',
+          assistantTeacherRoom: response.assistantTeacher.room
+            ? response.assistantTeacher.room
+            : '',
+          assistantTeacherEmail: response.assistantTeacher.email
+            ? response.assistantTeacher.email
+            : '',
+          assistantTeacherPhone: response.assistantTeacher.phone
+            ? response.assistantTeacher.phone
+            : '',
 
           teacherName: response.teacher.name,
           teacherRoom: response.teacher.room,
@@ -191,26 +211,65 @@ export class MainInfoComponent {
           selfStudyAssignment: response.selfStudyHours.assignment,
           selfStudyPractice: response.selfStudyHours.practice,
         });
-
+        let branchName = '';
+        if (response.school) {
+          this.branches.map((e) => {
+            if (e.id === response.school) {
+              this.mainInfoForm.patchValue({ school: e });
+            }
+          });
+        }
         if (response.school) {
           this.getDepartment(response.school, response.department);
+          console.log(response.department);
+          this.departments.map((e: { id: string; }) => {
+            if (e.id === response.department) {
+              this.mainInfoForm.patchValue({ department: e });
+            }
+          });
         }
 
+        if (response.lessonLevel){
+          this.lessonLevel.map((e) =>{
+            if( e.value === response.lessonLevel){
+              this.mainInfoForm.patchValue({ lessonLevel: e });
+            }
+          })
+        }
+        if (response.lessonType){
+          this.lessonType.map((e) =>{
+            if( e.value === response.lessonType){
+              this.mainInfoForm.patchValue({ lessonType: e });
+            }
+          })
+        }
+        if (response.recommendedSemester){
+          this.recommendedSemester.map((e) =>{
+            if( e.value === response.recommendedSemester){
+              this.mainInfoForm.patchValue({ recommendedSemester: e });
+            }
+          })
+        }
       }
-    })
+    });
   }
-
 
   loadBranches(): void {
     this.service.getBranches().subscribe((data: any[]) => {
-      this.branches = data.map(branch => ({ name: branch.name, id: branch.id || branch.name }));
+      this.branches = data.map((branch) => ({
+        name: branch.name,
+        id: branch.id || branch.name,
+      }));
     });
   }
 
   onBranchChange(branch: any): void {
     this.service.getDepartments(branch.id).subscribe((data: any[]) => {
       if (data) {
-        this.departments = data.map(dept => ({ name: dept.name, id: dept.id || dept.name }));
+        this.departments = data.map((dept) => ({
+          name: dept.name,
+          id: dept.id || dept.name,
+        }));
       }
     });
   }
@@ -219,17 +278,18 @@ export class MainInfoComponent {
     this.service.getDepartments(branchId).subscribe((data: any[]) => {
       if (data) {
         this.departments = data
-          .filter(dept => dept.id)
-          .map(dept => ({ name: dept.name, id: dept.id }));
+          .filter((dept) => dept.id)
+          .map((dept) => ({ name: dept.name, id: dept.id }));
 
-        const selectedDept = this.departments.find(dept => dept.id === departmentId);
+        const selectedDept = this.departments.find(
+          (dept) => dept.id === departmentId
+        );
         if (selectedDept) {
-          this.mainInfoForm.patchValue({ department: departmentId });
+          this.mainInfoForm.patchValue({ department: selectedDept });
         }
       }
     });
   }
-
 
   submitButton(): void {
     const formData = this.mainInfoForm.value;
@@ -269,35 +329,27 @@ export class MainInfoComponent {
       checkManagerDatetime: new Date(formData.checkManagerDatetime), // Array хэлбэртэй
     };
     if (this.isNew) {
-      this.service.createLessonCurriculum(lessoncurriculumsData).subscribe({
-        next: (response: any) => {
-          const data = response;
-          this.msgService.add({
-            severity: 'success',
-            summary: 'Амжилттай',
-            detail: 'Амжилттай хадгалагдлаа!',
-          });
-        },
-        error: (error) => {
-          this.msgService.add({
-            severity: 'error',
-            summary: 'Алдаа',
-            detail: 'Алдаа гарлаа: ' + error.message,
-          });
-        }
-      });
       this.service.saveLesson(cleanedData).subscribe({
         next: (response: any) => {
-          const data = { lessonId: response.lesson.id, teacherId: this.teacherId }
-          this.service.addLessonToTeacher(this.teacherId, data).subscribe((res) => {
-            this.msgService.add({
-              severity: 'success',
-              summary: 'Амжилттай',
-              detail: 'Амжилттай хадгалагдлаа!',
+          const data = {
+            lessonId: response.lesson.id,
+            teacherId: this.teacherId,
+          };
+          this.service
+            .addLessonToTeacher(this.teacherId, data)
+            .subscribe((res) => {
+              this.msgService.add({
+                severity: 'success',
+                summary: 'Амжилттай',
+                detail: 'Амжилттай хадгалагдлаа!',
+              });
             });
-          })
           this.tabRefreshService.triggerRefresh();
-          this.router.navigate(['/main/teacher/lesson', response.lesson.id, 'curriculum']);
+          this.router.navigate([
+            '/main/teacher/lesson',
+            response.lesson.id,
+            'curriculum',
+          ]);
         },
         error: (error) => {
           this.msgService.add({
@@ -305,28 +357,9 @@ export class MainInfoComponent {
             summary: 'Алдаа',
             detail: 'Алдаа гарлаа: ' + error.message,
           });
-        }
+        },
       });
-
     } else {
-
-      this.service.updateLessonCurriculum(this.lessonId, lessoncurriculumsData).subscribe({
-        next: (response: any) => {
-          const data = response;
-          this.msgService.add({
-            severity: 'success',
-            summary: 'Амжилттай',
-            detail: 'Амжилттай хадгалагдлаа!',
-          });
-        },
-        error: (error) => {
-          this.msgService.add({
-            severity: 'error',
-            summary: 'Алдаа',
-            detail: 'Алдаа гарлаа: ' + error.message,
-          });
-        }
-      });
       this.service.updateLesson(this.lessonId, cleanedData).subscribe({
         next: (response) => {
           this.msgService.add({
@@ -342,9 +375,28 @@ export class MainInfoComponent {
             summary: 'Алдаа',
             detail: 'Алдаа гарлаа: ' + error.message,
           });
-        }
+        },
       });
-
     }
+  }
+
+  onValueChange(e: any) {
+    this.mainInfoForm.get('totalLecture')?.setValue(e.value * 16);
+  }
+
+  onValueChangeSem(e: any) {
+    this.mainInfoForm.get('totalSeminar')?.setValue(e.value * 16);
+  }
+
+  onValueChangeLab(e: any) {
+    this.mainInfoForm.get('totalLab')?.setValue(e.value * 16);
+  }
+
+  onValueChangeAssign(e: any) {
+    this.mainInfoForm.get('totalAssignment')?.setValue(e.value * 16);
+  }
+
+  onValueChangePrac(e: any) {
+    this.mainInfoForm.get('totalPractice')?.setValue(e.value * 16);
   }
 }
