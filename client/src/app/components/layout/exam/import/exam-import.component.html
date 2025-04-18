@@ -1,10 +1,27 @@
 <p-toast></p-toast>
 
-<div class="text-4xl font-bold ml-5 mt-5">Хичээлд сурагчдыг бүртгэх</div>
+<div class="text-4xl font-bold ml-5 mt-5">Сурагчдын дүнгийн файл оруулах</div>
 
-<div class="flex justify-content-between px-6 mt-5">
+<div class="flex justify-content-between align-items-center px-6 mt-5 ">
   <div class="action-btn">
     <p-button label="Хадгалах" (onClick)="save()"></p-button>
+  </div>
+  <div class="action-btn">
+    <div class="label-txt">
+      <span>Шалгалтын төрөл</span>
+      <div style="margin-top: 10px;">
+      <p-dropdown [options]="examTypes" [(ngModel)]="examType" optionLabel="label" placeholder="Шалгалтын төрөл"
+        (onChange)="examTypesData($event.value)" />
+    </div>
+    </div>
+  </div>
+  <div class="action-btn">
+    <div class="label-txt">
+      <span>Өмнө бүртгэсэн сурагчдын дүнг шинжилж оруулах</span>
+      <div style="margin-top: 10px;">
+        <p-checkbox [(ngModel)]="checked" [binary]="true"/>
+      </div>
+    </div>
   </div>
   <div class="action-btn">
     <p-button label="Цэвэрлэх" (onClick)="resetInputs()"></p-button>
@@ -13,30 +30,17 @@
 
 <div class="flex justify-content-between px-6 mt-5">
   <div *ngIf="clos.length > 0">
-    <div
-      *ngFor="let clo of clos; let i = index"
-      class="flex align-items-center justify-content-end gap-2 mb-2"
-    >
+    <div *ngFor="let clo of clos; let i = index" class="flex align-items-center justify-content-end gap-2 mb-2">
       <span class="font-medium">{{ clo.cloName }}</span>
       <div class="flex">
         <p-floatlabel variant="on">
-          <p-inputNumber
-            #minV
-            inputStyleClass="w-6rem"
-            [max]="questionAmount"
-            (onInput)="checkValue(clo.id, minV.value, 'min')"
-            id="start"
-          ></p-inputNumber>
+          <p-inputNumber #minV inputStyleClass="w-6rem" [max]="questionAmount"
+            (onInput)="checkValue(clo.id, minV.value, 'min')" id="start"></p-inputNumber>
           <label for="start">Эхлэх</label>
         </p-floatlabel>
         <p-floatlabel variant="on">
-          <p-inputNumber
-            #maxV
-            inputStyleClass="w-6rem"
-            [max]="questionAmount"
-            (onInput)="checkValue(clo.id, maxV.value, 'max')"
-            id="end"
-          ></p-inputNumber>
+          <p-inputNumber #maxV inputStyleClass="w-6rem" [max]="questionAmount"
+            (onInput)="checkValue(clo.id, maxV.value, 'max')" id="end"></p-inputNumber>
           <label for="end">Дуусах</label>
         </p-floatlabel>
       </div>
@@ -46,14 +50,8 @@
 
 <div class="flex justify-content-between px-6 mt-5 align-items-center">
   <div class="action-btn">
-    <p-fileupload
-      mode="basic"
-      chooseLabel="Choose"
-      chooseIcon="pi pi-upload"
-      name="file"
-      accept=".xls,.xlsx"
-      (onSelect)="onFileChange($event)"
-    />
+    <p-fileupload mode="basic" chooseLabel="Choose" chooseIcon="pi pi-upload" name="file" accept=".xls,.xlsx"
+      (onSelect)="onFileChange($event)" />
     <!-- <input type="file" (change)="onFileChange($event)" accept=".xls,.xlsx" /> -->
   </div>
   <!-- Future buttons can go here -->

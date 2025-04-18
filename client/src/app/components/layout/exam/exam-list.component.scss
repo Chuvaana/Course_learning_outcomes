@@ -1,161 +1,21 @@
-.exam-main{
+.student-list-container {
+  //   width: 98%;
+  margin: auto;
+  padding: 20px;
+}
+
+.filter-section {
   display: flex;
-  align-items: center;
-  flex-direction: column;
-
-}
-
-.question-box {
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  padding: 10px;
-  margin: 10px;
-  width: 400px;
-}
-
-.question-header {
-  display: flex;
-  justify-content: space-between;
-  font-weight: bold;
-  padding-bottom: 10px;
-  border-bottom: 1px solid #ccc;
-}
-
-.answers {
-  margin-top: 10px;
-}
-
-.answer-item {
-  display: flex;
-  align-items: center;
   gap: 10px;
-  margin-bottom: 5px;
+  margin-bottom: 15px;
+  align-items: center;
 }
 
-/* Common styles for checkbox and radio */
-input[type="checkbox"],
-input[type="radio"] {
-  width: 20px;
-  height: 20px;
-  cursor: pointer;
-  appearance: none;
-  border: 2px solid #ccc;
-  border-radius: 4px;
-  transition: all 0.3s ease;
-  position: relative;
+.search-input,
+.dropdown-filter {
+  flex-grow: 1;
 }
 
-/* Checkbox specific styles */
-input[type="checkbox"] {
-  border-radius: 4px;
-}
-
-input[type="checkbox"]:checked {
-  background-color: #1a3cd4;
-  border-color: #1a3cd4;
-  transform: scale(1.2);
-}
-
-input[type="checkbox"]:checked::after {
-  content: '✔';
-  color: white;
-  font-size: 14px;
-  position: absolute;
-  top: -2px;
-  left: 2px;
-  opacity: 1;
-  transition: opacity 0.2s ease;
-}
-
-input[type="checkbox"]:not(:checked)::after {
-  opacity: 0;
-}
-
-/* Radio specific styles */
-input[type="radio"] {
-  border-radius: 50%; /* Make it circular */
-}
-
-input[type="radio"]:checked {
-  background-color: #1a3cd4;
-  border-color: #1a3cd4;
-  transform: scale(1.2);
-}
-
-input[type="radio"]::after {
-  content: '';
-  width: 10px;
-  height: 10px;
-  background-color: white;
-  border-radius: 50%;
-  position: absolute;
-  top: 3px;
-  left: 3px;
-  transform: scale(0);
-  transition: transform 0.2s ease;
-}
-
-input[type="radio"]:checked::after {
-  transform: scale(1);
-}
-
-/* Hover effect */
-input[type="checkbox"]:hover,
-input[type="radio"]:hover {
-  transform: scale(1.1);
-  border-color: #1a85ff;
-}
-
-
-.right-menu {
-  width: 16%;
-  padding: 10px;
-  background-color: #e0e0e0;
-  border: 1px solid #ccc;
-  position: absolute;
-  left: 84%;
-  top: 10%;
-}
-
-.pagination {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 5px;
-}
-
-.page-btn {
-  font-size: larger;
-  width: 35px;
-  height: 45px;
-  background-color: white;
-  border: 1px solid #007bff;
-  color: #007bff;
-  cursor: pointer;
-  border-radius: 4px;
-}
-.page-btn:hover {
-  background-color: #007bff;
-  color: white;
-}
-.end-btn {
-  width: 100%;
-  height: 30px;
-  background-color: white;
-  border: 1px solid #007bff;
-  color: #007bff;
-  cursor: pointer;
-  border-radius: 4px;
-  margin-top: 20px;
-}
-.end-btn:hover {
-  background-color: #007bff;
-  color: white;
-}
-
-.act-btn {
-  background-color: blue;
-}
-
-.non-act-btn {
-  background-color: red;
+.refresh-btn {
+  margin-left: auto;
 }

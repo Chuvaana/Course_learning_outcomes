@@ -211,9 +211,44 @@ export class MainInfoComponent {
           selfStudyAssignment: response.selfStudyHours.assignment,
           selfStudyPractice: response.selfStudyHours.practice,
         });
-
+        let branchName = '';
+        if (response.school) {
+          this.branches.map((e) => {
+            if (e.id === response.school) {
+              this.mainInfoForm.patchValue({ school: e });
+            }
+          });
+        }
         if (response.school) {
           this.getDepartment(response.school, response.department);
+          console.log(response.department);
+          this.departments.map((e: { id: string; }) => {
+            if (e.id === response.department) {
+              this.mainInfoForm.patchValue({ department: e });
+            }
+          });
+        }
+
+        if (response.lessonLevel){
+          this.lessonLevel.map((e) =>{
+            if( e.value === response.lessonLevel){
+              this.mainInfoForm.patchValue({ lessonLevel: e });
+            }
+          })
+        }
+        if (response.lessonType){
+          this.lessonType.map((e) =>{
+            if( e.value === response.lessonType){
+              this.mainInfoForm.patchValue({ lessonType: e });
+            }
+          })
+        }
+        if (response.recommendedSemester){
+          this.recommendedSemester.map((e) =>{
+            if( e.value === response.recommendedSemester){
+              this.mainInfoForm.patchValue({ recommendedSemester: e });
+            }
+          })
         }
       }
     });
@@ -250,7 +285,7 @@ export class MainInfoComponent {
           (dept) => dept.id === departmentId
         );
         if (selectedDept) {
-          this.mainInfoForm.patchValue({ department: departmentId });
+          this.mainInfoForm.patchValue({ department: selectedDept });
         }
       }
     });

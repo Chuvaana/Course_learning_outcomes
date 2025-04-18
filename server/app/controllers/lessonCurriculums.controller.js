@@ -11,7 +11,7 @@ exports.createLessonCurriculum = async (req, res) => {
   }
 };
 
-// READ - Get all lesson curriculums
+// READ - Get all lesson curriculums  
 exports.getAllLessonCurriculum = async (req, res) => {
   try {
     const curriculums = await LessonCurriculum.find().populate('lessonId');
@@ -22,10 +22,13 @@ exports.getAllLessonCurriculum = async (req, res) => {
 };
 
 exports.getCurriculumByLessonId = async (req, res) => {
-  try {
-    const { lessonId } = req.params;
+  const { lessonId } = req.params;
     const curriculums = await LessonCurriculum.find({ lessonId }).populate('lessonId');
-    res.status(200).json(curriculums);
+    res.json(assessments);
+    console.log(assessments);
+
+    // if (!curriculum) return res.status(404).json({ message: "Not found" });
+    // res.status(200).json(curriculum);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

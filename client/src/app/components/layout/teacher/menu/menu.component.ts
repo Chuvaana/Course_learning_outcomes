@@ -86,7 +86,23 @@ export class MenuComponent implements OnInit {
       {
         label: 'Шалгалт',
         icon: 'pi pi-plus',
-        routerLink: ['/main/teacher/lesson', this.lessonId, 'exam-import'],
+        items: [
+          {
+            label: 'Шалгалт импорт файл оруулах',
+            icon: 'pi pi-graduation-cap',
+            routerLink: ['/main/teacher/lesson', this.lessonId, 'exam-import'],
+          },
+          {
+            label: 'Шалгалт дүнгийн жагсаалт',
+            icon: 'pi pi-graduation-cap',
+            routerLink: ['/main/teacher/lesson', this.lessonId, 'exam-list'],
+          },
+        ],
+      },
+      {
+        label: 'Явцын үнэлгээ',
+        icon: 'pi pi-plus',
+        routerLink: ['/main/teacher/lesson', this.lessonId, 'progress-poll'],
       },
     ];
 
