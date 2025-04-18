@@ -1,33 +1,78 @@
 <div class="student-list-container">
   <p-toast />
   <div class="filter-section">
-    <p-button *ngIf="!editActive" label="Засах" icon="pi pi-file-edit" (click)="edit()" class="refresh-btn"></p-button>
-    <p-button *ngIf="editActive" label="Хадгалах" icon="pi pi-file-save" (click)="save()"
-      class="refresh-btn"></p-button>
-    <p-button *ngIf="editActive" label="Болих " icon="pi pi-times" (click)="cancel()" class="refresh-btn"></p-button>
-    <p-dropdown [(ngModel)]="selectedLessonType" [options]="lessonTypes" optionLabel="name" optionValue="id"
-      placeholder="Төрөл сонгох" (onChange)="filterStudents()" class="dropdown-filter"></p-dropdown>
+    <p-button
+      *ngIf="!editActive"
+      label="Засах"
+      icon="pi pi-file-edit"
+      (click)="edit()"
+      class="refresh-btn"
+    ></p-button>
+    <p-button
+      *ngIf="editActive"
+      label="Хадгалах"
+      icon="pi pi-file-save"
+      (click)="save()"
+      class="refresh-btn"
+    ></p-button>
+    <p-button
+      *ngIf="editActive"
+      label="Болих "
+      icon="pi pi-times"
+      (click)="cancel()"
+      class="refresh-btn"
+    ></p-button>
+    <p-dropdown
+      [(ngModel)]="selectedLessonType"
+      [options]="lessonTypes"
+      optionLabel="name"
+      optionValue="id"
+      placeholder="Төрөл сонгох"
+      (onChange)="filterStudents()"
+      class="dropdown-filter"
+    ></p-dropdown>
 
-    <p-dropdown [(ngModel)]="selectedWeek" [options]="weeks" optionLabel="name" optionValue="id" placeholder="Гараг"
-      class="dropdown-filter" (onChange)="filterStudents()"></p-dropdown>
-    <p-dropdown [(ngModel)]="selectedTime" [options]="timeSlots" optionLabel="label" optionValue="value"
-      placeholder="Цаг сонгох" class="dropdown-filter" (onChange)="filterStudents()"></p-dropdown>
+    <p-dropdown
+      [(ngModel)]="selectedWeek"
+      [options]="weeks"
+      optionLabel="name"
+      optionValue="id"
+      placeholder="Гараг"
+      class="dropdown-filter"
+      (onChange)="filterStudents()"
+    ></p-dropdown>
+    <p-dropdown
+      [(ngModel)]="selectedTime"
+      [options]="timeSlots"
+      optionLabel="label"
+      optionValue="value"
+      placeholder="Цаг сонгох"
+      class="dropdown-filter"
+      (onChange)="filterStudents()"
+    ></p-dropdown>
 
-    <input type="text" pInputText [(ngModel)]="searchQuery" (input)="filterStudents()"
-      placeholder="Нэр эсвэл ID хайх..." class="search-input" />
-    <p-button label="Шүүлт цэвэрлэх" icon="pi pi-refresh" (click)="loadStudents()" class="refresh-btn"></p-button>
+    <input
+      type="text"
+      pInputText
+      [(ngModel)]="searchQuery"
+      (input)="filterStudents()"
+      placeholder="Нэр эсвэл ID хайх..."
+      class="search-input"
+    />
+    <p-button
+      label="Шүүлт цэвэрлэх"
+      icon="pi pi-refresh"
+      (click)="loadStudents()"
+      class="refresh-btn"
+    ></p-button>
   </div>
 
-<<<<<<< HEAD
-  <p-table [value]="filteredStudents" [paginator]="true" [rows]="10" responsiveLayout="scroll">
-=======
   <p-table
     [value]="filteredStudents"
     [paginator]="true"
     [rows]="15"
     responsiveLayout="scroll"
   >
->>>>>>> d7d26053eccd8a5098644943c0bec4d9456774ee
     <ng-template pTemplate="header">
       <tr>
         <th>#</th>
@@ -46,47 +91,83 @@
         <td>{{ student.studentName }}</td>
         <td>
           <div *ngIf="editActive">
-            <span *ngIf="student.lec?.day" style="display: flex;">
-              <p-dropdown [options]="weeks" optionLabel="name" optionValue="id" [(ngModel)]="student.lec.day"
-                [style]="{'width':'100%'}" placeholder="Select Lesson Type"
-                (onChange)="onWeekChange( student)"></p-dropdown>
-              <p-dropdown [options]="timeSlots" [(ngModel)]="student.lec.time" [style]="{'width':'100%'}"
-                placeholder="Select Time Slot"></p-dropdown>
+            <span *ngIf="student.lec?.day" style="display: flex">
+              <p-dropdown
+                [options]="weeks"
+                optionLabel="name"
+                optionValue="id"
+                [(ngModel)]="student.lec.day"
+                [style]="{ width: '100%' }"
+                placeholder="Select Lesson Type"
+                (onChange)="onWeekChange(student)"
+              ></p-dropdown>
+              <p-dropdown
+                [options]="timeSlots"
+                [(ngModel)]="student.lec.time"
+                [style]="{ width: '100%' }"
+                placeholder="Select Time Slot"
+              ></p-dropdown>
             </span>
           </div>
           <div *ngIf="!editActive">
-            <span *ngIf="student.lec?.day">{{ getDayInMongolian(student.lec.day) }} -
-              {{ student.lec.time }}пар</span>
+            <span *ngIf="student.lec?.day"
+              >{{ getDayInMongolian(student.lec.day) }} -
+              {{ student.lec.time }}пар</span
+            >
           </div>
         </td>
         <td>
           <div *ngIf="editActive">
-            <span *ngIf="student.sem?.day" style="display: flex;">
-              <p-dropdown [options]="weeks" optionLabel="name" optionValue="id" [(ngModel)]="student.sem.day"
-                [style]="{'width':'100%'}" placeholder="Select Lesson Type"
-                (onChange)="onWeekChange( student)"></p-dropdown>
-              <p-dropdown [options]="timeSlots" [(ngModel)]="student.sem.time" [style]="{'width':'100%'}"
-                placeholder="Select Time Slot"></p-dropdown>
+            <span *ngIf="student.sem?.day" style="display: flex">
+              <p-dropdown
+                [options]="weeks"
+                optionLabel="name"
+                optionValue="id"
+                [(ngModel)]="student.sem.day"
+                [style]="{ width: '100%' }"
+                placeholder="Select Lesson Type"
+                (onChange)="onWeekChange(student)"
+              ></p-dropdown>
+              <p-dropdown
+                [options]="timeSlots"
+                [(ngModel)]="student.sem.time"
+                [style]="{ width: '100%' }"
+                placeholder="Select Time Slot"
+              ></p-dropdown>
             </span>
           </div>
           <div *ngIf="!editActive">
-            <span *ngIf="student.sem?.day">{{ getDayInMongolian(student.sem.day) }} -
-              {{ student.sem.time }}пар</span>
+            <span *ngIf="student.sem?.day"
+              >{{ getDayInMongolian(student.sem.day) }} -
+              {{ student.sem.time }}пар</span
+            >
           </div>
         </td>
         <td>
           <div *ngIf="editActive">
-            <span *ngIf="student.lab?.day" style="display: flex;">
-              <p-dropdown [options]="weeks" optionLabel="name" optionValue="id" [(ngModel)]="student.lab.day"
-                [style]="{'width':'100%'}" placeholder="Select Lesson Type"
-                (onChange)="onWeekChange( student)"></p-dropdown>
-              <p-dropdown [options]="timeSlots" [(ngModel)]="student.lab.time" [style]="{'width':'100%'}"
-                placeholder="Select Time Slot"></p-dropdown>
+            <span *ngIf="student.lab?.day" style="display: flex">
+              <p-dropdown
+                [options]="weeks"
+                optionLabel="name"
+                optionValue="id"
+                [(ngModel)]="student.lab.day"
+                [style]="{ width: '100%' }"
+                placeholder="Select Lesson Type"
+                (onChange)="onWeekChange(student)"
+              ></p-dropdown>
+              <p-dropdown
+                [options]="timeSlots"
+                [(ngModel)]="student.lab.time"
+                [style]="{ width: '100%' }"
+                placeholder="Select Time Slot"
+              ></p-dropdown>
             </span>
           </div>
           <div *ngIf="!editActive">
-            <span *ngIf="student.lab?.day">{{ getDayInMongolian(student.lab.day) }} -
-              {{ student.lab.time }}пар</span>
+            <span *ngIf="student.lab?.day"
+              >{{ getDayInMongolian(student.lab.day) }} -
+              {{ student.lab.time }}пар</span
+            >
           </div>
         </td>
       </tr>
