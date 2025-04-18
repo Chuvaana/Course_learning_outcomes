@@ -19,6 +19,8 @@ import { LesStudentListComponent } from './lesson-list/lesson/les-student-list/l
 import { LesStudentComponent } from './lesson-list/lesson/les-student/les-student.component';
 import { LessonComponent } from './lesson-list/lesson/lesson.component';
 import { TeacherComponent } from './teacher.component';
+import { ExamListComponent } from '../exam/exam-list.component';
+import { ProgressPollComponent } from './lesson-list/lesson/progress-poll/progress-poll.component';
 
 const routes: Routes = [
   {
@@ -38,6 +40,8 @@ const routes: Routes = [
           { path: 'curriculum', component: CurriculumComponent },
           { path: 'grade/:planId', component: GradeComponent },
           { path: 'exam-import', component: ExamImportComponent },
+          { path: 'exam-list', component:ExamListComponent },
+          { path: 'progress-poll', component: ProgressPollComponent },
         ],
       },
       {
