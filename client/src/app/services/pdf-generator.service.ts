@@ -4,6 +4,9 @@ import { fontStyle } from 'html2canvas/dist/types/css/property-descriptors/font-
 import { fontWeight } from 'html2canvas/dist/types/css/property-descriptors/font-weight';
 import pdfMake from 'pdfmake/build/pdfmake';
 import { vfs } from 'pdfmake/build/vfs_fonts';
+export const checked = 'data:image/png;base64,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';
+export const unChecked = 'data:image/png;base64,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';
+
 
 @Injectable({
   providedIn: 'root'
@@ -293,16 +296,65 @@ export class PdfGeneratorService {
         {}
       ],
       [
-        { text: 'Хичээлийн түвшин/төрөл:', colSpan: 2, rowSpan: 2, alignment: 'left', style: 'tableHeader' },
+        {
+          text: 'Хичээлийн түвшин/төрөл:',
+          colSpan: 2,
+          rowSpan: 2,
+          alignment: 'left',
+          style: 'tableHeader'
+        },
         {},
-        { text: '☑ Бакалавр ☐ Магистр ☐ Доктор\n☑ Заавал ☐ Сонгон ', colSpan: 8, rowSpan: 2, alignment: 'left', style: 'tableData' },
+        {
+          colSpan: 8,
+          rowSpan: 2,
+          alignment: 'left',
+          style: 'tableData',
+          stack: [
+            {
+              columns: [
+                { image: data.mainInfo.lessonLevel === 'BACHELOR' ? checked : unChecked, width: 10, height: 10 },
+                { text: 'Бакалавр', margin: [5, 0, 10, 0] },
+                { image: data.mainInfo.lessonLevel === 'MAGISTER' ? checked : unChecked, width: 10, height: 10 },
+                { text: 'Магистр', margin: [5, 0, 10, 0] },
+                { image: data.mainInfo.lessonLevel === 'DOCTOR' ? checked : unChecked, width: 10, height: 10 },
+                { text: 'Доктор', margin: [5, 0, 10, 0]  },
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+              ]
+            },
+            {
+              columns: [
+                { image: data.mainInfo.lessonType === 'REQ' ? checked : unChecked, width: 10, height: 10 },
+                { text: 'Заавал', margin: [5, 0, 10, 0] },
+                { image: data.mainInfo.lessonType === 'CHO' ? checked : unChecked, width: 10, height: 10 },
+                { text: 'Сонгон', margin: [5, 0, 10, 0]  },
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+              ],
+              margin: [0, 5, 0, 0]
+            }
+          ]
+        },
         {},
         {},
         {},
         {},
         {},
         {},
-        {}
       ],
       [
         {},
@@ -319,7 +371,26 @@ export class PdfGeneratorService {
       [
         { text: 'Санал болгох улирал', colSpan: 2, alignment: 'left', style: 'tableHeader' },
         {},
-        { text: '☑ Намар ☑ Хавар ☐ Дурын ☐ Өвлийн улирал ☐ Зуны улирал', colSpan: 8, alignment: 'left', style: 'tableData' },
+        {
+          colSpan: 8,
+          rowSpan: 2,
+          alignment: 'left',
+          style: 'tableData',
+          columns: [
+            { image: data.mainInfo.recommendedSemester === 'autumn' ? checked : unChecked, width: 10, height: 10 },
+            { text: 'Намар', margin: [3, 0, 8, 0] },
+            { image: data.mainInfo.recommendedSemester === 'spring' ? checked : unChecked, width: 10, height: 10 },
+            { text: 'Хавар', margin: [3, 0, 8, 0] },
+            { image: data.mainInfo.recommendedSemester === 'any' ? checked : unChecked, width: 10, height: 10 },
+            { text: 'Дурын', margin: [3, 0, 15, 0] },
+            { image: data.mainInfo.recommendedSemester === 'winter' ? checked : unChecked, width: 10, height: 10 },
+            { text: 'Өвлийн', margin: [3, 0, 8, 0] },
+            {},
+            {},
+            {},
+            {},
+          ]
+        },
         {},
         {},
         {},
@@ -843,22 +914,25 @@ export class PdfGeneratorService {
         {},
         {},
         {
-          text: row.knowledge == true ? 'true' : 'false',
+          image: row.knowledge == true ? checked: unChecked,
           colSpan: 2,
+          width: 12,
           alignment: 'center',
           style: 'tableData'
         },
         {},
         {
-          text: row.skill == true ? 'true' : 'false',
+          image: row.skill == true ? checked: unChecked,
           colSpan: 2,
+          width: 12,
           alignment: 'center',
           style: 'tableData'
         },
         {},
         {
-          text: row.attitude == true ? 'true' : 'false',
+          image: row.attitude == true ? checked: unChecked,
           colSpan: 2,
+          width: 12,
           alignment: 'center',
           style: 'tableData'
         },
@@ -905,22 +979,25 @@ export class PdfGeneratorService {
         {},
         {},
         {
-          text: row.knowledge == true ? 'true' : 'false',
+          image: row.knowledge == true ? checked: unChecked,
           colSpan: 2,
+          width: 12,
           alignment: 'center',
           style: 'tableData'
         },
         {},
         {
-          text: row.skill == true ? 'true' : 'false',
+          image: row.skill == true ? checked: unChecked,
           colSpan: 2,
+          width: 12,
           alignment: 'center',
           style: 'tableData'
         },
         {},
         {
-          text: row.attitude == true ? 'true' : 'false',
+          image: row.attitude == true ? checked: unChecked,
           colSpan: 2,
+          width: 12,
           alignment: 'center',
           style: 'tableData'
         },
@@ -983,18 +1060,21 @@ export class PdfGeneratorService {
         {},
         {},
         {
-          text: row.classroom == true ? 'True' : 'false',
+          image: row.classroom == true ? checked: unChecked,
           alignment: 'center',
+          width: 12,
           style: 'tableData'
         },
         {
-          text: row.electronic == true ? 'True' : 'false',
+          image: row.electronic == true ? checked: unChecked,
           alignment: 'center',
+          width: 12,
           style: 'tableData'
         },
         {
-          text: row.combined == true ? 'True' : 'false',
+          image: row.combined == true ? checked: unChecked,
           alignment: 'center',
+          width: 12,
           style: 'tableData'
         },
         {
@@ -1083,33 +1163,39 @@ export class PdfGeneratorService {
           {},
           {},
           {
-            text: row.attendance == true ? 'True' : 'False',
+            image: row.attendance == true ? checked: unChecked,
             alignment: 'center',
+            width: 12,
             style: 'tableData'
           },
           {
-            text: row.assignment == true ? 'True' : 'False',
+            image: row.assignment == true ? checked: unChecked,
             alignment: 'center',
+            width: 12,
             style: 'tableData'
           },
           {
-            text: row.quiz == true ? 'True' : 'False',
+            image: row.quiz == true ? checked: unChecked,
             alignment: 'center',
+            width: 12,
             style: 'tableData'
           },
           {
-            text: row.project == true ? 'True' : 'False',
+            image: row.project == true ? checked: unChecked,
             alignment: 'center',
+            width: 12,
             style: 'tableData'
           },
           {
-            text: row.lab == true ? 'True' : 'False',
+            image: row.lab == true ? checked: unChecked,
             alignment: 'center',
+            width: 12,
             style: 'tableData'
           },
           {
-            text: row.exam == true ? 'True' : 'False',
+            image: row.exam == true ? checked: unChecked,
             alignment: 'center',
+            width: 12,
             style: 'tableData'
           }
         ]),
@@ -1143,33 +1229,39 @@ export class PdfGeneratorService {
           {},
           {},
           {
-            text: row.attendance == true ? 'True' : 'False',
+            image: row.attendance == true ? checked: unChecked,
             alignment: 'center',
+            width: 12,
             style: 'tableData'
           },
           {
-            text: row.assignment == true ? 'True' : 'False',
+            image: row.assignment == true ? checked: unChecked,
             alignment: 'center',
+            width: 12,
             style: 'tableData'
           },
           {
-            text: row.quiz == true ? 'True' : 'False',
+            image: row.quiz == true ? checked: unChecked,
             alignment: 'center',
+            width: 12,
             style: 'tableData'
           },
           {
-            text: row.project == true ? 'True' : 'False',
+            image: row.project == true ? checked: unChecked,
             alignment: 'center',
+            width: 12,
             style: 'tableData'
           },
           {
-            text: row.lab == true ? 'True' : 'False',
+            image: row.lab == true ? checked: unChecked,
             alignment: 'center',
+            width: 12,
             style: 'tableData'
           },
           {
-            text: row.exam == true ? 'True' : 'False',
+            image: row.exam == true ? checked: unChecked,
             alignment: 'center',
+            width: 12,
             style: 'tableData'
           }
         ]),
@@ -1186,28 +1278,28 @@ export class PdfGeneratorService {
         {},
       ],
       [
-        { text: data.assessFooter[0].name, colSpan: 4, alignment: 'center', style: 'tableData' },
+        { text: data.assessFooter.assessFooter[0].name, colSpan: 4, alignment: 'center', style: 'tableData' },
         {},
         {},
         {},
-        { text: data.assessFooter[0].attendanceValue, alignment: 'center', style: 'tableData' },
-        { text: data.assessFooter[0].assignmentValue, alignment: 'center', style: 'tableData' },
-        { text: data.assessFooter[0].quizValue, alignment: 'center', style: 'tableData' },
-        { text: data.assessFooter[0].projectValue, alignment: 'center', style: 'tableData' },
-        { text: data.assessFooter[0].labValue, alignment: 'center', style: 'tableData' },
-        { text: data.assessFooter[0].examValue, alignment: 'center', style: 'tableData' }
+        { text: data.assessFooter.assessFooter[0].attendanceValue, alignment: 'center', style: 'tableData' },
+        { text: data.assessFooter.assessFooter[0].assignmentValue, alignment: 'center', style: 'tableData' },
+        { text: data.assessFooter.assessFooter[0].quizValue, alignment: 'center', style: 'tableData' },
+        { text: data.assessFooter.assessFooter[0].projectValue, alignment: 'center', style: 'tableData' },
+        { text: data.assessFooter.assessFooter[0].labValue, alignment: 'center', style: 'tableData' },
+        { text: data.assessFooter.assessFooter[0].examValue, alignment: 'center', style: 'tableData' }
       ],
       [
-        { text: data.assessFooter[1].name, colSpan: 4, alignment: 'center', style: 'tableData' },
+        { text: data.assessFooter.assessFooter[1].name, colSpan: 4, alignment: 'center', style: 'tableData' },
         {},
         {},
         {},
-        { text: data.assessFooter[1].attendanceValue, alignment: 'center', style: 'tableData' },
-        { text: data.assessFooter[1].assignmentValue, alignment: 'center', style: 'tableData' },
-        { text: data.assessFooter[1].quizValue, alignment: 'center', style: 'tableData' },
-        { text: data.assessFooter[1].projectValue, alignment: 'center', style: 'tableData' },
-        { text: data.assessFooter[1].labValue, alignment: 'center', style: 'tableData' },
-        { text: data.assessFooter[1].examValue, alignment: 'center', style: 'tableData' }
+        { text: data.assessFooter.assessFooter[1].attendanceValue, alignment: 'center', style: 'tableData' },
+        { text: data.assessFooter.assessFooter[1].assignmentValue, alignment: 'center', style: 'tableData' },
+        { text: data.assessFooter.assessFooter[1].quizValue, alignment: 'center', style: 'tableData' },
+        { text: data.assessFooter.assessFooter[1].projectValue, alignment: 'center', style: 'tableData' },
+        { text: data.assessFooter.assessFooter[1].labValue, alignment: 'center', style: 'tableData' },
+        { text: data.assessFooter.assessFooter[1].examValue, alignment: 'center', style: 'tableData' }
       ],
       [
         { text: 'ХИЧЭЭЛД ТАВИГДАХ НЭМЭЛТ ШААРДЛАГУУД:', colSpan: 10, alignment: 'left', style: 'tableTitle' },

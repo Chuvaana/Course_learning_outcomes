@@ -1,18 +1,18 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { MenuItem } from 'primeng/api';
 import { CheckboxModule } from 'primeng/checkbox';
 import { DropdownModule } from 'primeng/dropdown';
 import { IftaLabelModule } from 'primeng/iftalabel';
 import { InputTextModule } from 'primeng/inputtext';
-import { Rating } from 'primeng/rating';
 import { TextareaModule } from 'primeng/textarea';
 import { TieredMenuModule } from 'primeng/tieredmenu';
 import { ToastModule } from 'primeng/toast';
 import { ProgressPollService } from '../../../../../../services/progressPollService';
 import { ButtonModule } from 'primeng/button';
+import {  FloatLabelModule } from 'primeng/floatlabel';
 
 interface Question {
   name: string;
@@ -21,7 +21,7 @@ interface Question {
 
 @Component({
   selector: 'app-progress-poll',
-  imports: [ButtonModule, Rating, CommonModule, TextareaModule, CheckboxModule, DropdownModule, InputTextModule, IftaLabelModule, RouterModule, TieredMenuModule, ToastModule, FormsModule],
+  imports: [  ReactiveFormsModule, FloatLabelModule, ButtonModule, CommonModule, TextareaModule, CheckboxModule, DropdownModule, InputTextModule, IftaLabelModule, RouterModule, TieredMenuModule, ToastModule, FormsModule],
   templateUrl: './progress-poll.component.html',
   styleUrl: './progress-poll.component.scss',
 })
@@ -31,12 +31,13 @@ export class ProgressPollComponent {
   value: string | undefined;
   loading: boolean = false;
   createActive: boolean = false;
-  progressPollId: any;
+  progressPollId: string[] = [];
 
   questionTypes: Question[] | undefined;
 
   checked: boolean = false;
   selectedCity: Question | undefined;
+  dataQuestions : any;
 
   popQuestion = [
     {
@@ -54,22 +55,22 @@ export class ProgressPollComponent {
         {
           answerName: 'Та энэ багшийг сонгон хичээл судалсандаа сэтгэл ханамжтай байгаа эсэх /1-5 оноо/',
           answerValue: 0,
-          answerId: 1,
+          answerId: 1, questionType: 'RATE', questionTypeName: 'Үнэлгээ өгөх'
         },
         {
           answerName: 'Та энэ хичээлийг сонгон судалснаар хангалттай түвшинд мэдлэг, ур чадвар, хандлага эзэмшиж чадсан эсэх /1-5 оноо/',
           answerValue: 0,
-          answerId: 2,
+          answerId: 2, questionType: 'RATE', questionTypeName: 'Үнэлгээ өгөх'
         },
         {
           answerName: 'Багш хичээлээ цагт нь эхлүүлж дуусгах;  хичээлийн явцад цагийг үр дүнтэй ашиглах зэргээр цагийн менежмент хийж чадсан эсэх /1-5 оноо/',
           answerValue: 0,
-          answerId: 3,
+          answerId: 3, questionType: 'RATE', questionTypeName: 'Үнэлгээ өгөх'
         },
         {
           answerName: 'Багш оюутантай хүндэтгэлтэй харилцах; тэдний санал хүсэлтийг хүлээн авах; үлгэрлэх зэргээр багшийн ёс зүйн хэм хэмжээг хангаж чадсан эсэх /1-5 оноо/',
           answerValue: 0,
-          answerId: 4,
+          answerId: 4, questionType: 'RATE', questionTypeName: 'Үнэлгээ өгөх'
         },
       ]
     },
@@ -88,22 +89,22 @@ export class ProgressPollComponent {
         {
           answerName: 'Багш анхны хичээл дээр тухайн хичээлээс оюутны эзэмших мэдлэг, чадвар, хандлага; хичээлд хэрэглэх сургалтын арга хэлбэр; оюутныг хэрхэн дүгнэх арга, зарчим; ашиглах материал зэргийг хангалттай түвшинд тайлбарлаж өгсөн эсэх /1-5 оноо/',
           answerValue: 0,
-          answerId: 1,
+          answerId: 1, questionType: 'RATE', questionTypeName: 'Үнэлгээ өгөх'
         },
         {
           answerName: 'Багш хичээлийн явцад ашиглах үзүүлэн(PPT), лекц семинарын документ материал, лабораторийн заавар зэргийг суралцахуйн үр дүн, агуулгатай нь нийцүүлэн хангалттай түвшинд бэлтгэсэн эсэх /1-5 оноо/',
           answerValue: 0,
-          answerId: 2,
+          answerId: 2, questionType: 'RATE', questionTypeName: 'Үнэлгээ өгөх'
         },
         {
           answerName: 'Багш хичээлийн явцын шалгалтын материал, гэрийн даалгавар, бие даалтын ажлыг хангалттай түвшинд бэлтгэж, цаг хугацаанд оюутнуудад хүргэж чадсан эсэх/1-5 оноо/',
           answerValue: 0,
-          answerId: 3,
+          answerId: 3, questionType: 'RATE', questionTypeName: 'Үнэлгээ өгөх'
         },
         {
           answerName: 'Багш цахим хичээлийн материалыг хангалттай түвшинд бэлтгэж, онлайн сургалтын системд цаг хугацаанд нь байршуулан сургалтыг чанартай зохион байгуулж чадсан эсэх /1-5 оноо/',
           answerValue: 0,
-          answerId: 4,
+          answerId: 4, questionType: 'RATE', questionTypeName: 'Үнэлгээ өгөх'
         },
       ]
     },
@@ -122,27 +123,27 @@ export class ProgressPollComponent {
         {
           answerName: 'Багш лекц, семинар, лабораторийн хичээл дээр асуудалд суурилсан, туршилтад суурилсан, тонгоруу анги гэх мэт сургалтын идэвхтэй аргуудыг хэр зэрэг түвшинд ашигласан вэ /1-5 оноо/',
           answerValue: 2,
-          answerId: 1,
+          answerId: 1, questionType: 'RATE', questionTypeName: 'Үнэлгээ өгөх'
         },
         {
           answerName: 'Хичээлийн явцад оюутнуудыг сургалтын үйл ажиллагаанд татан оролцуулах үр ашигтай аргуудыг (багаар ажиллуулах, асуудал шийдвэрлэх даалгавар хийлгэх, дүрд тоглуулах гэх мэт) хэр зэрэг түвшинд ашигласан вэ? /1-5 оноо/',
           answerValue: 0,
-          answerId: 2,
+          answerId: 2, questionType: 'RATE', questionTypeName: 'Үнэлгээ өгөх'
         },
         {
           answerName: 'Багш хичээлийг чин сэтгэлээсээ ойлгомжтой тайлбарлаж, оюутанд холбогдох мэдлэг, ур чадварыг бүрэн дүүрэн эзэмшүүлэхэд хичээж ажилласан эсэх /1-5 оноо/',
           answerValue: 0,
-          answerId: 3,
+          answerId: 3, questionType: 'RATE', questionTypeName: 'Үнэлгээ өгөх'
         },
         {
           answerName: 'Хичээлийн явцад суралцагчдын дунд бодитой, амьд харилцаа бий болгон, таатай уур амьсгал бүрдүүлж оюутнуудыг идэвхжүүлэн, сонирхлыг татаж чадаж байсан эсэх /1-5 оноо/',
           answerValue: 0,
-          answerId: 4,
+          answerId: 4, questionType: 'RATE', questionTypeName: 'Үнэлгээ өгөх'
         },
         {
           answerName: 'Багш хичээлийн явцад аудио, видео контент үзүүлэх; гар утасны апп болон бусад программ ашиглан тест, сорил авах; симуляци, загварчлалын программ ашиглах зэргээр мэдээлэл холбооны шинэлэг технологи, хэрэгслүүдийг хэр зэрэг ашигласан вэ? /1-5 оноо/',
           answerValue: 0,
-          answerId: 5,
+          answerId: 5, questionType: 'RATE', questionTypeName: 'Үнэлгээ өгөх'
         },
       ]
     },
@@ -161,22 +162,22 @@ export class ProgressPollComponent {
         {
           answerName: 'Багш оюутнуудын хичээлээр эзэмшсэн мэдлэг, ур чадвар, хандлага төлөвшлийг шударгаар бодитой үнэлсэн эсэх /1-5 оноо/',
           answerValue: 0,
-          answerId: 1,
+          answerId: 1, questionType: 'RATE', questionTypeName: 'Үнэлгээ өгөх'
         },
         {
           answerName: 'Багш тухайн хичээлд тестийн шалгалтаас гадна хичээлийн төгсгөлд оюутны мэдлэгийг баталгаажуулах асуулт тавих; явцын сорил, улирлын шалгалт авахдаа асуултад хариулуулах, бодлого бодуулах, илтгэл тавиулах; мөн цахим тестийн систем хэрэглэх зэрэг үнэлгээний шинэлэг арга хэлбэрүүдийг ашигласан эсэх /1-5 оноо/',
           answerValue: 0,
-          answerId: 2,
+          answerId: 2, questionType: 'RATE', questionTypeName: 'Үнэлгээ өгөх'
         },
         {
           answerName: 'Багш оюутны гүйцэтгэсэн даалгавар, бие даалтыг ажлыг дүгнэн ахиц дэвшлийн үнэлгээ хийж, эргэж оюутанд мэдээлдэг, алдаа дутагдлыг тайлбарладаг эсэх /1-5 оноо/',
           answerValue: 0,
-          answerId: 3,
+          answerId: 3, questionType: 'RATE', questionTypeName: 'Үнэлгээ өгөх'
         },
         {
           answerName: 'Багш оюутанд хичээлээс гадуур зөвлөгөө өгч, дэмжиж тусалж байсан эсэх /1-5 оноо/',
           answerValue: 0,
-          answerId: 4,
+          answerId: 4, questionType: 'RATE', questionTypeName: 'Үнэлгээ өгөх'
         },
       ]
     },
@@ -195,24 +196,25 @@ export class ProgressPollComponent {
         {
           answerName: 'Энэ хичээлтэй холбоотой ном, сурах бичиг, бусад материал хангалттай, хүртээмжтэй байсан эсэх /1-5 оноо/',
           answerValue: 0,
-          answerId: 1,
+          answerId: 1, questionType: 'RATE', questionTypeName: 'Үнэлгээ өгөх'
+
         },
         {
           answerName: 'Лабораторийн хичээлд ашиглах компьютер/тоног төхөөрөмж хүрэлцээтэй, шаардлага хангаж байсан эсэх /1-5 оноо/',
           answerValue: 0,
-          answerId: 2,
+          answerId: 2, questionType: 'RATE', questionTypeName: 'Үнэлгээ өгөх'
         },
         {
           answerName: 'Лекц/семинарын хичээлийн анги танхимын тохижилт, самбар, телевизор/прожектор, дэлгэц шаардлага хангаж байсан эсэх /1-5 оноо/',
           answerValue: 0,
-          answerId: 3,
+          answerId: 3, questionType: 'RATE', questionTypeName: 'Үнэлгээ өгөх'
         },
       ]
     },
   ];
 
-  answers: { text: string; answerId: number, answerValue: number }[] = [
-    { text: '', answerId: 0, answerValue: 0 }
+  answers: { text: string; answerId: number, answerValue: number, questionType: string, questionTypeName: string }[] = [
+    { text: '', answerId: 0, answerValue: 0, questionType: 'RATE', questionTypeName: 'Үнэлгээ өгөх' }
   ];
 
   questions: {
@@ -226,7 +228,7 @@ export class ProgressPollComponent {
     questionTypeName: string;
     totalPoint: any;
     dateOfReplyTime: any;
-    answers: { answerName: string; answerValue: number }[];
+    answers: { answerName: string; answerId:number, answerValue: number,questionType: string, questionTypeName: string }[];
   }[] = [];
 
   constructor(
@@ -242,12 +244,10 @@ export class ProgressPollComponent {
       this.refreshDetail();
     }
     this.questionTypes = [
-      { name: 'Нэгийг сонгох', code: 'MC' },
-      { name: 'Олон сонголттой', code: 'CH' },
-      { name: 'DropDown', code: 'DD' },
-      { name: 'Хүснэгтээс нэгийг сонгох', code: 'TABMC' },
-      { name: 'Хүснэгтээс олон сонголттой', code: 'TABCH' }
+      { name: 'Үнэлгээ өгөх', code: 'RATE' },
+      { name: 'Хариулт бичих', code: 'FEEDBACK' }
     ];
+    this.dataQuestions = this.popQuestion;
     this.questions = this.popQuestion;
     this.addQuestion();
   }
@@ -264,13 +264,13 @@ export class ProgressPollComponent {
 
   }
   onRemove(answerIndex: number, questionIndex: number) {
-    const question = this.questions[questionIndex];
+    const question = this.dataQuestions[questionIndex];
 
     // If only one question exists
-    if (this.questions.length === 1) {
+    if (this.dataQuestions.length === 1) {
       if (question.answers.length === 1) {
         // Remove the only question
-        this.questions.splice(questionIndex, 1);
+        this.dataQuestions.splice(questionIndex, 1);
       } else {
         // Just remove the answer
         question.answers.splice(answerIndex, 1);
@@ -278,7 +278,7 @@ export class ProgressPollComponent {
     } else {
       if (question.answers.length === 1) {
         // Remove the entire question if it has only one answer
-        this.questions.splice(questionIndex, 1);
+        this.dataQuestions.splice(questionIndex, 1);
       } else {
         // Just remove the answer
         question.answers.splice(answerIndex, 1);
@@ -293,7 +293,7 @@ export class ProgressPollComponent {
   }
 
   addQuestion() {
-    this.questions.push({
+    this.dataQuestions.push({
       value: '',
       lessonId: '',
       studentId: '',
@@ -305,42 +305,66 @@ export class ProgressPollComponent {
       totalPoint: '',
       dateOfReplyTime: '',
       answers: [
-        { answerName: '', answerValue: 0 }
+        { answerName: '', answerId: 1, answerValue: 0, questionType: 'RATE', questionTypeName: 'Үнэлгээ өгөх'  }
       ]
     });
   }
   addAnswer(questionIndex: number) {
-    this.questions[questionIndex].answers.push({ answerName: '', answerValue: 0 });
+    this.dataQuestions[questionIndex].answers.push({ answerName: '',answerId: 1, answerValue: 0, questionType: 'RATE', questionTypeName: 'Үнэлгээ өгөх'  });
   }
   onQuestionType(e: any) {
     console.log("asdasd : " + e.code);
   }
   refreshDetail() {
     this.service.getAllLessonAssments(this.lessonId).subscribe((e: any) => {
+      const dataPush = [];
       console.log(e);
-      this.progressPollId = e[0]._id;
-      this.questions = e[0];
+      if(e.length > 0){
+        e.map((i:any)=>{
+          this.progressPollId.push(i._id);
+          i.answers.map((ans:any) =>{
+            this.questionTypes?.map((val: any) =>{
+              if(ans.questionType !== undefined && ans.questionType !== null){
+                if(val.code === ans.questionType){
+                  ans.questionType = val;
+                }
+              }
+            });
+          })
+        });
+        this.dataQuestions = e;
+      }
       this.createActive = true;
     });
   }
   save() {
-    console.log(this.questions);
-    this.questions[0].lessonId = '67f21da15d1c9f9efbf37dd9';
-    this.questions[0].studentId = '67f21da15d1c9f9efbf37dd9';
-    this.questions[0].dateOfReplyTime = '2024-12-12';
-    if (!this.createActive) {
-      this.service.createPollQuestions(this.questions[0]).subscribe((e: any) => {
-        this.progressPollId = e._id;
-        this.refreshDetail();
-      });
-    } else {
-      this.service.updatePollQuestions(this.progressPollId, this.questions[0]).subscribe((e: any) => {
-        this.progressPollId = e._id;
-        this.refreshDetail();
+    if(this.dataQuestions.length > 0){
+      this.dataQuestions.map((i : any, index: any) =>{
+        const id = this.progressPollId[index];
+        i.lessonId = '67f21da15d1c9f9efbf37dd9';
+        i.studentId = '67f21da15d1c9f9efbf37dd9';
+        i.dateOfReplyTime = '2024-12-12';
+        i.answers.map((answer:any)=>{
+          if(answer.questionType.code !== undefined && answer.questionType.code !== null){
+            answer.questionTypeName = answer.questionType.name;
+            answer.questionType = answer.questionType.code;
+          }
+        });
+        if (!this.createActive) {
+          this.service.createPollQuestions(i).subscribe((e: any) => {
+            this.progressPollId = e._id;
+            this.refreshDetail();
+          });
+        } else {
+          this.service.updatePollQuestions(id, i).subscribe((e: any) => {
+            this.progressPollId = e._id;
+            this.refreshDetail();
+          });
+        }
       });
     }
   }
-  // onRemoveAnswer(qIndex: number, answerIndex: number) {
-  //   this.questions[qIndex].answers.splice(answerIndex, 1);
-  // }
+  onBranchChange(e : any) {
+    console.log(e);
+  }
 }

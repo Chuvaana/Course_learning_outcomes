@@ -64,6 +64,7 @@ require('./app/routes/lessonCurriculums.routes')(app);
 require('./app/routes/plan.routes')(app);
 require('./app/routes/cloPointPlan.routes')(app);
 require('./app/routes/pollQuestions.routes')(app);
+require('./app/routes/studentsSendPollQues.routes')(app);
 
 // set port, listen for requests
 const PORT = process.env.PORT || 3000;
