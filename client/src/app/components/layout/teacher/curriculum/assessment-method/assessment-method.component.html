@@ -17,7 +17,7 @@
         <th rowspan="3">#</th>
         <th pFrozenColumn rowspan="4">CLOs</th>
         <ng-container *ngFor="let col of assessPlan.plans">
-          <ng-container *ngIf="col.methodType === 'PROC'">
+          <ng-container *ngIf="col.methodType !== 'EXAM'">
             <th [attr.colspan]="col.subMethods.length">
               {{ col.methodName }}
             </th>
@@ -74,7 +74,7 @@
       <tr>
         <th colspan="2">Үнэлгээний эзлэх хувь</th>
         <ng-container *ngFor="let col of assessPlan.plans">
-          <ng-container *ngIf="col.methodType === 'PROC'">
+          <ng-container *ngIf="col.methodType !== 'EXAM'">
             <td [attr.colspan]="col.subMethods.length">
               {{ col.methodPoint }}
             </td>
@@ -91,7 +91,7 @@
       <tr>
         <th colspan="2">Үнэлгээ хийх давтамж</th>
         <ng-container *ngFor="let col of assessPlan.plans">
-          <ng-container *ngIf="col.methodType === 'PROC'">
+          <ng-container *ngIf="col.methodType !== 'EXAM'">
             <td [attr.colspan]="col.subMethods.length">
               {{ col.frequency }}
             </td>

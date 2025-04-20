@@ -100,7 +100,7 @@ export class MenuComponent implements OnInit {
         ],
       },
       {
-        label: 'Явцын үнэлгээ',
+        label: 'Санал асуулга',
         icon: 'pi pi-plus',
         routerLink: ['/main/teacher/lesson', this.lessonId, 'progress-poll'],
       },

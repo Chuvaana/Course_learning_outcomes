@@ -71,7 +71,8 @@ export class CloTreeComponent {
 
   methodTypes = [
     { id: 'EXAM', name: 'Шалгалт' },
-    { id: 'QUIZ', name: 'Сорил' },
+    { id: 'QUIZ1', name: 'Сорил 1' },
+    { id: 'QUIZ2', name: 'Сорил 2' },
     { id: 'PARTI', name: 'Ирц, идэвх' },
     { id: 'PROC', name: 'Явц' },
   ];
