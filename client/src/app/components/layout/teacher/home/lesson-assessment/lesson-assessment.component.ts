@@ -3,6 +3,8 @@ import { Component, Input } from '@angular/core';
 import { AccordionModule } from 'primeng/accordion';
 import { ButtonModule } from 'primeng/button';
 import { TableModule } from 'primeng/table';
+import { AssessProcessService } from './assessProcess';
+import { GradeService } from '../../../../../services/gradeService';
 
 @Component({
   selector: 'app-lesson-assessment',
@@ -24,6 +26,12 @@ export class LessonAssessmentComponent {
   @Input() cloList: any;
   @Input() pointPlan: any;
   @Input() cloPlan: any;
+  @Input() lessonId!: string;
+
+  constructor(
+    private assessProcess: AssessProcessService,
+    private grade: GradeService
+  ) {}
 
   ngOnChanges() {
     if (this.cloList?.length && this.tabs.length === 0) {
@@ -35,6 +43,7 @@ export class LessonAssessmentComponent {
         totalPoint: 0,
         value: index,
       }));
+      this.read();
     }
     if (this.pointPlan.plans && this.tabs.length) {
       const assessPlanMap = new Map();
@@ -58,25 +67,149 @@ export class LessonAssessmentComponent {
       });
 
       if (this.students) {
-        this.tabs.map((item: any) => {
-          let content = [];
-          this.students.map((stu: any) => {
-            content.push({
+        this.tabs.forEach((item: any) => {
+          item.content = this.students.map((stu: any) => {
+            const points = item.assessPlan.map((plan: any) => ({
+              subMethodId: plan.subMethodId,
+              point: 0, // default 0
+            }));
+
+            return {
+              studentId: stu.id,
               studentCode: stu.studentCode,
               studentName: stu.studentName,
-              points: item.assessPlan,
-            });
-            item.content = content;
+              points,
+              totalPoint: 0,
+              percentage: 0,
+              letterGrade: '',
+            };
           });
         });
       }
-      console.log(this.tabs);
-      console.log(this.students);
-      console.log(this.pointPlan);
-      console.log(this.cloList);
-      console.log(this.cloPlan);
     }
   }
+
+  read() {
+    this.assessProcess
+      .gradePoint(this.lessonId, this.cloList)
+      .subscribe((gradeData) => {
+        this.tabs.forEach((item: any) => {
+          item.content.forEach((studentRow: any) => {
+            let total = 0;
+
+            studentRow.points.forEach((pointItem: any) => {
+              const grade = gradeData
+                .find((g: any) =>
+                  g.sumPoints.find(
+                    (s: any) =>
+                      s.studentId === studentRow.studentId &&
+                      s.subMethodId === pointItem.subMethodId
+                  )
+                )
+                ?.sumPoints.find(
+                  (s: any) =>
+                    s.studentId === studentRow.studentId &&
+                    s.subMethodId === pointItem.subMethodId
+                );
+
+              if (grade) {
+                console.log(grade);
+                pointItem.point = grade.point;
+                total += grade.point;
+              }
+            });
+
+            studentRow.totalPoint = total;
+            studentRow.percentage = +((total / item.totalPoint) * 100).toFixed(
+              2
+            );
+            studentRow.letterGrade = this.getLetterGrade(studentRow.percentage);
+          });
+        });
+      });
+  }
+
+  getLetterGrade(percent: number): string {
+    if (percent >= 90) return 'A';
+    if (percent >= 80) return 'B';
+    if (percent >= 70) return 'C';
+    if (percent >= 60) return 'D';
+    return 'F';
+  }
+
+  // read() {
+  //   // this.assessProcess
+  //   //   .studentAttPoint(this.lessonId, this.cloList)
+  //   //   .subscribe((data) => {
+  //   //     if (data) {
+  //   //       this.tabs.forEach((item: any) => {
+  //   //         const match = data.find((stu: any) => item.id === stu.cloId);
+  //   //         if (match) {
+  //   //           match.sumPoints.forEach((po: any) => {
+  //   //             const content = item.content.find(
+  //   //               (co: any) => co.studentId === po.studentId
+  //   //             );
+  //   //             if (content) {
+  //   //               content.points.forEach((coPo: any) => {
+  //   //                 if (coPo.subMethodId === match.cloId) {
+  //   //                   coPo.point = po.statusPoint;
+  //   //                 }
+  //   //               });
+  //   //             }
+  //   //           });
+  //   //         }
+  //   //       });
+  //   //     }
+  //   //   });
+  //   this.assessProcess
+  //     .gradePoint(this.lessonId, this.cloList)
+  //     .subscribe((gradeData) => {
+  //       this.tabs.forEach((item: any) => {
+  //         gradeData.forEach((data: any) => {
+  //           data.sumPoints.map((stu: any) => {
+  //             const content = item.content.find(
+  //               (co: any) => co.studentId === stu.studentId
+  //             );
+  //             if (content) {
+  //               const pointItem = content.points.find(
+  //                 (coPo: any) => coPo.subMethodId === stu.subMethodId
+  //               );
+  //               if (pointItem) {
+  //                 pointItem.point = stu.point;
+  //               }
+  //             }
+  //           });
+  //         });
+  //       });
+  //       console.log('content:', this.tabs);
+  //       console.log('gradeData:', gradeData);
+  //     });
+  //   // this.grade.getGradeByLesson(this.lessonId).subscribe((gradeData: any) => {
+  //   //   if (gradeData) {
+  //   //     this.tabs.forEach((item: any) => {
+  //   //       gradeData.forEach((data: any) => {
+  //   //         data.studentGrades.forEach((stu: any) => {
+  //   //           const content = item.content.find(
+  //   //             (co: any) => co.studentId === stu.studentId.id
+  //   //           );
+  //   //           if (content) {
+  //   //             stu.grades.forEach((gr: any) => {
+  //   //               const pointItem = content.points.find(
+  //   //                 (coPo: any) => coPo.subMethodId === gr.id
+  //   //               );
+  //   //               if (pointItem) {
+  //   //                 pointItem.point = gr.point;
+  //   //               }
+  //   //             });
+  //   //           }
+  //   //         });
+  //   //       });
+  //   //     });
+  //   //     console.log('content:', this.tabs);
+  //   //     console.log('gradeData:', gradeData);
+  //   //   }
+  //   // });
+  // }
 
   ngOnInit() {}
 

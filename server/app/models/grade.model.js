@@ -25,7 +25,7 @@ const GradeSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    labGrades: [
+    studentGrades: [
       {
         studentId: {
           type: mongoose.Schema.Types.ObjectId,

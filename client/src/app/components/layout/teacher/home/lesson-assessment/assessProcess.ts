@@ -1,0 +1,253 @@
+import { Injectable } from '@angular/core';
+import { forkJoin, map } from 'rxjs';
+import { AssessmentService } from '../../../../../services/assessmentService';
+import { AttendanceService } from '../../../../../services/attendanceService';
+import { GradeService } from '../../../../../services/gradeService';
+
+@Injectable({
+  providedIn: 'root',
+})
+export class AssessProcessService {
+  constructor(
+    private assess: AssessmentService,
+    private attend: AttendanceService,
+    private grade: GradeService
+  ) {}
+
+  readSchedules(lessonId: string) {
+    return forkJoin({
+      lecSchedule: this.assess.getSchedules(lessonId).pipe(
+        map((res: any[]) =>
+          res.map((item) => ({
+            ...item,
+            cloRelevance: item.cloRelevance?.id ?? null, // 👈 safe access
+          }))
+        )
+      ),
+      semSchedule: this.assess.getScheduleSems(lessonId).pipe(
+        map((res: any[]) =>
+          res.map((item) => ({
+            ...item,
+            cloRelevance: item.cloRelevance?.id ?? null,
+          }))
+        )
+      ),
+      labSchedule: this.assess.getScheduleLabs(lessonId).pipe(
+        map((res: any[]) =>
+          res.map((item) => ({
+            ...item,
+            cloRelevance: item.cloRelevance?.id ?? null,
+          }))
+        )
+      ),
+      bdSchedule: this.assess.getScheduleBds(lessonId).pipe(
+        map((res: any[]) =>
+          res.map((item) => ({
+            ...item,
+            cloRelevance: item.cloRelevance?.id ?? null,
+          }))
+        )
+      ),
+    });
+  }
+
+  clo(lessonId: string, cloList: any, type: string) {
+    return this.readSchedules(lessonId).pipe(
+      map((schedule: any) => {
+        const cloAndWeek: any[] = [];
+
+        const scheduleMap: Record<string, any[]> = {
+          lec: schedule?.lecSchedule,
+          sem: schedule?.semSchedule,
+          lab: schedule?.labSchedule,
+          bd: schedule?.bdSchedule,
+        };
+
+        const selectedSchedule = scheduleMap[type];
+
+        if (!selectedSchedule) return cloAndWeek;
+
+        cloList.forEach((item: any) => {
+          const weekList = selectedSchedule
+            .filter((entry: any) => entry.cloRelevance === item.id)
+            .map((entry: any) => entry.week);
+
+          cloAndWeek.push({
+            id: item.id,
+            week: weekList,
+          });
+        });
+
+        return cloAndWeek;
+      })
+    );
+  }
+
+  studentAttPoint(lessonId: string, cloList: any) {
+    return forkJoin({
+      attendance: this.attend.getAttendanceByLesson(lessonId),
+      weekAndClo: this.clo(lessonId, cloList, 'lec'),
+    }).pipe(
+      map(({ attendance, weekAndClo }) => {
+        const adata: any[] = [];
+
+        weekAndClo.forEach((wkc: any) => {
+          const cloAttPoint = {
+            cloId: wkc.id,
+            avahOnoo: wkc.week.length,
+            sumPoints: [] as { studentId: string; statusPoint: number }[],
+          };
+
+          const pointMap: Record<string, number> = {};
+
+          wkc.week.forEach((week: string) => {
+            attendance.forEach((a: any) => {
+              if (a.weekNumber === week) {
+                a.attendance.forEach((a1: any) => {
+                  const studentId = a1.studentId?.id || a1.studentId;
+                  const point = a1.status === false ? 0 : 1;
+
+                  pointMap[studentId] = (pointMap[studentId] || 0) + point;
+                });
+              }
+            });
+          });
+
+          for (const studentId in pointMap) {
+            cloAttPoint.sumPoints.push({
+              studentId,
+              statusPoint: pointMap[studentId],
+            });
+          }
+
+          adata.push(cloAttPoint);
+        });
+
+        return adata;
+      })
+    );
+  }
+
+  gradePoint(lessonId: string, cloList: any) {
+    return forkJoin({
+      grade: this.grade.getGradeByLesson(lessonId),
+      weekAndCloLab: this.clo(lessonId, cloList, 'lab'),
+      weekAndCloSem: this.clo(lessonId, cloList, 'sem'),
+      weekAndCloBd: this.clo(lessonId, cloList, 'bd'),
+    }).pipe(
+      map(({ grade, weekAndCloLab, weekAndCloSem, weekAndCloBd }) => {
+        const adata: any[] = [];
+        // weekAndCloLab.forEach((wkc: any) => {
+        //   const cloAttPoint = {
+        //     cloId: wkc.id,
+        //     avahOnoo: 0,
+        //     sumPoints: [] as {
+        //       studentId: string;
+        //       point: number;
+        //       subMethodId: string;
+        //     }[],
+        //   };
+
+        //   const pointMap: Record<string, Record<string, number>> = {};
+
+        //   wkc.week.forEach((week: string) => {
+        //     grade.forEach((a: any) => {
+        //       if (a.weekNumber === week) {
+        //         a.studentGrades.forEach((a1: any) => {
+        //           const studentId = a1.studentId?.id || a1.studentId;
+
+        //           a1.grades.forEach((item: any) => {
+        //             const subMethodId = item.id;
+        //             const point = item.point;
+
+        //             if (!pointMap[studentId]) {
+        //               pointMap[studentId] = {};
+        //             }
+
+        //             pointMap[studentId][subMethodId] =
+        //               (pointMap[studentId][subMethodId] || 0) + point;
+        //           });
+        //         });
+        //       }
+        //     });
+        //   });
+
+        //   // Convert pointMap to cloAttPoint.sumPoints[]
+        //   for (const studentId in pointMap) {
+        //     for (const subMethodId in pointMap[studentId]) {
+        //       cloAttPoint.sumPoints.push({
+        //         studentId,
+        //         point: pointMap[studentId][subMethodId],
+        //         subMethodId,
+        //       });
+        //     }
+        //   }
+
+        //   adata.push(cloAttPoint);
+        // });
+
+        adata.push(
+          ...this.dddd(weekAndCloLab, grade),
+          ...this.dddd(weekAndCloSem, grade),
+          ...this.dddd(weekAndCloBd, grade)
+        );
+
+        return adata;
+      })
+    );
+  }
+
+  dddd(data: any, grade: any) {
+    const adata: any[] = [];
+    data.forEach((wkc: any) => {
+      const cloAttPoint = {
+        cloId: wkc.id,
+        avahOnoo: 0,
+        sumPoints: [] as {
+          studentId: string;
+          point: number;
+          subMethodId: string;
+        }[],
+      };
+
+      const pointMap: Record<string, Record<string, number>> = {};
+
+      wkc.week.forEach((week: string) => {
+        grade.forEach((a: any) => {
+          if (a.weekNumber === week) {
+            a.studentGrades.forEach((a1: any) => {
+              const studentId = a1.studentId?.id || a1.studentId;
+
+              a1.grades.forEach((item: any) => {
+                const subMethodId = item.id;
+                const point = item.point;
+
+                if (!pointMap[studentId]) {
+                  pointMap[studentId] = {};
+                }
+
+                pointMap[studentId][subMethodId] =
+                  (pointMap[studentId][subMethodId] || 0) + point;
+              });
+            });
+          }
+        });
+      });
+
+      // Convert pointMap to cloAttPoint.sumPoints[]
+      for (const studentId in pointMap) {
+        for (const subMethodId in pointMap[studentId]) {
+          cloAttPoint.sumPoints.push({
+            studentId,
+            point: pointMap[studentId][subMethodId],
+            subMethodId,
+          });
+        }
+      }
+
+      adata.push(cloAttPoint);
+    });
+    return adata;
+  }
+}
+// 67f0c90b44acf77dcbdc2bf9  ---- 6800fb934fc06b730a882614

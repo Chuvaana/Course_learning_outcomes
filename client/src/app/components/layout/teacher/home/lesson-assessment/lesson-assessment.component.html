@@ -22,7 +22,7 @@
                 style="background-color: rgb(72, 182, 255)"
                 *ngFor="let col of tab.assessPlan"
               >
-                {{ col.subMethodName }}
+                {{ col.subMethodName }} {{ col.subMethodId }}
               </th>
               <th style="background-color: rgb(72, 182, 255)">Нийт оноо</th>
               <th style="background-color: rgb(72, 182, 255)">
@@ -47,9 +47,9 @@
               <th *ngFor="let point of row.points">
                 {{ point.point }}
               </th>
-              <th>{{ tab.totalPoint }}</th>
-              <th>100%</th>
-              <th>A</th>
+              <th>{{ row.totalPoint }}</th>
+              <th>{{ row.percentage }}%</th>
+              <th>{{ row.letterGrade }}</th>
             </tr>
           </ng-template>
         </p-table>

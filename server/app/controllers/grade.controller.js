@@ -1,9 +1,10 @@
 const Grade = require('../models/grade.model');
+const mongoose = require('mongoose');
 
 // ✅ Create a new labGrade record
 exports.createGrade = async (req, res) => {
   try {
-    const { lessonId, weekDay, weekNumber, type, time, labGrades } = req.body;
+    const { lessonId, weekDay, weekNumber, type, time, studentGrades } = req.body;
 
     // Check if a lab grade record already exists
     const existingGrade = await Grade.findOne({
@@ -16,8 +17,8 @@ exports.createGrade = async (req, res) => {
 
     if (existingGrade) {
       // Update or add each student's grades
-      for (let i = 0; i < labGrades.length; i++) {
-        const { studentId, grade1, grade2 } = labGrades[i];
+      for (let i = 0; i < studentGrades.length; i++) {
+        const { studentId, grade1, grade2 } = studentGrades[i];
 
         const index = existingGrade.labGrade.findIndex((record) => record.studentId.toString() === studentId);
 
@@ -39,7 +40,7 @@ exports.createGrade = async (req, res) => {
         weekNumber,
         type,
         time,
-        labGrade: labGrades, // Set labGrade field from request
+        labGrade: studentGrades, // Set labGrade field from request
       });
       await newGrade.save();
       return res.status(201).json(newGrade);
@@ -52,37 +53,49 @@ exports.createGrade = async (req, res) => {
 
 exports.createGradeAll = async (req, res) => {
   try {
-    const labGradeDatas = req.body.labGradeDatas; // The data array sent from frontend
-
-    const bulkOperations = [];
+    const labGradeDatas = req.body.labGradeDatas;
 
     for (let i = 0; i < labGradeDatas.length; i++) {
-      const { lessonId, weekDay, weekNumber, type, time, labGrades } = labGradeDatas[i];
+      const { lessonId, weekDay, weekNumber, type, time, studentGrades } = labGradeDatas[i];
 
-      bulkOperations.push({
-        updateOne: {
-          filter: { lessonId, weekDay, weekNumber, type, time },
-          update: {
-            $set: {
-              lessonId,
-              weekDay,
-              weekNumber,
-              type,
-              time,
-              labGrades,
-            },
-          },
-          upsert: true,
-        },
-      });
+      let gradeRecord = await Grade.findOne({ lessonId, weekDay, weekNumber, type, time });
+
+      if (!gradeRecord) {
+        gradeRecord = new Grade({
+          lessonId,
+          weekDay,
+          weekNumber,
+          type,
+          time,
+          studentGrades,
+        });
+      } else {
+        studentGrades.forEach((newGrade) => {
+          const existingIndex = gradeRecord.studentGrades.findIndex(
+            (g) => g.studentId.toString() === mongoose.Types.ObjectId(newGrade.studentId).toString()
+          );
+
+          if (existingIndex !== -1) {
+            // Байгаа бол шинэчилнэ
+            gradeRecord.studentGrades[existingIndex] = {
+              ...gradeRecord.studentGrades[existingIndex],
+              ...newGrade,
+              studentId: mongoose.Types.ObjectId(newGrade.studentId), // ensure correct type
+            };
+          } else {
+            // Байхгүй бол нэмнэ
+            gradeRecord.studentGrades.push({
+              ...newGrade,
+              studentId: mongoose.Types.ObjectId(newGrade.studentId),
+            });
+          }
+        });
+      }
+
+      await gradeRecord.save();
     }
 
-    const result = await Grade.bulkWrite(bulkOperations);
-
-    return res.status(200).json({
-      message: 'Grades saved successfully',
-      result,
-    });
+    return res.status(200).json({ message: 'Grades saved or updated successfully' });
   } catch (error) {
     return res.status(400).json({ message: error.message });
   }
@@ -99,7 +112,7 @@ exports.getGradeByFilter = async (req, res) => {
     if (type) filter.type = type;
     if (time) filter.time = time;
 
-    const attendanceRecords = await Grade.find(filter).populate('labGrades.studentId', 'studentName studentCode');
+    const attendanceRecords = await Grade.find(filter).populate('studentGrades.studentId', 'studentName studentCode');
     res.json(attendanceRecords);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -110,7 +123,7 @@ exports.getGradeByLesson = async (req, res) => {
   try {
     const id = req.params.id;
     const attendanceRecords = await Grade.find({ lessonId: id }).populate(
-      'labGrade.studentId',
+      'studentGrades.studentId',
       'studentName studentCode'
     );
     res.json(attendanceRecords);

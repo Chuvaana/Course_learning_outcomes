@@ -65,8 +65,8 @@ export interface Lesson {
   styleUrl: './grade.component.scss',
 })
 export class GradeComponent {
-  selectedWeekday: string = '';
-  selectedTimes!: number;
+  selectedWeekday = 'Monday';
+  selectedTimes = 1;
   searchQuery: string = '';
   students: any[] = [];
   gradeRecords: GradeRecord[] = [];
@@ -156,11 +156,7 @@ export class GradeComponent {
   }
 
   async onSelectionChange(): Promise<void> {
-    if (
-      (!this.selectedWeekday || !this.selectedTimes) &&
-      this.gradeType !== 'BD'
-    )
-      return;
+    if (!this.selectedWeekday || !this.selectedTimes) return;
     try {
       const res = await this.gradeService
         .getGrade(
@@ -251,7 +247,7 @@ export class GradeComponent {
     res.forEach((record) => {
       const week = record.weekNumber;
 
-      record.labGrades.forEach((grade: any) => {
+      record.studentGrades.forEach((grade: any) => {
         const studentId = grade.studentId.id;
 
         if (!studentMap[studentId]) {
@@ -331,13 +327,13 @@ export class GradeComponent {
     });
 
     const gradeData = Object.entries(groupedByWeek).map(
-      ([week, labGrades]: [string, any[]]) => ({
+      ([week, studentGrades]: [string, any[]]) => ({
         lessonId: this.lessonId,
         weekDay: this.selectedWeekday,
         time: this.selectedTimes,
         weekNumber: this.convertWeekToRoman(week),
         type: this.gradeType.toLowerCase(),
-        labGrades,
+        studentGrades,
       })
     );
 

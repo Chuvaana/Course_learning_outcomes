@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import {
+  AbstractControl,
   FormArray,
   FormBuilder,
   FormGroup,
@@ -21,6 +22,20 @@ import { forkJoin } from 'rxjs';
 import { AssessmentService } from '../../../../../../services/assessmentService';
 import { CloPointPlanService } from '../../../../../../services/cloPointPlanService';
 import { TeacherService } from '../../../../../../services/teacherService';
+
+interface SubMethod {
+  _id: string;
+  subMethod: string;
+}
+
+interface Plan {
+  methodType: string;
+  subMethods: SubMethod[];
+}
+
+interface AssessPlan {
+  plans: Plan[];
+}
 
 @Component({
   selector: 'app-clo-plan',
@@ -52,7 +67,9 @@ export class CloPointPlanComponent {
   cloPlan!: any;
   isUpdate: boolean = false;
   lessonId!: string;
-  isLoading: boolean = false;
+  isLoading = false;
+
+  subMethodOrder: string[] = [];
 
   constructor(
     private fb: FormBuilder,
@@ -66,7 +83,6 @@ export class CloPointPlanComponent {
   async ngOnInit() {
     this.route.parent?.paramMap.subscribe((params) => {
       this.lessonId = params.get('id')!;
-      console.log('Lesson ID:', this.lessonId);
     });
 
     await this.readData();
@@ -75,7 +91,7 @@ export class CloPointPlanComponent {
   async readData() {
     this.isLoading = true;
 
-    await forkJoin([
+    forkJoin([
       this.service.getCloList(this.lessonId),
       this.cloPointPlanService.getPointPlan(this.lessonId),
       this.assessService.getAssessmentByLesson(this.lessonId),
@@ -83,14 +99,16 @@ export class CloPointPlanComponent {
       this.cloList = cloList;
       this.assessPlan = assessPlan;
       this.cloPlan = cloPlan;
+      this.subMethodOrder = (assessPlan as any).plans.flatMap((p: any) =>
+        p.subMethods.map((s: any) => s._id)
+      );
       if (Array.isArray(this.cloPlan) && this.cloPlan.length === 0) {
         this.createRows(this.cloList, this.assessPlan.plans);
-        this.isLoading = false;
       } else {
         this.populateCLOForm();
         this.isUpdate = true;
-        this.isLoading = false;
       }
+      this.isLoading = false;
     });
   }
 
@@ -142,11 +160,41 @@ export class CloPointPlanComponent {
     return this.cloForm.get('cloRows') as FormArray;
   }
 
-  getPointsControls(rowIndex: number): FormGroup[] {
+  getPointsControls(cloId: string): FormGroup[] {
+    const cloRowsArray = this.cloForm.get('cloRows') as FormArray;
+
+    // cloId-р тохирох мөрийг хайж олно
+    const cloRow = cloRowsArray.controls.find(
+      (row: AbstractControl) => row.get('cloId')?.value === cloId
+    ) as FormGroup;
+
+    if (!cloRow) {
+      console.warn(`CLO ID ${cloId} not found`);
+      return [];
+    }
+
+    const pointsArray = cloRow.get('procPoints') as FormArray;
+
+    return this.subMethodOrder
+      .map((id) =>
+        pointsArray.controls.find(
+          (ctrl) => ctrl.get('subMethodId')?.value === id
+        )
+      )
+      .filter((ctrl) => !!ctrl) as FormGroup[];
+  }
+
+  getPointsControl(rowIndex: number): FormGroup[] {
     const pointsArray = this.getRowFormGroup(rowIndex).get(
       'procPoints'
     ) as FormArray;
-    return pointsArray.controls as FormGroup[];
+    return this.subMethodOrder
+      .map((id) =>
+        pointsArray.controls.find(
+          (ctrl) => ctrl.get('subMethodId')?.value === id
+        )
+      )
+      .filter((ctrl) => !!ctrl) as FormGroup[];
   }
 
   getPointsControlsExam(rowIndex: number): FormGroup[] {
@@ -199,6 +247,20 @@ export class CloPointPlanComponent {
             (e: any) => e.subMethodId === sub._id
           );
 
+          clo.procPoints.sort((a: any, b: any) => {
+            return (
+              this.subMethodOrder.indexOf(a.subMethodId) -
+              this.subMethodOrder.indexOf(b.subMethodId)
+            );
+          });
+
+          clo.examPoints.sort((a: any, b: any) => {
+            return (
+              this.subMethodOrder.indexOf(a.subMethodId) -
+              this.subMethodOrder.indexOf(b.subMethodId)
+            );
+          });
+
           if (!inProc && pl.methodType === 'PROC') {
             // insert to original position (optional: keep order)
             const insertIndex = clo.procPoints.findIndex(
@@ -242,6 +304,7 @@ export class CloPointPlanComponent {
           this.fb.group({
             subMethodId: [p.subMethodId],
             point: [p.point],
+            cloId: [clo.cloId], // 👈 энд нэмнэ
           })
         )
       );
@@ -251,6 +314,7 @@ export class CloPointPlanComponent {
           this.fb.group({
             subMethodId: [e.subMethodId],
             point: [e.point],
+            cloId: [clo.cloId], // 👈 энд ч мөн адил
           })
         )
       );
@@ -270,7 +334,12 @@ export class CloPointPlanComponent {
       cloRows: cloRowsArray,
     });
 
-    this.cloPoint = this.cloPlan; // Table-д харуулах
+    this.cloPoint = this.cloPlan.map((clo: any) => ({
+      ...clo,
+      cloName:
+        this.cloList.find((c: any) => (c.id || c._id) === clo.cloId)?.cloName ??
+        '-',
+    }));
   }
 
   checkPointsConsistency(): boolean {
@@ -339,7 +408,7 @@ export class CloPointPlanComponent {
   }
 
   getTotalProgressScore(rowIndex: number): number {
-    return this.getPointsControls(rowIndex)
+    return this.getPointsControl(rowIndex)
       .map((ctrl) => ctrl.get('point')?.value || 0)
       .reduce((sum, val) => sum + val, 0);
   }

@@ -117,61 +117,66 @@
         <ng-template pTemplate="body" let-row let-ri="rowIndex">
           <tr [formGroup]="getRowFormGroup(ri)">
             <td>{{ ri + 1 }}</td>
-            <td>{{ getCloName(row.cloId) }}</td>
+            <td>{{ row.cloName }}</td>
 
-            <ng-container
-              formArrayName="procPoints"
-              *ngFor="let pointCtrl of getPointsControls(ri); let pi = index"
-            >
-              <td [formGroupName]="pi" pEditableColumn>
-                <p-cellEditor>
-                  <ng-template pTemplate="input">
-                    <p-inputNumber
-                      formControlName="point"
-                      inputId="point"
-                      [showButtons]="true"
-                      [step]="1"
-                    ></p-inputNumber>
-                  </ng-template>
-                  <ng-template pTemplate="output">
-                    {{ getPointsControls(ri)[pi].get("point")?.value }}
-                  </ng-template>
-                </p-cellEditor>
-              </td>
+            <ng-container formArrayName="procPoints">
+              <ng-container
+                *ngFor="
+                  let pointCtrl of getPointsControls(row.cloId);
+                  let pi = index
+                "
+              >
+                <td [formGroupName]="pi" pEditableColumn>
+                  <p-cellEditor>
+                    <ng-template pTemplate="input">
+                      <p-inputNumber
+                        formControlName="point"
+                        inputId="point"
+                        [showButtons]="true"
+                        [step]="1"
+                      ></p-inputNumber>
+                    </ng-template>
+                    <ng-template pTemplate="output">
+                      {{ getPointsControls(row.cloId)[pi].get("point")?.value }}
+                    </ng-template>
+                  </p-cellEditor>
+                </td>
+              </ng-container>
             </ng-container>
 
             <td style="background-color: rgb(72, 182, 255)">
               {{ getTotalProgressScore(ri) }}
             </td>
-            <ng-container
-              formArrayName="examPoints"
-              *ngFor="
-                let pointCtrl of getPointsControlsExam(ri);
-                let pi = index
-              "
-            >
-              <td [formGroupName]="pi" pEditableColumn>
-                <p-cellEditor>
-                  <ng-template pTemplate="input">
-                    <p-inputNumber
-                      formControlName="point"
-                      inputId="point"
-                      [showButtons]="true"
-                      [step]="1"
-                    ></p-inputNumber>
-                  </ng-template>
-                  <ng-template pTemplate="output">
-                    {{ getPointsControlsExam(ri)[pi].get("point")?.value }}
-                  </ng-template>
-                </p-cellEditor>
-              </td>
+
+            <ng-container formArrayName="examPoints">
+              <ng-container
+                *ngFor="
+                  let pointCtrl of getPointsControlsExam(ri);
+                  let pi = index
+                "
+              >
+                <td [formGroupName]="pi" pEditableColumn>
+                  <p-cellEditor>
+                    <ng-template pTemplate="input">
+                      <p-inputNumber
+                        formControlName="point"
+                        inputId="point"
+                        [showButtons]="true"
+                        [step]="1"
+                      ></p-inputNumber>
+                    </ng-template>
+                    <ng-template pTemplate="output">
+                      {{ getPointsControlsExam(ri)[pi].get("point")?.value }}
+                    </ng-template>
+                  </p-cellEditor>
+                </td>
+              </ng-container>
             </ng-container>
+
             <td style="background-color: rgb(72, 182, 255)">
               {{ getTotalExamScore(ri) }}
             </td>
-            <td>
-              {{ getTotalScore(ri) }}
-            </td>
+            <td>{{ getTotalScore(ri) }}</td>
           </tr>
         </ng-template>
       </p-table>

@@ -46,39 +46,56 @@ exports.createAttendance = async (req, res) => {
     res.status(400).json({ message: error.message });
   }
 };
+const mongoose = require('mongoose');
 
 exports.createAttendanceAll = async (req, res) => {
   try {
-    const attendanceDatas = req.body.attendanceDatas; // The data array sent from frontend
+    const attendanceDatas = req.body.attendanceDatas;
 
-    // Prepare an array for bulk write operations
-    const bulkOperations = [];
-
-    // Iterate through each attendanceData for each week
     for (let i = 0; i < attendanceDatas.length; i++) {
       const { lessonId, weekDay, weekNumber, type, time, attendance } = attendanceDatas[i];
 
-      // Build the update or insert operation for this attendance data
-      bulkOperations.push({
-        updateOne: {
-          filter: { lessonId, weekDay, weekNumber, type, time },
-          update: {
-            $set: { lessonId, weekDay, weekNumber, type, time },
-            $addToSet: {
-              // Ensure we do not add duplicate student attendance
-              attendance: { $each: attendance },
-            },
-          },
-          upsert: true, // If no record exists, create a new one
-        },
-      });
+      // Attendance бичлэг байгаа эсэхийг шалгах
+      let attendanceRecord = await Attendance.findOne({ lessonId, weekDay, weekNumber, type, time });
+
+      if (!attendanceRecord) {
+        // Байхгүй бол шинээр үүсгэнэ
+        attendanceRecord = new Attendance({
+          lessonId,
+          weekDay,
+          weekNumber,
+          type,
+          time,
+          attendance: attendance.map((a) => ({
+            ...a,
+            studentId: mongoose.Types.ObjectId(a.studentId),
+          })),
+        });
+      } else {
+        // Байгаа бол attendance update хийх
+        attendance.forEach((newAtt) => {
+          const index = attendanceRecord.attendance.findIndex(
+            (a) => a.studentId.toString() === mongoose.Types.ObjectId(newAtt.studentId).toString()
+          );
+
+          if (index !== -1) {
+            // Хэрвээ сурагч байгаа бол status шинэчилнэ
+            attendanceRecord.attendance[index].status = newAtt.status;
+          } else {
+            // Байхгүй бол push хийнэ
+            attendanceRecord.attendance.push({
+              ...newAtt,
+              studentId: mongoose.Types.ObjectId(newAtt.studentId),
+            });
+          }
+        });
+      }
+
+      // Save after each record update
+      await attendanceRecord.save();
     }
 
-    // Perform the bulk write operation
-    const result = await Attendance.bulkWrite(bulkOperations);
-
-    // Return the result to the client
-    return res.status(200).json({ message: 'Attendance updated successfully', result });
+    return res.status(200).json({ message: 'Attendance saved or updated successfully' });
   } catch (error) {
     return res.status(400).json({ message: error.message });
   }

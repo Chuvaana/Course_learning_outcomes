@@ -24,6 +24,7 @@ import { CLOService } from '../../../../../services/cloService';
 import { CurriculumService } from '../../../../../services/curriculum.service';
 import { ScheduleService } from '../../../../../services/schedule.service';
 import { TabRefreshService } from '../tabRefreshService';
+import { CloPointPlanService } from '../../../../../services/cloPointPlanService';
 
 @Component({
   selector: 'app-schedule',
@@ -91,7 +92,8 @@ export class ScheduleComponent {
     private msgService: MessageService,
     private tabRefreshService: TabRefreshService,
     private mainService: CurriculumService,
-    private assessService: AssessmentService
+    private assessService: AssessmentService,
+    private cloPointPlanService: CloPointPlanService
   ) {}
 
   async ngOnInit() {
@@ -102,6 +104,16 @@ export class ScheduleComponent {
           this.closLec = this.clos.filter((item: any) => item.type === 'LEC');
           this.closSem = this.clos.filter((item: any) => item.type === 'SEM');
           this.closLab = this.clos.filter((item: any) => item.type === 'LAB');
+          this.cloPointPlanService
+            .getPointPlan(this.lessonId)
+            .subscribe((res) => {
+              res.forEach((plan: any) => {
+                console.log(plan);
+                // plan.subMethods.forEach((sub: any) => {
+
+                // });
+              });
+            });
         });
         // this.readData(); // Датаг дахин ачаалах функц
       });
