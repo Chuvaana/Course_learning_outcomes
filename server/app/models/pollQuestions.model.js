@@ -5,6 +5,8 @@ const QuestionPoll = new mongoose.Schema({
   answerValue: { type: Number, required: true },
   point: {type: Number},
   answerName: { type: String},
+    questionType: { type: String, required: true },
+    questionTypeName: { type: String, required: true },
 });
 
 const PollQuestionsSchema = new mongoose.Schema({
