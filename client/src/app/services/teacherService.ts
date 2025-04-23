@@ -3,12 +3,12 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class TeacherService {
   private apiUrl = 'http://localhost:3000/api'; // Update with your actual API URL
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
   // Fetch all branches
   getBranches(): Observable<any> {
@@ -27,14 +27,18 @@ export class TeacherService {
 
   assignLesson(lessonId: string): Observable<any> {
     const teacherId = localStorage.getItem('teacherId'); // Get token from localStorage
-    return this.http.post(`${this.apiUrl}/teachers/assign-lesson`, { teacherId, lessonId });
+    return this.http.post(`${this.apiUrl}/teachers/assign-lesson`, {
+      teacherId,
+      lessonId,
+    });
   }
 
   getLessons(): Observable<any> {
     return this.http.get(`${this.apiUrl}/lesson`);
   }
 
-  getTeacher(teacherId: string): Observable<any> { // Get token from localStorage
+  getTeacher(teacherId: string): Observable<any> {
+    // Get token from localStorage
     return this.http.get(`${this.apiUrl}/teachers/${teacherId}`);
   }
 
@@ -50,15 +54,17 @@ export class TeacherService {
     return this.http.put(`${this.apiUrl}/clos/${cloData.id}`, cloData);
   }
 
-  // getTeacherLessons(teacherId: string): Observable<any> {
-  //   return this.http.get(`${this.apiUrl}/teachers/${teacherId}/lessons`);
-  // }
-
-  getTeacherLessons(teacherId: string, year: string , season: string): Observable<any> {
-    return this.http.get(`${this.apiUrl}/teachers/${teacherId}/lessons/${year}/${season}`);
+  getTeacherLessons(
+    teacherId: string,
+    year: string,
+    season: string
+  ): Observable<any> {
+    return this.http.get(
+      `${this.apiUrl}/teachers/${teacherId}/lessons/${year}/${season}`
+    );
   }
 
   getConfig(itemCode: string): Observable<any> {
     return this.http.get(`${this.apiUrl}/config/${itemCode}`);
-}
+  }
 }

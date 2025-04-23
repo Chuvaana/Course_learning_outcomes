@@ -108,11 +108,11 @@ export class MenuComponent implements OnInit {
         icon: 'pi pi-plus',
         routerLink: ['/main/teacher/lesson', this.lessonId, 'progress-poll'],
       },
-      {
-        label: 'Явцын өгөх',
-        icon: 'pi pi-plus',
-        routerLink: ['/main/teacher/lesson', this.lessonId, 'exam-progress-poll'],
-      },
+      // {
+      //   label: 'Явцын өгөх',
+      //   icon: 'pi pi-plus',
+      //   routerLink: ['/main/teacher/lesson', this.lessonId, 'exam-progress-poll'],
+      // },
       {
         label: 'Тайлан',
         icon: 'pi pi-home',

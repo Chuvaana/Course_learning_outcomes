@@ -12,24 +12,6 @@ import { ToastModule } from 'primeng/toast';
 import { AttendanceService } from '../../../../../../services/attendanceService';
 import { StudentService } from '../../../../../../services/studentService';
 
-interface Student {
-  lessonId: string;
-  studentCode: string;
-  studentName: string;
-  lec?: { day?: string; time?: string };
-  sem?: { day?: string; time?: string };
-  lab?: { day?: string; time?: string };
-}
-
-interface Att {
-  lessonId: string;
-  weekDay: string;
-  type: string;
-  time: number;
-  weekNumber: string;
-  attendance: [{ studentId: string; status: boolean }];
-}
-
 interface AttendanceRecord {
   student: {
     name: string;
@@ -58,9 +40,9 @@ interface AttendanceRecord {
 export class AttendanceComponent {
   weekdays: SelectItem[] = [];
   classTypes: SelectItem[] = [];
-  selectedWeekday: string = '';
-  selectedClassType!: 'lec' | 'sem' | 'lab';
-  selectedTimes!: number;
+  selectedWeekday: string = 'Monday';
+  selectedClassType: 'lec' | 'sem' | 'lab' = 'lec';
+  selectedTimes: number = 1;
   students: any[] = [];
   attendanceRecords: any[] = [];
   lessonId!: string;
@@ -137,24 +119,25 @@ export class AttendanceComponent {
               });
           }
         });
-    }else {
-      this.attendanceService.getAttendanceByLesson(this.lessonId).subscribe((res) =>{
-        console.log(res);
-        this.attendanceRecords = this.generateAttendance(res);
-        if (this.attendanceRecords.length == 0) {
-          this.studentService
-            .getStudentByClasstypeAndDayTime(
-              this.selectedClassType,
-              this.selectedWeekday,
-              this.selectedTimes
-            )
-            .subscribe((students: any[]) => {
-              this.students = students;
-              this.attendanceRecords = this.generateAttendanceRecords();
-            });
-        }
-
-      })
+    } else {
+      this.attendanceService
+        .getAttendanceByLesson(this.lessonId)
+        .subscribe((res) => {
+          console.log(res);
+          this.attendanceRecords = this.generateAttendance(res);
+          if (this.attendanceRecords.length == 0) {
+            this.studentService
+              .getStudentByClasstypeAndDayTime(
+                this.selectedClassType,
+                this.selectedWeekday,
+                this.selectedTimes
+              )
+              .subscribe((students: any[]) => {
+                this.students = students;
+                this.attendanceRecords = this.generateAttendanceRecords();
+              });
+          }
+        });
     }
   }
 
@@ -273,7 +256,6 @@ export class AttendanceComponent {
 
       this.attendanceService.createAttendance(attendanceData).subscribe(
         (response) => {
-          console.log('Attendance Saved:', response);
           this.msgService.add({
             severity: 'success',
             summary: 'Амжилттай',
@@ -317,7 +299,6 @@ export class AttendanceComponent {
 
       this.attendanceService.createAttendanceAll(attendanceDatas).subscribe(
         (response) => {
-          console.log('Attendance saved:', response);
           this.msgService.add({
             severity: 'success',
             summary: 'Амжилттай',
