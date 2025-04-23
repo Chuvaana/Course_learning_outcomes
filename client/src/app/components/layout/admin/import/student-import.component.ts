@@ -24,7 +24,7 @@ import { ToastModule } from 'primeng/toast';
 })
 export class AdminStudentImportComponent {
   studentForm: FormGroup;
-  branches: any[] = [];
+  lessons: any[] = [];
   departments: any[] = [];
 
   error = 'ERROR';
@@ -40,6 +40,8 @@ export class AdminStudentImportComponent {
   onlyBranch: string[] = [];
   studentAllData: string[] = [];
   tableData: any[][] = [];
+  lessonId: any;
+
 
   constructor(
     private fb: FormBuilder,
@@ -58,6 +60,12 @@ export class AdminStudentImportComponent {
   }
 
   ngOnInit(): void {
+    this.loadLesson();
+  }
+  loadLesson(): void {
+    this.studentService.getLessons().subscribe((data: any[]) => {
+      this.lessons = data.map(branch => ({ name: branch.lessonName, id: branch.id || branch.lessonName }));
+    });
   }
 
   onFileChange(event: any) {
@@ -175,5 +183,8 @@ export class AdminStudentImportComponent {
         console.error('Error:', error);
       }
     );
+  }
+  onLessonChange(e : any){
+    this.lessonId = e.id;
   }
 }

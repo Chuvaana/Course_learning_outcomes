@@ -17,6 +17,10 @@
       accept=".xls,.xlsx" (onSelect)="onFileChange($event)" />
     </div>
     <div class="action-btn">
+      <p-dropdown id="id" formControlName="lessonId" [options]="lessons" optionLabel="name"
+          placeholder="Select a branch" (onChange)="onLessonChange($event.value)"></p-dropdown>
+    </div>
+    <div class="action-btn">
       <p-button mat-raised-button (click)="submit()">Хадгалах</p-button>
     </div>
   </div>

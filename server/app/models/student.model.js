@@ -7,7 +7,6 @@ var schema = mongoose.Schema(
     id: { type: String, required: true, unique: true },
     userName: { type: String, required: true },
     email: { type: String, required: true, unique: true, match: /@must\.edu\.mn$/ },
-    branch: { type: mongoose.Schema.Types.ObjectId, ref: "Branch", required: true },
     password: { type: String, required: true }
   },
   { timestamps: true }

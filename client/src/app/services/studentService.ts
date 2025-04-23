@@ -14,6 +14,9 @@ export class StudentService {
   getBranches(): Observable<any> {
     return this.http.get(`${this.apiUrl}/branches`);
   }
+  getLessons(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/lesson`);
+  }
 
   // Fetch departments by branch ID
   getDepartments(branchId: string): Observable<any> {
