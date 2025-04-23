@@ -11,6 +11,10 @@ import { LessonComponent } from '../teacher/lesson-list/lesson/lesson.component'
 import { TeacherComponent } from '../teacher/teacher.component';
 import { SharedComponent } from '../shared/shared.component';
 import { QuestionTypeListComponent } from '../exam/question-type-list/question-type-list.component';
+import { LesStudentComponent } from '../teacher/lesson-list/lesson/les-student/les-student.component';
+import { ProgressPollComponent } from '../teacher/lesson-list/lesson/progress-poll/progress-poll.component';
+import { ExamProgressPollComponent } from './exam-progress-poll/exam-progress-poll.component';
+import { MenuComponent } from './menu/menu.component';
 
 const routes: Routes = [
   {
@@ -18,12 +22,23 @@ const routes: Routes = [
     component: StudentComponent,
     children: [
       {
-        path: 'student-import',
-        component: StudentImportComponent,
+        path: 'lesson/:id',
+        children: [
+          { path: 'student', component: LesStudentComponent },
+          { path: 'exam-progress-poll', component: ExamProgressPollComponent },
+          {
+            path: 'student-import',
+            component: StudentImportComponent,
+          },
+          {
+            path: 'exam-list',
+            component: ExamListComponent
+          },
+        ]
       },
       {
-        path: 'exam-list',
-        component: ExamListComponent
+        path: 'student-app-menu',
+        component: MenuComponent,
       }
     ]
   },

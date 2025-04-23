@@ -4,16 +4,14 @@ import { Router, RouterModule } from '@angular/router';
 import { MenuItem } from 'primeng/api';
 import { Menubar } from 'primeng/menubar';
 import { ToastModule } from 'primeng/toast';
-import { NavbarComponent } from '../teacher/lesson-list/lesson/navbar/navbar.component';
 import { MenuModule } from 'primeng/menu';
 import { TabsModule } from 'primeng/tabs';
 import { BadgeModule } from 'primeng/badge';
 import { AvatarModule } from 'primeng/avatar';
-import { Image } from 'primeng/image';
 
 @Component({
   selector: 'app-student',
-  imports: [ Image, TabsModule, AvatarModule, BadgeModule, MenuModule, CommonModule, RouterModule, Menubar, ToastModule , NavbarComponent],
+  imports: [ TabsModule, AvatarModule, BadgeModule, MenuModule, CommonModule, RouterModule, Menubar, ToastModule],
   templateUrl: './student.component.html',
   styleUrl: './student.component.scss'
 })
@@ -26,64 +24,53 @@ export class StudentComponent {
     this.items = [
       {
 
-        label: 'Home',
+        label: 'Эхлэл',
         icon: 'pi pi-home',
         command: () => {
-            this.router.navigate(['/main/student/student-import']);
+            this.router.navigate(['/main/student/student-app-menu']);
         }
       },
       {
-        label: 'Сурагч нэмэх',
+        label: 'Шалгалт өгөх',
         icon: 'pi pi-star',
         command: () => {
             this.router.navigate(['/main/student/exam']);
         }
       },
       {
-        label: 'Projects',
-        icon: 'pi pi-search',
-        items: [
-          {
-            label: 'Components',
-            icon: 'pi pi-bolt',
-            command: () => {
-                this.router.navigate(['/main/student/exam-list']);
-            }
-          },
-          {
-            label: 'Blocks',
-            icon: 'pi pi-server',
-            command: () => {
-                this.router.navigate(['/main/student/question']);
-            }
-          },
-          {
-            label: 'UI Kit',
-            icon: 'pi pi-pencil'
-          },
-          {
-            label: 'Templates',
-            icon: 'pi pi-palette',
-            items: [
-              {
-                label: 'Apollo',
-                icon: 'pi pi-palette'
-              },
-              {
-                label: 'Ultima',
-                icon: 'pi pi-palette'
-              }
-            ]
-          }
-        ]
+        label: 'Дүн харах',
+        icon: 'pi pi-star',
+        command: () => {
+            this.router.navigate(['/main/student/exam']);
+        }
       },
       {
-        label: 'Contact',
-        icon: 'pi pi-envelope',
+        label: 'Ирц явцын оноо харах',
+        icon: 'pi pi-star',
         command: () => {
-            this.router.navigate(['/student-login']);
+            this.router.navigate(['/main/student/exam']);
         }
+      },
+      {
+        label: 'Санал асуулга өгөх',
+        icon: 'pi pi-star',
+        command: () => {
+            this.router.navigate(['/main/student/lesson/67f21da15d1c9f9efbf37dd9/exam-progress-poll']);
+        }
+      },
+      {
+        separator: true
+      },
+      {
+        label: 'Гарах',
+        icon: 'pi pi-sign-out',
+        command: () => this.logout(),
+        styleClass: 'logout-button'  // This class will be used for custom styling if needed
       }
     ]
+  }
+  logout() {
+    localStorage.clear(); // clear tokens or user info
+    this.router.navigate(['/student-login']); // redirect to login
   }
 }

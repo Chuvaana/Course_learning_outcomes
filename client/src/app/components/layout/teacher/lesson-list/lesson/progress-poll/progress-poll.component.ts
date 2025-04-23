@@ -12,7 +12,8 @@ import { TieredMenuModule } from 'primeng/tieredmenu';
 import { ToastModule } from 'primeng/toast';
 import { ProgressPollService } from '../../../../../../services/progressPollService';
 import { ButtonModule } from 'primeng/button';
-import {  FloatLabelModule } from 'primeng/floatlabel';
+import { FloatLabelModule } from 'primeng/floatlabel';
+import { CLOService } from '../../../../../../services/cloService';
 
 interface Question {
   name: string;
@@ -21,7 +22,7 @@ interface Question {
 
 @Component({
   selector: 'app-progress-poll',
-  imports: [  ReactiveFormsModule, FloatLabelModule, ButtonModule, CommonModule, TextareaModule, CheckboxModule, DropdownModule, InputTextModule, IftaLabelModule, RouterModule, TieredMenuModule, ToastModule, FormsModule],
+  imports: [ReactiveFormsModule, FloatLabelModule, ButtonModule, CommonModule, TextareaModule, CheckboxModule, DropdownModule, InputTextModule, IftaLabelModule, RouterModule, TieredMenuModule, ToastModule, FormsModule],
   templateUrl: './progress-poll.component.html',
   styleUrl: './progress-poll.component.scss',
 })
@@ -37,7 +38,7 @@ export class ProgressPollComponent {
 
   checked: boolean = false;
   selectedCity: Question | undefined;
-  dataQuestions : any;
+  dataQuestions: any;
 
   popQuestion = [
     {
@@ -213,7 +214,7 @@ export class ProgressPollComponent {
     },
   ];
 
-  answers: { text: string; answerId: number, answerValue: number, questionType: string, questionTypeName: string }[] = [
+  answers: { text: string; answerId: number, answerValue: number, questionType: string | Question, questionTypeName: string }[] = [
     { text: '', answerId: 0, answerValue: 0, questionType: 'RATE', questionTypeName: 'Үнэлгээ өгөх' }
   ];
 
@@ -228,11 +229,12 @@ export class ProgressPollComponent {
     questionTypeName: string;
     totalPoint: any;
     dateOfReplyTime: any;
-    answers: { answerName: string; answerId:number, answerValue: number,questionType: string, questionTypeName: string }[];
+    answers: { answerName: string; answerId: number, answerValue: number, questionType: string | Question, questionTypeName: string }[];
   }[] = [];
 
   constructor(
     private route: ActivatedRoute,
+    private cloService: CLOService,
     private service: ProgressPollService
   ) { }
 
@@ -249,6 +251,17 @@ export class ProgressPollComponent {
     ];
     this.dataQuestions = this.popQuestion;
     this.questions = this.popQuestion;
+
+    this.popQuestion.forEach((question: any) => {
+      question.answers.forEach((answer: any) => {
+        const matchedType = this.questionTypes?.find((qt: any) => qt.code === answer.questionType);
+        if (matchedType) {
+          answer.questionType = matchedType; // 🔁 Replace string with full object
+        }
+      });
+    });
+    this.popQuestion
+    this.cloQuestion();
     this.addQuestion();
   }
 
@@ -286,6 +299,51 @@ export class ProgressPollComponent {
     }
   }
 
+  cloQuestion() {
+    if (!this.createActive) {
+
+      this.cloService.getCloPlan(this.lessonId).subscribe((e: any) => {
+        console.log('CLO = ', e);
+        let countPoint = 5;
+        let answerData: { answerName: string; answerId: number; answerValue: number; questionType: string | Question; questionTypeName: string; }[] = [];
+        answerData.push({ answerName: 'Оюутан та энэ хичээлээр эзэмшсэн мэдлэг, чадвар, хандлагын түвшингээ тодорхойлно уу', answerId: 0, answerValue: 0, questionType: { code: "RATE", name: "Үнэлгээ өгөх" }, questionTypeName: 'Үнэлгээ өгөх' });
+        e.map((cloData: any, index: any) => {
+          const answer: {
+            answerName: string;
+            answerId: number;
+            answerValue: number;
+            questionType: string | Question;
+            questionTypeName: string;
+          } = {
+            answerName: cloData.cloName + ' тус түвшингээ тодорхойлно уу',
+            answerId: index + 1,
+            answerValue: 0,
+            questionType: 'RATE',
+            questionTypeName: 'Үнэлгээ өгөх',
+          };
+          countPoint = countPoint + 5;
+          const matchedType = this.questionTypes?.find((val: any) => val.code === answer.questionType);
+          if (matchedType) {
+            answer.questionType = matchedType; // ✅ Assign full object here
+          }
+
+          answerData.push(answer);
+        });
+        this.dataQuestions.push({
+          value: '',
+          lessonId: this.lessonId,
+          studentId: this.lessonId,
+          pollQuestionId: '1',
+          questionSubName: 'Хичээлийн суралцахуйн үр дүнгийн үнэлгээ',
+          questionName: 'Хичээлийн суралцахуйн үр дүнгийн үнэлгээ',
+          totalPoint: countPoint,
+          dateOfReplyTime: '2024-12-12',
+          answers: answerData
+        });
+      });
+    }
+  }
+
   // Хариултын текст өөрчлөгдөхөд
   onTextInput(answerIndex: number, questionIndex: number) {
     const changedAnswer = this.questions[questionIndex].answers[answerIndex];
@@ -305,27 +363,27 @@ export class ProgressPollComponent {
       totalPoint: '',
       dateOfReplyTime: '',
       answers: [
-        { answerName: '', answerId: 1, answerValue: 0, questionType: 'RATE', questionTypeName: 'Үнэлгээ өгөх'  }
+        { answerName: '', answerId: 1, answerValue: 0, questionType: 'RATE', questionTypeName: 'Үнэлгээ өгөх' }
       ]
     });
   }
   addAnswer(questionIndex: number) {
-    this.dataQuestions[questionIndex].answers.push({ answerName: '',answerId: 1, answerValue: 0, questionType: 'RATE', questionTypeName: 'Үнэлгээ өгөх'  });
+    this.dataQuestions[questionIndex].answers.push({ answerName: '', answerId: 1, answerValue: 0, questionType: 'RATE', questionTypeName: 'Үнэлгээ өгөх' });
   }
   onQuestionType(e: any) {
     console.log("asdasd : " + e.code);
   }
   refreshDetail() {
     this.service.getAllLessonAssments(this.lessonId).subscribe((e: any) => {
-      const dataPush = [];
+
       console.log(e);
-      if(e.length > 0){
-        e.map((i:any)=>{
+      if (e.length > 0) {
+        e.map((i: any) => {
           this.progressPollId.push(i._id);
-          i.answers.map((ans:any) =>{
-            this.questionTypes?.map((val: any) =>{
-              if(ans.questionType !== undefined && ans.questionType !== null){
-                if(val.code === ans.questionType){
+          i.answers.map((ans: any) => {
+            this.questionTypes?.map((val: any) => {
+              if (ans.questionType !== undefined && ans.questionType !== null) {
+                if (val.code === ans.questionType) {
                   ans.questionType = val;
                 }
               }
@@ -333,38 +391,37 @@ export class ProgressPollComponent {
           })
         });
         this.dataQuestions = e;
+        this.createActive = true;
       }
-      this.createActive = true;
     });
   }
   save() {
-    if(this.dataQuestions.length > 0){
-      this.dataQuestions.map((i : any, index: any) =>{
+    if (this.dataQuestions.length > 0) {
+      this.dataQuestions.map((i: any, index: any) => {
         const id = this.progressPollId[index];
         i.lessonId = '67f21da15d1c9f9efbf37dd9';
         i.studentId = '67f21da15d1c9f9efbf37dd9';
         i.dateOfReplyTime = '2024-12-12';
-        i.answers.map((answer:any)=>{
-          if(answer.questionType.code !== undefined && answer.questionType.code !== null){
+        i.answers.map((answer: any) => {
+          if (answer.questionType.code !== undefined && answer.questionType.code !== null) {
             answer.questionTypeName = answer.questionType.name;
             answer.questionType = answer.questionType.code;
           }
         });
         if (!this.createActive) {
           this.service.createPollQuestions(i).subscribe((e: any) => {
-            this.progressPollId = e._id;
+            this.progressPollId.push(e._id);
             this.refreshDetail();
           });
         } else {
           this.service.updatePollQuestions(id, i).subscribe((e: any) => {
-            this.progressPollId = e._id;
             this.refreshDetail();
           });
         }
       });
     }
   }
-  onBranchChange(e : any) {
+  onBranchChange(e: any) {
     console.log(e);
   }
 }

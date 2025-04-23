@@ -22,7 +22,11 @@ export class StudentService {
 
   // Register a new teacher
   registerStudent(studentData: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/lesStudents/upload`, studentData);
+    return this.http.post(`${this.apiUrl}/student`, studentData);
+  }
+
+  getStudentId(id: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/student/findById`, { id });
   }
 
   getStudents(lessonCode: string): Observable<any> {
@@ -40,5 +44,5 @@ export class StudentService {
   getStudentByClasstypeAndDayTime(classType: string, day: string, time: number): Observable<any> {
     return this.http.get(`${this.apiUrl}/lesStudents/classTypeDateTime/${classType}?day=${day}&time=${time}`);
   }
-  
+
 }

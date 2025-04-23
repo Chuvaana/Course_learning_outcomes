@@ -11,7 +11,7 @@ import { Rating } from 'primeng/rating';
 import { TextareaModule } from 'primeng/textarea';
 import { TieredMenuModule } from 'primeng/tieredmenu';
 import { ToastModule } from 'primeng/toast';
-import { ProgressPollService } from '../../../../../../../services/progressPollService';
+import { ProgressPollService } from '../../../../services/progressPollService';
 import { ButtonModule } from 'primeng/button';
 import {  FloatLabelModule } from 'primeng/floatlabel';
 
@@ -87,8 +87,6 @@ export class ExamProgressPollComponent {
       { name: 'Хариулт бичих', code: 'FEEDBACK' }
     ];
 
-    this.addQuestion();
-
     this.sendAnswer = {
       subQuestions: [],
       lessonId: '',
@@ -135,24 +133,6 @@ export class ExamProgressPollComponent {
   onTextInput(answerIndex: number, questionIndex: number) {
     const changedAnswer = this.questions[questionIndex].answers[answerIndex];
     console.log(`Question ${questionIndex}, Answer ${answerIndex}:`, changedAnswer);
-  }
-
-  addQuestion() {
-    this.dataQuestions.push({
-      value: '',
-      lessonId: '',
-      studentId: '',
-      pollQuestionId: '',
-      questionSubName: '',
-      questionName: '',
-      dateOfReplyTime: '',
-      answers: [
-        { answerName: '', answerId: 1, answerValue: 0, status : 'ACTIVE', statusName: 'Идэвхтэй'  }
-      ]
-    });
-  }
-  addAnswer(questionIndex: number) {
-    this.dataQuestions[questionIndex].answers.push({ answerName: '',answerId: 1, answerValue: 0, status : 'ACTIVE', statusName: 'Идэвхтэй'  });
   }
   onQuestionType(e: any) {
     console.log("asdasd : " + e.code);

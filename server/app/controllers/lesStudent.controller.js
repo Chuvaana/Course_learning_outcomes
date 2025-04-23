@@ -4,6 +4,7 @@ const Lesson = require('../models/lesson.model');
 // Create a new student
 exports.createStudent = async (req, res) => {
   try {
+    console.log(req.body);
     const studentData = new Student(req.body); // Use the request body to create a new student
     const student = await studentData.save(); // Save student to database
     res.status(201).json(student); // Respond with the created student
@@ -138,6 +139,7 @@ exports.updateStudents = async (req, res) => {
 exports.uploadStudents = async (req, res) => {
   try {
     const studentData = req.body;
+    console.log(studentData);
     if (!studentData || !Array.isArray(studentData)) {
       return res.status(400).json({ message: 'Invalid student data' });
     }

@@ -3,6 +3,7 @@ const PollQuestions = require('../models/PollQuestions.model.js');
 // Create a new PollQuestion
 exports.createPollQuestions = async (req, res) => {
   try {
+    console.log(req.body);
     const pollQuestion = new PollQuestions(req.body);
     const savedPollQuestion = await pollQuestion.save();
     res.status(201).json(savedPollQuestion);

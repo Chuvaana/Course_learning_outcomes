@@ -9,6 +9,8 @@ module.exports = app => {
   // Retrieve all students
   router.get("/", students.findAll);
 
+  router.post("/findById", students.findById);
+
   // Retrieve a single student with id
   router.get("/:id", students.findOne);
 

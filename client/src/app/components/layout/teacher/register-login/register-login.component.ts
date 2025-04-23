@@ -14,13 +14,13 @@ import { Image } from 'primeng/image';
   standalone: true,
   imports: [
     Image,
-    ReactiveFormsModule, 
-    DropdownModule, 
-    PasswordModule, 
-    ButtonModule, 
-    CommonModule, 
-    FormsModule, 
-    CardModule, 
+    ReactiveFormsModule,
+    DropdownModule,
+    PasswordModule,
+    ButtonModule,
+    CommonModule,
+    FormsModule,
+    CardModule,
     RouterModule],
   templateUrl: './register-login.component.html',
   styleUrl: './register-login.component.scss'
@@ -100,11 +100,11 @@ export class RegisterLoginComponent {
         (response: any) => {
           if (response && response.token) {
             console.log("Teacher logged in:", response);
-            
+
             // Store the token in localStorage
             localStorage.setItem('authToken', response.token);
             localStorage.setItem('teacherId', response.teacher.id);
-            
+
             // Optionally, you can navigate the user to a protected route
             this.router.navigate(['/main/teacher/lessonList']);
           }

@@ -15,8 +15,6 @@ const SubQuestions = new mongoose.Schema({
   pollQuestionId: { type: String, required: true },
   questionSubName: { type: String, required: true },
   questionName: { type: String},
-  questionType: { type: String},
-  questionTypeName: { type: String},
   dateOfReplyTime: { type: String, required: true },
   answers: [Question],
 });

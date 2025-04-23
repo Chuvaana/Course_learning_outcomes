@@ -11,12 +11,10 @@ const QuestionPoll = new mongoose.Schema({
 
 const PollQuestionsSchema = new mongoose.Schema({
   lessonId: { type: String, required: true },
-  studentId: { type: String, required: true },
+  studentId: { type: String},
   pollQuestionId: { type: String, required: true },
   questionSubName: { type: String, required: true },
   questionName: { type: String, required: true },
-  questionType: { type: String, required: true },
-  questionTypeName: { type: String, required: true },
   totalPoint: { type: Number, required: true },
   dateOfReplyTime: { type: String, required: true },
   answers: [QuestionPoll],

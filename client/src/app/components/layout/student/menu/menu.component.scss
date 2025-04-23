@@ -80,18 +80,3 @@ form p-password {
     }
   }
 }
-
-/* This will target the Menubar container */
-.custom-menubar .p-menubar-start {
-  flex: 1;  /* Push the items to the left */
-}
-
-.custom-menubar .p-menubar-end {
-  margin-left: auto; /* Align the logout button to the right */
-}
-
-.custom-menubar .p-menubar-item-link {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}

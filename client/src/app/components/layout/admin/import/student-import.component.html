@@ -1,4 +1,5 @@
 <div>
+  <p-toast />
   <div style="font-size: 50px;margin-left: 5%;margin-top: 20px;">
     <span>Сурагч бүртгэх</span>
   </div>
@@ -11,17 +12,15 @@
   margin-top: 50px;
 ">
     <div class="action-btn">
-      <input type="file" (change)="onFileChange($event)" accept=".xls,.xlsx" />
+
+      <p-fileupload mode="basic" chooseLabel="Choose" chooseIcon="pi pi-upload" name="file"
+      accept=".xls,.xlsx" (onSelect)="onFileChange($event)" />
     </div>
     <div class="action-btn">
-      <button mat-raised-button (click)="openPopup()">Open Popup</button>
-    </div>
-    <div class="action-btn">
-      <button mat-raised-button (click)="submit()">Create New Student</button>
+      <p-button mat-raised-button (click)="submit()">Хадгалах</p-button>
     </div>
   </div>
-  <div style="display: flex;justify-content: center;margin-top: 2%;">
-
+  <div class="table-container">
     <table *ngIf="tableData.length > 0" class="custom-table">
       <thead>
         <tr>

@@ -9,6 +9,8 @@ import { PasswordModule } from 'primeng/password';
 import { RegLogService } from '../../../../services/regLogService';
 import { InputTextModule } from 'primeng/inputtext';
 import { Image } from 'primeng/image';
+import { MessageService } from 'primeng/api';
+import { ToastModule } from 'primeng/toast';
 
 @Component({
   selector: 'login-student',
@@ -23,8 +25,10 @@ import { Image } from 'primeng/image';
     FormsModule,
     CardModule,
     RouterModule,
-    InputTextModule],
+    InputTextModule,
+    ToastModule],
   templateUrl: './login-student.component.html',
+    providers: [MessageService],
   styleUrl: './login-student.component.scss'
 })
 export class LoginStudentComponent {
@@ -39,7 +43,8 @@ export class LoginStudentComponent {
   selectedBranch: string = '';
   filteredDepartments = [];
 
-  constructor(private fb: FormBuilder, private service: RegLogService, private router: Router) {
+  constructor(private fb: FormBuilder, private service: RegLogService, private router: Router,
+    private msgService: MessageService) {
     this.teacherForm = this.fb.group({
       name: ['', Validators.required],
       code: ['', Validators.required],
@@ -74,7 +79,7 @@ export class LoginStudentComponent {
     if (this.isRegister) {
       // Registering a teacher
       if (this.teacherForm.valid) {
-        this.service.registerTeacher(this.teacherForm.value).subscribe(
+        this.service.loginStudent(this.teacherForm.value).subscribe(
           (data: { message: string; teacher: any }) => {
             if (data.message) {
               alert(data.message);
@@ -98,28 +103,30 @@ export class LoginStudentComponent {
       }
     } else {
 
-      this.service.loginTeacher(this.teacherForm.value).subscribe(
+      this.service.loginStudent(this.teacherForm.value).subscribe(
         (response: any) => {
           if (response && response.token) {
+            this.msgService.add({
+              severity: 'success',
+              summary: 'Амжилттай',
+              detail: `Оюутан (${response.studen.email}) амжилттай нэвтэрлээ.`,
+            });
             console.log("Teacher logged in:", response);
 
             // Store the token in localStorage
             localStorage.setItem('authToken', response.token);
-            localStorage.setItem('teacherId', response.teacher.id);
+            localStorage.setItem('teacherId', response.studen.id);
 
             // Optionally, you can navigate the user to a protected route
-            this.router.navigate(['/main/teacher/lessonList']);
+            this.router.navigate(['/main/student/student-app-menu']);
           }
         },
         (error) => {
-          let errorMessage = 'Error logging in';
-
-          if (error && error.error && error.error.message) {
-            errorMessage = error.error.message;
-          }
-
-          alert(errorMessage);
-          console.error('Error:', error);
+          this.msgService.add({
+            severity: 'error',
+            summary: 'Алдаа',
+            detail: `Нэвтрэхэд алдаа гарлаа.`,
+          });
         }
       );
 

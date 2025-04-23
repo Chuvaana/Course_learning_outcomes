@@ -1,10 +1,12 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
+const jwt = require('jsonwebtoken');
 const Student = require("../models/student.model"); // Make sure the path is correct
 // POST route to save student data
 exports.create = async (req, res) => {
   try {
     // Extract all required fields from req.body
+    console.log(req.body);
     const { name, id, userName, password, email, branch } = req.body;
 
     // Validate required fields
@@ -85,6 +87,25 @@ exports.login = async (req, res) => {
     res.status(500).json({ message: "Internal server error", error: error.message });
   }
 };
+exports.findById = async (req, res) => {
+  try {
+    const { id } = req.body;
+
+    if (!id) {
+      return res.status(400).send({ message: "Student ID is required" });
+    }
+
+    const student = await Student.findOne({ id }).populate("branch", "name");
+
+    if (!student) {
+      return res.status(404).send({ message: "Student not found" });
+    }
+
+    res.status(200).json(student);
+  } catch (error) {
+    res.status(500).send({ message: "Error retrieving student", error: error.message });
+  }
+};
 
 
 exports.findAll = async (req, res) => {
@@ -98,6 +119,8 @@ exports.findAll = async (req, res) => {
 
 exports.findOne = async (req, res) => {
   try {
+    console.log("body = " +req.body);
+    console.log("req.params = " +req.params.id);
     const student = await Student.findById(req.params.id).populate("branch", "name").populate("department", "name");
     if (!student) return res.status(404).send({ message: "student not found" });
     res.status(200).json(student);
