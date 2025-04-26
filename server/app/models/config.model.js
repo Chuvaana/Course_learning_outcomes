@@ -2,10 +2,10 @@ const mongoose = require('mongoose');
 
 // Define the schema for the configuration table
 const configSchema = new mongoose.Schema({
-  branchId: { type: String, required: true },
+  branchId: { type: mongoose.Schema.Types.ObjectId, ref: 'Branch', required: true },
   department: { type: String, required: true },
   name: { type: String, required: true },
-  itemCode: { type: String, required: true },  // item_code should be unique
+  itemCode: { type: String, required: true }, // item_code should be unique
   itemValue: { type: String, required: true },
 });
 

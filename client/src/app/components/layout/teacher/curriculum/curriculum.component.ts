@@ -80,7 +80,7 @@ export class CurriculumComponent {
       scheduleSems: this.service.getScheduleSems(this.lessonId),
       scheduleLabs: this.service.getScheduleLabs(this.lessonId),
       scheduleBds: this.service.getScheduleBds(this.lessonId),
-      assessFooter: this.service.getAssessFooter(this.lessonId),
+      // assessFooter: this.service.getAssessFooter(this.lessonId),
     }).subscribe((results) => {
       // 🎯 Энд бүх үр дүн хадгалагдсан байна
 
@@ -95,7 +95,7 @@ export class CurriculumComponent {
       this.scheduleSemsData = results.scheduleSems;
       this.scheduleLabsData = results.scheduleLabs;
       this.scheduleBdsData = results.scheduleBds;
-      this.assessFooter = results.assessFooter;
+      // this.assessFooter = results.assessFooter;
 
       console.log('Бүх өгөгдөл:', results);
       this.resultData = results;

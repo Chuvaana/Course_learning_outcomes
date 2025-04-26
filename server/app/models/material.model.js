@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const MaterialSchema = new mongoose.Schema(
   {
-    lessonId: { type: String, required: true },
+    lessonId: { type: mongoose.Schema.Types.ObjectId, ref: 'Lesson', required: true },
     mainBooks: [{ type: String }],
     extraMaterials: [{ type: String }],
     webLinks: [{ type: String }],
