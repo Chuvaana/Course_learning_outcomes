@@ -55,7 +55,7 @@ export class StudentComponent {
         label: 'Санал асуулга өгөх',
         icon: 'pi pi-star',
         command: () => {
-            this.router.navigate(['/main/student/lesson/67f21da15d1c9f9efbf37dd9/exam-progress-poll']);
+            this.router.navigate(['/main/student/lesson/67e972470db75a2af3d2db11/exam-progress-poll']);
         }
       },
       {

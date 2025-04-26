@@ -5,15 +5,15 @@
   <div *ngFor="let question of dataQuestions; let qIndex = index" class="question">
     <div class="header-sub-title">
       <p-iftalabel>
-        <textarea class="no-resize-textarea" pSize="large" rows="2" cols="40" pTextarea [(ngModel)]="question.questionSubName"></textarea>
+        <textarea class="no-resize-textarea" pSize="large" rows="3" cols="62" pTextarea [(ngModel)]="question.groupName"></textarea>
         <label for="username">Дэд нэр</label>
       </p-iftalabel>
     </div>
-    <div *ngFor="let answer of question.answers; let i = index">
+    <div *ngFor="let answer of question.questionList; let i = index">
       <div class="header-title">
         <div class="title">
           <p-iftalabel>
-            <textarea rows="3" cols="65" pTextarea [(ngModel)]="answer.answerName"></textarea>
+            <textarea rows="5" cols="70" pTextarea [(ngModel)]="answer.questionTitle"></textarea>
             <label for="username">Асуулт</label>
           </p-iftalabel>
         </div>

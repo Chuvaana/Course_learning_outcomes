@@ -4,18 +4,20 @@
   </div>
   <div *ngFor="let question of dataQuestions; let qIndex = index" class="question">
     <div class="header-sub-title">
-      <p-iftalabel>
-        <textarea [disabled]="true" pSize="large" rows="2" cols="40" pTextarea [(ngModel)]="question.questionSubName"></textarea>
-        <label for="username">Дэд нэр</label>
-      </p-iftalabel>
+      <p-fieldset legend="Дэд нэр">
+          <p class="m-0">
+            {{question.groupName}}
+          </p>
+      </p-fieldset>
     </div>
-    <div *ngFor="let answer of question.answers; let i = index">
+    <div *ngFor="let answer of question.questionList; let i = index">
       <div class="header-title">
         <div class="title">
-          <p-iftalabel>
-            <textarea [disabled]="true" rows="3" cols="65" pTextarea [(ngModel)]="answer.answerName"></textarea>
-            <label for="username">Асуулт</label>
-          </p-iftalabel>
+          <p-fieldset legend="Асуулт">
+              <p class="m-0">
+                {{answer.questionTitle}}
+              </p>
+          </p-fieldset>
         </div>
       </div>
       <div class="action-dropdown">
