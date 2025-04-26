@@ -14,6 +14,7 @@ import { ToastModule } from 'primeng/toast';
 import { ProgressPollService } from '../../../../services/progressPollService';
 import { ButtonModule } from 'primeng/button';
 import {  FloatLabelModule } from 'primeng/floatlabel';
+import { FieldsetModule } from 'primeng/fieldset';
 
 interface Question {
   name: string;
@@ -22,7 +23,7 @@ interface Question {
 
 @Component({
   selector: 'app-exam-progress-poll',
-  imports: [  ReactiveFormsModule, FloatLabelModule, ButtonModule, Rating, CommonModule, TextareaModule, CheckboxModule, DropdownModule, InputTextModule, IftaLabelModule, RouterModule, TieredMenuModule, ToastModule, FormsModule],
+  imports: [ FieldsetModule, ReactiveFormsModule, FloatLabelModule, ButtonModule, Rating, CommonModule, TextareaModule, CheckboxModule, DropdownModule, InputTextModule, IftaLabelModule, RouterModule, TieredMenuModule, ToastModule, FormsModule],
   templateUrl: './exam-progress-poll.component.html',
   styleUrl: './exam-progress-poll.component.scss',
 })
