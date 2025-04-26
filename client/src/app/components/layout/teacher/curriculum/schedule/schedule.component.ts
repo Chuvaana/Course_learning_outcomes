@@ -20,11 +20,11 @@ import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { ToastModule } from 'primeng/toast';
 import { AssessmentService } from '../../../../../services/assessmentService';
+import { CloPointPlanService } from '../../../../../services/cloPointPlanService';
 import { CLOService } from '../../../../../services/cloService';
 import { CurriculumService } from '../../../../../services/curriculum.service';
 import { ScheduleService } from '../../../../../services/schedule.service';
 import { TabRefreshService } from '../tabRefreshService';
-import { CloPointPlanService } from '../../../../../services/cloPointPlanService';
 
 @Component({
   selector: 'app-schedule',
@@ -71,7 +71,7 @@ export class ScheduleComponent {
   closLec: any;
   closSem: any;
   closLab: any;
-  cloPlan: any;
+  // cloPlan: any;
 
   labSumPoint = 0;
   semSumPoint = 0;
@@ -203,9 +203,9 @@ export class ScheduleComponent {
       const resBd = await this.service
         .getScheduleBds(this.lessonId)
         .toPromise();
-      const cloPlan = await this.cloService
-        .getCloPlan(this.lessonId)
-        .toPromise();
+      // const cloPlan = await this.cloService
+      //   .getCloPlan(this.lessonId)
+      //   .toPromise();
       const scheduleArray = this.scheduleLecForm.get('schedules') as FormArray;
       const scheduleSemArray = this.scheduleSemForm.get(
         'scheduleSems'
@@ -220,7 +220,7 @@ export class ScheduleComponent {
       scheduleSemArray.clear();
       scheduleLabArray.clear();
       scheduleBdArray.clear();
-      this.cloPlan = cloPlan;
+      // this.cloPlan = cloPlan;
 
       if (resLec && resLec.length > 0) {
         this.setSchedules(resLec);

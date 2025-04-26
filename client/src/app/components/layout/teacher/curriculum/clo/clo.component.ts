@@ -14,6 +14,7 @@ import { AssessmentService } from '../../../../../services/assessmentService';
 import { MethodService } from '../../../../../services/methodService';
 import { ScheduleService } from '../../../../../services/schedule.service';
 import { TabRefreshService } from '../tabRefreshService';
+import { CloPointPlanService } from '../../../../../services/cloPointPlanService';
 
 interface Clo {
   id: number;
@@ -59,6 +60,7 @@ export class CloComponent {
 
   constructor(
     private service: CLOService,
+    private planService: CloPointPlanService,
     private msgService: MessageService,
     private assessmentService: AssessmentService,
     private methodService: MethodService,
@@ -217,32 +219,33 @@ export class CloComponent {
   }
 
   saveCloPlan(clo: any) {
-    const plan = [
-      {
-        id: '',
-        cloId: clo.id,
-        cloName: clo.cloName,
-        cloType: clo.type,
-        lessonId: this.lessonId,
-        timeManagement: 0,
-        engagement: 0,
-        recall: 0,
-        problemSolving: 0,
-        recall2: 0,
-        problemSolving2: 0,
-        toExp: 0,
-        processing: 0,
-        decisionMaking: 0,
-        formulation: 0,
-        analysis: 0,
-        implementation: 0,
-        understandingLevel: 0,
-        analysisLevel: 0,
-        creationLevel: 0,
-      },
-    ];
-    this.service.saveCloPlan(plan).subscribe((res) => {
-      console.log(res);
-    });
+    // const plan = [
+    //   {
+    //     id: '',
+    //     cloId: clo.id,
+    //     cloName: clo.cloName,
+    //     cloType: clo.type,
+    //     lessonId: this.lessonId,
+    //     timeManagement: 0,
+    //     engagement: 0,
+    //     recall: 0,
+    //     problemSolving: 0,
+    //     recall2: 0,
+    //     problemSolving2: 0,
+    //     toExp: 0,
+    //     processing: 0,
+    //     decisionMaking: 0,
+    //     formulation: 0,
+    //     analysis: 0,
+    //     implementation: 0,
+    //     understandingLevel: 0,
+    //     analysisLevel: 0,
+    //     creationLevel: 0,
+    //   },
+    // ];
+    // this.planService.saveCloPlan(plan).subscribe((res) => {
+    //   console.log(res);
+    // });
+    // TODO zasah
   }
 }

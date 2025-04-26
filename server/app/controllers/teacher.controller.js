@@ -1,8 +1,8 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
-const bcrypt = require("bcryptjs");
-const Teacher = require("../models/teacher.model"); // Make sure the path is correct
-const Lesson = require("../models/lesson.model"); // Make sure the path is correct
+const bcrypt = require('bcryptjs');
+const Teacher = require('../models/teacher.model'); // Make sure the path is correct
+const Lesson = require('../models/lesson.model'); // Make sure the path is correct
 
 require('dotenv').config();
 exports.create = async (req, res) => {
@@ -12,11 +12,11 @@ exports.create = async (req, res) => {
     const existingTeacher = await Teacher.findOne({ email });
 
     if (existingTeacher) {
-      return res.status(400).json({ message: "Имэйл бүртгэгдсэн байна" });
+      return res.status(400).json({ message: 'Имэйл бүртгэгдсэн байна' });
     }
 
     if (!mongoose.Types.ObjectId.isValid(branch)) {
-      return res.status(400).json({ message: "Салбар тэнхим буруу байна" });
+      return res.status(400).json({ message: 'Салбар тэнхим буруу байна' });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -33,46 +33,46 @@ exports.create = async (req, res) => {
     await newTeacher.save();
 
     res.status(201).json({
-      message: "Амжилттай бүртгэгдлээ",
+      message: 'Амжилттай бүртгэгдлээ',
       teacher: newTeacher,
     });
   } catch (error) {
-    console.error("Багш бүртгэхэд алдаа гарлаа:", error);
-    res.status(500).json({ message: "Internal server error", error: error.message });
+    console.error('Багш бүртгэхэд алдаа гарлаа:', error);
+    res.status(500).json({ message: 'Internal server error', error: error.message });
   }
 };
 
 exports.findAll = async (req, res) => {
   try {
-    const teachers = await Teacher.find().populate("branch", "name").populate("department", "name");
+    const teachers = await Teacher.find().populate('branch', 'name').populate('department', 'name');
     res.status(200).json(teachers);
   } catch (error) {
-    res.status(500).send({ message: "Error retrieving teachers", error: error.message });
+    res.status(500).send({ message: 'Error retrieving teachers', error: error.message });
   }
 };
 
 exports.findOne = async (req, res) => {
   try {
     const teacher = await Teacher.findById(req.params.id)
-      .populate("branch", "name")
-      .populate("department", "name")
-      .populate("lessons");
+      .populate('branch', 'name')
+      .populate('department', 'name')
+      .populate('lessons');
 
-    if (!teacher) return res.status(404).send({ message: "Teacher not found" });
+    if (!teacher) return res.status(404).send({ message: 'Teacher not found' });
 
     res.status(200).json(teacher);
   } catch (error) {
-    res.status(500).send({ message: "Error retrieving teacher", error: error.message });
+    res.status(500).send({ message: 'Error retrieving teacher', error: error.message });
   }
 };
 
 exports.update = async (req, res) => {
   try {
     const updatedTeacher = await Teacher.findByIdAndUpdate(req.params.id, req.body, { new: true });
-    if (!updatedTeacher) return res.status(404).send({ message: "Teacher not found" });
+    if (!updatedTeacher) return res.status(404).send({ message: 'Teacher not found' });
     res.status(200).json(updatedTeacher);
   } catch (error) {
-    res.status(500).send({ message: "Error updating teacher", error: error.message });
+    res.status(500).send({ message: 'Error updating teacher', error: error.message });
   }
 };
 
@@ -84,16 +84,16 @@ exports.addLessonToTeacher = async (req, res) => {
       teacherId,
       { $addToSet: { lessons: lessonId } },
       { new: true }
-    ).populate("lessons");
+    ).populate('lessons');
 
     if (!updatedTeacher) {
-      return res.status(404).json({ message: "Teacher not found" });
+      return res.status(404).json({ message: 'Teacher not found' });
     }
 
-    res.json({ message: "Lesson added successfully", teacher: updatedTeacher });
+    res.json({ message: 'Lesson added successfully', teacher: updatedTeacher });
   } catch (error) {
-    console.error("Error updating teacher lessons:", error);
-    res.status(500).json({ message: "Server error", error });
+    console.error('Error updating teacher lessons:', error);
+    res.status(500).json({ message: 'Server error', error });
   }
 };
 
@@ -107,26 +107,26 @@ exports.removeLessonFromTeacher = async (req, res) => {
       teacherId,
       { $pull: { lessons: lessonId } }, // Remove the specific lesson
       { new: true }
-    ).populate("lessons");
+    ).populate('lessons');
 
     if (!updatedTeacher) {
-      return res.status(404).json({ message: "Teacher not found" });
+      return res.status(404).json({ message: 'Teacher not found' });
     }
 
-    res.json({ message: "Lesson removed successfully", teacher: updatedTeacher });
+    res.json({ message: 'Lesson removed successfully', teacher: updatedTeacher });
   } catch (error) {
-    console.error("Error removing lesson from teacher:", error);
-    res.status(500).json({ message: "Server error", error });
+    console.error('Error removing lesson from teacher:', error);
+    res.status(500).json({ message: 'Server error', error });
   }
 };
 
 exports.delete = async (req, res) => {
   try {
     const deletedTeacher = await Teacher.findByIdAndRemove(req.params.id);
-    if (!deletedTeacher) return res.status(404).send({ message: "Teacher not found" });
-    res.status(200).json({ message: "Teacher deleted successfully" });
+    if (!deletedTeacher) return res.status(404).send({ message: 'Teacher not found' });
+    res.status(200).json({ message: 'Teacher deleted successfully' });
   } catch (error) {
-    res.status(500).send({ message: "Error deleting teacher", error: error.message });
+    res.status(500).send({ message: 'Error deleting teacher', error: error.message });
   }
 };
 
@@ -137,33 +137,29 @@ exports.login = async (req, res) => {
     const teacher = await Teacher.findOne({ email });
 
     if (!teacher) {
-      return res.status(404).json({ message: "Бүртгэлтэй имэйл олдсонгүй" });
+      return res.status(404).json({ message: 'Бүртгэлтэй имэйл олдсонгүй' });
     }
 
     const isPasswordValid = await bcrypt.compare(password, teacher.password);
 
     if (!isPasswordValid) {
-      return res.status(401).json({ message: "Нууц үг буруу байна" });
+      return res.status(401).json({ message: 'Нууц үг буруу байна' });
     }
 
     if (!process.env.JWT_SECRET) {
-      return res.status(500).json({ message: "JWT_SECRET тохируулаагүй байна" });
+      return res.status(500).json({ message: 'JWT_SECRET тохируулаагүй байна' });
     }
 
-    const token = jwt.sign(
-      { id: teacher._id, email: teacher.email },
-      process.env.JWT_SECRET,
-      { expiresIn: '1h' }
-    );
+    const token = jwt.sign({ id: teacher._id, email: teacher.email }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
     res.status(200).json({
-      message: "Амжилттай",
+      message: 'Амжилттай',
       teacher,
       token,
     });
   } catch (error) {
-    console.error("Нэвтрэхэд алдаа гарлаа:", error);
-    res.status(500).json({ message: "Internal server error", error: error.message });
+    console.error('Нэвтрэхэд алдаа гарлаа:', error);
+    res.status(500).json({ message: 'Internal server error', error: error.message });
   }
 };
 
@@ -194,8 +190,12 @@ exports.getTeacherLessons = async (req, res) => {
   try {
     const { teacherId, yearIntervals, selectedSeason } = req.params;
 
+    console.log(teacherId, yearIntervals, selectedSeason);
+
     // Find the teacher
-    const teacher = await Teacher.findOne({ id: teacherId });
+    const teacher = await Teacher.findById(teacherId);
+
+    console.log(teacher);
 
     if (!teacher) {
       return res.status(404).json({ message: 'Багш олдсонгүй' });
@@ -203,14 +203,14 @@ exports.getTeacherLessons = async (req, res) => {
 
     // Fetch lessons for the teacher with the specified year and season
     const lessons = await Lesson.find({
-      teacherId: teacherId,
+      'teacher.email': teacher.email,
       schoolYear: yearIntervals,
-      recommendedSemester: selectedSeason
+      recommendedSemester: selectedSeason,
     });
-
+    console.log('lessons' + lessons);
     return res.status(200).json({ lessons });
   } catch (error) {
-    console.error("Error fetching lessons:", error);
+    console.error('Error fetching lessons:', error);
     res.status(500).json({ message: 'Алдаа гарлаа' });
   }
 };
