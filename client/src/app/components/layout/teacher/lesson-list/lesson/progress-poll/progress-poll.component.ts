@@ -108,7 +108,7 @@ export class ProgressPollComponent {
       questionList: [
         {
           questionTitle: 'Багш лекц, семинар, лабораторийн хичээл дээр асуудалд суурилсан, туршилтад суурилсан, тонгоруу анги гэх мэт сургалтын идэвхтэй аргуудыг хэр зэрэг түвшинд ашигласан вэ /1-5 оноо/',
-          answerValue: 2, questionType: 'RATE', questionTypeName: 'Үнэлгээ өгөх'
+          answerValue: 0, questionType: 'RATE', questionTypeName: 'Үнэлгээ өгөх'
         },
         {
           questionTitle: 'Хичээлийн явцад оюутнуудыг сургалтын үйл ажиллагаанд татан оролцуулах үр ашигтай аргуудыг (багаар ажиллуулах, асуудал шийдвэрлэх даалгавар хийлгэх, дүрд тоглуулах гэх мэт) хэр зэрэг түвшинд ашигласан вэ? /1-5 оноо/',
@@ -253,17 +253,20 @@ export class ProgressPollComponent {
       this.cloService.getCloList(this.lessonId).subscribe((e: any) => {
         console.log('CLO = ', e);
         let countPoint = 5;
-        let answerData: { answerName: string; answerId: number; answerValue: number; questionType: string | Question; questionTypeName: string; }[] = [];
-        answerData.push({ answerName: 'Оюутан та энэ хичээлээр эзэмшсэн мэдлэг, чадвар, хандлагын түвшингээ тодорхойлно уу', answerId: 0, answerValue: 0, questionType: { code: "RATE", name: "Үнэлгээ өгөх" }, questionTypeName: 'Үнэлгээ өгөх' });
+        let answerData: { totalPoint: number; point: number; answerValue: number; questionTitle: string; questionType: string | Question; questionTypeName: string; }[] = [];
         e.map((cloData: any, index: any) => {
           const answer: {
-            questionTitle: string;
+            totalPoint: number;
+            point: number;
             answerValue: number;
+            questionTitle: string;
             questionType: string | Question;
             questionTypeName: string;
           } = {
-            questionTitle: cloData.cloName,
+            totalPoint: 0,
+            point: 0,
             answerValue: 0,
+            questionTitle: cloData.cloName,
             questionType: 'RATE',
             questionTypeName: 'Үнэлгээ өгөх',
           };
@@ -279,13 +282,9 @@ export class ProgressPollComponent {
         });
         this.dataQuestions.push({
           lessonId: this.lessonId,
-          studentId: this.lessonId,
-          pollQuestionId: '1',
-          questionSubName: 'Хичээлийн суралцахуйн үр дүнгийн үнэлгээ',
-          questionName: 'Хичээлийн суралцахуйн үр дүнгийн үнэлгээ',
-          totalPoint: countPoint,
-          dateOfReplyTime: '2024-12-12',
-          answers: answerData
+          groupName: 'Хичээлийн суралцахуйн үр дүнгийн үнэлгээ',
+          questionType: 'Хичээлийн суралцахуйн үр дүнгийн үнэлгээ',
+          questionList: answerData
         });
       });
     }
@@ -293,22 +292,16 @@ export class ProgressPollComponent {
 
   // Хариултын текст өөрчлөгдөхөд
   onTextInput(answerIndex: number, questionIndex: number) {
-    const changedAnswer = this.questions[questionIndex].answers[answerIndex];
+    const changedAnswer = this.questions[questionIndex].questionList[answerIndex];
     console.log(`Question ${questionIndex}, Answer ${answerIndex}:`, changedAnswer);
   }
 
   addQuestion() {
     this.dataQuestions.push({
       lessonId: '',
-      studentId: '',
-      pollQuestionId: '',
-      questionSubName: '',
-      questionName: '',
+      groupName: '',
       questionType: '',
-      questionTypeName: '',
-      totalPoint: '',
-      dateOfReplyTime: '',
-      answers: [
+      questionList: [
         { answerName: '', answerId: 1, answerValue: 0, questionType: 'RATE', questionTypeName: 'Үнэлгээ өгөх' }
       ]
     });
@@ -345,9 +338,7 @@ export class ProgressPollComponent {
       this.dataQuestions.map((i: any, index: any) => {
         const id = this.progressPollId[index];
         i.lessonId = this.lessonId;
-        i.studentId = this.lessonId;
-        i.dateOfReplyTime = '2024-12-12';
-        i.answers.map((answer: any) => {
+        i.questionList.map((answer: any) => {
           if (answer.questionType.code !== undefined && answer.questionType.code !== null) {
             answer.questionTypeName = answer.questionType.name;
             answer.questionType = answer.questionType.code;
