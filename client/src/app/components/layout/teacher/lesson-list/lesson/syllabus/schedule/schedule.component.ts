@@ -13,7 +13,8 @@ import { CLOService } from '../../../../../../../services/cloService';
 
 @Component({
   selector: 'app-schedule',
-  imports: [TableModule,
+  imports: [
+    TableModule,
     ToastModule,
     CommonModule,
     TagModule,
@@ -21,15 +22,16 @@ import { CLOService } from '../../../../../../../services/cloService';
     ButtonModule,
     InputTextModule,
     FormsModule,
-    ReactiveFormsModule],
+    ReactiveFormsModule,
+  ],
   providers: [MessageService],
   templateUrl: './schedule.component.html',
-  styleUrl: './schedule.component.scss'
+  styleUrl: './schedule.component.scss',
 })
 export class ScheduleComponent {
   customers!: any;
 
-  constructor(private cloService: CLOService) { }
+  constructor(private cloService: CLOService) {}
 
   ngOnInit() {
     // this.cloService.getPointPlan().subscribe((data) => {
@@ -37,19 +39,19 @@ export class ScheduleComponent {
     // });
 
     this.customers = [
-      { week: 1, title: 'John Doe', time: 30, type: 'LEC' },
-      { week: 2, title: 'John Doe', time: 30, type: 'LEC' },
-      { week: 3, title: 'John Doe', time: 30, type: 'LEC' },
-      { week: 4, title: 'John Doe', time: 30, type: 'LEC' },
-      { week: 5, title: 'John Doe', time: 30, type: 'LAB' },
-      { week: 6, title: 'John Doe', time: 30, type: 'LAB' },
-      { week: 7, title: 'John Doe', time: 30, type: 'LAB' },
-      { week: 8, title: 'John Doe', time: 30, type: 'LAB' },
-      { week: 9, title: 'John Doe', time: 30, type: 'SEM' },
-      { week: 10, title: 'John Doe', time: 30, type: 'SEM' },
-      { week: 11, title: 'John Doe', time: 30, type: 'SEM' },
-      { week: 12, title: 'John Doe', time: 30, type: 'SEM' },
-    ]
+      { week: 1, title: 'John Doe', time: 30, type: 'ALEC' },
+      { week: 2, title: 'John Doe', time: 30, type: 'ALEC' },
+      { week: 3, title: 'John Doe', time: 30, type: 'ALEC' },
+      { week: 4, title: 'John Doe', time: 30, type: 'ALEC' },
+      { week: 5, title: 'John Doe', time: 30, type: 'CLAB' },
+      { week: 6, title: 'John Doe', time: 30, type: 'CLAB' },
+      { week: 7, title: 'John Doe', time: 30, type: 'CLAB' },
+      { week: 8, title: 'John Doe', time: 30, type: 'CLAB' },
+      { week: 9, title: 'John Doe', time: 30, type: 'BSEM' },
+      { week: 10, title: 'John Doe', time: 30, type: 'BSEM' },
+      { week: 11, title: 'John Doe', time: 30, type: 'BSEM' },
+      { week: 12, title: 'John Doe', time: 30, type: 'BSEM' },
+    ];
   }
 
   calculateCustomerTotal(name: string) {

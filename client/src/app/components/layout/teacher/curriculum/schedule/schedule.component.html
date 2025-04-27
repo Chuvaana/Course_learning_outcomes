@@ -13,7 +13,7 @@
 
         <p-table
           *ngIf="!isLoading"
-          [value]="lessonControls"
+          [value]="lessonControls.controls"
           class="custom-table"
         >
           <ng-template pTemplate="header">
@@ -94,7 +94,7 @@
 
         <p-table
           *ngIf="!isLoading"
-          [value]="lessonSemControls"
+          [value]="lessonSemControls.controls"
           class="custom-table"
         >
           <ng-template pTemplate="header">
@@ -211,7 +211,7 @@
 
         <p-table
           *ngIf="!isLoading"
-          [value]="lessonLabControls"
+          [value]="lessonLabControls.controls"
           class="custom-table"
         >
           <ng-template pTemplate="header">
@@ -275,22 +275,7 @@
                   </ng-template>
                 </p-cellEditor>
               </td>
-              <!-- <td [pEditableColumn]>
-                <p-cellEditor>
-                  <ng-template pTemplate="input">
-                    <p-inputNumber formControlName="point"></p-inputNumber>
-                  </ng-template>
-                  <ng-template pTemplate="output">
-                    <ng-container
-                      *ngIf="lesson.get('point')?.value > 0; else zeroPoint"
-                    >
-                      <p-tag [value]="lesson.get('point').value"></p-tag>
-                    </ng-container>
-                    <ng-template #zeroPoint>0</ng-template>
-                  </ng-template>
-                </p-cellEditor>
-              </td> -->
-              <td>
+              <td [pEditableColumn]>
                 <div
                   *ngFor="
                     let pCtrl of lesson.get('point')['controls'];
@@ -324,7 +309,7 @@
 
         <p-table
           *ngIf="!isLoading"
-          [value]="lessonBdControls"
+          [value]="lessonBdControls.controls"
           class="custom-table"
         >
           <ng-template pTemplate="header">

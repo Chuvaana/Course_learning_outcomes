@@ -70,16 +70,16 @@ export class CloTreeComponent {
   hideArray: boolean[] = [];
 
   methodTypes = [
-    { id: 'EXAM', name: 'Шалгалт' },
-    { id: 'QUIZ1', name: 'Сорил 1' },
-    { id: 'QUIZ2', name: 'Сорил 2' },
-    { id: 'PARTI', name: 'Ирц, идэвх' },
-    { id: 'PROC', name: 'Явц' },
+    { value: 'EXAM', label: 'Шалгалт' },
+    { value: 'QUIZ1', label: 'Сорил 1' },
+    { value: 'QUIZ2', label: 'Сорил 2' },
+    { value: 'PARTI', label: 'Ирц, идэвх' },
+    { value: 'PROC', label: 'Явц' },
   ];
   secondMethodTypes = [
-    { id: 'LAB', name: 'Лаборатори' },
-    { id: 'SEM', name: 'Семинар' },
-    { id: 'BD', name: 'Бие даалт' },
+    { value: 'CLAB', label: 'Лаборатори' },
+    { value: 'BSEM', label: 'Семинар' },
+    { value: 'BD', label: 'Бие даалт' },
   ];
 
   ngOnInit() {
@@ -105,8 +105,10 @@ export class CloTreeComponent {
           const planGroup = this.fb.group({
             id: this.fb.control<string>(plan._id),
             methodName: this.fb.control<string>(plan.methodName),
-            methodType: this.fb.control<string>(plan.methodType),
-            secondMethodType: this.fb.control<string>(plan.secondMethodType),
+            methodType: this.fb.control<string>(plan.methodType || ' '),
+            secondMethodType: this.fb.control<string>(
+              plan.secondMethodType || ' '
+            ),
             frequency: this.fb.control<number>(plan.frequency),
             subMethods: subMethodsArray,
           });
@@ -161,7 +163,7 @@ export class CloTreeComponent {
         },
         {
           methodName: 'Явцын сорил 1',
-          methodType: 'QUIZ',
+          methodType: 'QUIZ1',
           frequency: 1,
           subMethods: [
             {
@@ -180,7 +182,7 @@ export class CloTreeComponent {
         },
         {
           methodName: 'Явцын сорил 2',
-          methodType: 'QUIZ',
+          methodType: 'QUIZ2',
           frequency: 1,
           subMethods: [
             {
@@ -200,6 +202,7 @@ export class CloTreeComponent {
         {
           methodName: 'Лабораторийн ажил, туршилт',
           methodType: 'PROC',
+          secondMethodType: 'CLAB',
           frequency: 3,
           subMethods: [
             {

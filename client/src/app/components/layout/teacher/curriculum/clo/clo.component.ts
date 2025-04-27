@@ -74,9 +74,9 @@ export class CloComponent {
     }
 
     this.types = [
-      { label: 'Лекц', value: 'LEC' },
-      { label: 'Семинар', value: 'SEM' },
-      { label: 'Лаборатори', value: 'LAB' },
+      { label: 'Лекц', value: 'ALEC' },
+      { label: 'Семинар', value: 'BSEM' },
+      { label: 'Лаборатори', value: 'CLAB' },
     ];
   }
 

@@ -8,17 +8,16 @@
       [formGroupName]="planIndex"
     >
       <div class="p-inputgroup mb-3">
-        <p-floatlabel variant="on" style="margin-bottom: 10px">
+        <p-floatlabel variant="on">
           <p-dropdown
             formControlName="methodType"
             [options]="methodTypes"
-            optionLabel="name"
-            optionValue="id"
+            optionLabel="label"
+            optionValue="value"
             class="w-full"
             (onChange)="changedMethodType($event, planIndex)"
-          >
-          </p-dropdown>
-          <label for="methodType">Төрөл</label>
+          ></p-dropdown>
+          <label>Төрөл</label>
         </p-floatlabel>
         <p-floatlabel
           variant="on"
@@ -28,8 +27,8 @@
           <p-dropdown
             formControlName="secondMethodType"
             [options]="secondMethodTypes"
-            optionLabel="name"
-            optionValue="id"
+            optionLabel="label"
+            optionValue="value"
             class="w-full"
           >
           </p-dropdown>

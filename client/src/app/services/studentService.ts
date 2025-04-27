@@ -3,12 +3,12 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class StudentService {
   private apiUrl = 'http://localhost:3000/api'; // Update with your actual API URL
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
   // Fetch all branches
   getBranches(): Observable<any> {
@@ -28,6 +28,11 @@ export class StudentService {
     return this.http.post(`${this.apiUrl}/student`, studentData);
   }
 
+  // Register a new teacher
+  registerLesStudent(studentData: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/lesStudents/upload`, studentData);
+  }
+
   getStudentId(id: any): Observable<any> {
     return this.http.post(`${this.apiUrl}/student/findById`, { id });
   }
@@ -41,11 +46,18 @@ export class StudentService {
   }
 
   getStudentByClasstypeAndDay(classType: string, day: string): Observable<any> {
-    return this.http.get(`${this.apiUrl}/lesStudents/classType/${classType}?day=${day}`);
+    return this.http.get(
+      `${this.apiUrl}/lesStudents/classType/${classType}?day=${day}`
+    );
   }
 
-  getStudentByClasstypeAndDayTime(classType: string, day: string, time: number): Observable<any> {
-    return this.http.get(`${this.apiUrl}/lesStudents/classTypeDateTime/${classType}?day=${day}&time=${time}`);
+  getStudentByClasstypeAndDayTime(
+    classType: string,
+    day: string,
+    time: number
+  ): Observable<any> {
+    return this.http.get(
+      `${this.apiUrl}/lesStudents/classTypeDateTime/${classType}?day=${day}&time=${time}`
+    );
   }
-
 }

@@ -1,6 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { DropdownModule } from 'primeng/dropdown';
@@ -12,24 +18,33 @@ import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 
 interface Student {
-  lessonId: string,
-  studentCode: string,
-  studentName: string,
-  lecDay?: string,
-  lecTime?: string,
-  semDay?: string,
-  semTime?: string,
-  labDay?: string,
-  labTime?: string
+  lessonId: string;
+  studentCode: string;
+  studentName: string;
+  lecDay?: string;
+  lecTime?: string;
+  semDay?: string;
+  semTime?: string;
+  labDay?: string;
+  labTime?: string;
 }
 
 @Component({
   selector: 'app-les-student',
   standalone: true,
   providers: [MessageService],
-  imports: [ReactiveFormsModule, ToastModule, DropdownModule, PasswordModule, ButtonModule, CommonModule, FormsModule, FileUploadModule],
+  imports: [
+    ReactiveFormsModule,
+    ToastModule,
+    DropdownModule,
+    PasswordModule,
+    ButtonModule,
+    CommonModule,
+    FormsModule,
+    FileUploadModule,
+  ],
   templateUrl: './les-student.component.html',
-  styleUrl: './les-student.component.scss'
+  styleUrl: './les-student.component.scss',
 })
 export class LesStudentComponent {
   studentForm: FormGroup;
@@ -42,18 +57,18 @@ export class LesStudentComponent {
   tableData: any[][] = [];
 
   lessonTypes = [
-    { id: 'LEC', name: 'Лекц' },
-    { id: 'SEM', name: 'Семинар' },
-    { id: 'LAB', name: 'Лаборатори' }
-  ]
+    { id: 'ALEC', name: 'Лекц' },
+    { id: 'BSEM', name: 'Семинар' },
+    { id: 'CLAB', name: 'Лаборатори' },
+  ];
 
   weeks = [
     { id: 'Monday', name: 'Даваа' },
     { id: 'Tuesday', name: 'Мягмар' },
     { id: 'Wednesday', name: 'Лхагва' },
     { id: 'Thursday', name: 'Пүрэв' },
-    { id: 'Friday', name: 'Баасан' }
-  ]
+    { id: 'Friday', name: 'Баасан' },
+  ];
 
   times = [
     { id: '1', name: '1-р цаг' },
@@ -64,7 +79,7 @@ export class LesStudentComponent {
     { id: '6', name: '6-р цаг' },
     { id: '7', name: '7-р цаг' },
     { id: '8', name: '8-р цаг' },
-  ]
+  ];
 
   studentList: Student[] = [];
   lessonId!: string;
@@ -78,12 +93,12 @@ export class LesStudentComponent {
     this.studentForm = this.fb.group({
       week: ['', Validators.required],
       time: ['', Validators.required],
-      lessonType: ['', Validators.required]
+      lessonType: ['', Validators.required],
     });
   }
 
   ngOnInit(): void {
-    this.route.parent?.paramMap.subscribe(params => {
+    this.route.parent?.paramMap.subscribe((params) => {
       this.lessonId = params.get('id')!;
     });
   }
@@ -99,7 +114,9 @@ export class LesStudentComponent {
 
     reader.onload = (e: any) => {
       const binaryString: string = e.target.result;
-      const workbook: XLSX.WorkBook = XLSX.read(binaryString, { type: 'binary' });
+      const workbook: XLSX.WorkBook = XLSX.read(binaryString, {
+        type: 'binary',
+      });
 
       const sheetName: string = workbook.SheetNames[0];
       const worksheet: XLSX.WorkSheet = workbook.Sheets[sheetName];
@@ -108,12 +125,11 @@ export class LesStudentComponent {
 
       this.studentCount = this.tableData.length - 1;
 
-      this.tableData
-        .forEach((e: string[]) => {
-          const [id, name] = e;
-          if (name) this.onlyName.push(name);
-          if (id) this.onlyId.push(id);
-        });
+      this.tableData.forEach((e: string[]) => {
+        const [id, name] = e;
+        if (name) this.onlyName.push(name);
+        if (id) this.onlyId.push(id);
+      });
     };
 
     reader.readAsBinaryString(file);
@@ -127,18 +143,21 @@ export class LesStudentComponent {
         lessonId: this.lessonId,
         studentCode: this.onlyId[i],
         studentName: this.onlyName[i],
-        lecDay: this.studentForm.get('lessonType')?.value == 'LEC' ? day : '',
-        lecTime: this.studentForm.get('lessonType')?.value == 'LEC' ? time : '',
-        labDay: this.studentForm.get('lessonType')?.value == 'LAB' ? day : '',
-        labTime: this.studentForm.get('lessonType')?.value == 'LAB' ? time : '',
-        semDay: this.studentForm.get('lessonType')?.value == 'SEM' ? day : '',
-        semTime: this.studentForm.get('lessonType')?.value == 'SEM' ? time : '',
+        lecDay: this.studentForm.get('lessonType')?.value == 'ALEC' ? day : '',
+        lecTime:
+          this.studentForm.get('lessonType')?.value == 'ALEC' ? time : '',
+        labDay: this.studentForm.get('lessonType')?.value == 'CLAB' ? day : '',
+        labTime:
+          this.studentForm.get('lessonType')?.value == 'CLAB' ? time : '',
+        semDay: this.studentForm.get('lessonType')?.value == 'BSEM' ? day : '',
+        semTime:
+          this.studentForm.get('lessonType')?.value == 'BSEM' ? time : '',
       });
     }
     console.log(this.studentList);
 
     if (this.studentForm.valid && this.studentList.length > 0) {
-      this.service.registerStudent(this.studentList).subscribe(
+      this.service.registerLesStudent(this.studentList).subscribe(
         (data) => {
           this.msgService.add({
             severity: 'success',

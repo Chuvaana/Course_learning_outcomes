@@ -75,7 +75,7 @@ export class GradeComponent {
   planId!: string;
   title!: string;
   data: any;
-  gradeType!: 'SEM' | 'LAB' | 'BD';
+  gradeType!: 'BSEM' | 'CLAB' | 'BD';
   formData: Lesson[] = [];
   showEdit = false;
 
@@ -131,16 +131,14 @@ export class GradeComponent {
       this.data = this.data[0].subMethods;
 
       this.fetchScheduleData(this.gradeType);
-      if (this.gradeType === 'BD') {
-        this.onSelectionChange();
-      }
+      this.onSelectionChange();
     });
   }
 
-  private fetchScheduleData(type: 'SEM' | 'LAB' | 'BD') {
+  private fetchScheduleData(type: 'BSEM' | 'CLAB' | 'BD') {
     const serviceMap = {
-      SEM: this.service.getScheduleSems.bind(this.service),
-      LAB: this.service.getScheduleLabs.bind(this.service),
+      BSEM: this.service.getScheduleSems.bind(this.service),
+      CLAB: this.service.getScheduleLabs.bind(this.service),
       BD: this.service.getScheduleBds.bind(this.service),
     };
 

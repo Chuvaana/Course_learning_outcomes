@@ -31,7 +31,7 @@ interface Student {
     ButtonModule,
     FormsModule,
     SelectModule,
-    ToastModule
+    ToastModule,
   ],
   providers: [MessageService],
   templateUrl: './les-student-list.component.html',
@@ -50,9 +50,9 @@ export class LesStudentListComponent {
   studentSaveDatas: any[] = [];
 
   lessonTypes = [
-    { id: 'LEC', name: 'Лекц' },
-    { id: 'SEM', name: 'Семинар' },
-    { id: 'LAB', name: 'Лаборатори' },
+    { id: 'ALEC', name: 'Лекц' },
+    { id: 'BSEM', name: 'Семинар' },
+    { id: 'CLAB', name: 'Лаборатори' },
   ];
   weeks = [
     { name: 'Даваа', id: 'Monday' },
@@ -61,7 +61,6 @@ export class LesStudentListComponent {
     { name: 'Пүрэв', id: 'Thursday' },
     { name: 'Баасан', id: 'Friday' },
   ];
-
 
   timeSlots = Array.from({ length: 8 }, (_, i) => ({
     value: i + 1,
@@ -72,7 +71,7 @@ export class LesStudentListComponent {
     private studentService: StudentService,
     private msgService: MessageService,
     private route: ActivatedRoute
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.route.parent?.paramMap.subscribe((params) => {
@@ -127,15 +126,15 @@ export class LesStudentListComponent {
   ): boolean {
     if (student && lessonType && week && time) {
       switch (lessonType) {
-        case 'LEC':
+        case 'ALEC':
           return (
             student.lec?.day === week && Number(student.lec?.time) === time
           );
-        case 'SEM':
+        case 'BSEM':
           return (
             student.sem?.day === week && Number(student.sem?.time) === time
           );
-        case 'LAB':
+        case 'CLAB':
           return (
             student.lab?.day === week && Number(student.lab?.time) === time
           );
@@ -148,11 +147,11 @@ export class LesStudentListComponent {
 
   hasLessonType(student: Student, lessonType: string): boolean {
     switch (lessonType) {
-      case 'LEC':
+      case 'ALEC':
         return !!student.lec?.day;
-      case 'SEM':
+      case 'BSEM':
         return !!student.sem?.day;
-      case 'LAB':
+      case 'CLAB':
         return !!student.lab?.day;
       default:
         return false;
@@ -211,13 +210,15 @@ export class LesStudentListComponent {
   }
 
   save() {
-    this.studentService.updateStudents(this.studentSaveDatas).subscribe((res) => {
-      this.msgService.add({
-        severity: 'success',
-        summary: 'Амжилттай',
-        detail: 'Амжилттай хадгалагдлаа!',
+    this.studentService
+      .updateStudents(this.studentSaveDatas)
+      .subscribe((res) => {
+        this.msgService.add({
+          severity: 'success',
+          summary: 'Амжилттай',
+          detail: 'Амжилттай хадгалагдлаа!',
+        });
+        this.editActive = false;
       });
-      this.editActive = false;
-    })
   }
 }

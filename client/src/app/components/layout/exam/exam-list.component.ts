@@ -59,18 +59,16 @@ export class ExamListComponent {
   examList: assessmentList[] = [];
   allExamList: assessmentList[] = [];
 
-
   lessonTypes = [
-    { id: 'LEC', name: 'Лекц' },
-    { id: 'SEM', name: 'Семинар' },
-    { id: 'LAB', name: 'Лаборатори' },
+    { id: 'ALEC', name: 'Лекц' },
+    { id: 'BSEM', name: 'Семинар' },
+    { id: 'CLAB', name: 'Лаборатори' },
   ];
   examTypes = [
     { label: 'Сорил 1', value: 'exam1' },
     { label: 'Сорил 2', value: 'exam2' },
     { label: 'Улирлын шалгалт', value: 'finalExam' },
   ];
-
 
   constructor(
     private fb: FormBuilder,
@@ -98,8 +96,7 @@ export class ExamListComponent {
       createdBy: ['', Validators.required],
     });
   }
-  onRefreshData() { }
-
+  onRefreshData() {}
 
   ngOnInit(): void {
     this.route.parent?.paramMap.subscribe((params) => {
@@ -110,11 +107,13 @@ export class ExamListComponent {
   }
 
   selectlessonAssessment() {
-    this.lessonAssessmentService.getLesAssessment(this.lessonId).subscribe((res) => {
-      console.log(res);
-      this.examList = res;
-      this.allExamList = res;
-    });
+    this.lessonAssessmentService
+      .getLesAssessment(this.lessonId)
+      .subscribe((res) => {
+        console.log(res);
+        this.examList = res;
+        this.allExamList = res;
+      });
   }
   get questions(): FormArray {
     return this.studentForm.get('questions') as FormArray;
@@ -127,11 +126,13 @@ export class ExamListComponent {
     });
   }
   loadStudents() {
-    if(this.lessonId !== null && this.lessonId !== undefined){
-      this.lessonAssessmentService.getLesAssessment(this.lessonId).subscribe((res) => {
-        console.log(res);
-        this.examList = res;
-      });
+    if (this.lessonId !== null && this.lessonId !== undefined) {
+      this.lessonAssessmentService
+        .getLesAssessment(this.lessonId)
+        .subscribe((res) => {
+          console.log(res);
+          this.examList = res;
+        });
     }
     this.examType = '';
     this.searchQuery = '';
@@ -147,13 +148,19 @@ export class ExamListComponent {
 
   applyFilters() {
     this.examList = this.allExamList.filter((exam) => {
-      const matchesType = this.examType ? exam.examType === this.examType : true;
+      const matchesType = this.examType
+        ? exam.examType === this.examType
+        : true;
       const matchesSearch = this.searchQuery
-        ? (exam.lastName?.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-        exam.firstName?.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-        exam.status?.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-        exam.gmail?.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-           exam.studentId?.toString().includes(this.searchQuery))
+        ? exam.lastName
+            ?.toLowerCase()
+            .includes(this.searchQuery.toLowerCase()) ||
+          exam.firstName
+            ?.toLowerCase()
+            .includes(this.searchQuery.toLowerCase()) ||
+          exam.status?.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+          exam.gmail?.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+          exam.studentId?.toString().includes(this.searchQuery)
         : true;
 
       return matchesType && matchesSearch;

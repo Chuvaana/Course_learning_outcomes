@@ -62,7 +62,6 @@ exports.deleteStudent = async (req, res) => {
   }
 };
 
-
 exports.updateStudents = async (req, res) => {
   try {
     const studentData = req.body;
@@ -83,7 +82,26 @@ exports.updateStudents = async (req, res) => {
       const labDay = lab.day;
       const labTime = lab.time;
 
-      console.log("rr" + lessonId + " " + studentCode + " " + studentName + " " + lecDay + " " + lecTime + " " + semDay + " " + semTime + " " + labDay + " " + labTime)
+      console.log(
+        'rr' +
+          lessonId +
+          ' ' +
+          studentCode +
+          ' ' +
+          studentName +
+          ' ' +
+          lecDay +
+          ' ' +
+          lecTime +
+          ' ' +
+          semDay +
+          ' ' +
+          semTime +
+          ' ' +
+          labDay +
+          ' ' +
+          labTime
+      );
       const lesson = await Lesson.findById(lessonId);
       if (!lesson) {
         return res.status(400).json({ message: `Lesson ${lessonId} not found` });
@@ -151,7 +169,26 @@ exports.uploadStudents = async (req, res) => {
     for (const student of studentData) {
       const { lessonId, studentCode, studentName, lecDay, lecTime, semDay, semTime, labDay, labTime } = student;
 
-      console.log("rr" + lessonId + " " + studentCode + " " + studentName + " " + lecDay + " " + lecTime + " " + semDay + " " + semTime + " " + labDay + " " + labTime)
+      console.log(
+        'rr' +
+          lessonId +
+          ' ' +
+          studentCode +
+          ' ' +
+          studentName +
+          ' ' +
+          lecDay +
+          ' ' +
+          lecTime +
+          ' ' +
+          semDay +
+          ' ' +
+          semTime +
+          ' ' +
+          labDay +
+          ' ' +
+          labTime
+      );
       const lesson = await Lesson.findById(lessonId);
       if (!lesson) {
         return res.status(400).json({ message: `Lesson ${lessonId} not found` });
@@ -210,7 +247,7 @@ exports.getStudentsByClassTypeAndDay = async (req, res) => {
 
   try {
     // Validate classType
-    if (!['lec', 'sem', 'lab'].includes(classType)) {
+    if (!['alec', 'bsem', 'clab'].includes(classType)) {
       return res.status(400).json({ message: 'Invalid class type' });
     }
 
@@ -232,7 +269,7 @@ exports.getStudentsByClassTypeAndDayTime = async (req, res) => {
 
   try {
     // Validate classType
-    if (!['lec', 'sem', 'lab'].includes(classType)) {
+    if (!['alec', 'bsem', 'clab'].includes(classType)) {
       return res.status(400).json({ message: 'Invalid class type' });
     }
 

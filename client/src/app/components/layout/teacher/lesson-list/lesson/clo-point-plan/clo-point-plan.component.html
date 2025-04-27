@@ -20,9 +20,7 @@
         icon="pi pi-file-excel"
         label="Excel үүсгэх"
       />
-      <!-- (click)="exportToExcel()" -->
       <p-button severity="success" icon="pi pi-file-pdf" label="PDF үүсгэх" />
-      <!-- (click)="generate()" -->
     </div>
     <div id="pdf-content">
       <p-progressSpinner
@@ -34,9 +32,9 @@
         *ngIf="!isLoading"
         [value]="cloPoint"
         [rows]="10"
-        [sortMode]="'multiple'"
         rowGroupMode="subheader"
         groupRowsBy="cloType"
+        groupRowsByOrder=""
         class="custom-table"
       >
         <ng-template pTemplate="header">
@@ -60,7 +58,6 @@
                 </th>
               </ng-container>
             </ng-container>
-            <!-- <th colspan="3">Улирлын шалгалт</th> -->
             <th rowspan="3" style="background-color: rgb(72, 182, 255)">
               Шалгалтын үнэлгээний харгалзах нийлбэр оноо
             </th>
@@ -101,11 +98,11 @@
             <td colspan="22">
               <strong>
                 {{
-                  row.cloType == "LEC"
+                  row.cloType === "ALEC"
                     ? "Лекцийн хичээлээр эзэмшсэн суралцахуйн үр дүнгүүд"
-                    : row.cloType == "SEM"
+                    : row.cloType === "BSEM"
                     ? "Семинарын хичээлээр эзэмшсэн суралцахуйн үр дүнгүүд"
-                    : row.cloType == "LAB"
+                    : row.cloType === "CLAB"
                     ? "Лабораторийн хичээлээр эзэмшсэн суралцахуйн үр дүнгүүд"
                     : row.cloType
                 }}
@@ -114,63 +111,69 @@
           </tr>
         </ng-template>
 
+        <!-- Display sorted rows in table body -->
+        <ng-template pTemplate="body" let-row>
+          <tr>
+            <td>{{ row.cloName }}</td>
+            <td>{{ row.cloType }}</td>
+          </tr>
+        </ng-template>
+
         <ng-template pTemplate="body" let-row let-ri="rowIndex">
           <tr [formGroup]="getRowFormGroup(ri)">
             <td>{{ ri + 1 }}</td>
-            <td>{{ row.cloName }}</td>
+            <td>{{ getCloName(row.cloId) }}</td>
 
-            <ng-container formArrayName="procPoints">
-              <ng-container
-                *ngFor="
-                  let pointCtrl of getPointsControls(row.cloId);
-                  let pi = index
-                "
-              >
-                <td [formGroupName]="pi" pEditableColumn>
-                  <p-cellEditor>
-                    <ng-template pTemplate="input">
-                      <p-inputNumber
-                        formControlName="point"
-                        inputId="point"
-                        [showButtons]="true"
-                        [step]="1"
-                      ></p-inputNumber>
-                    </ng-template>
-                    <ng-template pTemplate="output">
-                      {{ getPointsControls(row.cloId)[pi].get("point")?.value }}
-                    </ng-template>
-                  </p-cellEditor>
-                </td>
-              </ng-container>
+            <ng-container
+              formArrayName="procPoints"
+              *ngFor="
+                let pointCtrl of getPointsControls(row.cloId);
+                let pi = index
+              "
+            >
+              <td [formGroupName]="pi" pEditableColumn>
+                <p-cellEditor>
+                  <ng-template pTemplate="input">
+                    <p-inputNumber
+                      formControlName="point"
+                      inputId="point"
+                      [showButtons]="true"
+                      [step]="1"
+                    ></p-inputNumber>
+                  </ng-template>
+                  <ng-template pTemplate="output">
+                    {{ getPointsControl(ri)[pi].get("point")?.value }}
+                  </ng-template>
+                </p-cellEditor>
+              </td>
             </ng-container>
 
             <td style="background-color: rgb(72, 182, 255)">
               {{ getTotalProgressScore(ri) }}
             </td>
 
-            <ng-container formArrayName="examPoints">
-              <ng-container
-                *ngFor="
-                  let pointCtrl of getPointsControlsExam(ri);
-                  let pi = index
-                "
-              >
-                <td [formGroupName]="pi" pEditableColumn>
-                  <p-cellEditor>
-                    <ng-template pTemplate="input">
-                      <p-inputNumber
-                        formControlName="point"
-                        inputId="point"
-                        [showButtons]="true"
-                        [step]="1"
-                      ></p-inputNumber>
-                    </ng-template>
-                    <ng-template pTemplate="output">
-                      {{ getPointsControlsExam(ri)[pi].get("point")?.value }}
-                    </ng-template>
-                  </p-cellEditor>
-                </td>
-              </ng-container>
+            <ng-container
+              formArrayName="examPoints"
+              *ngFor="
+                let pointCtrl of getPointsControlsExam(ri);
+                let pi = index
+              "
+            >
+              <td [formGroupName]="pi" pEditableColumn>
+                <p-cellEditor>
+                  <ng-template pTemplate="input">
+                    <p-inputNumber
+                      formControlName="point"
+                      inputId="point"
+                      [showButtons]="true"
+                      [step]="1"
+                    ></p-inputNumber>
+                  </ng-template>
+                  <ng-template pTemplate="output">
+                    {{ getPointsControlsExam(ri)[pi].get("point")?.value }}
+                  </ng-template>
+                </p-cellEditor>
+              </td>
             </ng-container>
 
             <td style="background-color: rgb(72, 182, 255)">

@@ -14,7 +14,7 @@ const GradeSchema = new mongoose.Schema(
     },
     type: {
       type: String,
-      enum: ['lec', 'sem', 'lab', 'bd'],
+      enum: ['alec', 'bsem', 'clab', 'bd'],
       required: true,
     },
     time: {

@@ -1,6 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormArray,
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { DropdownModule } from 'primeng/dropdown';
@@ -37,7 +44,7 @@ interface Student {
     FloatLabel,
     FloatLabelModule,
     InputNumberModule,
-    ToastModule
+    ToastModule,
   ],
   providers: [MessageService],
   templateUrl: './poll-create.component.html',
@@ -60,9 +67,9 @@ export class PollCreateComponent {
     { id: '4', name: 'Linear scale' },
   ];
   lessonTypes = [
-    { id: 'LEC', name: 'Лекц' },
-    { id: 'SEM', name: 'Семинар' },
-    { id: 'LAB', name: 'Лаборатори' },
+    { id: 'ALEC', name: 'Лекц' },
+    { id: 'BSEM', name: 'Семинар' },
+    { id: 'CLAB', name: 'Лаборатори' },
   ];
   weeks = [
     { name: 'Даваа', id: 'Monday' },
@@ -72,20 +79,27 @@ export class PollCreateComponent {
     { name: 'Баасан', id: 'Friday' },
   ];
 
-
   timeSlots = Array.from({ length: 8 }, (_, i) => ({
     value: i + 1,
     label: `Цаг ${i + 1}`,
   }));
 
-  constructor(private fb: FormBuilder,
+  constructor(
+    private fb: FormBuilder,
     private studentService: StudentService,
     private route: ActivatedRoute
   ) {
     this.teacherForm = this.fb.group({
       questionCode: ['', Validators.required],
       questionType: ['', Validators.required],
-      email: ['', [Validators.required, Validators.email, Validators.pattern(/^[a-zA-Z0-9._%+-]+@must\.edu\.mn$/)]],
+      email: [
+        '',
+        [
+          Validators.required,
+          Validators.email,
+          Validators.pattern(/^[a-zA-Z0-9._%+-]+@must\.edu\.mn$/),
+        ],
+      ],
       branch: ['', Validators.required],
       department: ['', Validators.required],
       password: ['', Validators.required],
@@ -109,8 +123,7 @@ export class PollCreateComponent {
     (this.selectedTime = null), (this.selectedLessonType = '');
     this.selectedWeek = '';
   }
-  addLesson() {
-  }
+  addLesson() {}
   get questions(): FormArray {
     return this.teacherForm.get('questions') as FormArray;
   }
@@ -118,7 +131,7 @@ export class PollCreateComponent {
   createQuestionGroup(): FormGroup {
     return this.fb.group({
       questionCode: ['', Validators.required],
-      questionType: ['', Validators.required]
+      questionType: ['', Validators.required],
     });
   }
 

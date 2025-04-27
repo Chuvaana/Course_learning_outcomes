@@ -233,11 +233,11 @@ export class AssessmentMethodComponent {
 
   getGroupHeaderLabel(cloType: string): string {
     switch (cloType) {
-      case 'LEC':
+      case 'ALEC':
         return 'Лекцийн хичээлээр эзэмшсэн суралцахуйн үр дүнгүүд';
-      case 'SEM':
+      case 'BSEM':
         return 'Семинарын хичээлээр эзэмшсэн суралцахуйн үр дүнгүүд';
-      case 'LAB':
+      case 'CLAB':
         return 'Лабораторийн хичээлээр эзэмшсэн суралцахуйн үр дүнгүүд';
       default:
         return cloType;

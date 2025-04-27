@@ -101,9 +101,9 @@ export class ScheduleComponent {
       this.tabRefreshService.refresh$.subscribe(() => {
         this.service.getCloList(this.lessonId).subscribe((res) => {
           this.clos = res;
-          this.closLec = this.clos.filter((item: any) => item.type === 'LEC');
-          this.closSem = this.clos.filter((item: any) => item.type === 'SEM');
-          this.closLab = this.clos.filter((item: any) => item.type === 'LAB');
+          this.closLec = this.clos.filter((item: any) => item.type === 'ALEC');
+          this.closSem = this.clos.filter((item: any) => item.type === 'BSEM');
+          this.closLab = this.clos.filter((item: any) => item.type === 'CLAB');
           this.cloPointPlanService
             .getPointPlan(this.lessonId)
             .subscribe((res) => {
@@ -168,15 +168,24 @@ export class ScheduleComponent {
       this.assessService
         .getAssessmentByLesson(this.lessonId)
         .subscribe((res: any) => {
+          if (res.plans.length === 0) {
+            this.msgService.add({
+              severity: 'warn',
+              summary: 'Анхааруулга',
+              detail:
+                'Хичээлийн төлөвлөгөө бүртгээгүй байна. Төлөвлөгөөгөө бүртгэнэ үү',
+            });
+            this.disableAll();
+          }
           res.plans.forEach((element: any) => {
             if (element.methodType === 'PROC') {
-              if (element.secondMethodType === 'LAB') {
+              if (element.secondMethodType === 'CLAB') {
                 element.subMethods.forEach((item: any) => {
                   this.labSumPoint += item.point;
                 });
                 this.labData = element;
                 this.labFreq = element.frequency;
-              } else if (element.secondMethodType === 'SEM') {
+              } else if (element.secondMethodType === 'BSEM') {
                 element.subMethods.forEach((item: any) => {
                   this.semSumPoint += item.point;
                 });
@@ -255,6 +264,24 @@ export class ScheduleComponent {
     } finally {
       this.isLoading = false;
     }
+  }
+
+  disableAll() {
+    this.hasBd = false;
+    this.hasLab = false;
+    this.hasLec = false;
+    this.hasSem = false;
+  }
+
+  enable() {
+    this.mainService.getMainInfo(this.lessonId).subscribe((response: any) => {
+      if (response) {
+        this.hasLec = response.weeklyHours.lecture == 0 ? false : true;
+        this.hasSem = response.weeklyHours.seminar == 0 ? false : true;
+        this.hasLab = response.weeklyHours.lab == 0 ? false : true;
+        this.hasBd = response.weeklyHours.assignment == 0 ? false : true;
+      }
+    });
   }
 
   setSchedules(res: any[]): void {
@@ -826,23 +853,19 @@ export class ScheduleComponent {
   }
 
   get lessonControls() {
-    const schedules = this.scheduleLecForm.get('schedules') as FormArray;
-    return schedules.controls;
+    return this.scheduleLecForm.get('schedules') as FormArray;
   }
 
   get lessonSemControls() {
-    const schedules = this.scheduleSemForm.get('scheduleSems') as FormArray;
-    return schedules.controls;
+    return this.scheduleSemForm.get('scheduleSems') as FormArray;
   }
 
   get lessonLabControls() {
-    const schedules = this.scheduleLabForm.get('scheduleLabs') as FormArray;
-    return schedules.controls;
+    return this.scheduleLabForm.get('scheduleLabs') as FormArray;
   }
 
   get lessonBdControls() {
-    const schedules = this.scheduleBdForm.get('scheduleBds') as FormArray;
-    return schedules.controls;
+    return this.scheduleBdForm.get('scheduleBds') as FormArray;
   }
 
   saveLecSchedule() {

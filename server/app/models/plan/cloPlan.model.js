@@ -29,7 +29,7 @@ const CloPlanPointSchema = new mongoose.Schema({
   },
   cloType: {
     type: String,
-    enum: ['LEC', 'LAB', 'SEM'],
+    enum: ['ALEC', 'BSEM', 'CLAB'],
     required: true,
   },
   procPoints: [PointSchema],

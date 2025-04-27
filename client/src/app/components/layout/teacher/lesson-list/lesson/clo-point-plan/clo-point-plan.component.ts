@@ -33,10 +33,6 @@ interface Plan {
   subMethods: SubMethod[];
 }
 
-interface AssessPlan {
-  plans: Plan[];
-}
-
 @Component({
   selector: 'app-clo-plan',
   standalone: true,
@@ -84,7 +80,6 @@ export class CloPointPlanComponent {
     this.route.parent?.paramMap.subscribe((params) => {
       this.lessonId = params.get('id')!;
     });
-
     await this.readData();
   }
 
@@ -126,7 +121,7 @@ export class CloPointPlanComponent {
             point: [0],
           });
 
-          if (plan.methodType === 'PROC') {
+          if (plan.methodType !== 'EXAM') {
             procPointsArray.push(pointGroup);
           } else if (plan.methodType === 'EXAM') {
             examPointsArray.push(pointGroup);
@@ -137,6 +132,7 @@ export class CloPointPlanComponent {
       this.cloPoint.push({
         lessonId: this.lessonId,
         cloId: item.id,
+        cloName: item.cloName,
         cloType: item.type,
         procPoints: procPointsArray.value,
         examPoints: examPointsArray.value,
@@ -184,17 +180,24 @@ export class CloPointPlanComponent {
       .filter((ctrl) => !!ctrl) as FormGroup[];
   }
 
+  // getPointsControl(rowIndex: number): FormGroup[] {
+  //   const pointsArray = this.getRowFormGroup(rowIndex).get(
+  //     'procPoints'
+  //   ) as FormArray;
+  //   return this.subMethodOrder
+  //     .map((id) =>
+  //       pointsArray.controls.find(
+  //         (ctrl) => ctrl.get('subMethodId')?.value === id
+  //       )
+  //     )
+  //     .filter((ctrl) => !!ctrl) as FormGroup[];
+  // }
+
   getPointsControl(rowIndex: number): FormGroup[] {
     const pointsArray = this.getRowFormGroup(rowIndex).get(
       'procPoints'
     ) as FormArray;
-    return this.subMethodOrder
-      .map((id) =>
-        pointsArray.controls.find(
-          (ctrl) => ctrl.get('subMethodId')?.value === id
-        )
-      )
-      .filter((ctrl) => !!ctrl) as FormGroup[];
+    return pointsArray.controls as FormGroup[];
   }
 
   getPointsControlsExam(rowIndex: number): FormGroup[] {
@@ -304,7 +307,7 @@ export class CloPointPlanComponent {
           this.fb.group({
             subMethodId: [p.subMethodId],
             point: [p.point],
-            cloId: [clo.cloId], // 👈 энд нэмнэ
+            cloId: [clo.cloId],
           })
         )
       );
@@ -314,7 +317,7 @@ export class CloPointPlanComponent {
           this.fb.group({
             subMethodId: [e.subMethodId],
             point: [e.point],
-            cloId: [clo.cloId], // 👈 энд ч мөн адил
+            cloId: [clo.cloId],
           })
         )
       );
@@ -340,6 +343,28 @@ export class CloPointPlanComponent {
         this.cloList.find((c: any) => (c.id || c._id) === clo.cloId)?.cloName ??
         '-',
     }));
+    console.log(this.cloPoint);
+    const tmp = [];
+    tmp.push(
+      this.cloPoint.filter((item: any) => {
+        return item.cloType === 'ALEC';
+      })
+    );
+    tmp.push(
+      this.cloPoint.filter((item: any) => {
+        return item.cloType === 'BSEM';
+      })
+    );
+    console.log(tmp);
+    tmp.push(
+      this.cloPoint.filter((item: any) => {
+        return item.cloType === 'CLAB';
+      })
+    );
+
+    console.log('Before merge:', this.cloPoint);
+    this.cloPoint = [...tmp[0], ...tmp[1], ...tmp[2]];
+    console.log('After merge:', this.cloPoint);
   }
 
   checkPointsConsistency(): boolean {
