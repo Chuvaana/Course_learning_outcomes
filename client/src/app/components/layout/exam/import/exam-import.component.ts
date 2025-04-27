@@ -3,26 +3,27 @@ import { Component, ElementRef, ViewChild } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
+  FormsModule,
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
+import { ActivatedRoute } from '@angular/router';
 import { MessageService } from 'primeng/api'; // ✅ MessageService-г импортлох
 import { ButtonModule } from 'primeng/button';
+import { Checkbox } from 'primeng/checkbox';
 import { DropdownModule } from 'primeng/dropdown';
+import { FileUploadModule } from 'primeng/fileupload';
+import { FloatLabelModule } from 'primeng/floatlabel';
+import { InputNumberModule } from 'primeng/inputnumber';
 import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
+import { TableModule } from 'primeng/table';
 import { ToastModule } from 'primeng/toast'; // ✅ Toast-г импортлох
 import * as XLSX from 'xlsx';
 import { ExamService } from '../../../../services/examService';
-import { ActivatedRoute } from '@angular/router';
-import { FileUploadModule } from 'primeng/fileupload';
 import { lessonAssessmentService } from '../../../../services/lessonAssessment';
-import { InputNumberModule } from 'primeng/inputnumber';
-import { TableModule } from 'primeng/table';
-import { FloatLabelModule } from 'primeng/floatlabel';
-import { FormsModule } from '@angular/forms';
-import { Checkbox } from 'primeng/checkbox';
+import { AssessmentService } from '../../../../services/assessmentService';
+import { CloPointPlanService } from '../../../../services/cloPointPlanService';
 
 interface City {
   name: string;
@@ -85,23 +86,22 @@ export class ExamImportComponent {
   };
   cloQuestionData: { cloId: any; cloName: any; max: any; min: any }[] = [];
 
-
   examTypes = [
-    { label: 'Сорил 1', value: 'exam1' },
-    { label: 'Сорил 2', value: 'exam2' },
-    { label: 'Улирлын шалгалт', value: 'finalExam' },
+    { value: 'EXAM', label: 'Шалгалт' },
+    { value: 'QUIZ1', label: 'Сорил 1' },
+    { value: 'QUIZ2', label: 'Сорил 2' },
   ];
-
 
   clos: any[] = []; // Initialize to avoid undefined issues
   formGroup: any;
   constructor(
     private fb: FormBuilder,
     private service: ExamService,
-    private dialog: MatDialog,
     private route: ActivatedRoute,
     private msgService: MessageService,
-    private lessonAssessmentService: lessonAssessmentService
+    private lessonAssessmentService: lessonAssessmentService,
+    private assessService: AssessmentService,
+    private cloPointPlanService: CloPointPlanService
   ) {
     this.assesstmentForm = this.fb.group({
       lessonId: ['', Validators.required],
@@ -126,31 +126,82 @@ export class ExamImportComponent {
     this.route.parent?.paramMap.subscribe((params) => {
       this.lessonId = params.get('id')!;
     });
-
-    this.loadBranches();
   }
 
-  loadBranches(): void {
-    this.service.getClos().subscribe((data: any[]) => {
-      const closData: any[] = [];
-      let cloQuestion: any;
-      this.cloCount = data.length;
-      data.forEach((i) => {
-        if (i.lessonId === this.lessonId) {
-          closData.push(i);
+  loadClo(e: string): void {
+    let subMethods: any[] = [];
+    let cloList: any[] = [];
+    this.assessService
+      .getAssessmentByLesson(this.lessonId)
+      .subscribe((res: any) => {
+        const data = res?.plans.filter((item: any) => {
+          return item.methodType === e;
+        });
 
-          const cloQuestion = {
-            cloId: i.id,
-            cloName: i.cloName,
-            max: null,
-            min: null,
-          };
+        data.forEach((item: any) => {
+          item.subMethods.forEach((sub: any) => {
+            subMethods.push(sub._id);
+          });
+        });
 
-          this.cloQuestionData.push(cloQuestion);
-        }
+        this.cloPointPlanService
+          .getPointPlan(this.lessonId)
+          .subscribe((response) => {
+            response.forEach((i: any) => {
+              let found = false; // Энэ i дээр examPoints-д match олдсон эсэх
+
+              i.examPoints.forEach((exam: any) => {
+                if (subMethods.includes(exam.subMethodId) && exam.point != 0) {
+                  if (!cloList.includes(i.cloId)) {
+                    cloList.push(i.cloId);
+                  }
+                  found = true; // Match олдсон тул found = true болгоно
+                }
+              });
+
+              if (!found) {
+                // Хэрвээ examPoints дээр match олдоогүй бол procPoints-оос хайна
+                i.procPoints.forEach((proc: any) => {
+                  if (
+                    subMethods.includes(proc.subMethodId) &&
+                    proc.point != 0
+                  ) {
+                    if (!cloList.includes(i.cloId)) {
+                      cloList.push(i.cloId);
+                    }
+                  }
+                });
+              }
+            });
+            this.assessService
+              .getCloList(this.lessonId)
+              .subscribe((data: any[]) => {
+                const closData: any[] = [];
+
+                if (data) {
+                  // cloList-д орсон ID-тай таарах clos-уудыг үлдээ
+                  const filteredClos = data.filter((dat: any) => {
+                    return cloList.includes(dat.id);
+                  });
+
+                  this.cloCount = filteredClos.length;
+                  filteredClos.forEach((i) => {
+                    closData.push(i);
+
+                    const cloQuestion = {
+                      cloId: i.id,
+                      cloName: i.cloName,
+                      max: null,
+                      min: null,
+                    };
+
+                    this.cloQuestionData.push(cloQuestion);
+                  });
+                  this.clos = closData;
+                }
+              });
+          });
       });
-      this.clos = closData;
-    });
   }
 
   onClo(cloId: string): void {
@@ -247,8 +298,9 @@ export class ExamImportComponent {
       this.msgService.add({
         severity: 'error',
         summary: 'Алдаа',
-        detail: `Алдаа гарлаа: Дүнгийн файл зөрсөн байна! Алдаа -> '${data[mismatchedIndex]
-          }' (${mismatchedIndex + 1}-р багана)`,
+        detail: `Алдаа гарлаа: Дүнгийн файл зөрсөн байна! Алдаа -> '${
+          data[mismatchedIndex]
+        }' (${mismatchedIndex + 1}-р багана)`,
       });
       return false;
     }
@@ -400,7 +452,7 @@ export class ExamImportComponent {
       }[];
     }[] = [];
 
-    this.cloQuestionData.map((data) => { });
+    this.cloQuestionData.map((data) => {});
 
     // Логикийг шалгаж эхэлнэ
     if (!this.activeFileLogic) {
@@ -433,7 +485,6 @@ export class ExamImportComponent {
               detail: `Шалгалтын төрлөө сонгоно уу!`,
             });
           } else {
-
             this.service
               .getAllLessonAssments(this.lessonId)
               .subscribe((res) => {
@@ -489,7 +540,10 @@ export class ExamImportComponent {
                     let countQuetion = 1;
                     for (let j = 9; j < e.length; j++) {
                       this.cloQuestionData.map((data) => {
-                        if (data.min <= countQuetion && data.max >= countQuetion) {
+                        if (
+                          data.min <= countQuetion &&
+                          data.max >= countQuetion
+                        ) {
                           const question = {
                             questionId: countQuetion,
                             cloId: data.cloId,
@@ -512,16 +566,24 @@ export class ExamImportComponent {
                     let checkData = true;
                     if (this.lessonAllStudents.length > 0) {
                       this.lessonAllStudents.map((beforeData: any) => {
-                        if (assessmentFormData.studentId === beforeData.studentId) {
+                        if (
+                          assessmentFormData.studentId === beforeData.studentId
+                        ) {
                           id = beforeData._id;
                           checkData = false;
                         }
                       });
                     }
-                    if (assessmentFormData.studentId == null && assessmentFormData.studentId == undefined) {
+                    if (
+                      assessmentFormData.studentId == null &&
+                      assessmentFormData.studentId == undefined
+                    ) {
                       checkData = false;
                     }
-                    if (assessmentFormData.gmail == null && assessmentFormData.gmail == undefined) {
+                    if (
+                      assessmentFormData.gmail == null &&
+                      assessmentFormData.gmail == undefined
+                    ) {
                       checkData = false;
                     }
                     if (checkData) {
@@ -580,5 +642,7 @@ export class ExamImportComponent {
       this.examTypeAction = true;
     }
     console.log(e);
+
+    this.loadClo(e.value);
   }
 }

@@ -1,5 +1,10 @@
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import * as XLSX from 'xlsx';
 import { AppModule } from '../../../../app.module';
@@ -13,18 +18,27 @@ import { StudentService } from '../../../../services/studentService';
 import { FileUploadModule } from 'primeng/fileupload';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
+import { ConfigService } from '../admin.service';
 
 @Component({
   selector: 'app-student-import',
   standalone: true,
-  imports: [ReactiveFormsModule, DropdownModule, PasswordModule, ButtonModule, CommonModule, FileUploadModule, ToastModule],
+  imports: [
+    ReactiveFormsModule,
+    DropdownModule,
+    PasswordModule,
+    ButtonModule,
+    CommonModule,
+    FileUploadModule,
+    ToastModule,
+  ],
   providers: [MessageService],
   templateUrl: './student-import.component.html',
-  styleUrls: ['./student-import.component.scss']
+  styleUrls: ['./student-import.component.scss'],
 })
 export class AdminStudentImportComponent {
   studentForm: FormGroup;
-  lessons: any[] = [];
+  branches: any[] = [];
   departments: any[] = [];
 
   error = 'ERROR';
@@ -40,31 +54,42 @@ export class AdminStudentImportComponent {
   onlyBranch: string[] = [];
   studentAllData: string[] = [];
   tableData: any[][] = [];
-  lessonId: any;
-
+  branchId: any;
 
   constructor(
     private fb: FormBuilder,
     private studentService: StudentService,
     private dialog: MatDialog,
-    private msgService: MessageService
+    private msgService: MessageService,
+    private service: ConfigService
   ) {
     this.studentForm = this.fb.group({
       name: ['', Validators.required],
       id: ['', Validators.required],
       branch: ['', Validators.required],
-      email: ['', [Validators.required, Validators.email, Validators.pattern(/^[a-zA-Z0-9._%+-]+@must\.edu\.mn$/)]],
+      email: [
+        '',
+        [
+          Validators.required,
+          Validators.email,
+          Validators.pattern(/^[a-zA-Z0-9._%+-]+@must\.edu\.mn$/),
+        ],
+      ],
       userName: ['', Validators.required],
-      password: ['', Validators.required]
+      password: ['', Validators.required],
     });
   }
 
   ngOnInit(): void {
-    this.loadLesson();
+    this.loadBranches();
   }
-  loadLesson(): void {
-    this.studentService.getLessons().subscribe((data: any[]) => {
-      this.lessons = data.map(branch => ({ name: branch.lessonName, id: branch.id || branch.lessonName }));
+
+  loadBranches(): void {
+    this.service.getBranches().subscribe((data: any[]) => {
+      this.branches = data.map((branch) => ({
+        name: branch.name,
+        id: branch.id || branch.name,
+      }));
     });
   }
 
@@ -107,9 +132,8 @@ export class AdminStudentImportComponent {
         this.onlyStudentName.push(e[1].substring(2, 6));
         this.onlyPassword.push(e[0].substring(6, 10));
         this.onlyEmail.push(e[0] + '@must.edu.mn');
-        this.onlyBranch.push('6801bb108e66a6fc4ee4b1e9');
       }
-    })
+    });
     console.log(this.onlyName);
     console.log(this.onlyId);
     console.log(this.onlyStudentName);
@@ -121,7 +145,7 @@ export class AdminStudentImportComponent {
   openPopup() {
     this.dialog.open(TeacherComponent, {
       width: '800px',
-      height: '600px'
+      height: '600px',
     });
   }
 
@@ -133,7 +157,7 @@ export class AdminStudentImportComponent {
         userName: this.onlyName[i],
         email: this.onlyEmail[i],
         password: this.onlyPassword[i],
-        branch: this.onlyBranch[i]
+        branch: this.branchId,
       };
 
       this.studentService.getStudentId(studentData.id).subscribe(
@@ -148,8 +172,8 @@ export class AdminStudentImportComponent {
           const errorMsg = error?.error?.message || '';
 
           if (
-            (error.status === 404 && errorMsg === "Student not found") ||
-            (error.status === 400 && errorMsg === "Student ID is required")
+            (error.status === 404 && errorMsg === 'Student not found') ||
+            (error.status === 400 && errorMsg === 'Student ID is required')
           ) {
             this.registerData(studentData);
           } else {
@@ -164,13 +188,13 @@ export class AdminStudentImportComponent {
     }
   }
 
-  registerData(e : any) {
+  registerData(e: any) {
     this.studentService.registerStudent(e).subscribe(
       (data: { message: string; student: any }) => {
         if (data.message) {
         }
         if (data.student) {
-          console.log("Teacher created:", data.student);
+          console.log('Teacher created:', data.student);
         }
       },
       (error) => {
@@ -184,7 +208,8 @@ export class AdminStudentImportComponent {
       }
     );
   }
-  onLessonChange(e : any){
-    this.lessonId = e.id;
+
+  onChangeBranch(e: any) {
+    this.branchId = e.id;
   }
 }
