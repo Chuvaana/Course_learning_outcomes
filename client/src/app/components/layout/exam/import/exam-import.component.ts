@@ -227,6 +227,7 @@ export class ExamImportComponent {
       const worksheet: XLSX.WorkSheet = workbook.Sheets[sheetName];
 
       this.tableData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+      this.tableData = this.tableData.filter(e => e.length !== 0);
 
       this.studentCount = this.tableData.length - 1;
 
