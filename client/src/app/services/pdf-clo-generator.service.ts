@@ -13,9 +13,263 @@ import { Content } from 'pdfmake/interfaces';
 export class PdfCloGeneratorService {
 
 
-  generatePdf(data: string[][]) {
+  generatePdf(data: string[]) {
     if (data.length === 0) return;
 
+    let headerRowData: any = {};
+    let enterRowData: any = {};
+
+    if (data.length >= 2) {
+      headerRowData = data[0];
+      enterRowData = data[1];
+    }
+    const progressPontCount = (enterRowData[0].procPoints?.length || 0);
+    const examPointCount = (enterRowData[0].examPoints?.length || 0);
+
+    const procPointsLength = progressPontCount + 3 + examPointCount;
+
+    const lengthValue = procPointsLength; // энэ бол нийт хэдэн багана болж хуваагдхын олох мөн default 3 багана нэмж өгж байгаа
+
+    const percent = 89 / lengthValue; // багана болж хуваагдах хэмжээ
+
+    const widths: string[] = ['3%', '8%'];
+
+
+    for (let i = 0; i < procPointsLength; i++) {
+      widths.push(`${percent.toFixed(2)}%`);
+    }
+
+    console.log(widths);
+
+    const defaultHeaders = [
+      { text: 'Д/Д', rowSpan: 4, alignment: 'center', style: 'tableHeader' },
+      { text: 'Хичээлийн суралцахуйн\nүр дүн (CLOs)\n/Үнэлгээний аргууд', rowSpan: 4, alignment: 'center', style: 'tableHeader' },
+    ];
+
+    const dynamicHeaders = headerRowData.plans.flatMap((plan: { subMethods: any[]; methodName: string; methodType: string; }) => {
+      const subMethodCount = plan.subMethods.length;
+      const headers = [];
+
+      if (plan.methodType === 'EXAM') {
+        headers.push({
+          text: 'Тухайн\nсуралцахуйн\nүр дүнд\nхаргалзах\nявцын\nүнэлгээнээс\nавбал зохих\nнийлбэр оноо',
+          alignment: 'center',
+          style: 'tableGreen',
+          rowSpan: 4
+        });
+      }
+
+      headers.push(
+        {
+          text: plan.methodName,
+          colSpan: subMethodCount,
+          alignment: 'center',
+          style: getStyleByMethodType(plan.methodType),
+        },
+        ...Array(subMethodCount - 1).fill({}) // colSpan тул хоёр дахь хоосон {} үүсгэнэ
+      );
+
+      return headers;
+    });
+
+    const dynamicSubHeaders = headerRowData.plans.flatMap((plan: { subMethods: any[]; methodName: string; methodType: string; }) => {
+      const headers = [];
+
+      if (plan.methodType === 'EXAM') {
+        headers.push({}); // Улирлын шалгалтаас өмнө нэг хоосон багана оруулах
+      }
+
+      const subMethodHeaders = plan.subMethods.map((subMethod) => ({
+        text: subMethod.subMethod,
+        alignment: 'center',
+        style: getStyleByMethodType(plan.methodType),
+      }));
+
+      headers.push(...subMethodHeaders); // нэг нэгээр нь push хийх хэрэгтэй
+
+      return headers; // flatMap учраас OK
+    });
+    const dynamicTopHeaders = [
+      {},
+      {},
+      {
+        text: 'Явцын 70 онооны задаргаа /хичээлийн хэлбэрээс хамаарч өөрчлөгдөнө/',
+        colSpan: progressPontCount,
+        alignment: 'center',
+        style: 'tableYellow'
+      },
+      ...Array(progressPontCount - 1).fill({}), // colSpan тул үлдсэн багануудыг хоосон болгоно
+      {},
+      {
+        text: 'Шалгалтын 30 онооны задаргаа',
+        colSpan: examPointCount,
+        alignment: 'center',
+        style: 'tableYellow'
+      },
+      ...Array(examPointCount - 1).fill({}), // colSpan тул үлдсэн багануудыг хоосон болгоно
+      {},
+      {},
+    ];
+
+    const dynamicSubPoints = headerRowData.plans.flatMap((plan: { subMethods: any[]; methodName: string; methodType: string; }) => {
+      const headers = [];
+
+      if (plan.methodType === 'EXAM') {
+        headers.push({}); // Улирлын шалгалтаас өмнө нэг хоосон багана оруулах
+      }
+
+      const subMethodHeaders = plan.subMethods.map((subMethod) => ({
+        text: subMethod.point,
+        alignment: 'center',
+        style: getStyleByMethodType(plan.methodType),
+      }));
+
+      headers.push(...subMethodHeaders); // нэг нэгээр нь push хийх хэрэгтэй
+
+      return headers; // flatMap учраас OK
+    });
+
+    const cloColumn = enterRowData.flatMap((clo: any, index: any) => {
+      const headers = [];
+      const headersData = [];
+
+      // Extract points
+      let procAllPoint = 0;
+      clo.procPoints.map((procPoints: any) => {
+        procAllPoint = procAllPoint + procPoints.point
+      });
+      let examAllPoint = 0;
+      clo.examPoints.map((examPoints: any) => {
+        examAllPoint = examAllPoint + examPoints.point
+      });
+
+      // Sum of all points
+      const allPoint = procAllPoint+ examAllPoint
+      // Push headers
+      headers.push({
+        text: index + 1,
+        alignment: 'center',
+        style: 'tableGreen',
+      });
+
+      headers.push({
+        text: clo.cloName,
+        alignment: 'center',
+        style: 'tableGreen',
+      });
+
+      // Process procPoints
+      const subMethodproc = clo.procPoints.map((procPoints: any) => ({
+        text: procPoints.point,
+        alignment: 'center',
+        style: 'tableBlue',
+      }));
+      headers.push(...subMethodproc); // Add procPoints headers
+
+      // Add sum of procPoints
+      headers.push({
+        text: procAllPoint,
+        alignment: 'center',
+        style: 'tableGreen',
+      });
+
+      // Process examPoints
+      const subMethodExam = clo.examPoints.map((examPoints: any) => ({
+        text: examPoints.point,
+        alignment: 'center',
+        style: 'tableBlue',
+      }));
+      headers.push(...subMethodExam); // Add examPoints headers
+
+      // Add sum of examPoints
+      headers.push({
+        text: examAllPoint,
+        alignment: 'center',
+        style: 'tableGreen',
+      });
+
+      // Add total sum of all points
+      headers.push({
+        text: allPoint,
+        alignment: 'center',
+        style: 'tableGreen',
+      });
+
+      headersData.push(headers);
+      return headersData; // flatMap works to flatten the headers into a single array
+    });
+
+    // const cloColumn = enterRowData.flatMap((clo : any, index : any) =>{
+    //   const headers = [];
+    //   const procAllPoint = clo.procPoints.map((procPoints : any) =>{procPoints.point});
+    //   const examAllPoint = clo.examPoints.map((examPoints: any) =>{examPoints.point});
+    //   const allPoint = 0;
+
+    //   headers.push({
+    //     text: index + 1,
+    //     alignment: 'center',
+    //     style: 'tableGreen',
+    //   });
+    //   headers.push({
+    //     text: clo.cloName,
+    //     alignment: 'center',
+    //     style: 'tableGreen',
+    //   });
+
+    //   const subMethodproc = clo.procPoints.map((procPoints : any) => ({
+    //     text: procPoints.point,
+    //     alignment: 'center',
+    //     style: 'tableDefault',
+    //   }));
+    //   headers.push(...subMethodproc); // нэг нэгээр нь push хийх хэрэгтэй
+
+    //   headers.push({
+    //     text: procAllPoint,
+    //     alignment: 'center',
+    //     style: 'tableGreen',
+    //   });
+
+    //   const subMethodExam = clo.procPoints.map((procPoints : any) => ({
+    //     text: procPoints.point,
+    //     alignment: 'center',
+    //     style: 'tableDefault',
+    //   }));
+
+    //   headers.push(...subMethodExam); // нэг нэгээр нь push хийх хэрэгтэй
+
+    //   headers.push({
+    //     text: examAllPoint,
+    //     alignment: 'center',
+    //     style: 'tableGreen',
+    //   });
+    //   headers.push({
+    //     text: allPoint,
+    //     alignment: 'center',
+    //     style: 'tableGreen',
+    //   });
+
+    //   return headers; // flatMap учраас OK
+    // })
+
+    console.log(dynamicHeaders);
+    console.log(dynamicTopHeaders);
+    console.log(dynamicSubHeaders);
+    console.log(cloColumn);
+    function getStyleByMethodType(methodType: string): string {
+      switch (methodType) {
+        case 'PARTI':
+          return 'tableYellow';
+        case 'QUIZ1':
+        case 'QUIZ2':
+          return 'tableBlue';
+        case 'PROC':
+          return 'tableOrange';
+        case 'EXAM':
+          return 'tableGreen';
+        default:
+          return 'tableDefault'; // default style
+      }
+    }
     const allPont = [
       {
         title: '1',
@@ -34,143 +288,48 @@ export class PdfCloGeneratorService {
         point: 5,
       },
     ]
-    const tableBody = [
+    const cloAssesment = [
       // Header row
       [
         { text: 'Д/Д', rowSpan: 4, alignment: 'center', style: 'tableHeader' },
         { text: 'Хичээлийн суралцахуйн\nүр дүн (CLOs)\n/Үнэлгээний аргууд', rowSpan: 4, alignment: 'center', style: 'tableHeader' },
-        { text: 'Хичээлийн идэвхи,\nоролцоо', colSpan: 2, alignment: 'center', style: 'tableYellow' },
-        {},
-        { text: 'Явцын сорил 1', colSpan: 2, alignment: 'center', style: 'tableBlue' },
-        {},
-        { text: 'Явцын сорил 2', colSpan: 2, alignment: 'center', style: 'tableGreen' },
-        {},
-        { text: 'Лабораторийн ажил,\nтуршилт', colSpan: 2, alignment: 'center', style: 'tableOrange' },
-        {},
-        { text: 'Даалгавар\n/Бие даалтын ажил, курсын ажил,\nтөсөл гэх мэт/', colSpan: 4, alignment: 'center', style: 'tableGreen' },
-        {},
-        {},
-        {},
-        { text: 'Тухайн\nсуралцахуйн\nүр дүнд\nхаргалзах\nявцын\nүнэлгээнээс\nавбал зохих\nнийлбэр оноо', rowSpan: 4, alignment: 'center', style: 'tableYellow' },
-        { text: 'Улирлын шалгалт', colSpan: 3, alignment: 'center', style: 'tableGreen' },
-        {},
-        {},
+        ...dynamicHeaders,
+        // { text: 'Тухайн\nсуралцахуйн\nүр дүнд\nхаргалзах\nявцын\nүнэлгээнээс\nавбал зохих\nнийлбэр оноо', rowSpan: 4, alignment: 'center', style: 'tableYellow' },
         { text: 'Тухайн\nсуралцахуйн\nүр дүнд\nхаргалзах\nшалгалтын\nүнэлгээнээс\nавбал зохих\nнийлбэр оноо', rowSpan: 4, alignment: 'center', style: 'tableYellow' },
         { text: 'Тухайн\nсуралцахуйн\nүр дүнд\nхаргалзах\nүнэлгээнээс\nавбал зохих\nнийлбэр оноо\n/явц+шалгалт/', rowSpan: 4, alignment: 'center', style: 'tableBlue' }
       ],
       [
         {},
         {},
-        { text: 'Цаг\nтөлөвлөлт,\nхариуцлага', alignment: 'center', style: 'tableYellow' },
-        { text: 'Суралцах\nхүсэл\nэрмэлзэл,\nөөрийгээ\nилэрхийлэх', alignment: 'center', style: 'tableYellow' },
-        { text: 'Мэдлэгээ\nсэргээн\nсанах,\nтайлбарлах', alignment: 'center', style: 'tableBlue' },
-        { text: 'Асуудал\nшийдвэрлэхэд\nмэдлэгээ\nхэрэглэх,\nзадлан\nшинжлэх', alignment: 'center', style: 'tableBlue' },
-        { text: 'Мэдлэгээ\nсэргээн\nсанах,\nтайлбарлах', alignment: 'center', style: 'tableGreen' },
-        { text: 'Асуудал\nшийдвэрлэхэд\nмэдлэгээ\nхэрэглэх,\nзадлан\nшинжлэх', alignment: 'center', style: 'tableGreen' },
-        { text: 'Лабораторийн\nхэмжилт,\nхэрэглэх,\nдаалгавар\nгүйцэтгэх', alignment: 'center', style: 'tableOrange' },
-        { text: 'Үр дүнг тохирох\nаргаар өгөгдсөн\nформатын\nдагуу\nболовсруулж,\nтайлагнах', alignment: 'center', style: 'tableOrange' },
-        { text: 'Өгөгдсөн\nдаалгаварын\nхүрээнд\nшийдвэрлэх\nасуудлаа\nтодорхойлж\nтомъёолох', alignment: 'center', style: 'tableGreen' },
-        { text: 'Шийдвэрлэх\nасуудлын\nхүрээнд\nтодорхой\nшийдэл\nдэвшүүлэх,\nдүн\nшинжилгээ\nхийх', alignment: 'center', style: 'tableGreen' },
-        { text: 'Мэдлэг, ур\nчадвараа\nашиглан\nсонгосон\nшийдлын\nдагуу\nасуудлыг\nшийдвэрлэх', alignment: 'center', style: 'tableGreen' },
-        { text: 'Бичгийн болон\nхарилцах ур\nчадвараа\nашиглан үр\nдүнг өгөгдсөн\nформатын\nдагуу\nтайлагнах,\nилтгэх', alignment: 'center', style: 'tableGreen' },
+        ...dynamicSubHeaders,
         {},
-        { text: 'Сэргээн\nсанах/ойлгох\nтүвшин', alignment: 'center', style: 'tableGreen' },
-        { text: 'Хэрэглэх\n/дүн\nшинжилгээ\nхийх түвшин', alignment: 'center', style: 'tableOrange' },
-        { text: 'Үнэлэх/\nбүтээх\nтүвшин', alignment: 'center', style: 'tableGreen' },
         {},
-        {}
+      ],
+      [
+        ...dynamicTopHeaders,
       ],
       [
         {},
         {},
-        { text: 'Явцын 70 онооны задаргаа /хичээлийн хэлбэрээс хамаарч өөрчлөгдөнө/', colSpan: 12, alignment: 'center', style: 'tableYellow' },
+        ...dynamicSubPoints,
         {},
         {},
-        {},
-        {},
-        {},
-        {},
-        {},
-        {},
-        {},
-        {},
-        {},
-        {},
-        { text: 'Шалгалтын 30 онооны задаргаа', colSpan: 3, alignment: 'center', style: 'tableGreen' },
-        {},
-        {},
-        {},
-        {}
       ],
       [
-        {},
-        {},
-        { text: '5', alignment: 'center', style: 'tableYellow' },
-        { text: '5', alignment: 'center', style: 'tableYellow' },
-        { text: '5', alignment: 'center', style: 'tableBlue' },
-        { text: '5', alignment: 'center', style: 'tableBlue' },
-        { text: '5', alignment: 'center', style: 'tableBlue' },
-        { text: '5', alignment: 'center', style: 'tableBlue' },
-        { text: '15', alignment: 'center', style: 'tableOrange' },
-        { text: '5', alignment: 'center', style: 'tableOrange' },
-        { text: '5', alignment: 'center', style: 'tableGreen' },
-        { text: '5', alignment: 'center', style: 'tableGreen' },
-        { text: '5', alignment: 'center', style: 'tableGreen' },
-        { text: '5', alignment: 'center', style: 'tableGreen' },
-        {},
-        { text: '5', alignment: 'center', style: 'tableGreen' },
-        { text: '10', alignment: 'center', style: 'tableOrange' },
-        { text: '15', alignment: 'center', style: 'tableGreen' },
-        {},
-        {}
+        { text: 'Лекц семинарын хичээлээр эзэмшсэн суралцхуйн үр дүнгүүд', colSpan: procPointsLength + 2, alignment: 'center', style: 'tableGoldenYellow' },
+        ...Array((procPointsLength + 2) - 1).fill({}),
       ],
       [
-        { text: 'Лекц семинарын хичээлээр эзэмшсэн суралцхуйн үр дүнгүүд', colSpan: 20, alignment: 'center', style: 'tableGoldenYellow' },
-        {},
-        {},
-        {},
-        {},
-        {},
-        {},
-        {},
-        {},
-        {},
-        {},
-        {},
-        {},
-        {},
-        {},
-        {},
-        {},
-        {},
-        {},
-        {}
+        { text: 'Лабораторийн хичээлээр эзэмшсэн суралцхуйн үр дүнгүүд', colSpan: procPointsLength + 2, alignment: 'center', style: 'tableGoldenYellow' },
+        ...Array((procPointsLength + 2) - 1).fill({}),
       ],
-      [
-        { text: 'Лабораторийн хичээлээр эзэмшсэн суралцхуйн үр дүнгүүд', colSpan: 20, alignment: 'center', style: 'tableGoldenYellow' },
-        {},
-        {},
-        {},
-        {},
-        {},
-        {},
-        {},
-        {},
-        {},
-        {},
-        {},
-        {},
-        {},
-        {},
-        {},
-        {},
-        {},
-        {},
-        {}
-      ],
+      ...cloColumn.map((row: any) => {
+        // Ensure row.stack is an array or return an empty array if it's not
+        return Array.isArray(row) ? row : [];
+      })
     ];
 
-    const cloAssesment = [
+    const tableBody = [
       [
         { text: 'д/д', alignment: 'center', style: 'tableGreen' },
         { text: 'Оюутны нэр/\nүнэлгээний аргууд', alignment: 'center', style: 'tableGreen' },
@@ -190,7 +349,7 @@ export class PdfCloGeneratorService {
         { text: 'Үсгэн үнэлгээ', alignment: 'center', style: 'tableGreen' },
       ],
       [
-        { text: 'Математикийн ойлголтыг дүрс боловсруулалтад хэрэглэх;',colSpan: 16, alignment: 'center', style: 'tableGreen' },
+        { text: 'Математикийн ойлголтыг дүрс боловсруулалтад хэрэглэх;', colSpan: 16, alignment: 'center', style: 'tableGreen' },
         {},
         {},
         {},
@@ -208,7 +367,7 @@ export class PdfCloGeneratorService {
         {},
       ],
       [
-        { text: 'Авбал зохих оноо',colSpan: 2, alignment: 'center', style: 'tableHeader' },
+        { text: 'Авбал зохих оноо', colSpan: 2, alignment: 'center', style: 'tableHeader' },
         {},
         { text: '1', alignment: 'center', style: 'tableHeader' },
         { text: '3', alignment: 'center', style: 'tableHeader' },
@@ -243,10 +402,7 @@ export class PdfCloGeneratorService {
         {
           table: {
             headerRows: 1,
-            widths: ['3%', '8%', '4%', '5%', '5%',
-              '5%', '5%', '5%', '5%', '5%',
-              '5%', '5%', '5%', '5%', '5%',
-              '5%', '5%', '5%', '5%', '5%'],
+            widths: widths,
             body: cloAssesment,
           },
         },

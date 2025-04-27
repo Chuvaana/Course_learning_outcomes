@@ -28,7 +28,7 @@ export class PdfComponent {
     this.pdfService.generatePdfTest(this.body);
   }
   generatePdf(){
-    this.pdfCloService.generatePdf(this.data);
+    // this.pdfCloService.generatePdf(this.data);
 
   }
 }

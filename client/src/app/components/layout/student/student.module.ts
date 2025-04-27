@@ -18,12 +18,12 @@ import { MenuComponent } from './menu/menu.component';
 
 const routes: Routes = [
   {
-    path: ':id',
-    component: MenuComponent,
+    path: '',
+    component: StudentComponent,
     children: [
       {
         path: ':id',
-        component: LessonComponent,
+        // component: LessonComponent,
         children: [
           { path: 'student', component: LesStudentComponent },
           { path: 'exam-progress-poll', component: ExamProgressPollComponent },
@@ -40,7 +40,7 @@ const routes: Routes = [
       { path: 'exam-progress-poll', component: ExamProgressPollComponent },
       {
         path: 'student-app-menu',
-        component: StudentComponent ,
+        component:  MenuComponent,
       }
     ]
   },

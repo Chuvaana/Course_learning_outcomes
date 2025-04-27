@@ -19,8 +19,9 @@
         severity="success"
         icon="pi pi-file-excel"
         label="Excel үүсгэх"
+        (onClick)="excelConvert()"
       />
-      <p-button severity="success" icon="pi pi-file-pdf" label="PDF үүсгэх" />
+      <p-button severity="success" icon="pi pi-file-pdf" label="PDF үүсгэх"  (onClick)="pdfConvert()"/>
     </div>
     <div id="pdf-content">
       <p-progressSpinner

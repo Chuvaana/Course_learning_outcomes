@@ -22,6 +22,9 @@ import { forkJoin } from 'rxjs';
 import { AssessmentService } from '../../../../../../services/assessmentService';
 import { CloPointPlanService } from '../../../../../../services/cloPointPlanService';
 import { TeacherService } from '../../../../../../services/teacherService';
+import { PdfCloGeneratorService } from '../../../../../../services/pdf-clo-generator.service';
+import * as XLSX from 'xlsx';
+import * as FileSaver from 'file-saver';
 
 interface SubMethod {
   _id: string;
@@ -67,14 +70,21 @@ export class CloPointPlanComponent {
 
   subMethodOrder: string[] = [];
 
+  pdfSendData: any[] = [];
+  dataTest = [
+    ['qw', 'Age', 'Country', 'Country', 'qw', 'Age', 'Country', 'Country', 'qw', 'Age', 'Country', 'Country', 'qw', 'Age', 'Country', 'Country', 'qw', 'Age', 'Country'],
+    ['qw', 'Age', 'Country', 'Country', 'qw', 'Age', 'Country', 'Country', 'qw', 'Age', 'Country', 'Country', 'qw', 'Age', 'Country', 'Country', 'qw', 'Age', 'Country'],
+    ['qw', 'Age', 'Country', 'Country', 'qw', 'Age', 'Country', 'Country', 'qw', 'Age', 'Country', 'Country', 'qw', 'Age', 'Country', 'Country', 'qw', 'Age', 'Country'],
+  ];
   constructor(
     private fb: FormBuilder,
     private service: TeacherService,
     private cloPointPlanService: CloPointPlanService,
     private assessService: AssessmentService,
     private msgService: MessageService,
-    private route: ActivatedRoute
-  ) {}
+    private route: ActivatedRoute,
+    private pdfGeneretorService: PdfCloGeneratorService
+  ) { }
 
   async ngOnInit() {
     this.route.parent?.paramMap.subscribe((params) => {
@@ -85,7 +95,7 @@ export class CloPointPlanComponent {
 
   async readData() {
     this.isLoading = true;
-
+    this.pdfSendData = []
     forkJoin([
       this.service.getCloList(this.lessonId),
       this.cloPointPlanService.getPointPlan(this.lessonId),
@@ -93,6 +103,7 @@ export class CloPointPlanComponent {
     ]).subscribe(([cloList, cloPlan, assessPlan]) => {
       this.cloList = cloList;
       this.assessPlan = assessPlan;
+      this.pdfSendData.push(this.assessPlan);
       this.cloPlan = cloPlan;
       this.subMethodOrder = (assessPlan as any).plans.flatMap((p: any) =>
         p.subMethods.map((s: any) => s._id)
@@ -425,6 +436,7 @@ export class CloPointPlanComponent {
           detail: `Алдаа гарлаа: ${err.message}`,
         })
     );
+    this.readData();
   }
 
   getCloName(cloId: string): string {
@@ -448,5 +460,28 @@ export class CloPointPlanComponent {
     return (
       this.getTotalProgressScore(rowIndex) + this.getTotalExamScore(rowIndex)
     );
+  }
+
+  excelConvert(): void {
+    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(this.cloPoint);
+    const workbook: XLSX.WorkBook = { Sheets: { 'data': worksheet }, SheetNames: ['data'] };
+    const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+
+    this.saveAsExcelFile(excelBuffer, 'exported-data');
+  }
+
+  private saveAsExcelFile(buffer: any, fileName: string): void {
+    const data: Blob = new Blob([buffer], { type: 'application/octet-stream' });
+    FileSaver.saveAs(data, fileName + '_export_' + new Date().getTime() + '.xlsx');
+  }
+
+  pdfConvert() {
+    if (this.cloPoint !== undefined && this.cloPoint !== null) {
+      console.log(this.cloPoint);
+      console.log(this.pdfSendData);
+      this.pdfSendData.push(this.cloPoint);
+      this.pdfSendData.push(this.cloPlan);
+      this.pdfGeneretorService.generatePdf(this.pdfSendData);
+    }
   }
 }

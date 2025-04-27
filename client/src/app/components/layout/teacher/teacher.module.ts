@@ -34,6 +34,7 @@ const routes: Routes = [
         component: LessonComponent,
         children: [
           { path: 'student', component: LesStudentComponent },
+          { path: 'app-active-points', component: LesStudentComponent },
           { path: 'studentList', component: LesStudentListComponent },
           { path: 'clo-tree', component: CloTreeComponent },
           { path: 'clo-point-plan', component: CloPointPlanComponent },
