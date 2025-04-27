@@ -18,11 +18,12 @@ import { MenuComponent } from './menu/menu.component';
 
 const routes: Routes = [
   {
-    path: '',
-    component: StudentComponent,
+    path: ':id',
+    component: MenuComponent,
     children: [
       {
-        path: 'lesson/:id',
+        path: ':id',
+        component: LessonComponent,
         children: [
           { path: 'student', component: LesStudentComponent },
           { path: 'exam-progress-poll', component: ExamProgressPollComponent },
@@ -36,9 +37,10 @@ const routes: Routes = [
           },
         ]
       },
+      { path: 'exam-progress-poll', component: ExamProgressPollComponent },
       {
         path: 'student-app-menu',
-        component: MenuComponent,
+        component: StudentComponent ,
       }
     ]
   },
@@ -59,7 +61,7 @@ const routes: Routes = [
     LessonListComponent, // ✅ Explicitly importing standalone components
     LessonComponent,
     TeacherComponent,
-    SharedComponent
+    SharedComponent,
   ],
   exports: [RouterModule, FormsModule, ReactiveFormsModule]
 })

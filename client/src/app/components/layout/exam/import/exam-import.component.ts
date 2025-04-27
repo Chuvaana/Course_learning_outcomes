@@ -87,7 +87,7 @@ export class ExamImportComponent {
   cloQuestionData: { cloId: any; cloName: any; max: any; min: any }[] = [];
 
   examTypes = [
-    { value: 'EXAM', label: 'Шалгалт' },
+    { value: 'EXAM', label: 'Улирлын шалгалт' },
     { value: 'QUIZ1', label: 'Сорил 1' },
     { value: 'QUIZ2', label: 'Сорил 2' },
   ];
@@ -568,6 +568,7 @@ export class ExamImportComponent {
                       this.lessonAllStudents.map((beforeData: any) => {
                         if (
                           assessmentFormData.studentId === beforeData.studentId
+                          && beforeData.examType === assessmentFormData.examType
                         ) {
                           id = beforeData._id;
                           checkData = false;

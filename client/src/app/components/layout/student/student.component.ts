@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { Router, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { MenuItem } from 'primeng/api';
 import { Menubar } from 'primeng/menubar';
 import { ToastModule } from 'primeng/toast';
@@ -18,9 +18,14 @@ import { AvatarModule } from 'primeng/avatar';
 export class StudentComponent {
   items: MenuItem[] | undefined;
 
-  constructor(private router: Router) {}
+  studentId: string = '';
+  constructor(private router: Router, private actRoute: ActivatedRoute) {
+
+  }
 
   ngOnInit() {
+    this.studentId = this.actRoute.snapshot.paramMap.get('id') || '';
+
     this.items = [
       {
 

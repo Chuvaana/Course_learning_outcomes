@@ -10,6 +10,7 @@ import { RippleModule } from 'primeng/ripple';
 import { Image } from 'primeng/image';
 import { AssessmentService } from '../../../../services/assessmentService';
 import { TabsModule } from 'primeng/tabs';
+import { CardModule } from 'primeng/card';
 
 @Component({
   selector: 'student-app-menu',
@@ -23,6 +24,7 @@ import { TabsModule } from 'primeng/tabs';
     RippleModule,
     CommonModule,
     RouterModule,
+    CardModule,
     Image,
   ],
   templateUrl: './menu.component.html',
@@ -35,7 +37,7 @@ export class MenuComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private service: AssessmentService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.lessonId = this.route.snapshot.paramMap.get('id') || '';

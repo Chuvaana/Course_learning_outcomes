@@ -65,9 +65,9 @@ export class ExamListComponent {
     { id: 'CLAB', name: 'Лаборатори' },
   ];
   examTypes = [
-    { label: 'Сорил 1', value: 'exam1' },
-    { label: 'Сорил 2', value: 'exam2' },
-    { label: 'Улирлын шалгалт', value: 'finalExam' },
+    { label: 'Сорил 1', value: 'QUIZ1' },
+    { label: 'Сорил 2', value: 'QUIZ2' },
+    { label: 'Улирлын шалгалт', value: 'EXAM' },
   ];
 
   constructor(
