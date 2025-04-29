@@ -1,6 +1,6 @@
 <div class="lesson-body">
   <div class="action-btn">
-    <p-button label="Илгээх" (onClick)="save()"></p-button>
+    <p-button label="Илгээх" [disabled]="createActive" (onClick)="save()"></p-button>
   </div>
   <div *ngFor="let question of dataQuestions; let qIndex = index" class="question">
     <div class="header-sub-title">

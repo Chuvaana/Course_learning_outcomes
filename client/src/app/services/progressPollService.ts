@@ -51,6 +51,9 @@ export class ProgressPollService {
   getAllStudentsSendPollQuess() {
     return this.http.get(`${this.apiUrl1}`);
   }
+  getStudentsSendPollQuesById(studentId: any) {
+    return this.http.get(`${this.apiUrl1}/${studentId}`);
+  }
   updateStudentsSendPollQues(data: any) {
     return this.http.post(`${this.apiUrl1}`, data);
   }
