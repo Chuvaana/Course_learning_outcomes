@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
-import { forkJoin, map } from 'rxjs';
+import { forkJoin, map, Observable } from 'rxjs';
 import { AssessmentService } from '../../../../../services/assessmentService';
 import { AttendanceService } from '../../../../../services/attendanceService';
 import { GradeService } from '../../../../../services/gradeService';
+import { lessonAssessmentService } from '../../../../../services/lessonAssessment';
 
 @Injectable({
   providedIn: 'root',
@@ -11,7 +12,8 @@ export class AssessProcessService {
   constructor(
     private assess: AssessmentService,
     private attend: AttendanceService,
-    private grade: GradeService
+    private grade: GradeService,
+    private lessonAssessmentService: lessonAssessmentService
   ) {}
 
   readSchedules(lessonId: string) {
@@ -83,6 +85,58 @@ export class AssessProcessService {
     );
   }
 
+  studentExamPoint(lessonId: string, type: string): Observable<any[]> {
+    return this.lessonAssessmentService.getLesAssessment(lessonId).pipe(
+      map((res) => {
+        return res.filter((exam: any) => exam.examType === type);
+      })
+    );
+  }
+  studentExamPointProcess(lessonId: string, cloList: any[]): Observable<any[]> {
+    const studentPoints: {
+      students: any;
+      cloId: string;
+      type: string;
+    }[] = [];
+
+    const types = ['QUIZ1', 'QUIZ2', 'EXAM'];
+    const allObservables: Observable<any>[] = [];
+
+    types.forEach((type) => {
+      cloList.forEach((clo: any) => {
+        const obs$ = this.studentExamPoint(lessonId, type).pipe(
+          map((data: any[]) => {
+            const students = data.map((item: any) => {
+              let allPointSum = 0;
+              let takePointSum = 0;
+              item.question.forEach((que: any) => {
+                if (que.cloId === clo.id) {
+                  allPointSum += Number(que.allPoint) || 0;
+                  takePointSum += Number(que.takePoint) || 0;
+                }
+              });
+              return {
+                studentCode: item.studentId,
+                allPoint: allPointSum,
+                takePoint: takePointSum,
+              };
+            });
+
+            studentPoints.push({
+              students,
+              cloId: clo.id,
+              type,
+            });
+          })
+        );
+
+        allObservables.push(obs$);
+      });
+    });
+
+    return forkJoin(allObservables).pipe(map(() => studentPoints));
+  }
+
   studentAttPoint(lessonId: string, cloList: any) {
     return forkJoin({
       attendance: this.attend.getAttendanceByLesson(lessonId),
@@ -122,7 +176,7 @@ export class AssessProcessService {
 
           adata.push(cloAttPoint);
         });
-
+        console.log(adata);
         return adata;
       })
     );
@@ -250,4 +304,3 @@ export class AssessProcessService {
     return adata;
   }
 }
-// 67f0c90b44acf77dcbdc2bf9  ---- 6800fb934fc06b730a882614

@@ -113,7 +113,6 @@ export class LessonAssessmentComponent {
                 );
 
               if (grade) {
-                console.log(grade);
                 pointItem.point = grade.point;
                 total += grade.point;
               }
@@ -127,13 +126,54 @@ export class LessonAssessmentComponent {
           });
         });
       });
+
+    this.assessProcess
+      .studentAttPoint(this.lessonId, this.cloList)
+      .subscribe((data) => {});
+
+    this.assessProcess
+      .studentExamPointProcess(this.lessonId, this.cloList)
+      .subscribe((examQuizPointData) => {
+        console.log(examQuizPointData);
+        this.tabs.forEach((item: any) => {
+          item.content.forEach((studentRow: any) => {
+            let total = 0;
+
+            studentRow.points.forEach((pointItem: any) => {
+              // const grade = examQuizPointData
+              //   .find((g: any) =>
+              //     g.sumPoints.find(
+              //       (s: any) =>
+              //         s.studentId === studentRow.studentCode &&
+              //         s.subMethodId === pointItem.subMethodId
+              //     )
+              //   )
+              //   ?.sumPoints.find(
+              //     (s: any) =>
+              //       s.studentId === studentRow.studentCode &&
+              //       s.subMethodId === pointItem.subMethodId
+              //   );
+              // if (grade) {
+              //   pointItem.point = grade.point;
+              //   total += grade.point;
+              // }
+            });
+
+            // studentRow.totalPoint = total;
+            // studentRow.percentage = +((total / item.totalPoint) * 100).toFixed(
+            //   2
+            // );
+            // studentRow.letterGrade = this.getLetterGrade(studentRow.percentage);
+          });
+        });
+      });
   }
 
   getLetterGrade(percent: number): string {
-    if (percent >= 90) return 'A';
-    if (percent >= 80) return 'B';
-    if (percent >= 70) return 'C';
-    if (percent >= 60) return 'D';
+    if (percent > 90) return 'A';
+    if (percent > 80) return 'B';
+    if (percent > 70) return 'C';
+    if (percent > 60) return 'D';
     return 'F';
   }
 

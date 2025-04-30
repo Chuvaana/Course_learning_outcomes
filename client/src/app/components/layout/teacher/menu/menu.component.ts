@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { MenuItem } from 'primeng/api';
 import { AvatarModule } from 'primeng/avatar';
 import { BadgeModule } from 'primeng/badge';
@@ -30,7 +30,8 @@ export class MenuComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private service: AssessmentService
+    private service: AssessmentService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -143,5 +144,10 @@ export class MenuComponent implements OnInit {
         this.items = [...this.items!, newItem];
       }
     });
+  }
+
+  logout() {
+    localStorage.clear(); // clear tokens or user info
+    this.router.navigate(['/teacher-login']); // redirect to login
   }
 }

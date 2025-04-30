@@ -1,0 +1,50 @@
+<div class="lesson-list-container">
+  <div class="lesson-cards">
+    <div *ngFor="let lesson of courses" class="lesson-card">
+      <p-card [style]="{ width: '100%', overflow: 'hidden' }">
+        <ng-template #title> {{ lesson.department }}</ng-template>
+        <a
+          [routerLink]="['/main/teacher/lesson', lesson.id, 'curriculum']"
+          *ngIf="create"
+        >
+          {{ lesson.lessonCode }} - {{ lesson.lessonName }}
+        </a>
+        <a [routerLink]="['/main/teacher/report', lesson.id]" *ngIf="!create">
+          {{ lesson.lessonCode }} - {{ lesson.lessonName }}
+        </a>
+      </p-card>
+    </div>
+  </div>
+</div>
+
+<div style="height: 500px"></div>
+
+<footer class="footer">
+  <div class="footer-content">
+    <div class="footer-content-image">
+      <p>ШУТИС - МХТС</p>
+      <div class="card flex justify-center">
+        <p-image src="assets/img/White_logo.png" alt="Image" width="250" />
+      </div>
+      <span>&copy; Copyright © 2024 МХТС.</span>
+    </div>
+    <div class="footer-content-text">
+      <div class="footer-content-text-p1">
+        <p>ХОЛБОО БАРИХ</p>
+        <span> ШУТИС-ийн МХТС </span>
+        <span> sict&#64;must.edu.mn </span>
+        <span> +976-70151333 </span>
+        <span> Баянзүрх дүүрэг, 22 хороо, МХТС </span>
+      </div>
+      <div class="footer-content-text-p2">
+        <p>ЧУХАЛ ХОЛБООС</p>
+        <a href="https://www.must.edu.mn/mn/"> ШУТИС-ийн Вэб </a>
+        <a href="http://www.sict.edu.mn/"> МХТС-ийн Вэб </a>
+        <a href="https://professor.must.edu.mn/"> Багшийн Вэб </a>
+        <a href="https://student.must.edu.mn/Login?ReturnUrl=%2f">
+          Оюутны Вэб
+        </a>
+      </div>
+    </div>
+  </div>
+</footer>

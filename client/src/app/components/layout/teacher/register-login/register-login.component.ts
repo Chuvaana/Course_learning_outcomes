@@ -1,6 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
@@ -8,6 +14,8 @@ import { DropdownModule } from 'primeng/dropdown';
 import { PasswordModule } from 'primeng/password';
 import { RegLogService } from '../../../../services/regLogService';
 import { Image } from 'primeng/image';
+import { MessageService } from 'primeng/api';
+import { ToastModule } from 'primeng/toast';
 
 @Component({
   selector: 'app-register-login',
@@ -21,12 +29,14 @@ import { Image } from 'primeng/image';
     CommonModule,
     FormsModule,
     CardModule,
-    RouterModule],
+    RouterModule,
+    ToastModule,
+  ],
+  providers: [MessageService],
   templateUrl: './register-login.component.html',
-  styleUrl: './register-login.component.scss'
+  styleUrl: './register-login.component.scss',
 })
 export class RegisterLoginComponent {
-
   ingredient!: string;
 
   isRegister = true;
@@ -37,11 +47,23 @@ export class RegisterLoginComponent {
   selectedBranch: string = '';
   filteredDepartments = [];
 
-  constructor(private fb: FormBuilder, private service: RegLogService, private router: Router) {
+  constructor(
+    private fb: FormBuilder,
+    private service: RegLogService,
+    private router: Router,
+    private msgService: MessageService
+  ) {
     this.teacherForm = this.fb.group({
       name: ['', Validators.required],
       code: ['', Validators.required],
-      email: ['', [Validators.required, Validators.email, Validators.pattern(/^[a-zA-Z0-9._%+-]+@must\.edu\.mn$/)]],
+      email: [
+        '',
+        [
+          Validators.required,
+          Validators.email,
+          Validators.pattern(/^[a-zA-Z0-9._%+-]+@must\.edu\.mn$/),
+        ],
+      ],
       branch: ['', Validators.required],
       department: ['', Validators.required],
       password: ['', Validators.required],
@@ -54,31 +76,44 @@ export class RegisterLoginComponent {
 
   loadBranches(): void {
     this.service.getBranches().subscribe((data: any[]) => {
-      this.branches = data.map(branch => ({ name: branch.name, id: branch.id || branch.name }));
+      this.branches = data.map((branch) => ({
+        name: branch.name,
+        id: branch.id || branch.name,
+      }));
     });
   }
 
   onBranchChange(branchId: string): void {
     this.service.getDepartments(branchId).subscribe((data: any[]) => {
       if (data) {
-        this.departments = data.map(dept => ({ name: dept.name, id: dept.id || dept.name }));
+        this.departments = data.map((dept) => ({
+          name: dept.name,
+          id: dept.id || dept.name,
+        }));
       }
     });
   }
 
   submitButton(): void {
-    console.log(this.isRegister ? "Teacher registering:" : "Teacher logging in:");
+    console.log(
+      this.isRegister ? 'Teacher registering:' : 'Teacher logging in:'
+    );
 
     if (this.isRegister) {
       // Registering a teacher
       if (this.teacherForm.valid) {
         this.service.registerTeacher(this.teacherForm.value).subscribe(
           (data: { message: string; teacher: any }) => {
+            this.msgService.add({
+              severity: 'success',
+              summary: 'Амжилттай',
+              detail: 'Амжилттай бүртгэгдлээ',
+            });
             if (data.message) {
               alert(data.message);
             }
             if (data.teacher) {
-              console.log("Teacher created:", data.teacher);
+              console.log('Teacher created:', data.teacher);
             }
             this.teacherForm.reset(); // Reset form after successful registration
           },
@@ -88,21 +123,25 @@ export class RegisterLoginComponent {
             if (error && error.error && error.error.message) {
               errorMessage = error.error.message;
             }
-
-            alert(errorMessage);
-            console.error('Error:', error);
+            this.msgService.add({
+              severity: 'error',
+              summary: 'Алдаа',
+              detail: `Алдаа гарлаа: ${errorMessage}`,
+            });
           }
         );
       }
     } else {
-
       this.service.loginTeacher(this.teacherForm.value).subscribe(
         (response: any) => {
           if (response && response.token) {
-            console.log("Teacher logged in:", response);
-
-            // Store the token in localStorage
-            localStorage.setItem('authToken', response.token);
+            this.msgService.add({
+              severity: 'success',
+              summary: 'Амжилттай',
+              detail: 'Амжилттай нэвтэрлээ',
+            }),
+              // Store the token in localStorage
+              localStorage.setItem('authToken', response.token);
             localStorage.setItem('teacherId', response.teacher.id);
 
             // Optionally, you can navigate the user to a protected route
@@ -116,11 +155,13 @@ export class RegisterLoginComponent {
             errorMessage = error.error.message;
           }
 
-          alert(errorMessage);
-          console.error('Error:', error);
+          this.msgService.add({
+            severity: 'error',
+            summary: 'Алдаа',
+            detail: `Алдаа гарлаа: ${errorMessage}`,
+          });
         }
       );
-
     }
   }
 

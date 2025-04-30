@@ -69,8 +69,6 @@ exports.updateStudents = async (req, res) => {
       return res.status(400).json({ message: 'Invalid student data' });
     }
 
-    console.log(studentData);
-
     const updatedStudents = [];
 
     for (const student of studentData) {
@@ -82,26 +80,6 @@ exports.updateStudents = async (req, res) => {
       const labDay = lab.day;
       const labTime = lab.time;
 
-      console.log(
-        'rr' +
-          lessonId +
-          ' ' +
-          studentCode +
-          ' ' +
-          studentName +
-          ' ' +
-          lecDay +
-          ' ' +
-          lecTime +
-          ' ' +
-          semDay +
-          ' ' +
-          semTime +
-          ' ' +
-          labDay +
-          ' ' +
-          labTime
-      );
       const lesson = await Lesson.findById(lessonId);
       if (!lesson) {
         return res.status(400).json({ message: `Lesson ${lessonId} not found` });
@@ -161,34 +139,10 @@ exports.uploadStudents = async (req, res) => {
     if (!studentData || !Array.isArray(studentData)) {
       return res.status(400).json({ message: 'Invalid student data' });
     }
-
-    console.log(studentData);
-
     const updatedStudents = [];
 
     for (const student of studentData) {
       const { lessonId, studentCode, studentName, lecDay, lecTime, semDay, semTime, labDay, labTime } = student;
-
-      console.log(
-        'rr' +
-          lessonId +
-          ' ' +
-          studentCode +
-          ' ' +
-          studentName +
-          ' ' +
-          lecDay +
-          ' ' +
-          lecTime +
-          ' ' +
-          semDay +
-          ' ' +
-          semTime +
-          ' ' +
-          labDay +
-          ' ' +
-          labTime
-      );
       const lesson = await Lesson.findById(lessonId);
       if (!lesson) {
         return res.status(400).json({ message: `Lesson ${lessonId} not found` });
@@ -288,5 +242,51 @@ exports.getStudentsByClassTypeAndDayTime = async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Error fetching students' });
+  }
+};
+
+exports.getStudentsByClassTypeAndDayTime = async (req, res) => {
+  const { classType } = req.params;
+  let { day, time } = req.query; // Getting the selected day and time from query params
+
+  try {
+    // Validate classType
+    if (!['alec', 'bsem', 'clab'].includes(classType)) {
+      return res.status(400).json({ message: 'Invalid class type' });
+    }
+
+    // Validate time (optional: adjust according to your requirements)
+    if (!time) {
+      return res.status(400).json({ message: 'Time is required' });
+    }
+    time = parseInt(time, 10);
+
+    const students = await Student.find({
+      [`${classType}.day`]: day,
+      [`${classType}.time`]: time,
+    });
+
+    res.json(students);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error fetching students' });
+  }
+};
+
+exports.getLessonByStudent = async (req, res) => {
+  try {
+    const students = await Student.find({ studentCode: req.params.id }).populate('lessonId');
+
+    if (students.length === 0) {
+      return res.status(404).json({ message: 'No students found' });
+    }
+
+    // Extract the populated lesson data
+    const lessons = students.map((student) => student.lessonId);
+
+    res.json({ lessons });
+  } catch (error) {
+    console.error('Error fetching lessons:', error);
+    res.status(500).json({ message: 'Server error' });
   }
 };

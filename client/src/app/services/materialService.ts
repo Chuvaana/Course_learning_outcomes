@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class MaterialService {
   private apiUrl = 'http://localhost:3000/api/materials';
@@ -14,7 +14,7 @@ export class MaterialService {
   }
 
   getMaterials(lessonCode: string) {
-    console.log(lessonCode + "fff");
+    console.log(lessonCode + 'fff');
     return this.http.get(`${this.apiUrl}/${lessonCode}`);
   }
 

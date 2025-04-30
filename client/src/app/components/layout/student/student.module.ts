@@ -1,26 +1,28 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule, Routes } from '@angular/router';
 import { ExamListComponent } from '../exam/exam-list.component';
-import { ExamImportComponent } from '../exam/import/exam-import.component';
-import { StudentImportComponent } from './import/student-import.component';
-import { StudentComponent } from './student.component';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { LessonListComponent } from '../teacher/lesson-list/lesson-list.component';
+import { QuestionTypeListComponent } from '../exam/question-type-list/question-type-list.component';
+import { SharedComponent } from '../shared/shared.component';
+import { LessonListComponent } from './lesson-list/lesson-list.component';
+import { LesStudentComponent } from '../teacher/lesson-list/lesson/les-student/les-student.component';
 import { LessonComponent } from '../teacher/lesson-list/lesson/lesson.component';
 import { TeacherComponent } from '../teacher/teacher.component';
-import { SharedComponent } from '../shared/shared.component';
-import { QuestionTypeListComponent } from '../exam/question-type-list/question-type-list.component';
-import { LesStudentComponent } from '../teacher/lesson-list/lesson/les-student/les-student.component';
-import { ProgressPollComponent } from '../teacher/lesson-list/lesson/progress-poll/progress-poll.component';
 import { ExamProgressPollComponent } from './exam-progress-poll/exam-progress-poll.component';
-import { MenuComponent } from './menu/menu.component';
+import { StudentImportComponent } from './import/student-import.component';
+import { StudentComponent } from './student.component';
 
 const routes: Routes = [
   {
     path: '',
     component: StudentComponent,
+
     children: [
+      {
+        path: 'lesson-list',
+        component: LessonListComponent,
+      },
       {
         path: ':id',
         // component: LessonComponent,
@@ -33,23 +35,18 @@ const routes: Routes = [
           },
           {
             path: 'exam-list',
-            component: ExamListComponent
+            component: ExamListComponent,
           },
-        ]
+        ],
       },
       { path: 'exam-progress-poll', component: ExamProgressPollComponent },
-      {
-        path: 'student-app-menu',
-        component:  MenuComponent,
-      }
-    ]
+    ],
   },
   {
     path: 'question-type-list',
     component: QuestionTypeListComponent,
-  }
-
-]
+  },
+];
 
 @NgModule({
   declarations: [],
@@ -63,6 +60,6 @@ const routes: Routes = [
     TeacherComponent,
     SharedComponent,
   ],
-  exports: [RouterModule, FormsModule, ReactiveFormsModule]
+  exports: [RouterModule, FormsModule, ReactiveFormsModule],
 })
-export class StudentModule { }
+export class StudentModule {}

@@ -1,6 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
@@ -26,29 +32,40 @@ import { ToastModule } from 'primeng/toast';
     CardModule,
     RouterModule,
     InputTextModule,
-    ToastModule],
+    ToastModule,
+  ],
   templateUrl: './login-student.component.html',
-    providers: [MessageService],
-  styleUrl: './login-student.component.scss'
+  providers: [MessageService],
+  styleUrl: './login-student.component.scss',
 })
 export class LoginStudentComponent {
-
   ingredient!: string;
 
   isRegister = false;
-  teacherForm: FormGroup;
+  studentForm: FormGroup;
   branches: any[] = [];
   departments: any[] = [];
 
   selectedBranch: string = '';
   filteredDepartments = [];
 
-  constructor(private fb: FormBuilder, private service: RegLogService, private router: Router,
-    private msgService: MessageService) {
-    this.teacherForm = this.fb.group({
+  constructor(
+    private fb: FormBuilder,
+    private service: RegLogService,
+    private router: Router,
+    private msgService: MessageService
+  ) {
+    this.studentForm = this.fb.group({
       name: ['', Validators.required],
       code: ['', Validators.required],
-      email: ['', [Validators.required, Validators.email, Validators.pattern(/^[a-zA-Z0-9._%+-]+@must\.edu\.mn$/)]],
+      email: [
+        '',
+        [
+          Validators.required,
+          Validators.email,
+          Validators.pattern(/^[a-zA-Z0-9._%+-]+@must\.edu\.mn$/),
+        ],
+      ],
       branch: ['', Validators.required],
       department: ['', Validators.required],
       password: ['', Validators.required],
@@ -61,75 +78,88 @@ export class LoginStudentComponent {
 
   loadBranches(): void {
     this.service.getBranches().subscribe((data: any[]) => {
-      this.branches = data.map(branch => ({ name: branch.name, id: branch.id || branch.name }));
+      this.branches = data.map((branch) => ({
+        name: branch.name,
+        id: branch.id || branch.name,
+      }));
     });
   }
 
   onBranchChange(branchId: string): void {
     this.service.getDepartments(branchId).subscribe((data: any[]) => {
       if (data) {
-        this.departments = data.map(dept => ({ name: dept.name, id: dept.id || dept.name }));
+        this.departments = data.map((dept) => ({
+          name: dept.name,
+          id: dept.id || dept.name,
+        }));
       }
     });
   }
 
   submitButton(): void {
-    console.log(this.isRegister ? "Teacher registering:" : "Teacher logging in:");
+    console.log(
+      this.isRegister ? 'Student registering:' : 'Student logging in:'
+    );
 
     if (this.isRegister) {
-      // Registering a teacher
-      if (this.teacherForm.valid) {
-        this.service.loginStudent(this.teacherForm.value).subscribe(
-          (data: { message: string; teacher: any }) => {
+      // Registering a Student
+      if (this.studentForm.valid) {
+        this.service.registerStudent(this.studentForm.value).subscribe(
+          (data: { message: string; Student: any }) => {
+            this.msgService.add({
+              severity: 'success',
+              summary: 'Амжилттай',
+              detail: 'Амжилттай бүртгэгдлээ',
+            });
             if (data.message) {
               alert(data.message);
             }
-            if (data.teacher) {
-              console.log("Teacher created:", data.teacher);
+            if (data.Student) {
+              console.log('Student created:', data.Student);
             }
-            this.teacherForm.reset(); // Reset form after successful registration
+            this.studentForm.reset(); // Reset form after successful registration
           },
           (error) => {
-            let errorMessage = 'Error registering teacher';
+            let errorMessage = 'Error registering student';
 
             if (error && error.error && error.error.message) {
               errorMessage = error.error.message;
             }
-
-            alert(errorMessage);
-            console.error('Error:', error);
+            this.msgService.add({
+              severity: 'error',
+              summary: 'Алдаа',
+              detail: `Алдаа гарлаа: ${errorMessage}`,
+            });
           }
         );
       }
     } else {
-
-      this.service.loginStudent(this.teacherForm.value).subscribe(
+      this.service.loginStudent(this.studentForm.value).subscribe(
         (response: any) => {
           if (response && response.token) {
             this.msgService.add({
               severity: 'success',
               summary: 'Амжилттай',
-              detail: `Оюутан (${response.studen.email}) амжилттай нэвтэрлээ.`,
+              detail: `Оюутан (${response.student.email}) амжилттай нэвтэрлээ.`,
             });
-            console.log("Teacher logged in:", response);
 
             // Store the token in localStorage
             localStorage.setItem('authToken', response.token);
-            localStorage.setItem('teacherId', response.studen.id);
+            localStorage.setItem('studentCode', response.student.code);
+            localStorage.setItem('studentId', response.student.id);
 
             // Optionally, you can navigate the user to a protected route
-            this.router.navigate(['/main/student/student-app-menu']);
+            this.router.navigate(['/main/student/lesson-list']);
           }
         },
         (error) => {
           this.msgService.add({
             severity: 'error',
             summary: 'Алдаа',
-            detail: `Нэвтрэхэд алдаа гарлаа.`,
+            detail: `Нэвтрэхэд алдаа гарлаа. ${error}`,
           });
         }
       );
-
     }
   }
 
