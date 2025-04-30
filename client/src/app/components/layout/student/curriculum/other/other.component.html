@@ -1,0 +1,21 @@
+<div style="display: flex; justify-content: center; margin-top: 2rem">
+  <div style="width: 70%; display: flex; flex-direction: column; gap: 2rem">
+    <p-divider><b>Хичээлийн тодорхойлолт</b></p-divider>
+    <div class="p-card p-mb-4">
+      <div class="p-card-body">
+        <p class="text-justify white-space-pre-line m-0">
+          {{ otherForm.get("description")?.value }}
+        </p>
+      </div>
+    </div>
+
+    <p-divider><b>Хичээлийн зорилго</b></p-divider>
+    <div class="p-card">
+      <div class="p-card-body">
+        <p class="text-justify white-space-pre-line m-0">
+          {{ otherForm.get("goal")?.value }}
+        </p>
+      </div>
+    </div>
+  </div>
+</div>

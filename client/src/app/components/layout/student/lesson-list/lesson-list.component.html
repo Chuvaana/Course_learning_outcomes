@@ -4,12 +4,9 @@
       <p-card [style]="{ width: '100%', overflow: 'hidden' }">
         <ng-template #title> {{ lesson.department }}</ng-template>
         <a
-          [routerLink]="['/main/teacher/lesson', lesson.id, 'curriculum']"
+          [routerLink]="['/main/student', lesson.id, 'curriculum']"
           *ngIf="create"
         >
-          {{ lesson.lessonCode }} - {{ lesson.lessonName }}
-        </a>
-        <a [routerLink]="['/main/teacher/report', lesson.id]" *ngIf="!create">
           {{ lesson.lessonCode }} - {{ lesson.lessonName }}
         </a>
       </p-card>

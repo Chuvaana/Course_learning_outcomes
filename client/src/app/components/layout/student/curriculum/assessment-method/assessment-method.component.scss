@@ -1,0 +1,11 @@
+:host ::ng-deep .p-datatable {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+:host ::ng-deep .p-datatable th,
+:host ::ng-deep .p-datatable td {
+  padding: 10px;
+  text-align: center;
+  border: 1px solid #ddd;
+}

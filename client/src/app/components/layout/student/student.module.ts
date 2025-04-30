@@ -12,6 +12,7 @@ import { TeacherComponent } from '../teacher/teacher.component';
 import { ExamProgressPollComponent } from './exam-progress-poll/exam-progress-poll.component';
 import { StudentImportComponent } from './import/student-import.component';
 import { StudentComponent } from './student.component';
+import { CurriculumComponent } from './curriculum/curriculum.component';
 
 const routes: Routes = [
   {
@@ -27,6 +28,7 @@ const routes: Routes = [
         path: ':id',
         // component: LessonComponent,
         children: [
+          { path: 'curriculum', component: CurriculumComponent },
           { path: 'student', component: LesStudentComponent },
           { path: 'exam-progress-poll', component: ExamProgressPollComponent },
           {
