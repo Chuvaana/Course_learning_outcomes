@@ -1,0 +1,61 @@
+<div class="student-list-container">
+  <div class="filter-section">
+    <!-- <p-dropdown
+      [options]="examTypes"
+      [(ngModel)]="examType"
+      optionLabel="label"
+      placeholder="Шалгалтын төрөл"
+      (onChange)="examTypesData($event.value)" /> -->
+      <p-dropdown
+        [(ngModel)]="examType"
+        [options]="examTypes"
+        optionLabel="label"
+        optionValue="value"
+        placeholder="Шалгалтын төрөл"
+        (onChange)="examTypesData($event.value)"
+        class="dropdown-filter"
+      ></p-dropdown>
+    <input
+      type="text"
+      pInputText
+      [(ngModel)]="searchQuery"
+      (input)="filterStudents()"
+      placeholder="Нэр эсвэл ID хайх..."
+      class="search-input"
+    />
+    <p-button
+      label="Шүүлт цэвэрлэх"
+      icon="pi pi-refresh"
+      (click)="loadStudents()"
+      class="refresh-btn"
+    ></p-button>
+  </div>
+
+  <p-table [value]="examList" [paginator]="true" [rows]="15" responsiveLayout="scroll">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>#</th>
+        <th>Оюутны код</th>
+        <th>Овог</th>
+        <th>Нэр</th>
+        <th>Имайл хаяг</th>
+        <th>Төрөл</th>
+        <th>Төлөв</th>
+        <th>Авсан оноо</th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-examList let-index="rowIndex">
+      <tr>
+        <td>{{ index + 1 }}</td>
+        <td>{{ examList.studentId }}</td>
+        <td>{{ examList.lastName }}</td>
+        <td>{{ examList.firstName }}</td>
+        <td>{{ examList.gmail }}</td>
+        <td>{{ examList.examTypeName }}</td>
+        <td>{{ examList.status }}</td>
+        <td>{{ examList.takePoint }}</td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
