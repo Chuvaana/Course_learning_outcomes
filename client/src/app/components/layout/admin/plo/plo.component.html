@@ -1,0 +1,42 @@
+<p-table [value]="items" editMode="row">
+    <ng-template pTemplate="header">
+        <tr>
+            <th>Branch</th>
+            <th>Department</th>
+            <th>Nmae</th>
+            <th>Item Code</th>
+            <th>Item Value</th>
+            <th>Action</th>
+        </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-item let-editing="editing" let-ri="rowIndex">
+        <tr [pEditableRow]>
+            <td>
+                <input pInputText [(ngModel)]="item.branchId" />
+            </td>
+            <td [pEditableRow]>
+                <input pInputText [(ngModel)]="item.department" />
+            </td>
+            <td [pEditableRow]>
+                <input pInputText [(ngModel)]="item.name" />
+            </td>
+            <td [pEditableRow]>
+                <input pInputText [(ngModel)]="item.itemCode" />
+            </td>
+            <td [pEditableRow]>
+                <input pInputText [(ngModel)]="item.itemValue" />
+            </td>
+            <td>
+                <div class="flex items-center justify-center gap-2">
+                    <button *ngIf="!editing" pButton pRipple type="button" pInitEditableRow icon="pi pi-pencil"
+                        (click)="onRowEditInit(item, ri)" text rounded severity="secondary"></button>
+                    <button *ngIf="editing" pButton pRipple type="button" pSaveEditableRow icon="pi pi-check"
+                        (click)="onRowEditSave(item)" text rounded severity="secondary"></button>
+                    <button *ngIf="editing" pButton pRipple type="button" pCancelEditableRow icon="pi pi-times"
+                        (click)="onRowEditCancel(item, ri)" text rounded severity="secondary"></button>
+                </div>
+            </td>
+        </tr>
+    </ng-template>
+</p-table>

@@ -11,6 +11,8 @@ import { AdminComponent } from './admin.component';
 import { AdminStudentImportComponent } from './import/student-import.component';
 import { PdfComponent } from './pdf-convert/pdf.component';
 import { ConfigComponent } from './config/config.component';
+import { PloComponent } from './plo/plo.component';
+import { VerbComponent } from './verb/verb.component';
 
 const routes: Routes = [
   {
@@ -32,6 +34,14 @@ const routes: Routes = [
       {
         path: 'config',
         component: ConfigComponent,
+      },
+      {
+        path: 'plo',
+        component: PloComponent,
+      },
+      {
+        path: 'verb',
+        component: VerbComponent,
       }
     ]
   },

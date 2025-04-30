@@ -60,6 +60,21 @@ export class NavbarComponent {
 
     this.items = [
       {
+        label: 'Ерөнхий тохиргоо',
+        icon: 'pi pi-check',
+        routerLink: ['/main/admin/config'],
+      },
+      {
+        label: 'PLO тохиргоо',
+        icon: 'pi pi-check',
+        routerLink: ['/main/admin/plo'],
+      },
+      {
+        label: 'Үйл үгний тохиргоо',
+        icon: 'pi pi-check',
+        routerLink: ['/main/admin/verb'],
+      },
+      {
         label: 'Хичээлийн хөтөлбөр',
         icon: 'pi pi-book',
         routerLink: ['/main/teacher/lesson', this.lessonId, 'curriculum'],
@@ -79,7 +94,6 @@ export class NavbarComponent {
         icon: 'pi pi-check',
         routerLink: ['/main/teacher/lesson', this.lessonId, 'clo-point-plan'],
       },
-
       {
         label: 'Дүнгийн төлөвлөлт3',
         icon: 'pi pi-check',
