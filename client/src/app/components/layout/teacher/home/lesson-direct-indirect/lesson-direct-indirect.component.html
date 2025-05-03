@@ -1,1 +1,20 @@
-<p>lesson-direct-indirect works!</p>
+<p-table [value]="summaryData" responsiveLayout="scroll">
+  <ng-template pTemplate="header">
+    <tr>
+      <th>Үнэлгээ / CLOs</th>
+      <th *ngFor="let clo of cloList">{{ getCloName(clo) }}</th>
+    </tr>
+  </ng-template>
+
+  <ng-template pTemplate="body" let-row>
+    <tr>
+      <td>{{ row.label }}</td>
+      <td
+        *ngFor="let clo of cloList"
+        [ngStyle]="getCellStyle(row.values[clo], row.type)"
+      >
+        {{ row.values[clo] }}<span *ngIf="row.type === 'percent'">%</span>
+      </td>
+    </tr>
+  </ng-template>
+</p-table>

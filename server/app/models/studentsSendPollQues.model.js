@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const Question = new mongoose.Schema({
   questionTitle: { type: String, required: true },
-  questionId: { type: String },
+  cloId: { type: String },
   answerValue: { type: String, required: true },
   questionType: { type: String, required: true },
   questionTypeName: { type: String, required: true },
@@ -17,7 +17,7 @@ const SubQuestions = new mongoose.Schema({
 
 const StudentsSendPollQuesSchema = new mongoose.Schema(
   {
-    lessonId: { type: String, required: true },
+    lessonId: { type: mongoose.Schema.Types.ObjectId, ref: 'Lesson' },
     studentId: { type: String, required: true },
     groupList: [SubQuestions],
   },

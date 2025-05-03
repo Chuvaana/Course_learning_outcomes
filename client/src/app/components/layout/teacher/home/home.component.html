@@ -61,10 +61,14 @@
         ></app-lesson-indirect-assess>
       </p-tabpanel>
       <p-tabpanel value="6">
-        <app-lesson-direct-indirect></app-lesson-direct-indirect>
+        <app-lesson-direct-indirect
+          [lessonId]="lessonId"
+        ></app-lesson-direct-indirect>
       </p-tabpanel>
       <p-tabpanel value="7">
-        <app-lesson-poll-analysis></app-lesson-poll-analysis>
+        <app-lesson-poll-analysis
+          [lessonId]="lessonId"
+        ></app-lesson-poll-analysis>
       </p-tabpanel>
     </p-tabpanels>
   </p-tabs>

@@ -4,6 +4,7 @@ const QuestionPoll = new mongoose.Schema({
   questionTitle: { type: String },
   questionType: { type: String, required: true },
   questionTypeName: { type: String, required: true },
+  cloId: { type: String },
 });
 
 const PollQuestionsSchema = new mongoose.Schema(

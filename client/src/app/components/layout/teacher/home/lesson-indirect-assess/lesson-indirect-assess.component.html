@@ -22,7 +22,7 @@
   <ng-template pTemplate="body" let-row>
     <!-- Row 1: counts -->
     <tr>
-      <td rowspan="2">{{ row.clo }}</td>
+      <td rowspan="2">{{ getCloName(row.clo) }}</td>
       <td>Хариултын тоо</td>
       <td *ngFor="let rating of ratingLevels">
         {{ row.responses[rating.key] }}
@@ -42,3 +42,17 @@
     </tr>
   </ng-template>
 </p-table>
+
+<p-chart
+  type="bar"
+  [data]="chartData"
+  [options]="chartOptions"
+  style="max-height: 500px"
+></p-chart>
+
+<p-chart
+  type="bar"
+  [data]="chartData45"
+  [options]="chartOptions45"
+  style="max-height: 500px"
+></p-chart>

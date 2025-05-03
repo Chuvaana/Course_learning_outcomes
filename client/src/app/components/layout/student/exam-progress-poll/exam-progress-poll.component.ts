@@ -27,6 +27,7 @@ interface QuestionItem {
   answerValue: number;
   questionType: string;
   questionTypeName: string;
+  cloId: string;
 }
 
 interface GroupAnswerList {
@@ -86,22 +87,6 @@ export class ExamProgressPollComponent {
 
   studentCode: string = '';
 
-  // answers: {
-  //   text: string;
-  //   answerId: number;
-  //   answerValue: number;
-  //   status: string;
-  //   statusName: string;
-  // }[] = [
-  //   {
-  //     text: '',
-  //     answerId: 0,
-  //     answerValue: 0,
-  //     status: 'ACTIVE',
-  //     statusName: 'Идэвхтэй',
-  //   },
-  // ];
-
   questions: {
     groupId: string;
     groupName: string;
@@ -133,11 +118,6 @@ export class ExamProgressPollComponent {
       { name: 'Хариулт бичих', code: 'FEEDBACK' },
     ];
     this.studentCode = localStorage.getItem('studentCode') ?? '';
-    // this.groupList = {
-    //   questionList: [],
-    //   groupName: '',
-    //   groupId: ''
-    // };
   }
 
   load() {
@@ -180,24 +160,20 @@ export class ExamProgressPollComponent {
       changedAnswer
     );
   }
+
   onQuestionType(e: any) {
     console.log('asdasd : ' + e.code);
   }
+
   refreshDetail() {
-    forkJoin({
-      assessment: this.service.getAllLessonAssments(this.lessonId),
-    }).subscribe((results) => {
-      console.log('Бүх өгөгдөл:', results);
-    });
     this.service.getAllLessonAssments(this.lessonId).subscribe((e: any) => {
       this.progressPollId = e[0]._id;
       if (e.length > 0) {
-        if (e.studentId === 'B200950009') {
+        if (e.studentId === this.studentCode) {
           this.refreshStudentId();
         }
         this.dataQuestions = e;
       }
-      // this.createActive = true;
     });
   }
 
@@ -246,6 +222,7 @@ export class ExamProgressPollComponent {
             questionTitle: quest.questionTitle,
             questionId: quest._id ?? null,
             answerValue: quest.answerValue?.toString(),
+            cloId: quest.cloId ?? null,
             questionType: quest.questionType ?? '',
             questionTypeName: quest.questionTypeName ?? '',
           };

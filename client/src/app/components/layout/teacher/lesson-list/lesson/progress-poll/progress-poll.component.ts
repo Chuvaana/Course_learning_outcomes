@@ -20,16 +20,26 @@ interface Question {
   code: string;
 }
 
+interface QueWithClo {
+  questionTitle: string;
+  questionType: string | Question;
+  questionTypeName: string;
+  cloId: string | null;
+}
+
 interface Ques {
   questionTitle: string;
   questionType: string | Question;
   questionTypeName: string;
 }
+
+type QuestionItem = Ques | QueWithClo;
+
 interface QuestionList {
   lessonId: string;
   groupType: string;
   groupName: string;
-  questionList: Ques[];
+  questionList: QuestionItem[];
 }
 
 @Component({
@@ -301,23 +311,14 @@ export class ProgressPollComponent {
   cloQuestion() {
     if (!this.createActive) {
       this.cloService.getCloList(this.lessonId).subscribe((e: any) => {
-        console.log('CLO = ', e);
-        let countPoint = 5;
-        let answerData: Ques[] = [];
+        let answerData: QueWithClo[] = [];
         e.map((cloData: any, index: any) => {
-          const answer: Ques = {
+          const answer: QueWithClo = {
             questionTitle: cloData.cloName,
+            cloId: cloData.id,
             questionType: 'RATE',
             questionTypeName: 'Үнэлгээ өгөх',
           };
-          // countPoint = countPoint + 5;
-          // const matchedType = this.questionTypes?.find(
-          //   (val: any) => val.code === answer.questionType
-          // );
-          // if (matchedType) {
-          //   answer.questionType = matchedType; // ✅ Assign full object here
-          // }
-
           answerData.push(answer);
         });
         this.dataQuestions.push({

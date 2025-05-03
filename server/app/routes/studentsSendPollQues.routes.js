@@ -7,7 +7,9 @@ module.exports = (app) => {
 
   router.get('/', controller.getAllStudentsSendPollQuess);
 
-  router.get('/:lessonId', controller.getAllLessonStudentsSendPollQues);
+  router.get('/lesson/:lessonId', controller.getAllLessonStudentsSendPollQues);
+
+  router.get('/lessonClo/:lessonId', controller.getPollQuesLessonClo);
 
   router.get('/:studentId', controller.getAllStudentsSendPollQues);
 
@@ -17,5 +19,5 @@ module.exports = (app) => {
 
   router.delete('/:id', controller.deleteStudentsSendPollQues);
 
-  app.use('/api/StudentsSendPollQues', router);
+  app.use('/api/studentsSendPollQues', router);
 };
