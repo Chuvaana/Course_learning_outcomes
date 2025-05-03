@@ -105,11 +105,6 @@ export class MenuComponent implements OnInit {
         icon: 'pi pi-plus',
         routerLink: ['/main/teacher/lesson', this.lessonId, 'progress-poll'],
       },
-      // {
-      //   label: 'Явцын өгөх',
-      //   icon: 'pi pi-plus',
-      //   routerLink: ['/main/teacher/lesson', this.lessonId, 'exam-progress-poll'],
-      // },
       {
         label: 'Тайлан',
         icon: 'pi pi-home',
@@ -137,7 +132,7 @@ export class MenuComponent implements OnInit {
       });
       if (subMenu.length > 0) {
         const newItem = {
-          label: 'Дүн',
+          label: 'Явц',
           icon: 'pi pi-graduation-cap',
           items: subMenu,
         };

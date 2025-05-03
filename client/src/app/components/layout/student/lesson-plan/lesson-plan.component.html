@@ -1,0 +1,118 @@
+<div class="cloTable">
+  <div id="pdf-content">
+    <p-progressSpinner
+      *ngIf="isLoading"
+      aria-label="Loading"
+    ></p-progressSpinner>
+
+    <p-table
+      *ngIf="!isLoading"
+      [value]="cloPoint"
+      [rows]="10"
+      [sortMode]="'multiple'"
+      rowGroupMode="subheader"
+      groupRowsBy="cloType"
+      class="custom-table"
+    >
+      <ng-template pTemplate="header">
+        <tr>
+          <th rowspan="3">#</th>
+          <th pFrozenColumn rowspan="4">CLOs</th>
+          <ng-container *ngFor="let col of assessPlan.plans">
+            <ng-container *ngIf="col.methodType !== 'EXAM'">
+              <th [attr.colspan]="col.subMethods.length">
+                {{ col.methodName }}
+              </th>
+            </ng-container>
+          </ng-container>
+          <th style="background-color: rgb(72, 182, 255)" rowspan="3">
+            Явцын үнэлгээний харгалзах нийлбэр оноо
+          </th>
+          <ng-container *ngFor="let col of assessPlan.plans">
+            <ng-container *ngIf="col.methodType === 'EXAM'">
+              <th [attr.colspan]="col.subMethods.length">
+                {{ col.methodName }}
+              </th>
+            </ng-container>
+          </ng-container>
+          <!-- <th colspan="3">Улирлын шалгалт</th> -->
+          <th rowspan="3" style="background-color: rgb(72, 182, 255)">
+            Шалгалтын үнэлгээний харгалзах нийлбэр оноо
+          </th>
+          <th rowspan="3">Нийлбэр оноо</th>
+        </tr>
+        <tr>
+          <ng-container *ngFor="let col of assessPlan.plans">
+            <ng-container *ngIf="col.methodType !== 'EXAM'">
+              <th *ngFor="let item of col.subMethods">
+                {{ item.subMethod }}
+              </th>
+            </ng-container>
+          </ng-container>
+          <ng-container *ngFor="let col of assessPlan.plans">
+            <ng-container *ngIf="col.methodType === 'EXAM'">
+              <th *ngFor="let item of col.subMethods">
+                {{ item.subMethod }}
+              </th>
+            </ng-container>
+          </ng-container>
+        </tr>
+        <tr>
+          <ng-container *ngFor="let col of assessPlan.plans">
+            <ng-container *ngIf="col.methodType !== 'EXAM'">
+              <th *ngFor="let item of col.subMethods">{{ item.point }}</th>
+            </ng-container>
+          </ng-container>
+          <ng-container *ngFor="let col of assessPlan.plans">
+            <ng-container *ngIf="col.methodType === 'EXAM'">
+              <th *ngFor="let item of col.subMethods">{{ item.point }}</th>
+            </ng-container>
+          </ng-container>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="groupheader" let-row>
+        <tr class="clo-subheader">
+          <td colspan="22">
+            <strong>
+              {{ getGroupHeaderLabel(row.cloType) }}
+            </strong>
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-row let-ri="rowIndex">
+        <tr>
+          <td>{{ ri + 1 }}</td>
+          <td>{{ getCloName(row.cloId) }}</td>
+
+          <!-- Явцын үнэлгээ -->
+          <ng-container *ngFor="let proc of row.procPoints">
+            <td>
+              {{ proc.point }}
+            </td>
+          </ng-container>
+
+          <td style="background-color: rgb(72, 182, 255)">
+            {{ getTotalProgressScore(ri) }}
+          </td>
+
+          <!-- Шалгалтын үнэлгээ -->
+          <ng-container *ngFor="let exam of row.examPoints">
+            <td>
+              {{ exam.point }}
+            </td>
+          </ng-container>
+
+          <td style="background-color: rgb(72, 182, 255)">
+            {{ getTotalExamScore(ri) }}
+          </td>
+
+          <td>
+            {{ getTotalScore(ri) }}
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</div>

@@ -1,5 +1,11 @@
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { ConfigService } from '../admin.service';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
@@ -21,10 +27,11 @@ import { PloService } from '../../../../services/ploService';
     InputTextModule,
     DropdownModule,
     TableModule,
-    ToastModule],
+    ToastModule,
+  ],
   providers: [MessageService],
   templateUrl: './plo.component.html',
-  styleUrl: './plo.component.scss'
+  styleUrl: './plo.component.scss',
 })
 export class PloComponent {
   configForm: FormGroup;
@@ -39,12 +46,13 @@ export class PloComponent {
     private fb: FormBuilder,
     private service: PloService,
     private configService: ConfigService,
-    private msgService: MessageService) {
+    private msgService: MessageService
+  ) {
     this.configForm = this.fb.group({
       branchId: ['', Validators.required],
       department: ['', Validators.required],
       name: ['', Validators.required],
-      itemCode: ['', [Validators.required, Validators.minLength(3)]],  // item_code validation (example)
+      itemCode: ['', [Validators.required, Validators.minLength(3)]], // item_code validation (example)
       itemValue: ['', Validators.required],
     });
   }
@@ -54,11 +62,11 @@ export class PloComponent {
     this.readData();
   }
 
-  readData(){
+  readData() {
     this.service.getPlos().subscribe((res) => {
       console.log(res);
       // this.items = res
-    })
+    });
   }
 
   loadBranches(): void {
@@ -66,11 +74,13 @@ export class PloComponent {
       // Add "All" option at the beginning
       this.branches = [
         { name: 'Бүгд', id: 'all' }, // This will be your "All" option
-        ...data.map(branch => ({ name: branch.name, id: branch.id || branch.name })),
+        ...data.map((branch) => ({
+          name: branch.name,
+          id: branch.id || branch.name,
+        })),
       ];
     });
   }
-
 
   onBranchChange(branch: any): void {
     if (branch.id == 'all') {
@@ -80,12 +90,14 @@ export class PloComponent {
     } else {
       this.configService.getDepartments(branch.id).subscribe((data: any[]) => {
         if (data) {
-          this.departments = data.map(dept => ({ name: dept.name, id: dept.id || dept.name }));
+          this.departments = data.map((dept) => ({
+            name: dept.name,
+            id: dept.id || dept.name,
+          }));
         }
       });
     }
   }
-
 
   onRowEditInit(config: any, index: number) {
     this.index = index + 1;
@@ -99,7 +111,6 @@ export class PloComponent {
   }
 
   onRowEditSave(data: any) {
-
     if (data._id === null || data._id === undefined) {
       this.service.addPlo(data).subscribe(
         (res: any) => {
@@ -141,13 +152,11 @@ export class PloComponent {
   // On form submit
   onSubmit(): void {
     if (this.configForm.valid) {
-
       const config = this.configForm.value;
       const cleanedData = {
         ...config,
         department: config.department.id,
         branchId: config.branchId.id,
-
       };
       this.configService.submitConfig(cleanedData).subscribe(
         (response: any) => {

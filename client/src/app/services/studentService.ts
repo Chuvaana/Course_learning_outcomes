@@ -63,4 +63,8 @@ export class StudentService {
       `${this.apiUrl}/lesStudents/classTypeDateTime/${classType}?day=${day}&time=${time}`
     );
   }
+
+  getCloList(id: string): Observable<any> {
+    return this.http.get(`${this.apiUrl}/clos/${id}`);
+  }
 }

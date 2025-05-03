@@ -4,15 +4,14 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule, Routes } from '@angular/router';
 import { ExamListComponent } from '../exam/exam-list.component';
 import { QuestionTypeListComponent } from '../exam/question-type-list/question-type-list.component';
-import { SharedComponent } from '../shared/shared.component';
-import { LessonListComponent } from './lesson-list/lesson-list.component';
 import { LesStudentComponent } from '../teacher/lesson-list/lesson/les-student/les-student.component';
-import { LessonComponent } from '../teacher/lesson-list/lesson/lesson.component';
-import { TeacherComponent } from '../teacher/teacher.component';
+import { CurriculumComponent } from './curriculum/curriculum.component';
 import { ExamProgressPollComponent } from './exam-progress-poll/exam-progress-poll.component';
 import { StudentImportComponent } from './import/student-import.component';
+import { LessonListComponent } from './lesson-list/lesson-list.component';
 import { StudentComponent } from './student.component';
-import { CurriculumComponent } from './curriculum/curriculum.component';
+import { LessonComponent } from './lesson/lesson.component';
+import { LessonPlanComponent } from './lesson-plan/lesson-plan.component';
 
 const routes: Routes = [
   {
@@ -26,9 +25,10 @@ const routes: Routes = [
       },
       {
         path: ':id',
-        // component: LessonComponent,
+        component: LessonComponent,
         children: [
           { path: 'curriculum', component: CurriculumComponent },
+          { path: 'plan', component: LessonPlanComponent },
           { path: 'student', component: LesStudentComponent },
           { path: 'exam-progress-poll', component: ExamProgressPollComponent },
           {
@@ -57,10 +57,6 @@ const routes: Routes = [
     RouterModule.forChild(routes),
     FormsModule,
     ReactiveFormsModule,
-    LessonListComponent, // ✅ Explicitly importing standalone components
-    LessonComponent,
-    TeacherComponent,
-    SharedComponent,
   ],
   exports: [RouterModule, FormsModule, ReactiveFormsModule],
 })

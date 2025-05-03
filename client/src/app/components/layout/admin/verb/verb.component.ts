@@ -1,5 +1,11 @@
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { ConfigService } from '../admin.service';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
@@ -21,10 +27,11 @@ import { VerbService } from '../../../../services/verbService';
     InputTextModule,
     DropdownModule,
     TableModule,
-    ToastModule],
+    ToastModule,
+  ],
   providers: [MessageService],
   templateUrl: './verb.component.html',
-  styleUrl: './verb.component.scss'
+  styleUrl: './verb.component.scss',
 })
 export class VerbComponent {
   verbForm: FormGroup;
@@ -39,7 +46,8 @@ export class VerbComponent {
     private fb: FormBuilder,
     private service: VerbService,
     private configService: ConfigService,
-    private msgService: MessageService) {
+    private msgService: MessageService
+  ) {
     this.verbForm = this.fb.group({
       verbCode: ['', Validators.required],
       verbName: ['', Validators.required],
@@ -51,11 +59,11 @@ export class VerbComponent {
     this.readData();
   }
 
-  readData(){
+  readData() {
     this.service.getVerbs().subscribe((res) => {
       console.log(res);
       // this.items = res
-    })
+    });
   }
 
   loadBranches(): void {
@@ -63,11 +71,13 @@ export class VerbComponent {
       // Add "All" option at the beginning
       this.branches = [
         { name: 'Бүгд', id: 'all' }, // This will be your "All" option
-        ...data.map(branch => ({ name: branch.name, id: branch.id || branch.name })),
+        ...data.map((branch) => ({
+          name: branch.name,
+          id: branch.id || branch.name,
+        })),
       ];
     });
   }
-
 
   onBranchChange(branch: any): void {
     if (branch.id == 'all') {
@@ -77,12 +87,14 @@ export class VerbComponent {
     } else {
       this.configService.getDepartments(branch.id).subscribe((data: any[]) => {
         if (data) {
-          this.departments = data.map(dept => ({ name: dept.name, id: dept.id || dept.name }));
+          this.departments = data.map((dept) => ({
+            name: dept.name,
+            id: dept.id || dept.name,
+          }));
         }
       });
     }
   }
-
 
   onRowEditInit(config: any, index: number) {
     this.index = index + 1;
@@ -96,7 +108,6 @@ export class VerbComponent {
   }
 
   onRowEditSave(data: any) {
-
     if (data._id === null || data._id === undefined) {
       this.service.addVerb(data).subscribe(
         (res: any) => {
@@ -138,13 +149,11 @@ export class VerbComponent {
   // On form submit
   onSubmit(): void {
     if (this.verbForm.valid) {
-
       const config = this.verbForm.value;
       const cleanedData = {
         ...config,
         department: config.department.id,
         branchId: config.branchId.id,
-
       };
       this.configService.submitConfig(cleanedData).subscribe(
         (response: any) => {
