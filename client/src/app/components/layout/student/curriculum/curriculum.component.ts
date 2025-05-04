@@ -68,7 +68,6 @@ export class CurriculumComponent {
 
   loadLessonAllData() {
     forkJoin({
-      assessment: this.service.getAssessment(this.lessonId),
       additional: this.service.getAdditional(this.lessonId),
       cloList: this.service.getCloList(this.lessonId),
       mainInfo: this.service.getMainInfo(this.lessonId),
@@ -82,8 +81,6 @@ export class CurriculumComponent {
       // assessFooter: this.service.getAssessFooter(this.lessonId),
     }).subscribe((results) => {
       // 🎯 Энд бүх үр дүн хадгалагдсан байна
-
-      this.assessmentData = results.assessment;
       this.additionalData = results.additional;
       this.cloListData = results.cloList;
       this.mainInfoData = results.mainInfo;

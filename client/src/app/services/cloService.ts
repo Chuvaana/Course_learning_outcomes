@@ -30,6 +30,10 @@ export class CLOService {
     return this.http.post(`${this.apiUrl}/clos`, cloData);
   }
 
+  registerCloList(cloData: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/clos/all`, cloData);
+  }
+
   updateClo(cloData: any): Observable<any> {
     return this.http.put(`${this.apiUrl}/clos/${cloData.id}`, cloData);
   }

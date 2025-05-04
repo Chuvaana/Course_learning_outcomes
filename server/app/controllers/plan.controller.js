@@ -49,7 +49,7 @@ exports.saveAssessmentPlan = async (req, res) => {
     });
 
     await lesson.save();
-    res.status(200).json({ message: 'Saved successfully' });
+    res.status(200).json(lesson);
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Error saving lesson data' });

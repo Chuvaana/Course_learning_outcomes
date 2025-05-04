@@ -69,7 +69,6 @@ export class CurriculumComponent {
   }
   loadLessonAllData() {
     forkJoin({
-      assessment: this.service.getAssessment(this.lessonId),
       additional: this.service.getAdditional(this.lessonId),
       cloList: this.service.getCloList(this.lessonId),
       mainInfo: this.service.getMainInfo(this.lessonId),
@@ -80,11 +79,8 @@ export class CurriculumComponent {
       scheduleSems: this.service.getScheduleSems(this.lessonId),
       scheduleLabs: this.service.getScheduleLabs(this.lessonId),
       scheduleBds: this.service.getScheduleBds(this.lessonId),
-      // assessFooter: this.service.getAssessFooter(this.lessonId),
     }).subscribe((results) => {
       // 🎯 Энд бүх үр дүн хадгалагдсан байна
-
-      this.assessmentData = results.assessment;
       this.additionalData = results.additional;
       this.cloListData = results.cloList;
       this.mainInfoData = results.mainInfo;
@@ -95,7 +91,6 @@ export class CurriculumComponent {
       this.scheduleSemsData = results.scheduleSems;
       this.scheduleLabsData = results.scheduleLabs;
       this.scheduleBdsData = results.scheduleBds;
-      // this.assessFooter = results.assessFooter;
 
       console.log('Бүх өгөгдөл:', results);
       this.resultData = results;

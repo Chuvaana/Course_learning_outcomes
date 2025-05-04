@@ -14,6 +14,10 @@ export class MethodService {
     return this.http.post(`${this.apiUrl}/methodologys`, data);
   }
 
+  createMethods(data: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/methodologys/all`, data);
+  }
+
   updateMethod(data: any): Observable<any> {
     return this.http.put(`${this.apiUrl}/methodologys/${data.id}`, data);
   }

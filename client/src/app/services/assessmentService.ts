@@ -28,17 +28,17 @@ export class AssessmentService {
     );
   }
 
-  createAssessment(data: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/assessments`, data);
-  }
+  // createAssessment(data: any): Observable<any> {
+  //   return this.http.post(`${this.apiUrl}/assessments`, data);
+  // }
 
-  updateAssessment(id: string, data: any): Observable<any> {
-    return this.http.put(`${this.apiUrl}/assessments/${id}`, data);
-  }
+  // updateAssessment(id: string, data: any): Observable<any> {
+  //   return this.http.put(`${this.apiUrl}/assessments/${id}`, data);
+  // }
 
-  getAssessment(id: string): Observable<any> {
-    return this.http.get(`${this.apiUrl}/assessments/${id}`);
-  }
+  // getAssessment(id: string): Observable<any> {
+  //   return this.http.get(`${this.apiUrl}/assessments/${id}`);
+  // }
 
   getCloList(id: string): Observable<any> {
     return this.http.get(`${this.apiUrl}/clos/${id}`);

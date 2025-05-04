@@ -47,6 +47,46 @@ exports.addClo = async (req, res) => {
   }
 };
 
+exports.addCloList = async (req, res) => {
+  try {
+    const { lessonId, cloList } = req.body;
+
+    // Validate that the CLO list is present
+    if (!lessonId || !Array.isArray(cloList) || cloList.length === 0) {
+      return res.status(400).json({ message: 'LessonId and CLO list are required' });
+    }
+
+    // Iterate over the CLO list and save each CLO
+    const savedClos = [];
+    for (let clo of cloList) {
+      const { type, cloName, knowledge, skill, attitude } = clo;
+
+      // Validate each CLO
+      if (!type || !cloName) {
+        return res.status(400).json({ message: 'Type and CLO Name are required for each CLO' });
+      }
+
+      // Create and save CLO
+      const newClo = new Clo({
+        lessonId,
+        type,
+        cloName,
+        knowledge,
+        skill,
+        attitude,
+      });
+
+      await newClo.save();
+      savedClos.push(newClo);
+    }
+
+    // Send back the list of saved CLOs
+    res.status(201).json(savedClos);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
 // Update CLO by ID
 exports.updateClo = async (req, res) => {
   try {

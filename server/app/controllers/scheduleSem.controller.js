@@ -51,6 +51,53 @@ exports.createSchedules = async (req, res) => {
   }
 };
 
+exports.createSchedulesSem = async (req, res) => {
+  try {
+    const scheduleSems = req.body; // Expect array directly
+
+    if (!Array.isArray(scheduleSems) || scheduleSems.length === 0) {
+      return res.status(400).json({ message: 'Request body must be a non-empty array of schedules.' });
+    }
+
+    const cleanedSchedules = [];
+
+    for (const schedule of scheduleSems) {
+      if (!schedule.lessonId || !schedule.week || !schedule.cloRelevance) {
+        return res.status(400).json({
+          message: `Missing required fields in schedule item for week ${schedule.week || 'unknown'}`,
+        });
+      }
+
+      const cleaned = {
+        lessonId: schedule.lessonId,
+        week: schedule.week,
+        title: schedule.title || '',
+        adviceTime: schedule.adviceTime || 0,
+        time: schedule.time || 0,
+        cloRelevance: schedule.cloRelevance,
+        point: Array.isArray(schedule.point)
+          ? schedule.point.map((pt) => ({
+              id: pt.id,
+              point: pt.point || 0,
+            }))
+          : [],
+      };
+
+      cleanedSchedules.push(cleaned);
+    }
+
+    const createdSchedules = await ScheduleSem.insertMany(cleanedSchedules);
+
+    res.status(201).json({
+      message: 'Schedule sems saved successfully',
+      schedules: createdSchedules,
+    });
+  } catch (error) {
+    console.error('Error saving schedule sems:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
 // Update ScheduleSem
 exports.updateSchedule = async (req, res) => {
   try {

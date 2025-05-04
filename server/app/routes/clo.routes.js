@@ -1,25 +1,26 @@
-module.exports = app => {
-    const clos = require("../controllers/clo.controller.js");
+module.exports = (app) => {
+  const clos = require('../controllers/clo.controller.js');
 
-    var router = require("express").Router();
+  var router = require('express').Router();
 
-    // Create a new CLO
-    router.post("/", clos.addClo);
+  // Create a new CLO
+  router.post('/', clos.addClo);
+  router.post('/all/', clos.addCloList);
 
-    // Retrieve all CLOs
-    router.get("/", clos.getClos);
+  // Retrieve all CLOs
+  router.get('/', clos.getClos);
 
-    // Retrieve a single CLO by ID
-    router.get("/:id", clos.getCloById);
+  // Retrieve a single CLO by ID
+  router.get('/:id', clos.getCloById);
 
-    // Update a CLO by ID
-    router.put("/:id", clos.updateClo);
+  // Update a CLO by ID
+  router.put('/:id', clos.updateClo);
 
-    // Delete a CLO by ID
-    router.delete("/:id", clos.deleteClo);
+  // Delete a CLO by ID
+  router.delete('/:id', clos.deleteClo);
 
-    // Delete all CLOs
-    // router.delete("/", clos.deleteAll);
+  // Delete all CLOs
+  // router.delete("/", clos.deleteAll);
 
-    app.use("/api/clos", router);
+  app.use('/api/clos', router);
 };

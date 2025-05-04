@@ -124,8 +124,6 @@ export class CloComponent {
       this.service.registerClo(cloData).subscribe(
         (res: Clo) => {
           clo.id = res.id;
-          this.saveAssess(res.id);
-          this.saveCloPlan(res);
           this.readData();
           this.tabRefreshService.triggerRefresh();
           this.msgService.add({
@@ -198,54 +196,5 @@ export class CloComponent {
     setTimeout(() => {
       this.onRowEditInit(newClo as Clo, this.clos.length - 1);
     });
-  }
-
-  saveAssess(data: any) {
-    const assessments = [
-      {
-        lessonId: this.lessonId,
-        clo: data,
-        attendance: false,
-        assignment: false,
-        quiz: false,
-        project: false,
-        lab: false,
-        exam: false,
-      },
-    ];
-    this.assessmentService.createAssessment(assessments).subscribe((res) => {
-      console.log(res);
-    });
-  }
-
-  saveCloPlan(clo: any) {
-    // const plan = [
-    //   {
-    //     id: '',
-    //     cloId: clo.id,
-    //     cloName: clo.cloName,
-    //     cloType: clo.type,
-    //     lessonId: this.lessonId,
-    //     timeManagement: 0,
-    //     engagement: 0,
-    //     recall: 0,
-    //     problemSolving: 0,
-    //     recall2: 0,
-    //     problemSolving2: 0,
-    //     toExp: 0,
-    //     processing: 0,
-    //     decisionMaking: 0,
-    //     formulation: 0,
-    //     analysis: 0,
-    //     implementation: 0,
-    //     understandingLevel: 0,
-    //     analysisLevel: 0,
-    //     creationLevel: 0,
-    //   },
-    // ];
-    // this.planService.saveCloPlan(plan).subscribe((res) => {
-    //   console.log(res);
-    // });
-    // TODO zasah
   }
 }

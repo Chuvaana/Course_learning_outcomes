@@ -3,15 +3,19 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ScheduleService {
   private apiUrl = 'http://localhost:3000/api';
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
   addSchedules(data: any) {
     return this.http.post(`${this.apiUrl}/schedules`, data);
+  }
+
+  addSchedulesArray(data: any) {
+    return this.http.post(`${this.apiUrl}/schedules/lec`, data);
   }
 
   getSchedules(lessonCode: string): Observable<any> {
@@ -30,6 +34,10 @@ export class ScheduleService {
     return this.http.post(`${this.apiUrl}/scheduleSems`, data);
   }
 
+  addScheduleSemsArray(data: any) {
+    return this.http.post(`${this.apiUrl}/scheduleSems/sem`, data);
+  }
+
   getScheduleSems(lessonCode: string): Observable<any> {
     return this.http.get(`${this.apiUrl}/scheduleSems/${lessonCode}`);
   }
@@ -42,9 +50,12 @@ export class ScheduleService {
     return this.http.delete(`${this.apiUrl}/scheduleSems/${lessonCode}`);
   }
 
-
   addScheduleLabs(data: any) {
     return this.http.post(`${this.apiUrl}/scheduleLabs`, data);
+  }
+
+  addScheduleLabsArray(data: any) {
+    return this.http.post(`${this.apiUrl}/scheduleLabs/lab`, data);
   }
 
   getScheduleLabs(lessonCode: string): Observable<any> {
@@ -63,6 +74,10 @@ export class ScheduleService {
     return this.http.post(`${this.apiUrl}/scheduleBds`, data);
   }
 
+  addScheduleBdsArray(data: any) {
+    return this.http.post(`${this.apiUrl}/scheduleBds/bd`, data);
+  }
+
   getScheduleBds(lessonCode: string): Observable<any> {
     return this.http.get(`${this.apiUrl}/scheduleBds/${lessonCode}`);
   }
@@ -74,7 +89,6 @@ export class ScheduleService {
   deleteScheduleBds(lessonCode: string) {
     return this.http.delete(`${this.apiUrl}/scheduleBds/${lessonCode}`);
   }
-
 
   getCloList(id: string): Observable<any> {
     return this.http.get(`${this.apiUrl}/clos/${id}`);

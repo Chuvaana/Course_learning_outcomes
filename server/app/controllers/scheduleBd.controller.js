@@ -50,6 +50,55 @@ exports.createSchedules = async (req, res) => {
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
+
+exports.createBdSchedules = async (req, res) => {
+  try {
+    const scheduleBds = req.body; // Expect body to be an array
+
+    if (!Array.isArray(scheduleBds) || scheduleBds.length === 0) {
+      return res.status(400).json({ message: 'Request body must be a non-empty array of schedules.' });
+    }
+
+    const cleanedSchedules = [];
+
+    for (const schedule of scheduleBds) {
+      if (!schedule.lessonId || !schedule.week || !schedule.cloRelevance) {
+        return res.status(400).json({
+          message: `Missing required fields in schedule item for week ${schedule.week || 'unknown'}`,
+        });
+      }
+
+      // Clean up the object
+      const cleaned = {
+        lessonId: schedule.lessonId,
+        week: schedule.week,
+        title: schedule.title || '',
+        adviceTime: schedule.adviceTime || 0,
+        time: schedule.time || 0,
+        cloRelevance: schedule.cloRelevance,
+        point: Array.isArray(schedule.point)
+          ? schedule.point.map((pt) => ({
+              id: pt.id,
+              point: pt.point || 0,
+            }))
+          : [],
+      };
+
+      cleanedSchedules.push(cleaned);
+    }
+
+    const createdSchedules = await ScheduleBd.insertMany(cleanedSchedules);
+
+    res.status(201).json({
+      message: 'Schedules saved successfully',
+      schedules: createdSchedules,
+    });
+  } catch (error) {
+    console.error('Error saving schedules:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
 // Update ScheduleBd
 exports.updateSchedule = async (req, res) => {
   try {

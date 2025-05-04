@@ -51,6 +51,50 @@ exports.createSchedules = async (req, res) => {
   }
 };
 
+exports.createSchedulesLec = async (req, res) => {
+  try {
+    const schedules = req.body; // Expect array directly in the request body
+
+    // Validate if schedules is an array and not empty
+    if (!Array.isArray(schedules) || schedules.length === 0) {
+      return res.status(400).json({ message: 'Schedules data must be a non-empty array.' });
+    }
+
+    const validSchedules = [];
+
+    for (const schedule of schedules) {
+      // Check if each schedule has necessary fields
+      if (!schedule.lessonId || !schedule.week || !schedule.cloRelevance) {
+        return res.status(400).json({
+          message: `Missing required fields in schedule item for week ${schedule.week || 'unknown'}`,
+        });
+      }
+
+      // Clean and format schedule before saving
+      const cleaned = {
+        lessonId: schedule.lessonId,
+        week: schedule.week,
+        title: schedule.title || '',
+        adviceTime: schedule.adviceTime || 0,
+        time: schedule.time || 0,
+        cloRelevance: schedule.cloRelevance,
+      };
+
+      validSchedules.push(cleaned);
+    }
+
+    const createdSchedules = await Schedule.insertMany(validSchedules);
+
+    res.status(201).json({
+      message: 'Schedules saved successfully.',
+      schedules: createdSchedules,
+    });
+  } catch (error) {
+    console.error('Error saving schedules:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
 // Update Schedule
 exports.updateSchedule = async (req, res) => {
   try {
