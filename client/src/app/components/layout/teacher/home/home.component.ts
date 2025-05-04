@@ -18,6 +18,7 @@ import { LessonInfoComponent } from './lesson-info/lesson-info.component';
 import { LessonOverallAssessComponent } from './lesson-overall-assess/lesson-overall-assess.component';
 import { LessonPlanComponent } from './lesson-plan/lesson-plan.component';
 import { LessonPollAnalysisComponent } from './lesson-poll-analysis/lesson-poll-analysis.component';
+import { LessonAdvDisadvComponent } from './lesson-adv-disadv/lesson-adv-disadv.component';
 
 @Component({
   selector: 'app-home',
@@ -34,6 +35,7 @@ import { LessonPollAnalysisComponent } from './lesson-poll-analysis/lesson-poll-
     LessonIndirectAssessComponent,
     LessonDirectIndirectComponent,
     LessonPollAnalysisComponent,
+    LessonAdvDisadvComponent,
   ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
