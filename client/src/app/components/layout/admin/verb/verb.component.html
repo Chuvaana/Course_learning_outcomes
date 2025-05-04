@@ -1,3 +1,13 @@
+
+<div class="column-style">
+  <div class="action-btn">
+    <p-button label="Хадгалах" (onClick)="save()"></p-button>
+  </div>
+  <div class="action-btn">
+    <p-button label="Шинэ асуулт оруулах" (onClick)="addColumn()"></p-button>
+  </div>
+</div>
+<p-toast />
 <p-table [value]="items" editMode="row">
     <ng-template pTemplate="header">
         <tr>
@@ -16,6 +26,8 @@
             </td>
             <td>
                 <div class="flex items-center justify-center gap-2">
+                    <button *ngIf="!editing" pButton pRipple type="button" pInitEditableRow icon="pi pi-delete-left"
+                        (click)="onRowDelete(item, ri)" text rounded severity="secondary"></button>
                     <button *ngIf="!editing" pButton pRipple type="button" pInitEditableRow icon="pi pi-pencil"
                         (click)="onRowEditInit(item, ri)" text rounded severity="secondary"></button>
                     <button *ngIf="editing" pButton pRipple type="button" pSaveEditableRow icon="pi pi-check"

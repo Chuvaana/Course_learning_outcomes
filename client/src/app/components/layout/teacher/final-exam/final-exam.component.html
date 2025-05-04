@@ -1,0 +1,109 @@
+<div class="card">
+  <div class="column-style">
+    <div class="action-btn">
+      <p-button label="Хадгалах" (onClick)="saveDataFull(finalExamQuestions)"></p-button>
+    </div>
+    <div class="action-btn">
+      <p-button label="Шинэ асуулт оруулах" (onClick)="addColumn()"></p-button>
+    </div>
+    <div class="action-btn">
+      <p-button label="Тайлан гаргах" (onClick)="pdfExport()"></p-button>
+    </div>
+  </div>
+  <div class="column-input">
+    <div class="action-btn">
+      <p-floatlabel variant="in">
+        <input pInputText id="in_label" class="exam-type ng-invalid ng-dirty"  [(ngModel)]="finalExams.examType" autocomplete="off" />
+        <label for="in_label">Шалгалтын хэлбэр</label>
+      </p-floatlabel>
+    </div>
+    <div class="action-btn">
+      <p-floatlabel variant="in">
+    <p-inputnumber class="ng-invalid ng-dirty"  [(ngModel)]="finalExams.examTakeStudentCount" inputId="in_label"/>
+        <label for="in_label">Шалгалт өгөх сурагчдын тоо</label>
+      </p-floatlabel>
+    </div>
+  </div>
+  <p-toast />
+  <p-table [value]="finalExamQuestions" dataKey="_id" editMode="row" [tableStyle]="{'min-width': '50rem'}"
+    [customSort]="true">
+    <ng-template #header>
+      <tr>
+        <th style="width:20%">Асуулт</th>
+        <th style="width:20%">Үйл үг</th>
+        <th style="width:20%">Блумын түвшин <p-sortIcon field="finalExamQuestions.blmLvl" /></th>
+        <th style="width:20%">Аль CLO-г үнэлэх</th>
+        <th style="width:20%">Багана</th>
+        <th style="width:20%"></th>
+      </tr>
+    </ng-template>
+    <ng-template #body let-finalExamQuestions let-editing="editing" let-ri="rowIndex">
+      <tr [pEditableRow]="finalExamQuestions">
+        <td>
+          <p-cellEditor>
+            <ng-template #input>
+              <input pInputText type="text" [(ngModel)]="finalExamQuestions.orderId" />
+            </ng-template>
+            <ng-template #output>
+              {{finalExamQuestions.orderId}}
+            </ng-template>
+          </p-cellEditor>
+        </td>
+        <td>
+          <p-cellEditor>
+            <ng-template #input>
+              <p-select id="verbCode" [options]="verbs" appendTo="body" [(ngModel)]="finalExamQuestions.verb"
+                optionLabel="verbName" [style]="{'width':'100%'}" />
+            </ng-template>
+            <ng-template #output>
+              <p-tag [value]="finalExamQuestions.verbName" />
+            </ng-template>
+          </p-cellEditor>
+        </td>
+        <td>
+          <p-cellEditor>
+            <ng-template #input>
+              <input pInputText type="text" [(ngModel)]="finalExamQuestions.blmLvl" />
+            </ng-template>
+            <ng-template #output>
+              {{finalExamQuestions.blmLvl}}
+            </ng-template>
+          </p-cellEditor>
+        </td>
+        <td>
+          <p-cellEditor>
+            <ng-template #input>
+              <p-select id="id" [options]="clos" appendTo="body" [(ngModel)]="finalExamQuestions.cloCode"
+                optionLabel="name" [style]="{'width':'100%'}" />
+            </ng-template>
+            <ng-template #output>
+              <p-tag [value]="finalExamQuestions.cloName" />
+            </ng-template>
+          </p-cellEditor>
+        </td>
+        <td>
+          <p-cellEditor>
+            <ng-template #input>
+              <input pInputText type="text" [(ngModel)]="finalExamQuestions.version" />
+            </ng-template>
+            <ng-template #output>
+              {{finalExamQuestions.version}}
+            </ng-template>
+          </p-cellEditor>
+        </td>
+        <td>
+          <div class="flex items-center justify-center gap-2">
+            <button *ngIf="!editing" pButton pRipple type="button" pInitEditableRow icon="pi pi-delete-left"
+              (click)="onRowDelete(finalExamQuestions, ri)" text rounded severity="secondary"></button>
+            <button *ngIf="!editing" pButton pRipple type="button" pInitEditableRow icon="pi pi-pencil"
+              (click)="onRowEditInit(finalExamQuestions)" text rounded severity="secondary"></button>
+            <button *ngIf="editing" pButton pRipple type="button" pSaveEditableRow icon="pi pi-check"
+              (click)="onRowEditSave(finalExamQuestions)" text rounded severity="secondary"></button>
+            <button *ngIf="editing" pButton pRipple type="button" pCancelEditableRow icon="pi pi-times"
+              (click)="onRowEditCancel(finalExamQuestions, ri)" text rounded severity="secondary"></button>
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>

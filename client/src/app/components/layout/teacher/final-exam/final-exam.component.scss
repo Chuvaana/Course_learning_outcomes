@@ -3,13 +3,8 @@
 }
 
 .card {
-    max-width: 600px;
     margin: 0 auto;
     padding: 20px;
-}
-
-.p-formgrid .p-field {
-    margin-bottom: 1.5rem;
 }
 .action-btn{
   margin-right: 40px;
@@ -17,4 +12,17 @@
 
 .column-style{
   display: flex;
+}
+
+.p-formgrid .p-field {
+    margin-bottom: 1.5rem;
+}
+
+.column-input{
+  margin: 30px 0px;
+  display: flex;
+}
+
+.exam-type{
+  width: 700px;
 }

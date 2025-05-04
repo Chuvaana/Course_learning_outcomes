@@ -16,7 +16,7 @@ export class PdfExamQuestionService {
   generatePdf(data: any) {
     // if (data.length === 0) return;
     console.log(data.clos);
-    const testPart2Exists = data.testData.some((row: { testPart: number }) => row.testPart === 2);
+    // const testPart2Exists = data.testData.some((row: { testPart: number }) => row.testPart === 2);
 
     const allPont = [
       {
@@ -40,41 +40,41 @@ export class PdfExamQuestionService {
       // Header row
       [
         { text: 'Хичээлийн нэр', alignment: 'left', style: 'tableHeader' },
-        { text: data.lessonName, alignment: 'left', style: 'body' }
+        { text: data.mainInfo.lessonName, alignment: 'left', style: 'body' }
       ],
       [
         { text: 'Хичээлийн код', alignment: 'left', style: 'tableHeader' },
-        { text: data.lessonCode, alignment: 'left', style: 'body' }
+        { text: data.mainInfo.lessonCode, alignment: 'left', style: 'body' }
       ],
       [
         { text: 'Хичээлийн кредит', alignment: 'left', style: 'tableHeader' },
-        { text: data.kredit, alignment: 'left', style: 'body' }
+        { text: data.mainInfo.lessonCredit, alignment: 'left', style: 'body' }
       ],
       [
         { text: 'Салбар/Тэнхим', alignment: 'left', style: 'tableHeader' },
-        { text: data.kreditName, alignment: 'left', style: 'body' }
+        { text: data.mainInfo.lessonCode, alignment: 'left', style: 'body' }
       ],
       [
         { text: 'Сургалтын нийт цаг', alignment: 'left', style: 'tableHeader' },
-        { text: '', alignment: 'left', style: 'body' }
+        { text: 'Лекц ('+ data.mainInfo.totalHours.lecture+'цаг),Лаборатори ('+ data.mainInfo.totalHours.lab+' цаг), Бие даан суралцах ('+ data.mainInfo.totalHours.practice+' цаг)', alignment: 'left', style: 'body' }
       ],
       [
         { text: 'Шалгалтын хэлбэр', alignment: 'left', style: 'tableHeader' },
-        { text: '', alignment: 'left', style: 'body' }
+        { text: data.finalExams.examType, alignment: 'left', style: 'body' }
       ],
       [
         { text: 'Хувилбарын тоо', alignment: 'left', style: 'tableHeader' },
-        { text: '', alignment: 'left', style: 'body' }
+        { text: data.finalExamQuestions.length, alignment: 'left', style: 'body' }
       ],
       [
         { text: 'Шалгалт өгөх оюутны тоо', alignment: 'left', style: 'tableHeader' },
-        { text: '', alignment: 'left', style: 'body' }
+        { text: data.finalExams.examTakeStudentCount, alignment: 'left', style: 'body' }
       ],
       [
         { text: 'Шалгалтаар үнэлэх суралцахуйн үр дүнгүүд (CLOs)', colSpan: 2, alignment: 'left', style: 'tableHeader' },
         {}
       ],
-      ...data.clos.map((row: { cloName: any; }) => [
+      ...data.cloList.map((row: { cloName: any; }) => [
         {
           text: row.cloName,
           alignment: 'left',
@@ -102,9 +102,9 @@ export class PdfExamQuestionService {
         {},
         {},
       ],
-      ...data.testData
-        .filter((row: { testPart: number; }) => row.testPart === 1).map((row: {
-          CloLevel: any; blmLevel: any; verb: any; cloName: any;
+      ...data.finalExamQuestions
+        .filter((row: { version: string; }) => row.version === '1').map((row: {
+          CloLevel: any; blmLvl: any; verbName: any; cloName: any;
         }, index: number) => [
             {
               text: index + 1,
@@ -113,32 +113,32 @@ export class PdfExamQuestionService {
 
             },
             {
-              text: row.verb,
+              text: row.verbName,
               alignment: 'left',
               style: 'body'
 
             },
             {
-              text: row.blmLevel,
+              text: row.blmLvl,
               alignment: 'center',
               style: 'body'
             },
             {
-              text: row.CloLevel,
+              text: row.cloName,
               alignment: 'center',
               style: 'body'
             },
           ]),
-          ...(data.testData.some((row: { testPart: number }) => row.testPart === 2)
+          ...(data.finalExamQuestions.some((row: { version: string }) => row.version === '2')
           ? [[
               { text: 'Тестийн 2-р хэсэг', colSpan: 4, alignment: 'center', style: 'tableHeader' },
               {}, {}, {}
             ]]
           : []
         ),
-          ...data.testData
-        .filter((row: { testPart: number; }) => row.testPart === 2).map((row: {
-          CloLevel: any; blmLevel: any; verb: any; cloName: any;
+          ...data.finalExamQuestions
+        .filter((row: { version: string; }) => row.version === '2').map((row: {
+          CloLevel: any; blmLvl: any; verbName: any; cloName: any;
         }, index: number) => [
             {
               text: index + 1,
@@ -147,18 +147,18 @@ export class PdfExamQuestionService {
 
             },
             {
-              text: row.verb,
+              text: row.verbName,
               alignment: 'left',
               style: 'body'
 
             },
             {
-              text: row.blmLevel,
+              text: row.blmLvl,
               alignment: 'center',
               style: 'body'
             },
             {
-              text: row.CloLevel,
+              text: row.cloName,
               alignment: 'center',
               style: 'body'
             },

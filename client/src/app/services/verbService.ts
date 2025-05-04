@@ -17,6 +17,10 @@ export class VerbService {
     return this.http.get(`${this.apiUrl}`);
   }
 
+  deleteVerbs(id : any){
+    return this.http.delete(`${this.apiUrl}/${id}`);
+  }
+
   updateVerb(lessonId: string, data: any) {
     return this.http.put(`${this.apiUrl}/${lessonId}`, data);
   }

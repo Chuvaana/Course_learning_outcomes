@@ -23,6 +23,20 @@ exports.getFinalExams = async (req, res) => {
     }
 };
 
+exports.getAllFinalExamQuestions = async (req, res) => {
+    const { lessonId } = req.params;
+
+    try {
+        const assessments = await FinalExamCurriculum.find({ lessonId });
+        res.json(assessments);
+    } catch (err) {
+        res.status(500).json({
+            message: 'Үнэлгээнүүдийг авахад алдаа гарлаа',
+            error: err.message
+        });
+    }
+};
+
 // Get a specific FinalExam by ID
 exports.getFinalExamByItemCode = async (req, res) => {
     try {
@@ -43,7 +57,7 @@ exports.updateFinalExam = async (req, res) => {
             req.params.id,
             req.body,
             { new: true, runValidators: true }
-        ).populate('cloRelevance');
+        );
         if (!updatedFinalExam) {
             return res.status(404).json({ message: "Final exam not found" });
         }
