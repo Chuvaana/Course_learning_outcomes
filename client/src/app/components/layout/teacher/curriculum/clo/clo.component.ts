@@ -1,23 +1,21 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { MessageService, SelectItem } from 'primeng/api';
+import { ConfirmationService, MessageService, SelectItem } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
+import { CheckboxModule } from 'primeng/checkbox';
 import { InputTextModule } from 'primeng/inputtext';
 import { SelectModule } from 'primeng/select';
 import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { ToastModule } from 'primeng/toast';
-import { CLOService } from '../../../../../services/cloService';
-import { CheckboxModule } from 'primeng/checkbox';
 import { AssessmentService } from '../../../../../services/assessmentService';
-import { MethodService } from '../../../../../services/methodService';
-import { ScheduleService } from '../../../../../services/schedule.service';
+import { CLOService } from '../../../../../services/cloService';
 import { TabRefreshService } from '../tabRefreshService';
-import { CloPointPlanService } from '../../../../../services/cloPointPlanService';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 
 interface Clo {
-  id: number;
+  id: string;
   type: string;
   cloName: string;
   knowledge: boolean;
@@ -45,8 +43,9 @@ interface Clo1 {
     InputTextModule,
     FormsModule,
     CheckboxModule,
+    ConfirmDialogModule,
   ],
-  providers: [MessageService],
+  providers: [MessageService, ConfirmationService],
   templateUrl: './clo.component.html',
   styleUrls: ['./clo.component.scss'],
 })
@@ -56,16 +55,14 @@ export class CloComponent {
   index!: number;
   types!: SelectItem[];
   clonedClos: { [s: string]: Clo } = {};
-  editingRowId: number | null = null;
+  editingRowId: string | null = null;
 
   constructor(
     private service: CLOService,
-    private planService: CloPointPlanService,
     private msgService: MessageService,
     private assessmentService: AssessmentService,
-    private methodService: MethodService,
-    private scheduleService: ScheduleService,
-    private tabRefreshService: TabRefreshService
+    private tabRefreshService: TabRefreshService,
+    private confirmationService: ConfirmationService
   ) {}
 
   ngOnInit() {
@@ -125,7 +122,6 @@ export class CloComponent {
         (res: Clo) => {
           clo.id = res.id;
           this.saveAssess(res.id);
-          this.saveCloPlan(res);
           this.readData();
           this.tabRefreshService.triggerRefresh();
           this.msgService.add({
@@ -169,6 +165,36 @@ export class CloComponent {
     this.clos[index] = { ...this.clonedClos[clo.id] };
     delete this.clonedClos[clo.id];
     this.editingRowId = null;
+  }
+
+  deleteClo(cloToDelete: Clo) {
+    this.confirmationService.confirm({
+      message: 'Та энэ CLO-г устгахдаа итгэлтэй байна уу?',
+      header: 'Баталгаажуулалт',
+      icon: 'pi pi-exclamation-triangle',
+      acceptLabel: 'Тийм',
+      rejectLabel: 'Үгүй',
+      accept: () => {
+        this.service.deleteClo(cloToDelete.id).subscribe(
+          () => {
+            this.clos = this.clos.filter((clo) => clo.id !== cloToDelete.id);
+            this.tabRefreshService.triggerRefresh();
+            this.msgService.add({
+              severity: 'success',
+              summary: 'Устгалаа',
+              detail: 'CLO амжилттай устлаа',
+            });
+          },
+          (error) => {
+            this.msgService.add({
+              severity: 'error',
+              summary: 'Алдаа',
+              detail: 'Устгах үед алдаа гарлаа: ' + error.error.message,
+            });
+          }
+        );
+      },
+    });
   }
 
   getGroupHeaderLabel(cloType: string): string {
@@ -216,36 +242,5 @@ export class CloComponent {
     this.assessmentService.createAssessment(assessments).subscribe((res) => {
       console.log(res);
     });
-  }
-
-  saveCloPlan(clo: any) {
-    // const plan = [
-    //   {
-    //     id: '',
-    //     cloId: clo.id,
-    //     cloName: clo.cloName,
-    //     cloType: clo.type,
-    //     lessonId: this.lessonId,
-    //     timeManagement: 0,
-    //     engagement: 0,
-    //     recall: 0,
-    //     problemSolving: 0,
-    //     recall2: 0,
-    //     problemSolving2: 0,
-    //     toExp: 0,
-    //     processing: 0,
-    //     decisionMaking: 0,
-    //     formulation: 0,
-    //     analysis: 0,
-    //     implementation: 0,
-    //     understandingLevel: 0,
-    //     analysisLevel: 0,
-    //     creationLevel: 0,
-    //   },
-    // ];
-    // this.planService.saveCloPlan(plan).subscribe((res) => {
-    //   console.log(res);
-    // });
-    // TODO zasah
   }
 }

@@ -33,4 +33,8 @@ export class CLOService {
   updateClo(cloData: any): Observable<any> {
     return this.http.put(`${this.apiUrl}/clos/${cloData.id}`, cloData);
   }
+
+  deleteClo(id: string): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/clos/${id}`);
+  }
 }
