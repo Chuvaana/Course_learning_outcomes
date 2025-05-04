@@ -64,7 +64,7 @@ export class CurriculumComponent {
     private cloService: CLOService,
     private messageService: MessageService,
     private service: AssessmentService
-  ) { }
+  ) {}
 
   ngOnInit() {
     this.route.parent?.paramMap.subscribe((params) => {
@@ -74,7 +74,7 @@ export class CurriculumComponent {
   }
   loadLessonAllData() {
     forkJoin({
-      assessment: this.service.getAssessment(this.lessonId),
+      // assessment: this.service.getAssessment(this.lessonId),
       additional: this.service.getAdditional(this.lessonId),
       cloList: this.service.getCloList(this.lessonId),
       mainInfo: this.service.getMainInfo(this.lessonId),
@@ -85,31 +85,35 @@ export class CurriculumComponent {
       scheduleSems: this.service.getScheduleSems(this.lessonId),
       scheduleLabs: this.service.getScheduleLabs(this.lessonId),
       scheduleBds: this.service.getScheduleBds(this.lessonId),
-    }).subscribe((results) => {
-      // 🎯 Энд бүх үр дүн хадгалагдсан байна
-      this.assessmentData = results.assessment;
-      this.additionalData = results.additional;
-      this.cloListData = results.cloList;
-      this.mainInfoData = results.mainInfo;
-      this.materialsData = results.materials;
-      this.methodData = results.method;
-      this.definitionData = results.definition;
-      this.schedulesData = results.schedules;
-      this.scheduleSemsData = results.scheduleSems;
-      this.scheduleLabsData = results.scheduleLabs;
-      this.scheduleBdsData = results.scheduleBds;
+    }).subscribe(
+      (results) => {
+        // 🎯 Энд бүх үр дүн хадгалагдсан байна
+        // this.assessmentData = results.assessment;
+        this.additionalData = results.additional;
+        this.cloListData = results.cloList;
+        this.mainInfoData = results.mainInfo;
+        this.materialsData = results.materials;
+        this.methodData = results.method;
+        this.definitionData = results.definition;
+        this.schedulesData = results.schedules;
+        this.scheduleSemsData = results.scheduleSems;
+        this.scheduleLabsData = results.scheduleLabs;
+        this.scheduleBdsData = results.scheduleBds;
 
-      console.log('Бүх өгөгдөл:', results);
-      this.resultData = results;
-      this.pdfService.generatePdfTest(this.resultData);
-    },
+        console.log('Бүх өгөгдөл:', results);
+        this.resultData = results;
+        this.pdfService.generatePdfTest(this.resultData);
+      },
       (err) => {
         this.messageService.add({
           severity: 'error',
           summary: 'Алдаа',
-          detail: 'Тайлан хэвлэхэд алдаа гарлаа бүтэн мэдээлэл оруулна уу!: ' + err.message,
+          detail:
+            'Тайлан хэвлэхэд алдаа гарлаа бүтэн мэдээлэл оруулна уу!: ' +
+            err.message,
         });
-      });
+      }
+    );
   }
 
   exportToExcel() {
