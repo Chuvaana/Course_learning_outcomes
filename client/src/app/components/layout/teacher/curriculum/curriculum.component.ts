@@ -15,6 +15,8 @@ import { MaterialsComponent } from './materials/materials.component';
 import { MethodologyComponent } from './methodology/methodology.component';
 import { OtherComponent } from './other/other.component';
 import { ScheduleComponent } from './schedule/schedule.component';
+import { MessageService } from 'primeng/api';
+import { ToastModule } from 'primeng/toast';
 
 @Component({
   selector: 'app-curriculum',
@@ -31,7 +33,9 @@ import { ScheduleComponent } from './schedule/schedule.component';
     AdditionalComponent,
     MethodologyComponent,
     ButtonModule,
+    ToastModule,
   ],
+  providers: [MessageService],
   templateUrl: './curriculum.component.html',
   styleUrl: './curriculum.component.scss',
 })
@@ -58,8 +62,9 @@ export class CurriculumComponent {
     private route: ActivatedRoute,
     private pdfService: PdfGeneratorService,
     private cloService: CLOService,
+    private messageService: MessageService,
     private service: AssessmentService
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.route.parent?.paramMap.subscribe((params) => {
@@ -69,7 +74,7 @@ export class CurriculumComponent {
   }
   loadLessonAllData() {
     forkJoin({
-      assessment: this.service.getAssessment(this.lessonId),
+      // assessment: this.service.getAssessment(this.lessonId),
       additional: this.service.getAdditional(this.lessonId),
       cloList: this.service.getCloList(this.lessonId),
       mainInfo: this.service.getMainInfo(this.lessonId),
@@ -84,7 +89,7 @@ export class CurriculumComponent {
     }).subscribe((results) => {
       // 🎯 Энд бүх үр дүн хадгалагдсан байна
 
-      this.assessmentData = results.assessment;
+      // this.assessmentData = results.assessment;
       this.additionalData = results.additional;
       this.cloListData = results.cloList;
       this.mainInfoData = results.mainInfo;
@@ -100,7 +105,14 @@ export class CurriculumComponent {
       console.log('Бүх өгөгдөл:', results);
       this.resultData = results;
       this.pdfService.generatePdfTest(this.resultData);
-    });
+    },
+      (err) => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Алдаа',
+          detail: 'Тайлан хэвлэхэд алдаа гарлаа бүтэн мэдээлэл оруулна уу!: ' + err.message,
+        });
+      });
   }
 
   exportToExcel() {

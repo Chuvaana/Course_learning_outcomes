@@ -60,10 +60,17 @@ export class VerbComponent {
   }
 
   readData() {
-    this.service.getVerbs().subscribe((res) => {
-      console.log(res);
-      // this.items = res
-    });
+    this.service.getVerbs().subscribe((res : any) => {
+      // console.log(res);
+      this.items = res;
+    },
+      (err) => {
+        this.msgService.add({
+          severity: 'error',
+          summary: 'Алдаа',
+          detail: 'Алдаа гарлаа: ' + err.message,
+        });
+      });
   }
 
   loadBranches(): void {
@@ -99,6 +106,28 @@ export class VerbComponent {
   onRowEditInit(config: any, index: number) {
     this.index = index + 1;
     this.editingRowId = config.id;
+  }
+  onRowDelete(config: any, index: number) {
+    console.log(config + " - " + index);
+    if (index > -1) {
+      this.service.deleteVerbs(config._id).subscribe(() =>{
+        this.items.splice(index, 1);
+        this.msgService.add({
+          severity: 'success',
+          summary: 'Амжилттай',
+          detail: 'Амжилттай устгалаа!',
+        });
+      },
+      (err) => {
+        this.msgService.add({
+          severity: 'error',
+          summary: 'Алдаа',
+          detail: 'Устгахад алдаа гарлаа: ' + err.message,
+        });
+      })
+    }
+    // this.index = index + 1;
+    // this.editingRowId = config.id;
   }
 
   onRowEditCancel(config: any, index: number) {
@@ -174,5 +203,22 @@ export class VerbComponent {
   saveItem(item: any) {
     console.log('Saved item:', item);
     // Save the item after editing
+  }
+
+  save() {
+    this.items.map((e) => {
+      this.service.addVerb(e).subscribe((i) => {
+        console.log(i);
+      })
+    })
+
+  }
+
+  addColumn() {
+    const addData = {
+      verbCode: '2',
+      verbName: 'NAME',
+    };
+    this.items.push(addData);
   }
 }

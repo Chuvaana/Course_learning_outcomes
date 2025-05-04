@@ -16,7 +16,7 @@ exports.createVerb = async (req, res) => {
 // Get all Verb entries
 exports.getVerbs = async (req, res) => {
     try {
-        const verbs = await VerbCurriculum.find().populate('cloRelevance');
+        const verbs = await VerbCurriculum.find();
         res.status(200).json(verbs);
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -26,7 +26,7 @@ exports.getVerbs = async (req, res) => {
 // Get a specific Verb by ID
 exports.getVerbByItemCode = async (req, res) => {
     try {
-        const verb = await VerbCurriculum.findById(req.params.id).populate('cloRelevance');
+        const verb = await VerbCurriculum.findById(req.params.id);
         if (!verb) {
             return res.status(404).json({ message: "Verb not found" });
         }

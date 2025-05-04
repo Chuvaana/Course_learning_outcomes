@@ -37,7 +37,7 @@ export class AssessmentService {
   }
 
   getAssessment(id: string): Observable<any> {
-    return this.http.get(`${this.apiUrl}/assessments/${id}`);
+    return this.http.get(`${this.apiUrl}/lessonassessments/${id}`);
   }
 
   getCloList(id: string): Observable<any> {

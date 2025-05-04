@@ -8,6 +8,8 @@ module.exports = app => {
     // Get all finalExamurations
     router.get('/', finalExamController.getFinalExams);
 
+    router.get('/:lessonId', finalExamController.getAllFinalExamQuestions);
+
     // Get a specific finalExamuration by item_code
     router.get('/:id', finalExamController.getFinalExamByItemCode);
 

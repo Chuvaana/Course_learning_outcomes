@@ -22,6 +22,7 @@ import { TeacherComponent } from './teacher.component';
 import { ExamListComponent } from '../exam/exam-list.component';
 import { ProgressPollComponent } from './lesson-list/lesson/progress-poll/progress-poll.component';
 import { ExamProgressPollComponent } from '../student/exam-progress-poll/exam-progress-poll.component';
+import { FinalExamQuestionsComponent } from './final-exam/final-exam.component';
 
 const routes: Routes = [
   {
@@ -46,6 +47,7 @@ const routes: Routes = [
           { path: 'exam-progress-poll', component:ExamProgressPollComponent },
           { path: 'progress-poll', component: ProgressPollComponent },
           { path: 'report', component: HomeComponent },
+          { path: 'final-exam', component: FinalExamQuestionsComponent },
         ],
       },
       {

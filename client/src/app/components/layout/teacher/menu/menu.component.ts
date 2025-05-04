@@ -101,6 +101,11 @@ export class MenuComponent implements OnInit {
         ],
       },
       {
+        label: 'Улирлын шалгалт бэлдэх',
+        icon: 'pi pi-plus',
+        routerLink: ['/main/teacher/lesson', this.lessonId, 'final-exam'],
+      },
+      {
         label: 'Санал асуулга',
         icon: 'pi pi-plus',
         routerLink: ['/main/teacher/lesson', this.lessonId, 'progress-poll'],
