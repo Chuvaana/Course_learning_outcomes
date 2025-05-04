@@ -1,10 +1,10 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
 const FinalExamCurriculumSchema = new mongoose.Schema({
-    finalExamName: { type: String },
+  finalExamName: { type: String },
     lessonId: { type: String, required: true },
     examType: { type: String, required: true},
-    examVersion: { type: String },
+  examVersion: { type: String },
     examTakeStudentCount: { type: Number, required: true},
     finalExamQuestion: [{ type: mongoose.Schema.Types.ObjectId, ref: 'finalExamQuestion' }],
 });

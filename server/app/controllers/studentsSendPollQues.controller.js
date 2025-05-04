@@ -32,6 +32,34 @@ exports.getAllLessonStudentsSendPollQues = async (req, res) => {
   }
 };
 
+exports.getPollQuesLessonClo = async (req, res) => {
+  try {
+    const { lessonId } = req.params;
+    const { groupType } = req.query;
+
+    const entries = await StudentsSendPollQues.aggregate([
+      { $match: { lessonId } },
+      { $unwind: '$groupList' },
+      { $match: { 'groupList.groupType': groupType } },
+      {
+        $project: {
+          _id: 0,
+          lessonId: 1,
+          groupType: '$groupList.groupType',
+          questionList: '$groupList.questionList',
+        },
+      },
+    ]);
+
+    res.status(200).json(entries);
+  } catch (error) {
+    res.status(500).json({
+      message: 'Error fetching questionList by lessonId and groupType',
+      error,
+    });
+  }
+};
+
 // Get records by studentId
 exports.getAllStudentsSendPollQues = async (req, res) => {
   try {

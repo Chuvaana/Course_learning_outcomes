@@ -1,0 +1,32 @@
+<p-toast />
+<div class="other">
+  <form [formGroup]="feedbackForm" (ngSubmit)="submitForm()">
+    <p-floatlabel variant="on" class="w-full">
+      <textarea
+        pTextarea
+        id="strengths"
+        formControlName="strengths"
+        rows="5"
+        cols="80"
+      ></textarea>
+      <label for="strengths">Давуу тал</label>
+    </p-floatlabel>
+
+    <p-floatlabel variant="on" class="w-full">
+      <textarea
+        pTextarea
+        id="weaknesses"
+        formControlName="weaknesses"
+        rows="5"
+        cols="80"
+      ></textarea>
+      <label for="weaknesses">Сул тал</label>
+    </p-floatlabel>
+    <button
+      pButton
+      type="submit"
+      label="Хадгалах"
+      [disabled]="feedbackForm.invalid"
+    ></button>
+  </form>
+</div>

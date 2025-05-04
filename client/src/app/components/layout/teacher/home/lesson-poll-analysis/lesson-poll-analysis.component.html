@@ -1,1 +1,25 @@
-<p>lesson-poll-analysis works!</p>
+<h3>Санал асуулгад оролцсон оюутны тоо: {{ studentCount }}</h3>
+<div *ngFor="let group of feedbackByGroups">
+  <h3>{{ group.groupName }}</h3>
+  <p-table [value]="group.questionList">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>#</th>
+        <th style="width: 70%">Асуулт</th>
+        <th>Дундаж оноо</th>
+        <th>3–5 онооны тоо</th>
+        <th>3–5 онооны хувь (%)</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-question let-i="rowIndex">
+      <tr>
+        <td>{{ i + 1 }}</td>
+        <td>{{ question.questionTitle }}</td>
+        <td>{{ question.averageScore }}</td>
+        <td>{{ question.count3to5 }}</td>
+        <td>{{ question.percentage3to5 }}%</td>
+      </tr>
+    </ng-template>
+  </p-table>
+  <p-divider></p-divider>
+</div>

@@ -25,6 +25,9 @@
       <p-tab value="7"
         >САНАЛ АСУУЛГЫН БУСАД ҮР ДҮНГҮҮДЭД ХИЙСЭН ДҮН ШИНЖИЛГЭЭ</p-tab
       >
+      <p-tab value="8"
+        >СУРАЛЦАХУЙН ҮР ДҮНГИЙН ГҮЙЦЭТГЭЛИЙГ САЙЖРУУЛАХ ТӨЛӨВЛӨЛТ</p-tab
+      >
     </p-tablist>
     <p-tabpanels>
       <p-tabpanel value="0">
@@ -56,13 +59,22 @@
         <app-lesson-overall-assess></app-lesson-overall-assess>
       </p-tabpanel>
       <p-tabpanel value="5">
-        <app-lesson-indirect-assess></app-lesson-indirect-assess>
+        <app-lesson-indirect-assess
+          [lessonId]="lessonId"
+        ></app-lesson-indirect-assess>
       </p-tabpanel>
       <p-tabpanel value="6">
-        <app-lesson-direct-indirect></app-lesson-direct-indirect>
+        <app-lesson-direct-indirect
+          [lessonId]="lessonId"
+        ></app-lesson-direct-indirect>
       </p-tabpanel>
       <p-tabpanel value="7">
-        <app-lesson-poll-analysis></app-lesson-poll-analysis>
+        <app-lesson-poll-analysis
+          [lessonId]="lessonId"
+        ></app-lesson-poll-analysis>
+      </p-tabpanel>
+      <p-tabpanel value="8">
+        <app-lesson-adv-disadv [lessonId]="lessonId"></app-lesson-adv-disadv>
       </p-tabpanel>
     </p-tabpanels>
   </p-tabs>

@@ -1,0 +1,26 @@
+.other {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20px;
+
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+}
+
+.p-field {
+  margin-bottom: 1.5rem;
+}
+
+p-textarea {
+  width: 100%;
+  font-size: 1rem;
+  padding: 0.5rem;
+}
+
+button {
+  margin-top: 1rem;
+}

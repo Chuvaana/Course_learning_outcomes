@@ -1,1 +1,58 @@
-<p>lesson-indirect-assess works!</p>
+<p-table [value]="cloData" [responsiveLayout]="'scroll'">
+  <ng-template pTemplate="colgroup" let-columns>
+    <colgroup>
+      <col span="2" />
+      <col *ngFor="let rating of ratingLevels" />
+      <col span="2" />
+    </colgroup>
+  </ng-template>
+
+  <ng-template pTemplate="header">
+    <tr>
+      <th rowspan="2" colspan="2">CLO / Үнэлгээний түвшин</th>
+      <th colspan="5">Оноо (5-аас 1 хүртэл)</th>
+      <th rowspan="2">Нийт хариулт</th>
+      <th rowspan="2">4 ба 5 оноотой хариулт тоо, эзлэх хувь</th>
+    </tr>
+    <tr>
+      <th *ngFor="let rating of ratingLevels">{{ rating.label }}</th>
+    </tr>
+  </ng-template>
+
+  <ng-template pTemplate="body" let-row>
+    <!-- Row 1: counts -->
+    <tr>
+      <td rowspan="2">{{ getCloName(row.clo) }}</td>
+      <td>Хариултын тоо</td>
+      <td *ngFor="let rating of ratingLevels">
+        {{ row.responses[rating.key] }}
+      </td>
+      <td rowspan="2">{{ row.total }}</td>
+      <td rowspan="2">
+        {{ row.highScoreCount }} / {{ row.highScorePercent }}%
+      </td>
+    </tr>
+
+    <!-- Row 2: percentages -->
+    <tr>
+      <td>Эзлэх хувь(%)</td>
+      <td *ngFor="let rating of ratingLevels">
+        {{ row.percentages[rating.key] }}%
+      </td>
+    </tr>
+  </ng-template>
+</p-table>
+
+<p-chart
+  type="bar"
+  [data]="chartData"
+  [options]="chartOptions"
+  style="max-height: 500px"
+></p-chart>
+
+<p-chart
+  type="bar"
+  [data]="chartData45"
+  [options]="chartOptions45"
+  style="max-height: 500px"
+></p-chart>

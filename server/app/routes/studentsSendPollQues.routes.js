@@ -1,21 +1,23 @@
-module.exports = app => {
-    const controller = require('../controllers/StudentsSendPollQues.controller.js');
-    
-    var router = require('express').Router();
+module.exports = (app) => {
+  const controller = require('../controllers/studentsSendPollQues.controller');
 
-    router.post('/', controller.createStudentsSendPollQues);
+  var router = require('express').Router();
 
-    router.get('/', controller.getAllStudentsSendPollQuess);
+  router.post('/', controller.createStudentsSendPollQues);
 
-    router.get('/:lessonId', controller.getAllLessonStudentsSendPollQues);
+  router.get('/', controller.getAllStudentsSendPollQuess);
 
-    router.get('/:studentId', controller.getAllStudentsSendPollQues);
+  router.get('/lesson/:lessonId', controller.getAllLessonStudentsSendPollQues);
 
-    router.get('/:id', controller.getStudentsSendPollQuesById);
+  router.get('/lessonClo/:lessonId', controller.getPollQuesLessonClo);
 
-    router.put('/:id', controller.updateStudentsSendPollQues);
+  router.get('/:studentId', controller.getAllStudentsSendPollQues);
 
-    router.delete('/:id', controller.deleteStudentsSendPollQues);
+  router.get('/:id', controller.getStudentsSendPollQuesById);
 
-    app.use('/api/StudentsSendPollQues', router);
+  router.put('/:id', controller.updateStudentsSendPollQues);
+
+  router.delete('/:id', controller.deleteStudentsSendPollQues);
+
+  app.use('/api/studentsSendPollQues', router);
 };

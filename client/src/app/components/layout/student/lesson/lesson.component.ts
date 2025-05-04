@@ -29,11 +29,11 @@ import { ToastModule } from 'primeng/toast';
 export class LessonComponent {
   items: MenuItem[] | undefined;
 
-  studentId: string = '';
+  lessonId: string = '';
   constructor(private router: Router, private actRoute: ActivatedRoute) {}
 
   ngOnInit() {
-    this.studentId = this.actRoute.snapshot.paramMap.get('id') || '';
+    this.lessonId = this.actRoute.snapshot.paramMap.get('id') || '';
 
     this.items = [
       {
@@ -44,7 +44,7 @@ export class LessonComponent {
       {
         label: 'Төлөвлөгөө',
         icon: 'pi pi-home',
-        routerLink: ['/main/student', this.studentId, 'plan'],
+        routerLink: ['/main/student', this.lessonId, 'plan'],
       },
       {
         label: 'Шалгалт өгөх',
@@ -70,11 +70,7 @@ export class LessonComponent {
       {
         label: 'Санал асуулга өгөх',
         icon: 'pi pi-star',
-        command: () => {
-          this.router.navigate([
-            '/main/student/67f21da15d1c9f9efbf37dd9/exam-progress-poll',
-          ]);
-        },
+        routerLink: ['/main/student', this.lessonId, 'exam-progress-poll'],
       },
       {
         separator: true,

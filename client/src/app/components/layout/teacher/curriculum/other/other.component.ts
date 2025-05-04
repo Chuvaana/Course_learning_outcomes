@@ -1,6 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { FloatLabelModule } from 'primeng/floatlabel';
 import { TextareaModule } from 'primeng/textarea';
@@ -11,10 +17,18 @@ import { MessageService } from 'primeng/api';
 @Component({
   selector: 'app-other',
   standalone: true,
-  imports: [ToastModule, CommonModule, ButtonModule, FormsModule, ReactiveFormsModule, TextareaModule, FloatLabelModule],
+  imports: [
+    ToastModule,
+    CommonModule,
+    ButtonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    TextareaModule,
+    FloatLabelModule,
+  ],
   providers: [MessageService],
   templateUrl: './other.component.html',
-  styleUrl: './other.component.scss'
+  styleUrl: './other.component.scss',
 })
 export class OtherComponent {
   @Input() lessonId: string = '';
@@ -22,13 +36,17 @@ export class OtherComponent {
   otherForm!: FormGroup;
   isNew = true;
 
-  constructor(private fb: FormBuilder, private service: OtherService, private msgService: MessageService) { }
+  constructor(
+    private fb: FormBuilder,
+    private service: OtherService,
+    private msgService: MessageService
+  ) {}
 
   ngOnInit() {
     this.otherForm = this.fb.group({
       lessonId: [this.lessonId],
       description: ['', Validators.required],
-      goal: ['', Validators.required]
+      goal: ['', Validators.required],
     });
     if (this.lessonId) {
       this.service.getDefinition(this.lessonId).subscribe((res: any) => {
@@ -38,10 +56,9 @@ export class OtherComponent {
           this.otherForm.patchValue({
             lessonId: res.lessonId,
             description: res.description,
-            goal: res.goal
+            goal: res.goal,
           });
         }
-
       });
     }
   }
@@ -49,35 +66,41 @@ export class OtherComponent {
   onSubmit() {
     if (this.otherForm.valid) {
       if (this.isNew) {
-        this.service.addDefinition(this.otherForm.value).subscribe((res: any) => {
-          this.msgService.add({
-            severity: 'success',
-            summary: 'Амжилттай',
-            detail: 'Амжилттай хадгалагдлаа!',
-          });
-        },
+        this.service.addDefinition(this.otherForm.value).subscribe(
+          (res: any) => {
+            this.msgService.add({
+              severity: 'success',
+              summary: 'Амжилттай',
+              detail: 'Амжилттай хадгалагдлаа!',
+            });
+          },
           (err) => {
             this.msgService.add({
               severity: 'error',
               summary: 'Алдаа',
               detail: 'Алдаа гарлаа: ' + err.message,
             });
-          })
+          }
+        );
       } else {
-        this.service.updateDefinition(this.lessonId, this.otherForm.value).subscribe((res: any) => {
-          this.msgService.add({
-            severity: 'success',
-            summary: 'Амжилттай',
-            detail: 'Амжилттай шинэчлэгдлээ!',
-          });
-        },
-          (err) => {
-            this.msgService.add({
-              severity: 'error',
-              summary: 'Алдаа',
-              detail: 'Алдаа гарлаа: ' + err.message,
-            });
-          });
+        this.service
+          .updateDefinition(this.lessonId, this.otherForm.value)
+          .subscribe(
+            (res: any) => {
+              this.msgService.add({
+                severity: 'success',
+                summary: 'Амжилттай',
+                detail: 'Амжилттай шинэчлэгдлээ!',
+              });
+            },
+            (err) => {
+              this.msgService.add({
+                severity: 'error',
+                summary: 'Алдаа',
+                detail: 'Алдаа гарлаа: ' + err.message,
+              });
+            }
+          );
       }
     } else {
       console.log('Форм буруу байна');

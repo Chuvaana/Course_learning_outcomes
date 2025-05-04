@@ -1,35 +1,36 @@
-import { Component, Input } from '@angular/core';
-import { MessageService } from 'primeng/api';
 import { CommonModule } from '@angular/common';
-import { TableModule } from 'primeng/table';
+import { Component, Input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ToastModule } from 'primeng/toast';
-import { TagModule } from 'primeng/tag';
-import { DropdownModule } from 'primeng/dropdown';
+import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
-import { MethodService } from '../../../../../services/methodService';
-import { MultiSelectModule } from 'primeng/multiselect';
 import { CheckboxModule } from 'primeng/checkbox';
+import { DropdownModule } from 'primeng/dropdown';
+import { MultiSelectModule } from 'primeng/multiselect';
+import { TableModule } from 'primeng/table';
+import { TagModule } from 'primeng/tag';
+import { ToastModule } from 'primeng/toast';
+import { CLOService } from '../../../../../services/cloService';
+import { MethodService } from '../../../../../services/methodService';
 import { TabRefreshService } from '../tabRefreshService';
 
 interface Method {
   id: number;
-  lessonId: string,
+  lessonId: string;
   pedagogy: string;
   deliveryMode: string;
-  cloRelevance: string[],
-  classroom: boolean,
-  electronic: boolean,
-  combined: boolean
+  cloRelevance: string[];
+  classroom: boolean;
+  electronic: boolean;
+  combined: boolean;
 }
 interface Method1 {
-  lessonId: string,
+  lessonId: string;
   pedagogy: string;
   deliveryMode: string;
-  cloRelevance: string[],
-  classroom: boolean,
-  electronic: boolean,
-  combined: boolean
+  cloRelevance: string[];
+  classroom: boolean;
+  electronic: boolean;
+  combined: boolean;
 }
 
 @Component({
@@ -44,11 +45,11 @@ interface Method1 {
     DropdownModule,
     ButtonModule,
     MultiSelectModule,
-    CheckboxModule
+    CheckboxModule,
   ],
   providers: [MessageService],
   templateUrl: './methodology.component.html',
-  styleUrl: './methodology.component.scss'
+  styleUrl: './methodology.component.scss',
 })
 export class MethodologyComponent {
   @Input() lessonId: string = '';
@@ -59,22 +60,25 @@ export class MethodologyComponent {
   index!: number;
   isNew = true;
 
-  deliveryModes =
-    [
-      { label: 'Тонгоруу анги', value: 'CLASS' },
-      { label: 'Төсөлд суурилсан сургалт', value: 'PROJECT' },
-      { label: 'Туршилтад суурилсан сургалт', value: 'EXPERIMENT' },
-      { label: 'Асуудалд суурилсан сургалт', value: 'PROBLEM' }
-    ];
+  deliveryModes = [
+    { label: 'Тонгоруу анги', value: 'CLASS' },
+    { label: 'Төсөлд суурилсан сургалт', value: 'PROJECT' },
+    { label: 'Туршилтад суурилсан сургалт', value: 'EXPERIMENT' },
+    { label: 'Асуудалд суурилсан сургалт', value: 'PROBLEM' },
+  ];
 
   pedagogyOptions = [
     { label: 'Лекц', value: 'Lecture' },
     { label: 'Хэлэлцүүлэг, семинар', value: 'Discussion' },
     { label: 'Лаборатори, туршилт', value: 'Laboratory' },
-    { label: 'Практик', value: 'Practice' }
+    { label: 'Практик', value: 'Practice' },
   ];
 
-  constructor(private msgService: MessageService, private service: MethodService, private tabRefreshService: TabRefreshService) { }
+  constructor(
+    private service: MethodService,
+    private tabRefreshService: TabRefreshService,
+    private cloService: CLOService
+  ) {}
 
   ngOnInit() {
     if (this.lessonId) {
@@ -86,7 +90,7 @@ export class MethodologyComponent {
   }
 
   loadData() {
-    this.service.getCloList(this.lessonId).subscribe(res => {
+    this.cloService.getCloList(this.lessonId).subscribe((res) => {
       this.clos = res;
     });
     this.service.getMethod(this.lessonId).subscribe((data: any) => {
@@ -99,94 +103,26 @@ export class MethodologyComponent {
           classroom: item.classroom,
           electronic: item.electronic,
           combined: item.combined,
-          cloRelevance: item.cloRelevance.map((clo: any) => clo.id) // Extract only CLO IDs
+          cloRelevance: item.cloRelevance.map((clo: any) => clo.id), // Extract only CLO IDs
         }));
       }
     });
   }
 
-  onRowEditInit(method: Method, index: number) {
-    this.index = index + 1;
-    this.clonedMethods[method.id] = { ...method };
-    this.editingRowId = method.id;
-  }
-
-  newRow() {
-    return {
-      lessonId: this.lessonId,
-      pedagogy: '',
-      deliveryMode: '',
-      cloRelevance: [],
-      classroom: false,
-      electronic: false,
-      combined: false
-    };
-  }
-
-  onRowEditSave(method: Method) {
-    // const methodData = { ...method, lessonId: this.lessonId };
-
-    if (method.id === null || method.id === undefined) {
-      this.service.createMethod(method).subscribe((res: any) => {
-        this.msgService.add({
-          severity: 'success',
-          summary: 'Амжилттай',
-          detail: 'Амжилттай хадгалагдлаа!',
-        });
-      },
-        (err) => {
-          this.msgService.add({
-            severity: 'error',
-            summary: 'Алдаа',
-            detail: 'Алдаа гарлаа: ' + err.message,
-          });
-        })
-    } else {
-      this.service.updateMethod(method).subscribe((res: any) => { })
-
-    }
-    this.editingRowId = null;
-  }
-
-
-  onRowEditCancel(method: Method, index: number) {
-    this.methodologys[index] = { ...this.clonedMethods[method.id] };
-    delete this.clonedMethods[method.id];
-    this.editingRowId = null;
-  }
-
   getCloName(cloId: string): string {
-    const clo = this.clos.find((c: { id: string; }) => c.id === cloId);
+    const clo = this.clos.find((c: { id: string }) => c.id === cloId);
     return clo ? clo.cloName : 'Unknown';
   }
 
   getPedagogyName(pedagogyId: string): string {
-    const pedagogy = this.pedagogyOptions.find(p => p.value === pedagogyId);
-    return pedagogy ? pedagogy.label : "Unknown";
+    const pedagogy = this.pedagogyOptions.find((p) => p.value === pedagogyId);
+    return pedagogy ? pedagogy.label : 'Unknown';
   }
 
   getDeliveryModeName(deliveryModeId: string): string {
-    const mode = this.deliveryModes.find((m: { value: string; }) => m.value === deliveryModeId);
-    return mode ? mode.label : "Unknown";
-  }
-
-
-  addMethod() {
-
-    const newMethod: Method1 = {
-      lessonId: this.lessonId,
-      pedagogy: '',
-      deliveryMode: '',
-      cloRelevance: [],
-      classroom: false,
-      electronic: false,
-      combined: false
-    };
-
-    this.methodologys = [...this.methodologys, newMethod as Method];
-
-    setTimeout(() => {
-      this.onRowEditInit(newMethod as Method, this.methodologys.length - 1);
-    });
+    const mode = this.deliveryModes.find(
+      (m: { value: string }) => m.value === deliveryModeId
+    );
+    return mode ? mode.label : 'Unknown';
   }
 }
