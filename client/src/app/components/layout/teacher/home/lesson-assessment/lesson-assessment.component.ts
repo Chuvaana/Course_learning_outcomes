@@ -75,7 +75,7 @@ export class LessonAssessmentComponent {
           item.content = this.students.map((stu: any) => {
             const points = item.assessPlan.map((plan: any) => ({
               subMethodId: plan.subMethodId,
-              point: 0, // default 0
+              point: 0,
             }));
 
             return {
@@ -130,44 +130,69 @@ export class LessonAssessmentComponent {
           });
         });
       });
-
     this.assessProcess
-      .studentAttPoint(this.lessonId, this.cloList)
-      .subscribe((data) => { });
+      .studentAttPoint(
+        this.lessonId,
+        this.cloList,
+        this.pointPlan,
+        this.cloPlan
+      )
+      .subscribe((data) => {
+        const pointMap = new Map<string, Map<string, number>>();
 
-    this.assessProcess
-      .studentExamPointProcess(this.lessonId, this.cloList)
-      .subscribe((examQuizPointData) => {
-        console.log(examQuizPointData);
-        this.tabs.forEach((item: any) => {
-          item.content.forEach((studentRow: any) => {
-            let total = 0;
+        data.forEach((attendance: any) => {
+          const key = `${attendance.cloId}_${attendance.subMethodId}`; // Composite key
+          if (!pointMap.has(key)) {
+            pointMap.set(key, new Map());
+          }
 
-            studentRow.points.forEach((pointItem: any) => {
-              // const grade = examQuizPointData
-              //   .find((g: any) =>
-              //     g.sumPoints.find(
-              //       (s: any) =>
-              //         s.studentId === studentRow.studentCode &&
-              //         s.subMethodId === pointItem.subMethodId
-              //     )
-              //   )
-              //   ?.sumPoints.find(
-              //     (s: any) =>
-              //       s.studentId === studentRow.studentCode &&
-              //       s.subMethodId === pointItem.subMethodId
-              //   );
-              // if (grade) {
-              //   pointItem.point = grade.point;
-              //   total += grade.point;
-              // }
+          attendance.sumPoints.forEach((sp: any) => {
+            const floatPoint = Number(parseFloat(sp.statusPoint).toFixed(2));
+            pointMap.get(key)!.set(sp.studentId, floatPoint);
+          });
+        });
+
+        // Update studentRow.points with values from pointMap
+        this.tabs.forEach((tab: any) => {
+          tab.content.forEach((studentRow: any) => {
+            studentRow.points.forEach((point: any) => {
+              const key = `${tab.id}_${point.subMethodId}`;
+              const studentPoints = pointMap.get(key);
+              if (studentPoints && studentPoints.has(studentRow.studentId)) {
+                point.point = studentPoints.get(studentRow.studentId);
+              }
             });
+          });
+        });
+      });
 
-            // studentRow.totalPoint = total;
-            // studentRow.percentage = +((total / item.totalPoint) * 100).toFixed(
-            //   2
-            // );
-            // studentRow.letterGrade = this.getLetterGrade(studentRow.percentage);
+    this.assessProcess
+      .studentActivityPoint(this.lessonId, this.pointPlan, this.cloPlan)
+      .subscribe((data) => {
+        const pointMap = new Map<string, Map<string, number>>();
+
+        data.forEach((activity: any) => {
+          const key = `${activity.cloId}_${activity.subMethodId}`; // Composite key
+          if (!pointMap.has(key)) {
+            pointMap.set(key, new Map());
+          }
+
+          activity.sumPoints.forEach((sp: any) => {
+            const floatPoint = Number(parseFloat(sp.statusPoint).toFixed(2));
+            pointMap.get(key)!.set(sp.studentId, floatPoint);
+          });
+        });
+
+        // Update studentRow.points with values from pointMap
+        this.tabs.forEach((tab: any) => {
+          tab.content.forEach((studentRow: any) => {
+            studentRow.points.forEach((point: any) => {
+              const key = `${tab.id}_${point.subMethodId}`;
+              const studentPoints = pointMap.get(key);
+              if (studentPoints && studentPoints.has(studentRow.studentId)) {
+                point.point = studentPoints.get(studentRow.studentId);
+              }
+            });
           });
         });
       });
@@ -180,80 +205,6 @@ export class LessonAssessmentComponent {
     if (percent > 60) return 'D';
     return 'F';
   }
-
-  // read() {
-  //   // this.assessProcess
-  //   //   .studentAttPoint(this.lessonId, this.cloList)
-  //   //   .subscribe((data) => {
-  //   //     if (data) {
-  //   //       this.tabs.forEach((item: any) => {
-  //   //         const match = data.find((stu: any) => item.id === stu.cloId);
-  //   //         if (match) {
-  //   //           match.sumPoints.forEach((po: any) => {
-  //   //             const content = item.content.find(
-  //   //               (co: any) => co.studentId === po.studentId
-  //   //             );
-  //   //             if (content) {
-  //   //               content.points.forEach((coPo: any) => {
-  //   //                 if (coPo.subMethodId === match.cloId) {
-  //   //                   coPo.point = po.statusPoint;
-  //   //                 }
-  //   //               });
-  //   //             }
-  //   //           });
-  //   //         }
-  //   //       });
-  //   //     }
-  //   //   });
-  //   this.assessProcess
-  //     .gradePoint(this.lessonId, this.cloList)
-  //     .subscribe((gradeData) => {
-  //       this.tabs.forEach((item: any) => {
-  //         gradeData.forEach((data: any) => {
-  //           data.sumPoints.map((stu: any) => {
-  //             const content = item.content.find(
-  //               (co: any) => co.studentId === stu.studentId
-  //             );
-  //             if (content) {
-  //               const pointItem = content.points.find(
-  //                 (coPo: any) => coPo.subMethodId === stu.subMethodId
-  //               );
-  //               if (pointItem) {
-  //                 pointItem.point = stu.point;
-  //               }
-  //             }
-  //           });
-  //         });
-  //       });
-  //       console.log('content:', this.tabs);
-  //       console.log('gradeData:', gradeData);
-  //     });
-  //   // this.grade.getGradeByLesson(this.lessonId).subscribe((gradeData: any) => {
-  //   //   if (gradeData) {
-  //   //     this.tabs.forEach((item: any) => {
-  //   //       gradeData.forEach((data: any) => {
-  //   //         data.studentGrades.forEach((stu: any) => {
-  //   //           const content = item.content.find(
-  //   //             (co: any) => co.studentId === stu.studentId.id
-  //   //           );
-  //   //           if (content) {
-  //   //             stu.grades.forEach((gr: any) => {
-  //   //               const pointItem = content.points.find(
-  //   //                 (coPo: any) => coPo.subMethodId === gr.id
-  //   //               );
-  //   //               if (pointItem) {
-  //   //                 pointItem.point = gr.point;
-  //   //               }
-  //   //             });
-  //   //           }
-  //   //         });
-  //   //       });
-  //   //     });
-  //   //     console.log('content:', this.tabs);
-  //   //     console.log('gradeData:', gradeData);
-  //   //   }
-  //   // });
-  // }
 
   ngOnInit() { }
 

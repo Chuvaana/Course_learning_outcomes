@@ -6,23 +6,24 @@ import { MessageService, SelectItem } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { CheckboxModule } from 'primeng/checkbox';
 import { DropdownModule } from 'primeng/dropdown';
+import { InputNumberModule } from 'primeng/inputnumber';
 import { InputTextModule } from 'primeng/inputtext';
 import { TableModule } from 'primeng/table';
 import { ToastModule } from 'primeng/toast';
-import { AttendanceService } from '../../../../../../services/attendanceService';
-import { StudentService } from '../../../../../../services/studentService';
-import { SharedDictService } from '../../../shared';
-
-interface AttendanceRecord {
+import { ActivityService } from '../../../../services/activityService';
+import { AssessmentService } from '../../../../services/assessmentService';
+import { StudentService } from '../../../../services/studentService';
+interface ActivityRecord {
   student: {
     name: string;
     code: string;
     studentId: string;
   };
-  attendance: { [weekNumber: string]: boolean }; // Week number as key, attendance status as value
+  activity: { [weekNumber: string]: number };
 }
+
 @Component({
-  selector: 'app-attendance',
+  selector: 'app-activity',
   standalone: true,
   imports: [
     CommonModule,
@@ -33,19 +34,20 @@ interface AttendanceRecord {
     FormsModule,
     CheckboxModule,
     ToastModule,
+    InputNumberModule,
   ],
   providers: [MessageService],
-  templateUrl: './attendance.component.html',
-  styleUrl: './attendance.component.scss',
+  templateUrl: './activity.component.html',
+  styleUrl: './activity.component.scss',
 })
-export class AttendanceComponent {
+export class ActivityComponent {
   weekdays: SelectItem[] = [];
   classTypes: SelectItem[] = [];
   selectedWeekday: string = 'Monday';
   selectedClassType: 'alec' | 'bsem' | 'clab' = 'alec';
   selectedTimes: number = 1;
   students: any[] = [];
-  attendanceRecords: any[] = [];
+  activityRecords: any[] = [];
   lessonId!: string;
   startDate!: Date;
 
@@ -60,13 +62,14 @@ export class AttendanceComponent {
     { value: 8, label: '8-р цаг' },
   ];
   showPreviousWeeks = false;
+  activityPoint = 0;
 
   constructor(
     private studentService: StudentService,
+    private assessService: AssessmentService,
     private route: ActivatedRoute,
-    private attendanceService: AttendanceService,
-    private msgService: MessageService,
-    private shared: SharedDictService
+    private activityService: ActivityService,
+    private msgService: MessageService
   ) {}
 
   ngOnInit() {
@@ -77,37 +80,47 @@ export class AttendanceComponent {
       { label: 'Пүрэв', value: 'Thursday' },
       { label: 'Баасан', value: 'Friday' },
     ];
+
     this.route.parent?.paramMap.subscribe((params) => {
       this.lessonId = params.get('id')!;
     });
-    this.shared.getDictionary(this.lessonId, true).subscribe((res) => {
-      this.classTypes = res;
 
-      this.attendanceService
-        .getConfig('First_day_of_school')
-        .subscribe((res) => {
-          if (res) {
-            this.startDate = new Date(res.itemValue);
+    this.activityService.getConfig('First_day_of_school').subscribe((res) => {
+      if (res) {
+        this.startDate = new Date(res.itemValue);
+      }
+    });
+
+    this.assessService
+      .getAssessmentByLesson(this.lessonId)
+      .subscribe((res: any) => {
+        console.log(res);
+        res.plans.map((item: any) => {
+          if (item.methodType === 'PARTI') {
+            if (item.subMethods.length != 0) {
+              item.subMethods.map((po: any) => {
+                this.activityPoint = po.point;
+                console.log(this.activityPoint);
+              });
+            }
           }
         });
-
-      this.onSelectionChange();
-    });
+      });
+    this.onSelectionChange();
   }
 
   onSelectionChange(): void {
     if (this.selectedWeekday && this.selectedClassType && this.selectedTimes) {
-      this.attendanceService
-        .getAttendance(
+      this.activityService
+        .getActivity(
           this.lessonId,
           this.selectedWeekday,
           this.selectedClassType,
           this.selectedTimes
         )
         .subscribe((res: any) => {
-          console.log(res);
-          this.attendanceRecords = this.generateAttendance(res);
-          if (this.attendanceRecords.length == 0) {
+          this.activityRecords = this.generateActivity(res);
+          if (this.activityRecords.length == 0) {
             this.studentService
               .getStudentByClasstypeAndDayTime(
                 this.selectedClassType,
@@ -116,17 +129,17 @@ export class AttendanceComponent {
               )
               .subscribe((students: any[]) => {
                 this.students = students;
-                this.attendanceRecords = this.generateAttendanceRecords();
+                this.activityRecords = this.generateActivityRecords();
               });
           }
         });
     } else {
-      this.attendanceService
-        .getAttendanceByLesson(this.lessonId)
-        .subscribe((res) => {
+      this.activityService
+        .getActivityByLesson(this.lessonId)
+        .subscribe((res: any) => {
           console.log(res);
-          this.attendanceRecords = this.generateAttendance(res);
-          if (this.attendanceRecords.length == 0) {
+          this.activityRecords = this.generateActivity(res);
+          if (this.activityRecords.length == 0) {
             this.studentService
               .getStudentByClasstypeAndDayTime(
                 this.selectedClassType,
@@ -135,14 +148,14 @@ export class AttendanceComponent {
               )
               .subscribe((students: any[]) => {
                 this.students = students;
-                this.attendanceRecords = this.generateAttendanceRecords();
+                this.activityRecords = this.generateActivityRecords();
               });
           }
         });
     }
   }
 
-  generateAttendanceRecords() {
+  generateActivityRecords() {
     let dates = this.getAllWeeks().sort();
     return this.students.map((student) => ({
       student: {
@@ -150,33 +163,47 @@ export class AttendanceComponent {
         code: student.studentCode,
         studentId: student.id,
       },
-      attendance: dates.reduce((acc, date) => ({ ...acc, [date]: false }), {}),
+      activity: dates.reduce((acc, date) => ({ ...acc, [date]: 0 }), {}),
     }));
   }
 
-  generateAttendance(data: any): AttendanceRecord[] {
-    const studentAttendanceMap: { [studentId: string]: AttendanceRecord } = {};
+  generateActivity(data: any): ActivityRecord[] {
+    const studentActivityMap: { [studentId: string]: ActivityRecord } = {};
 
+    // Step 1: Get all unique weekNumbers
+    const allWeekNumbers: string[] = Array.from(
+      new Set(data.map((weekData: any) => weekData.weekNumber))
+    );
+
+    // Step 2: Process each week's data
     data.forEach((weekData: any) => {
-      weekData.attendance.forEach((item: any) => {
-        if (!studentAttendanceMap[item.studentId.id]) {
-          studentAttendanceMap[item.studentId.id] = {
+      weekData.activity.forEach((item: any) => {
+        const studentId = item.studentId.id;
+
+        // If student not added yet, initialize with 0 for all weeks
+        if (!studentActivityMap[studentId]) {
+          const activity: { [week: string]: number } = {};
+          allWeekNumbers.forEach((week: string) => {
+            activity[week] = 0;
+          });
+
+          studentActivityMap[studentId] = {
             student: {
               name: item.studentId.studentName,
               code: item.studentId.studentCode,
-              studentId: item.studentId.id,
+              studentId: studentId,
             },
-            attendance: {},
+            activity,
           };
         }
 
-        studentAttendanceMap[item.studentId.id].attendance[
-          weekData.weekNumber
-        ] = item.status;
+        // Overwrite with actual value for this week
+        studentActivityMap[studentId].activity[weekData.weekNumber] =
+          item.point;
       });
     });
 
-    return Object.values(studentAttendanceMap);
+    return Object.values(studentActivityMap);
   }
 
   getAllWeeks() {
@@ -230,14 +257,30 @@ export class AttendanceComponent {
     this.showPreviousWeeks = !this.showPreviousWeeks;
   }
 
-  getAttendanceSum(record: AttendanceRecord): number {
-    return Object.values(record.attendance).reduce(
-      (sum, val) => sum + (val ? 1 : 0),
-      0
-    );
+  getTotal(record: ActivityRecord): number {
+    return Object.values(record.activity).reduce((sum, val) => sum + val, 0);
   }
 
   save(): void {
+    const invalidStudents = this.activityRecords.filter((record) => {
+      const total = (Object.values(record.activity) as number[]).reduce(
+        (sum, val) => sum + val,
+        0
+      );
+      return total > this.activityPoint;
+    });
+
+    if (invalidStudents.length > 0) {
+      const studentCodes = invalidStudents
+        .map((s) => s.student.code)
+        .join(', ');
+      this.msgService.add({
+        severity: 'error',
+        summary: 'Алдаа',
+        detail: `${studentCodes} оюутны нийт идэвхийн оноо ${this.activityPoint}-аас хэтэрсэн байна.`,
+      });
+      return;
+    }
     if (!this.showPreviousWeeks) {
       const currentWeek = this.getCurrentWeeks();
       const lessonId = this.lessonId;
@@ -247,13 +290,13 @@ export class AttendanceComponent {
         type: this.selectedClassType,
         time: this.selectedTimes,
         weekNumber: currentWeek,
-        attendance: this.attendanceRecords.flatMap((record) =>
-          Object.keys(record.attendance)
+        activity: this.activityRecords.flatMap((record) =>
+          Object.keys(record.activity)
             .map((date) => {
               if (date === currentWeek) {
                 return {
                   studentId: record.student.studentId,
-                  status: record.attendance[date],
+                  point: record.activity[date],
                 };
               }
               return null;
@@ -262,7 +305,7 @@ export class AttendanceComponent {
         ),
       };
 
-      this.attendanceService.createAttendance(attendanceData).subscribe(
+      this.activityService.createActivity(attendanceData).subscribe(
         (response) => {
           this.msgService.add({
             severity: 'success',
@@ -289,13 +332,13 @@ export class AttendanceComponent {
           type: this.selectedClassType,
           time: this.selectedTimes,
           weekNumber: item,
-          attendance: this.attendanceRecords.flatMap((record) =>
-            Object.keys(record.attendance)
+          activity: this.activityRecords.flatMap((record) =>
+            Object.keys(record.activity)
               .map((date) => {
                 if (date === item) {
                   return {
                     studentId: record.student.studentId,
-                    status: record.attendance[date],
+                    point: record.activity[date],
                   };
                 }
                 return null;
@@ -305,7 +348,7 @@ export class AttendanceComponent {
         };
       });
 
-      this.attendanceService.createAttendanceAll(attendanceDatas).subscribe(
+      this.activityService.createActivityAll(attendanceDatas).subscribe(
         (response) => {
           this.msgService.add({
             severity: 'success',
@@ -314,7 +357,7 @@ export class AttendanceComponent {
           });
         },
         (error) => {
-          console.error('Error saving attendance:', error);
+          console.error('Error saving activity:', error);
           this.msgService.add({
             severity: 'error',
             summary: 'Алдаа',

@@ -80,9 +80,20 @@ export class MenuComponent implements OnInit {
         ],
       },
       {
-        label: 'Ирц',
+        label: 'Ирц, идэвх',
         icon: 'pi pi-plus',
-        routerLink: ['/main/teacher/lesson', this.lessonId, 'attendance'],
+        items: [
+          {
+            label: 'Ирц',
+            icon: 'pi pi-graduation-cap',
+            routerLink: ['/main/teacher/lesson', this.lessonId, 'attendance'],
+          },
+          {
+            label: 'Идэвх',
+            icon: 'pi pi-graduation-cap',
+            routerLink: ['/main/teacher/lesson', this.lessonId, 'activity'],
+          },
+        ],
       },
       {
         label: 'Шалгалт',

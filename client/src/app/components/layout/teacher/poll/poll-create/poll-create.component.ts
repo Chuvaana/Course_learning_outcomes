@@ -66,18 +66,6 @@ export class PollCreateComponent {
     { id: '3', name: 'Drop-down' },
     { id: '4', name: 'Linear scale' },
   ];
-  lessonTypes = [
-    { id: 'ALEC', name: 'Лекц' },
-    { id: 'BSEM', name: 'Семинар' },
-    { id: 'CLAB', name: 'Лаборатори' },
-  ];
-  weeks = [
-    { name: 'Даваа', id: 'Monday' },
-    { name: 'Мягмар', id: 'Tuesday' },
-    { name: 'Лхагва', id: 'Wednesday' },
-    { name: 'Пүрэв', id: 'Thursday' },
-    { name: 'Баасан', id: 'Friday' },
-  ];
 
   timeSlots = Array.from({ length: 8 }, (_, i) => ({
     value: i + 1,

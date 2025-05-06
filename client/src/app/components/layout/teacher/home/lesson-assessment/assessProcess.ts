@@ -4,6 +4,8 @@ import { AssessmentService } from '../../../../../services/assessmentService';
 import { AttendanceService } from '../../../../../services/attendanceService';
 import { GradeService } from '../../../../../services/gradeService';
 import { lessonAssessmentService } from '../../../../../services/lessonAssessment';
+import { KNOB_VALUE_ACCESSOR } from 'primeng/knob';
+import { ActivityService } from '../../../../../services/activityService';
 
 @Injectable({
   providedIn: 'root',
@@ -12,6 +14,7 @@ export class AssessProcessService {
   constructor(
     private assess: AssessmentService,
     private attend: AttendanceService,
+    private activityService: ActivityService,
     private grade: GradeService,
     private lessonAssessmentService: lessonAssessmentService
   ) {}
@@ -137,46 +140,192 @@ export class AssessProcessService {
     return forkJoin(allObservables).pipe(map(() => studentPoints));
   }
 
-  studentAttPoint(lessonId: string, cloList: any) {
+  studentAttPoint(
+    lessonId: string,
+    cloList: any,
+    pointPlan: any,
+    cloPlan: any
+  ) {
     return forkJoin({
       attendance: this.attend.getAttendanceByLesson(lessonId),
-      weekAndClo: this.clo(lessonId, cloList, 'lec'),
+      weekAndCloLec: this.clo(lessonId, cloList, 'lec'),
+      weekAndCloSem: this.clo(lessonId, cloList, 'sem'),
+      weekAndCloLab: this.clo(lessonId, cloList, 'lab'),
     }).pipe(
-      map(({ attendance, weekAndClo }) => {
+      map(({ attendance, weekAndCloLec, weekAndCloSem, weekAndCloLab }) => {
+        let subMethodId = '';
+        const points: { cloId: any; subMethodId: string; point: any }[] = [];
+        pointPlan.plans.map((item: any) => {
+          if (item.methodType === 'PARTI') {
+            subMethodId = item.subMethods[0]._id;
+          }
+        });
+        cloPlan.map((item: any) => {
+          item.procPoints.map((proc: any) => {
+            if (proc.subMethodId === subMethodId) {
+              if (proc.point == 0) {
+                return;
+              }
+              const point = {
+                cloId: item.cloId,
+                subMethodId: subMethodId,
+                point: proc.point,
+              };
+              points.push(point);
+            }
+          });
+        });
         const adata: any[] = [];
 
-        weekAndClo.forEach((wkc: any) => {
-          const cloAttPoint = {
-            cloId: wkc.id,
-            avahOnoo: wkc.week.length,
-            sumPoints: [] as { studentId: string; statusPoint: number }[],
-          };
+        const processClo = (wkcList: any[], type: string) => {
+          wkcList.forEach((wkc: any) => {
+            const avahOnoo = wkc.week.length;
+            if (avahOnoo === 0) return;
 
-          const pointMap: Record<string, number> = {};
+            const cloAttPoint = {
+              cloId: wkc.id,
+              avahOnoo,
+              subMethodId: subMethodId,
+              sumPoints: [] as { studentId: string; statusPoint: number }[],
+            };
 
-          wkc.week.forEach((week: string) => {
-            attendance.forEach((a: any) => {
-              if (a.weekNumber === week) {
-                a.attendance.forEach((a1: any) => {
-                  const studentId = a1.studentId?.id || a1.studentId;
-                  const point = a1.status === false ? 0 : 1;
+            const pointMap: Record<string, number> = {};
 
-                  pointMap[studentId] = (pointMap[studentId] || 0) + point;
-                });
+            wkc.week.forEach((week: string) => {
+              attendance.forEach((a: any) => {
+                if (a.weekNumber === week && a.type === type) {
+                  a.attendance.forEach((a1: any) => {
+                    const studentId = a1.studentId?.id || a1.studentId;
+                    const point = a1.status === false ? 0 : 1;
+
+                    pointMap[studentId] = (pointMap[studentId] || 0) + point;
+                  });
+                }
+              });
+            });
+
+            for (const studentId in pointMap) {
+              cloAttPoint.sumPoints.push({
+                studentId,
+                statusPoint: pointMap[studentId],
+              });
+            }
+
+            adata.push(cloAttPoint);
+          });
+        };
+
+        processClo(weekAndCloLec, 'alec');
+        processClo(weekAndCloSem, 'bsem');
+        processClo(weekAndCloLab, 'clab');
+
+        adata.map((item: any) => {
+          points.map((po: any) => {
+            if (po.cloId === item.cloId) {
+              item.sumPoints.map((sp: any) => {
+                sp.statusPoint = (sp.statusPoint * po.point) / item.avahOnoo;
+              });
+              item.cloId = po.cloId;
+            }
+          });
+        });
+
+        console.log(adata);
+        return adata;
+      })
+    );
+  }
+
+  studentActivityPoint(lessonId: string, pointPlan: any, cloPlan: any) {
+    return forkJoin({
+      activity: this.activityService.getActivityByLesson(lessonId),
+    }).pipe(
+      map(({ activity }) => {
+        let subMethodId = '';
+        const points: { cloId: any; subMethodId: string; point: any }[] = [];
+        pointPlan.plans.map((item: any) => {
+          if (item.methodType === 'PARTI' && item.subMethods.length == 2) {
+            subMethodId = item.subMethods[1]._id;
+          }
+        });
+        const adata: any[] = [];
+        if (subMethodId !== '') {
+          cloPlan.map((item: any) => {
+            item.procPoints.map((proc: any) => {
+              if (proc.subMethodId === subMethodId) {
+                if (proc.point == 0) {
+                  return;
+                }
+                const point = {
+                  cloId: item.cloId,
+                  subMethodId: subMethodId,
+                  point: proc.point,
+                };
+                points.push(point);
               }
             });
           });
 
-          for (const studentId in pointMap) {
-            cloAttPoint.sumPoints.push({
-              studentId,
-              statusPoint: pointMap[studentId],
-            });
-          }
+          console.log(points);
 
-          adata.push(cloAttPoint);
-        });
-        console.log(adata);
+          points.map((po: any) => {
+            const cloAttPoint = {
+              cloId: po.cloId,
+              subMethodId: po.subMethodId,
+              sumPoints: [] as { studentId: string; statusPoint: number }[],
+            };
+            adata.push(cloAttPoint);
+          });
+
+          const studentTotalPoints = new Map<
+            string,
+            { studentName: string; totalPoint: number }
+          >();
+
+          activity.forEach((week) => {
+            week.activity.forEach((act: any) => {
+              const id = act.studentId.id;
+              const name = act.studentId.studentName;
+              const point = act.point;
+
+              if (!studentTotalPoints.has(id)) {
+                studentTotalPoints.set(id, {
+                  studentName: name,
+                  totalPoint: 0,
+                });
+              }
+
+              const current = studentTotalPoints.get(id)!;
+              current.totalPoint += point;
+            });
+          });
+
+          // Хуваарилах процесс
+          studentTotalPoints.forEach((value, studentId) => {
+            let remaining = value.totalPoint;
+
+            for (const cloAttPoint of adata) {
+              const po = points.find(
+                (p) =>
+                  p.cloId === cloAttPoint.cloId &&
+                  p.subMethodId === cloAttPoint.subMethodId
+              );
+              if (!po || po.point === 0) continue;
+
+              const assign = Math.min(remaining, po.point);
+              remaining -= assign;
+
+              cloAttPoint.sumPoints.push({
+                studentId: studentId,
+                statusPoint: assign,
+              });
+
+              if (remaining <= 0) break;
+            }
+          });
+
+          console.log(adata);
+        }
         return adata;
       })
     );
@@ -191,54 +340,6 @@ export class AssessProcessService {
     }).pipe(
       map(({ grade, weekAndCloLab, weekAndCloSem, weekAndCloBd }) => {
         const adata: any[] = [];
-        // weekAndCloLab.forEach((wkc: any) => {
-        //   const cloAttPoint = {
-        //     cloId: wkc.id,
-        //     avahOnoo: 0,
-        //     sumPoints: [] as {
-        //       studentId: string;
-        //       point: number;
-        //       subMethodId: string;
-        //     }[],
-        //   };
-
-        //   const pointMap: Record<string, Record<string, number>> = {};
-
-        //   wkc.week.forEach((week: string) => {
-        //     grade.forEach((a: any) => {
-        //       if (a.weekNumber === week) {
-        //         a.studentGrades.forEach((a1: any) => {
-        //           const studentId = a1.studentId?.id || a1.studentId;
-
-        //           a1.grades.forEach((item: any) => {
-        //             const subMethodId = item.id;
-        //             const point = item.point;
-
-        //             if (!pointMap[studentId]) {
-        //               pointMap[studentId] = {};
-        //             }
-
-        //             pointMap[studentId][subMethodId] =
-        //               (pointMap[studentId][subMethodId] || 0) + point;
-        //           });
-        //         });
-        //       }
-        //     });
-        //   });
-
-        //   // Convert pointMap to cloAttPoint.sumPoints[]
-        //   for (const studentId in pointMap) {
-        //     for (const subMethodId in pointMap[studentId]) {
-        //       cloAttPoint.sumPoints.push({
-        //         studentId,
-        //         point: pointMap[studentId][subMethodId],
-        //         subMethodId,
-        //       });
-        //     }
-        //   }
-
-        //   adata.push(cloAttPoint);
-        // });
 
         adata.push(
           ...this.dddd(weekAndCloLab, grade),
@@ -246,6 +347,7 @@ export class AssessProcessService {
           ...this.dddd(weekAndCloBd, grade)
         );
 
+        console.log(adata);
         return adata;
       })
     );

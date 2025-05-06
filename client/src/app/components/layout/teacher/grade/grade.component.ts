@@ -47,7 +47,7 @@ export interface Lesson {
 }
 
 @Component({
-  selector: 'app-bd-grade',
+  selector: 'app-grade',
   standalone: true,
   imports: [
     CommonModule,

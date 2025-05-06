@@ -49,11 +49,6 @@ export class PollListComponent {
   dataCheckPoint: any;
   studentSaveDatas: any[] = [];
 
-  lessonTypes = [
-    { id: 'ALEC', name: 'Лекц' },
-    { id: 'BSEM', name: 'Семинар' },
-    { id: 'CLAB', name: 'Лаборатори' },
-  ];
   weeks = [
     { name: 'Даваа', id: 'Monday' },
     { name: 'Мягмар', id: 'Tuesday' },

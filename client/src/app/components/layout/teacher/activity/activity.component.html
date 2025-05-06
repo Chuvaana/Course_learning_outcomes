@@ -1,4 +1,4 @@
-<div class="p-fluid">
+<div class="p-fluid" *ngIf="this.activityPoint !== 0">
   <p-toast />
   <div class="filter-section">
     <p-dropdown
@@ -6,13 +6,6 @@
       [(ngModel)]="selectedWeekday"
       (onChange)="onSelectionChange()"
       placeholder="Гариг"
-    >
-    </p-dropdown>
-    <p-dropdown
-      [options]="classTypes"
-      [(ngModel)]="selectedClassType"
-      (onChange)="onSelectionChange()"
-      placeholder="Төрөл"
     >
     </p-dropdown>
     <p-dropdown
@@ -39,13 +32,14 @@
     <button pButton type="button" label="Хадгалах" (click)="save()"></button>
   </div>
 
-  <p-table [value]="attendanceRecords">
+  <p-table [value]="activityRecords">
     <ng-template pTemplate="header">
       <tr *ngIf="!showPreviousWeeks">
         <th>№</th>
         <th>Оюутан</th>
         <th>{{ getCurrentWeeks() }}</th>
         <th>Нийт</th>
+        <!-- Нэмсэн багана -->
       </tr>
       <tr *ngIf="showPreviousWeeks">
         <th>№</th>
@@ -56,29 +50,58 @@
         <th>Нийт</th>
       </tr>
     </ng-template>
+
     <ng-template pTemplate="body" let-record let-ri="rowIndex">
       <tr *ngIf="!showPreviousWeeks">
         <td>{{ ri + 1 }}</td>
         <td>{{ record.student.code }} - {{ record.student.name }}</td>
-        <td>
-          <p-checkbox
-            [(ngModel)]="record.attendance[getCurrentWeeks()]"
-            [binary]="true"
-          ></p-checkbox>
+        <td pEditableColumn>
+          <p-cellEditor>
+            <ng-template pTemplate="input">
+              <p-inputNumber
+                [(ngModel)]="record.activity[getCurrentWeeks()]"
+                [minFractionDigits]="2"
+                [maxFractionDigits]="5"
+                [max]="100"
+                [min]="0"
+              />
+            </ng-template>
+            <ng-template pTemplate="output">
+              {{ record.activity[getCurrentWeeks()] }}
+            </ng-template>
+          </p-cellEditor>
         </td>
-        <td>{{ getAttendanceSum(record) }}</td>
+        <td>
+          {{ getTotal(record) }}
+        </td>
       </tr>
+
       <tr *ngIf="showPreviousWeeks">
         <td>{{ ri + 1 }}</td>
         <td>{{ record.student.code }} - {{ record.student.name }}</td>
-        <td *ngFor="let week of getAllWeeks()">
-          <p-checkbox
-            [(ngModel)]="record.attendance[week]"
-            [binary]="true"
-          ></p-checkbox>
+        <td *ngFor="let week of getAllWeeks()" pEditableColumn>
+          <p-cellEditor>
+            <ng-template pTemplate="input">
+              <p-inputNumber
+                [(ngModel)]="record.activity[week]"
+                [minFractionDigits]="2"
+                [maxFractionDigits]="5"
+                [max]="100"
+                [min]="0"
+              />
+            </ng-template>
+            <ng-template pTemplate="output">
+              {{ record.activity[week] }}
+            </ng-template>
+          </p-cellEditor>
         </td>
-        <td>{{ getAttendanceSum(record) }}</td>
+        <td>
+          {{ getTotal(record) }}
+        </td>
       </tr>
     </ng-template>
   </p-table>
+</div>
+<div class="p-fluid" *ngIf="this.activityPoint === 0">
+  <h1>Идэвхийн оноо төлөвлөлт хийгээгүй байна</h1>
 </div>

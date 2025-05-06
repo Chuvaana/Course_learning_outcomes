@@ -10,14 +10,15 @@ import { StudentService } from '../../../../../../services/studentService';
 import { SelectModule } from 'primeng/select';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
+import { SharedDictService } from '../../../shared';
 
 interface Student {
   lessonId: string;
   studentCode: string;
   studentName: string;
-  lec?: { day?: string; time?: string };
-  sem?: { day?: string; time?: string };
-  lab?: { day?: string; time?: string };
+  alec?: { day?: string; time?: string };
+  bsem?: { day?: string; time?: string };
+  clab?: { day?: string; time?: string };
 }
 
 @Component({
@@ -70,14 +71,18 @@ export class LesStudentListComponent {
   constructor(
     private studentService: StudentService,
     private msgService: MessageService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private shared: SharedDictService
   ) { }
 
   ngOnInit(): void {
     this.route.parent?.paramMap.subscribe((params) => {
       this.lessonId = params.get('id')!;
     });
-    this.loadStudents();
+    this.shared.getDictionary(this.lessonId, true).subscribe((res) => {
+      this.lessonTypes = res;
+      this.loadStudents();
+    });
   }
 
   loadStudents(): void {
@@ -126,17 +131,17 @@ export class LesStudentListComponent {
   ): boolean {
     if (student && lessonType && week && time) {
       switch (lessonType) {
-        case 'ALEC':
+        case 'alec':
           return (
-            student.lec?.day === week && Number(student.lec?.time) === time
+            student.alec?.day === week && Number(student.alec?.time) === time
           );
-        case 'BSEM':
+        case 'bsem':
           return (
-            student.sem?.day === week && Number(student.sem?.time) === time
+            student.bsem?.day === week && Number(student.bsem?.time) === time
           );
-        case 'CLAB':
+        case 'clab':
           return (
-            student.lab?.day === week && Number(student.lab?.time) === time
+            student.clab?.day === week && Number(student.clab?.time) === time
           );
         default:
           return false;
@@ -147,12 +152,12 @@ export class LesStudentListComponent {
 
   hasLessonType(student: Student, lessonType: string): boolean {
     switch (lessonType) {
-      case 'ALEC':
-        return !!student.lec?.day;
-      case 'BSEM':
-        return !!student.sem?.day;
-      case 'CLAB':
-        return !!student.lab?.day;
+      case 'alec':
+        return !!student.alec?.day;
+      case 'bsem':
+        return !!student.bsem?.day;
+      case 'clab':
+        return !!student.clab?.day;
       default:
         return false;
     }
@@ -162,16 +167,16 @@ export class LesStudentListComponent {
     const selected = this.selectedTime;
 
     const timeMatch =
-      Number(student.lec?.time) === selected ||
-      Number(student.sem?.time) === selected ||
-      Number(student.lab?.time) === selected;
+      Number(student.alec?.time) === selected ||
+      Number(student.bsem?.time) === selected ||
+      Number(student.clab?.time) === selected;
 
     if (!this.selectedWeek) return timeMatch;
 
     const dayMatch =
-      student.lec?.day === this.selectedWeek ||
-      student.sem?.day === this.selectedWeek ||
-      student.lab?.day === this.selectedWeek;
+      student.alec?.day === this.selectedWeek ||
+      student.bsem?.day === this.selectedWeek ||
+      student.clab?.day === this.selectedWeek;
 
     return timeMatch && dayMatch;
   }
@@ -180,9 +185,9 @@ export class LesStudentListComponent {
     const selectedDay = this.selectedWeek;
 
     return (
-      student.lec?.day === selectedDay ||
-      student.sem?.day === selectedDay ||
-      student.lab?.day === selectedDay
+      student.alec?.day === selectedDay ||
+      student.bsem?.day === selectedDay ||
+      student.clab?.day === selectedDay
     );
   }
 

@@ -3,18 +3,15 @@ import { Component, Input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MessageService, SelectItem } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
+import { CheckboxModule } from 'primeng/checkbox';
 import { InputTextModule } from 'primeng/inputtext';
 import { SelectModule } from 'primeng/select';
 import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { ToastModule } from 'primeng/toast';
 import { CLOService } from '../../../../../services/cloService';
-import { CheckboxModule } from 'primeng/checkbox';
-import { AssessmentService } from '../../../../../services/assessmentService';
-import { MethodService } from '../../../../../services/methodService';
-import { ScheduleService } from '../../../../../services/schedule.service';
+import { SharedDictService } from '../../../teacher/shared';
 import { TabRefreshService } from '../tabRefreshService';
-import { CloPointPlanService } from '../../../../../services/cloPointPlanService';
 
 interface Clo {
   id: number;
@@ -60,12 +57,9 @@ export class CloComponent {
 
   constructor(
     private service: CLOService,
-    private planService: CloPointPlanService,
     private msgService: MessageService,
-    private assessmentService: AssessmentService,
-    private methodService: MethodService,
-    private scheduleService: ScheduleService,
-    private tabRefreshService: TabRefreshService
+    private tabRefreshService: TabRefreshService,
+    private shared: SharedDictService
   ) {}
 
   ngOnInit() {
@@ -73,11 +67,9 @@ export class CloComponent {
       this.readData();
     }
 
-    this.types = [
-      { label: 'Лекц', value: 'ALEC' },
-      { label: 'Семинар', value: 'BSEM' },
-      { label: 'Лаборатори', value: 'CLAB' },
-    ];
+    this.shared.getDictionary(this.lessonId, false).subscribe((res) => {
+      this.types = res;
+    });
   }
 
   readData() {

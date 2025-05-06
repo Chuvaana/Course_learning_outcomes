@@ -13,6 +13,7 @@ import { AssessmentService } from '../../../../../services/assessmentService';
 import { CLOService } from '../../../../../services/cloService';
 import { TabRefreshService } from '../tabRefreshService';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { SharedDictService } from '../../shared';
 
 interface Clo {
   id: string;
@@ -60,34 +61,26 @@ export class CloComponent {
   constructor(
     private service: CLOService,
     private msgService: MessageService,
-    private assessmentService: AssessmentService,
+    private shared: SharedDictService,
     private tabRefreshService: TabRefreshService,
     private confirmationService: ConfirmationService
   ) {}
 
   ngOnInit() {
-    if (this.lessonId) {
-      this.readData();
-    }
-
-    this.types = [
-      { label: 'Лекц', value: 'ALEC' },
-      { label: 'Семинар', value: 'BSEM' },
-      { label: 'Лаборатори', value: 'CLAB' },
-    ];
+    this.shared.getDictionary(this.lessonId, false).subscribe((res) => {
+      this.types = res;
+      if (this.lessonId) {
+        this.readData();
+      }
+    });
   }
 
   readData() {
     this.service.getCloList(this.lessonId).subscribe((data: any) => {
       this.clos = data.map((item: any) => {
-        // Find the label corresponding to item.type
-        const typeLabel = this.types.find(
-          (type) => type.value === item.type
-        )?.label;
-
         return {
           id: item.id,
-          type: typeLabel, // keep the value as it is
+          type: item.type, // <== value-г хадгалж үлдээх нь чухал!
           cloName: item.cloName,
           knowledge: item.knowledge || false,
           skill: item.skill || false,
@@ -95,6 +88,23 @@ export class CloComponent {
         };
       });
     });
+  }
+
+  getCloTypeLabel(value: string): string {
+    return this.types?.find((t) => t.value === value)?.label || value;
+  }
+
+  getGroupHeaderLabel(cloType: string): string {
+    switch (cloType) {
+      case 'ALEC':
+        return 'Лекцийн хичээлээр эзэмшсэн суралцахуйн үр дүнгүүд';
+      case 'BSEM':
+        return 'Семинарын хичээлээр эзэмшсэн суралцахуйн үр дүнгүүд';
+      case 'CLAB':
+        return 'Лабораторийн хичээлээр эзэмшсэн суралцахуйн үр дүнгүүд';
+      default:
+        return cloType;
+    }
   }
 
   onRowEditInit(clo: Clo, index: number) {
@@ -194,19 +204,6 @@ export class CloComponent {
         );
       },
     });
-  }
-
-  getGroupHeaderLabel(cloType: string): string {
-    switch (cloType) {
-      case 'Лекц':
-        return 'Лекцийн хичээлээр эзэмшсэн суралцахуйн үр дүнгүүд';
-      case 'Семинар':
-        return 'Семинарын хичээлээр эзэмшсэн суралцахуйн үр дүнгүүд';
-      case 'Лаборатори':
-        return 'Лабораторийн хичээлээр эзэмшсэн суралцахуйн үр дүнгүүд';
-      default:
-        return cloType;
-    }
   }
 
   addClo() {

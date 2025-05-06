@@ -19,6 +19,7 @@ import { LessonOverallAssessComponent } from './lesson-overall-assess/lesson-ove
 import { LessonPlanComponent } from './lesson-plan/lesson-plan.component';
 import { LessonPollAnalysisComponent } from './lesson-poll-analysis/lesson-poll-analysis.component';
 import { LessonAdvDisadvComponent } from './lesson-adv-disadv/lesson-adv-disadv.component';
+import { SharedDictService } from '../shared';
 
 @Component({
   selector: 'app-home',
@@ -60,11 +61,7 @@ export class HomeComponent {
   tabDatas!: [{ title: string; content: any; value: any }];
   students!: any;
 
-  types = [
-    { label: 'Лекц', value: 'ALEC' },
-    { label: 'Семинар', value: 'BSEM' },
-    { label: 'Лаборатори', value: 'CLAB' },
-  ];
+  types: any[] = [];
 
   constructor(
     private route: ActivatedRoute,
@@ -73,7 +70,8 @@ export class HomeComponent {
     private service: CurriculumService,
     private cloService: CLOService,
     private assessService: AssessmentService,
-    private cloPointPlanService: CloPointPlanService
+    private cloPointPlanService: CloPointPlanService,
+    private shared: SharedDictService
   ) {}
 
   ngOnInit() {
@@ -81,9 +79,12 @@ export class HomeComponent {
       this.lessonId = params.get('id')!;
     });
     this.teacherId = (localStorage.getItem('teacherId') as string) || '';
-    this.readMainInfo();
-    this.readClos();
-    this.readPlan();
+    this.shared.getDictionary(this.lessonId, false).subscribe((res) => {
+      this.types = res;
+      this.readMainInfo();
+      this.readClos();
+      this.readPlan();
+    });
   }
 
   readMainInfo() {

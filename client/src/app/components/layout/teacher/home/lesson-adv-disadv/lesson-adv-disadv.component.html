@@ -1,32 +1,104 @@
 <p-toast />
 <div class="other">
-  <form [formGroup]="feedbackForm" (ngSubmit)="submitForm()">
-    <p-floatlabel variant="on" class="w-full">
-      <textarea
-        pTextarea
-        id="strengths"
-        formControlName="strengths"
-        rows="5"
-        cols="80"
-      ></textarea>
-      <label for="strengths">Давуу тал</label>
-    </p-floatlabel>
+  <div style="display: flex; justify-content: center; width: 40%">
+    <form [formGroup]="feedbackForm" (ngSubmit)="submitForm()">
+      <h2>ХИЧЭЭЛИЙН ОНЦЛОГ, ДАВУУ ТАЛУУД</h2>
+      <p>
+        Таны заасан хичээлд суралцахуйн үр дүнгийн гүйцэтгэл, сургалтын арга
+        зүй, үнэлгээ талаасаа бусад багш нарт туршлага болохоор ямар онцлог
+        давуу талууд байгаа бол энэ хэсэгт тайлбарлан бичнэ
+      </p>
+      <p-floatlabel variant="on">
+        <textarea
+          pTextarea
+          id="strengths"
+          formControlName="strengths"
+          rows="5"
+          cols="80"
+        ></textarea>
+        <label for="strengths">Давуу тал</label>
+      </p-floatlabel>
 
-    <p-floatlabel variant="on" class="w-full">
-      <textarea
-        pTextarea
-        id="weaknesses"
-        formControlName="weaknesses"
-        rows="5"
-        cols="80"
-      ></textarea>
-      <label for="weaknesses">Сул тал</label>
-    </p-floatlabel>
-    <button
-      pButton
-      type="submit"
-      label="Хадгалах"
-      [disabled]="feedbackForm.invalid"
-    ></button>
-  </form>
+      <h2>ХИЧЭЭЛИЙН СУЛ ТАЛУУД</h2>
+      <p>
+        Таны заасан хичээлд суралцахуйн үр дүнгийн, сургалтын арга зүй, үнэлгээ
+        талаасаа ямар сул тал байгаагаас суралцахуйн үр дүн хангалтгүй гарсныг
+        энэ хэсэгт тайлбарлан бичнэ
+      </p>
+      <p-floatlabel variant="on">
+        <textarea
+          pTextarea
+          id="weaknesses"
+          formControlName="weaknesses"
+          rows="5"
+          cols="80"
+        ></textarea>
+        <label for="weaknesses">Сул тал</label>
+      </p-floatlabel>
+      <h2>НЭМЭЛТ САНАА</h2>
+      <p>
+        Хичээлийн суралцахуйн үр дүнгийн гүйцэтгэлийг дээшлүүлэх чиглэлээр хийх
+        ажлын төлөвлөлт дээр нэмэлт санаа
+      </p>
+      <p-floatlabel variant="on">
+        <textarea
+          pTextarea
+          id="additional"
+          formControlName="additional"
+          rows="5"
+          cols="80"
+        ></textarea>
+        <label for="additional">Нэмэлт санаа</label>
+      </p-floatlabel>
+      <button
+        pButton
+        type="submit"
+        label="Хадгалах"
+        [disabled]="feedbackForm.invalid"
+      ></button>
+    </form>
+  </div>
+  <p-divider layout="vertical" />
+  <div>
+    <h2>Хичээлийн суралцахуйн үр дүнгүүдийг сайжруулах чиглэлүүд</h2>
+    <form [formGroup]="form">
+      <p-table [value]="tasks" [tableStyle]="{ 'min-width': '50rem' }">
+        <ng-template pTemplate="colgroup" let-columns>
+          <colgroup>
+            <col style="width: 5%" />
+            <col style="width: 5%" />
+            <col style="width: 90%" />
+          </colgroup>
+        </ng-template>
+
+        <ng-template pTemplate="header">
+          <tr>
+            <th colspan="2" rowspan="2"></th>
+            <th>Үйл ажиллагааны чиглэлүүд</th>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-task let-i="rowIndex">
+          <tr *ngIf="task.categoryChanged">
+            <td colspan="3">
+              <strong>{{ task.category }}</strong>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <p-checkbox
+                [formControl]="getCheckboxControl(i)"
+                binary="true"
+                (onChange)="changeCheckBox()"
+              ></p-checkbox>
+            </td>
+            <td>{{ task.index }}</td>
+            <td>{{ task.description }}</td>
+          </tr>
+        </ng-template>
+      </p-table>
+
+      <button pButton label="Хадгалах" (click)="onSubmitImprove()"></button>
+    </form>
+  </div>
 </div>
