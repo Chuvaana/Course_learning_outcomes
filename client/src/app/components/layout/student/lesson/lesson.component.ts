@@ -42,19 +42,22 @@ export class LessonComponent {
         routerLink: ['/main/student/lesson-list'],
       },
       {
+        label: 'Хичээлийн хөтөлбөр',
+        icon: 'pi pi-home',
+        routerLink: ['/main/student', this.lessonId, 'curriculum'],
+      },
+      {
         label: 'Төлөвлөгөө',
         icon: 'pi pi-home',
         routerLink: ['/main/student', this.lessonId, 'plan'],
       },
       {
-        label: 'Шалгалт өгөх',
+        label: 'Шалгалтын дүн харах',
         icon: 'pi pi-star',
-        command: () => {
-          this.router.navigate(['/main/student/exam']);
-        },
+        routerLink: ['/main/student', this.lessonId, 'curriculum'],
       },
       {
-        label: 'Дүн харах',
+        label: 'Явцын дүн харах',
         icon: 'pi pi-star',
         command: () => {
           this.router.navigate(['/main/student/exam']);
@@ -63,9 +66,7 @@ export class LessonComponent {
       {
         label: 'Ирц явцын оноо харах',
         icon: 'pi pi-star',
-        command: () => {
-          this.router.navigate(['/main/student/exam']);
-        },
+        routerLink: ['/main/student', this.lessonId, 'attendance'],
       },
       {
         label: 'Санал асуулга өгөх',

@@ -1,0 +1,32 @@
+<div style="padding: 20px">
+  <p-table [value]="transposedWeeks" responsiveLayout="scroll">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>7 хоног</th>
+        <th *ngFor="let type of filteredGroupedData">
+          {{ getTypeName(type.type) }}
+        </th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-weekRow>
+      <tr>
+        <td>{{ weekRow.week }}</td>
+        <td *ngFor="let type of filteredGroupedData">
+          <span
+            *ngIf="weekRow[type.type] === true"
+            [ngStyle]="{ color: 'green' }"
+          >
+            ✔
+          </span>
+          <span
+            *ngIf="weekRow[type.type] === false"
+            [ngStyle]="{ color: 'red' }"
+          >
+            ✘
+          </span>
+          <span *ngIf="weekRow[type.type] === null" style="color: gray">-</span>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>

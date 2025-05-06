@@ -1,0 +1,48 @@
+.mur {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  align-items: center;
+}
+
+.p-fluid {
+  width: 100%;
+  margin: auto;
+  padding: 20px;
+}
+
+.filter-section {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+  align-items: center;
+}
+
+.search-input,
+.dropdown-filter {
+  flex-grow: 1;
+}
+
+.refresh-btn {
+  margin-left: auto;
+}
+
+:host ::ng-deep .p-datatable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+:host ::ng-deep .p-datatable th,
+:host ::ng-deep .p-datatable td {
+  padding: 10px;
+  text-align: center;
+  border: 1px solid #ddd;
+}
+
+:host ::ng-deep .p-frozen-column {
+  font-weight: bold;
+}
+:host ::ng-deep .p-datatable-frozen-tbody {
+  font-weight: bold;
+}

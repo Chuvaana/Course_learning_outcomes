@@ -12,6 +12,7 @@ import { LessonListComponent } from './lesson-list/lesson-list.component';
 import { StudentComponent } from './student.component';
 import { LessonComponent } from './lesson/lesson.component';
 import { LessonPlanComponent } from './lesson-plan/lesson-plan.component';
+import { AttendanceComponent } from './attendance/attendance.component';
 
 const routes: Routes = [
   {
@@ -28,6 +29,7 @@ const routes: Routes = [
         component: LessonComponent,
         children: [
           { path: 'curriculum', component: CurriculumComponent },
+          { path: 'attendance', component: AttendanceComponent },
           { path: 'plan', component: LessonPlanComponent },
           { path: 'student', component: LesStudentComponent },
           { path: 'exam-progress-poll', component: ExamProgressPollComponent },

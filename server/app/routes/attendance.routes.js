@@ -1,21 +1,22 @@
-module.exports = app => {
-    const router = require('express').Router();
-    const attendanceController = require('../controllers/attendance.controller');
+module.exports = (app) => {
+  const router = require('express').Router();
+  const attendanceController = require('../controllers/attendance.controller');
 
-    // 📌 Create a new attendance record
-    router.post('/', attendanceController.createAttendance);
-    router.post('/all', attendanceController.createAttendanceAll);
+  // 📌 Create a new attendance record
+  router.post('/', attendanceController.createAttendance);
+  router.post('/all', attendanceController.createAttendanceAll);
 
-    // 📌 Get attendance records by lessonId, weekNumber, and type
-    router.get('/', attendanceController.getAttendanceByFilter);
+  // 📌 Get attendance records by lessonId, weekNumber, and type
+  router.get('/', attendanceController.getAttendanceByFilter);
 
-    router.get('/:id', attendanceController.getAttendanceByLesson);
+  router.get('/:id', attendanceController.getAttendanceByLesson);
+  router.get('/student/:id', attendanceController.getStudentAttendance);
 
-    // 📌 Update an attendance record
-    router.put('/:id', attendanceController.updateAttendance);
+  // 📌 Update an attendance record
+  router.put('/:id', attendanceController.updateAttendance);
 
-    // 📌 Delete an attendance record
-    router.delete('/:id', attendanceController.deleteAttendance);
+  // 📌 Delete an attendance record
+  router.delete('/:id', attendanceController.deleteAttendance);
 
-    app.use('/api/attendance', router);
+  app.use('/api/attendance', router);
 };

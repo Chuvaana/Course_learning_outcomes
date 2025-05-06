@@ -1,4 +1,5 @@
 const Attendance = require('../models/attendance.model');
+const LesStudent = require('../models/lesStudent.model');
 
 // ✅ Create a new attendance record
 exports.createAttendance = async (req, res) => {
@@ -150,6 +151,47 @@ exports.deleteAttendance = async (req, res) => {
     if (!deletedAttendance) return res.status(404).json({ message: 'Attendance not found' });
     res.json({ message: 'Attendance deleted successfully' });
   } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+exports.getStudentAttendance = async (req, res) => {
+  try {
+    const { studentCode } = req.query;
+    const lessonId = req.params.id;
+
+    // Find the student by code
+    const student = await LesStudent.findOne({ studentCode });
+    if (!student) {
+      return res.status(404).json({ message: 'Student not found' });
+    }
+
+    // Find all attendance records where this student appears
+    const records = await Attendance.find({
+      lessonId: lessonId,
+      'attendance.studentId': student._id,
+    });
+
+    // Filter attendance array to include only this student
+    const filtered = records.map((record) => {
+      const matchedAttendance = record.attendance.find((a) => a.studentId._id.equals(student._id));
+
+      return {
+        _id: record._id,
+        lessonId: record.lessonId,
+        weekDay: record.weekDay,
+        type: record.type,
+        time: record.time,
+        weekNumber: record.weekNumber,
+        attendance: matchedAttendance ? [matchedAttendance] : [],
+        createdAt: record.createdAt,
+        updatedAt: record.updatedAt,
+      };
+    });
+
+    res.json(filtered);
+  } catch (error) {
+    console.error(error);
     res.status(500).json({ message: error.message });
   }
 };

@@ -45,6 +45,15 @@ export class AttendanceService {
 
     return this.http.get<Attendance[]>(`${this.apiUrl}${queryParams}`);
   }
+  // ✅ Get attendance records by filters (lessonId, weekNumber, type)
+  getStudentAttendance(lessonId: string): Observable<Attendance[]> {
+    const studentCode = localStorage.getItem('studentCode');
+    let queryParams = `?studentCode=${studentCode}`;
+
+    return this.http.get<Attendance[]>(
+      `${this.apiUrl}/student/${lessonId}${queryParams}`
+    );
+  }
 
   getAttendanceByLesson(lessonId: string): Observable<Attendance[]> {
     return this.http.get<Attendance[]>(`${this.apiUrl}/${lessonId}`);
