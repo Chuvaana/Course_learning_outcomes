@@ -263,6 +263,10 @@ export class ActivityComponent {
     this.showPreviousWeeks = !this.showPreviousWeeks;
   }
 
+  getTotal(record: ActivityRecord): number {
+    return Object.values(record.activity).reduce((sum, val) => sum + val, 0);
+  }
+
   save(): void {
     const invalidStudents = this.activityRecords.filter((record) => {
       const total = (Object.values(record.activity) as number[]).reduce(

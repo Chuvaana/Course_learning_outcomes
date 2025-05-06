@@ -1,4 +1,4 @@
-<div class="p-fluid">
+<div class="p-fluid" *ngIf="this.activityPoint !== 0">
   <p-toast />
   <div class="filter-section">
     <p-dropdown
@@ -45,6 +45,8 @@
         <th>№</th>
         <th>Оюутан</th>
         <th>{{ getCurrentWeeks() }}</th>
+        <th>Нийт</th>
+        <!-- Нэмсэн багана -->
       </tr>
       <tr *ngIf="showPreviousWeeks">
         <th>№</th>
@@ -52,8 +54,10 @@
         <th *ngFor="let week of getAllWeeks()">
           {{ week }}
         </th>
+        <th>Нийт</th>
       </tr>
     </ng-template>
+
     <ng-template pTemplate="body" let-record let-ri="rowIndex">
       <tr *ngIf="!showPreviousWeeks">
         <td>{{ ri + 1 }}</td>
@@ -74,7 +78,11 @@
             </ng-template>
           </p-cellEditor>
         </td>
+        <td>
+          {{ getTotal(record) }}
+        </td>
       </tr>
+
       <tr *ngIf="showPreviousWeeks">
         <td>{{ ri + 1 }}</td>
         <td>{{ record.student.code }} - {{ record.student.name }}</td>
@@ -94,7 +102,13 @@
             </ng-template>
           </p-cellEditor>
         </td>
+        <td>
+          {{ getTotal(record) }}
+        </td>
       </tr>
     </ng-template>
   </p-table>
+</div>
+<div class="p-fluid" *ngIf="this.activityPoint === 0">
+  <h1>Идэвхийн оноо төлөвлөлт хийгээгүй байна</h1>
 </div>

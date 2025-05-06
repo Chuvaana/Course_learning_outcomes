@@ -106,15 +106,15 @@ exports.updateStudents = async (req, res) => {
           lessonId: lessonId,
           studentCode: studentCode,
           studentName: studentName,
-          lec: {
+          alec: {
             day: lecDay,
             time: lecTime,
           },
-          sem: {
+          bsem: {
             day: semDay,
             time: semTime,
           },
-          lab: {
+          clab: {
             day: labDay,
             time: labTime,
           },

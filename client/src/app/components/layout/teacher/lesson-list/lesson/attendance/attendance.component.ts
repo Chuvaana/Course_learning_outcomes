@@ -76,9 +76,9 @@ export class AttendanceComponent {
       { label: 'Баасан', value: 'Friday' },
     ];
     this.classTypes = [
-      { label: 'Лекц', value: 'lec' },
-      { label: 'Семинар', value: 'sem' },
-      { label: 'Лаборатори', value: 'lab' },
+      { label: 'Лекц', value: 'alec' },
+      { label: 'Семинар', value: 'bsem' },
+      { label: 'Лаборатори', value: 'clab' },
     ];
 
     this.route.parent?.paramMap.subscribe((params) => {
@@ -227,6 +227,13 @@ export class AttendanceComponent {
 
   togglePreviousWeeks() {
     this.showPreviousWeeks = !this.showPreviousWeeks;
+  }
+
+  getAttendanceSum(record: AttendanceRecord): number {
+    return Object.values(record.attendance).reduce(
+      (sum, val) => sum + (val ? 1 : 0),
+      0
+    );
   }
 
   save(): void {
