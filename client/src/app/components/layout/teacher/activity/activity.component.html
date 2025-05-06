@@ -1,0 +1,100 @@
+<div class="p-fluid">
+  <p-toast />
+  <div class="filter-section">
+    <p-dropdown
+      [options]="weekdays"
+      [(ngModel)]="selectedWeekday"
+      (onChange)="onSelectionChange()"
+      placeholder="Гариг"
+    >
+    </p-dropdown>
+    <p-dropdown
+      [options]="classTypes"
+      [(ngModel)]="selectedClassType"
+      (onChange)="onSelectionChange()"
+      placeholder="Төрөл"
+    >
+    </p-dropdown>
+    <p-dropdown
+      [options]="times"
+      [(ngModel)]="selectedTimes"
+      (onChange)="onSelectionChange()"
+      placeholder="Цаг"
+    >
+    </p-dropdown>
+    <button
+      pButton
+      type="button"
+      *ngIf="!showPreviousWeeks"
+      label="Өмнөх долоо хоногуудыг харах"
+      (click)="togglePreviousWeeks()"
+    ></button>
+    <button
+      pButton
+      type="button"
+      *ngIf="showPreviousWeeks"
+      label="Одоогийн долоо хоногийг харах"
+      (click)="togglePreviousWeeks()"
+    ></button>
+    <button pButton type="button" label="Хадгалах" (click)="save()"></button>
+  </div>
+
+  <p-table [value]="activityRecords">
+    <ng-template pTemplate="header">
+      <tr *ngIf="!showPreviousWeeks">
+        <th>№</th>
+        <th>Оюутан</th>
+        <th>{{ getCurrentWeeks() }}</th>
+      </tr>
+      <tr *ngIf="showPreviousWeeks">
+        <th>№</th>
+        <th>Оюутан</th>
+        <th *ngFor="let week of getAllWeeks()">
+          {{ week }}
+        </th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-record let-ri="rowIndex">
+      <tr *ngIf="!showPreviousWeeks">
+        <td>{{ ri + 1 }}</td>
+        <td>{{ record.student.code }} - {{ record.student.name }}</td>
+        <td pEditableColumn>
+          <p-cellEditor>
+            <ng-template pTemplate="input">
+              <p-inputNumber
+                [(ngModel)]="record.activity[getCurrentWeeks()]"
+                [minFractionDigits]="2"
+                [maxFractionDigits]="5"
+                [max]="100"
+                [min]="0"
+              />
+            </ng-template>
+            <ng-template pTemplate="output">
+              {{ record.activity[getCurrentWeeks()] }}
+            </ng-template>
+          </p-cellEditor>
+        </td>
+      </tr>
+      <tr *ngIf="showPreviousWeeks">
+        <td>{{ ri + 1 }}</td>
+        <td>{{ record.student.code }} - {{ record.student.name }}</td>
+        <td *ngFor="let week of getAllWeeks()" pEditableColumn>
+          <p-cellEditor>
+            <ng-template pTemplate="input">
+              <p-inputNumber
+                [(ngModel)]="record.activity[week]"
+                [minFractionDigits]="2"
+                [maxFractionDigits]="5"
+                [max]="100"
+                [min]="0"
+              />
+            </ng-template>
+            <ng-template pTemplate="output">
+              {{ record.activity[week] }}
+            </ng-template>
+          </p-cellEditor>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>

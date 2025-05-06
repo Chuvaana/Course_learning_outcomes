@@ -23,6 +23,7 @@ import { ExamListComponent } from '../exam/exam-list.component';
 import { ProgressPollComponent } from './lesson-list/lesson/progress-poll/progress-poll.component';
 import { ExamProgressPollComponent } from '../student/exam-progress-poll/exam-progress-poll.component';
 import { FinalExamQuestionsComponent } from './final-exam/final-exam.component';
+import { ActivityComponent } from './activity/activity.component';
 
 const routes: Routes = [
   {
@@ -40,11 +41,12 @@ const routes: Routes = [
           { path: 'clo-tree', component: CloTreeComponent },
           { path: 'clo-point-plan', component: CloPointPlanComponent },
           { path: 'attendance', component: AttendanceComponent },
+          { path: 'activity', component: ActivityComponent },
           { path: 'curriculum', component: CurriculumComponent },
           { path: 'grade/:planId', component: GradeComponent },
           { path: 'exam-import', component: ExamImportComponent },
           { path: 'exam-list', component: ExamListComponent },
-          { path: 'exam-progress-poll', component:ExamProgressPollComponent },
+          { path: 'exam-progress-poll', component: ExamProgressPollComponent },
           { path: 'progress-poll', component: ProgressPollComponent },
           { path: 'report', component: HomeComponent },
           { path: 'final-exam', component: FinalExamQuestionsComponent },

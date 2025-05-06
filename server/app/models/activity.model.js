@@ -1,10 +1,10 @@
 const mongoose = require('mongoose');
 
-const AttendanceSchema = new mongoose.Schema(
+const ActivitySchema = new mongoose.Schema(
   {
     lessonId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Lesson', // Reference to Lesson model
+      ref: 'Lesson',
       required: true,
     },
     weekDay: {
@@ -14,7 +14,7 @@ const AttendanceSchema = new mongoose.Schema(
     },
     type: {
       type: String,
-      enum: ['alec', 'bsem', 'clab'], // Lecture, Seminar, Laboratory
+      enum: ['alec', 'bsem', 'clab'],
       required: true,
     },
     time: {
@@ -25,15 +25,15 @@ const AttendanceSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    attendance: [
+    activity: [
       {
         studentId: {
           type: mongoose.Schema.Types.ObjectId,
           ref: 'LesStudent',
           required: true,
         },
-        status: {
-          type: Boolean,
+        point: {
+          type: Number,
           required: true,
         },
       },
@@ -42,4 +42,4 @@ const AttendanceSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-module.exports = mongoose.model('Attendance', AttendanceSchema);
+module.exports = mongoose.model('Activity', ActivitySchema);
