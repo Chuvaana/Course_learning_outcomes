@@ -204,9 +204,9 @@ exports.getTeacherLessons = async (req, res) => {
       semesterFilter.push('any');
     }
 
-    // Fetch lessons with flexible semester matching
+    // Fetch lessons with teacher or assistantTeacher matching
     const lessons = await Lesson.find({
-      'teacher.email': teacher.email,
+      $or: [{ 'teacher.email': teacher.email }, { 'assistantTeacher.email': teacher.email }],
       schoolYear: yearIntervals,
       recommendedSemester: { $in: semesterFilter },
     });

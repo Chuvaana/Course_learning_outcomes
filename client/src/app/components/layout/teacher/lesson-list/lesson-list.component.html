@@ -1,3 +1,19 @@
+<div class="card">
+  <p-menubar>
+    <ng-template pTemplate="start"> </ng-template>
+    <ng-template pTemplate="item" let-item let-root="root"> </ng-template>
+    <ng-template pTemplate="end">
+      <div class="flex align-items-center gap-2">
+        <i
+          class="pi pi-sign-out"
+          pTooltip="Гарах"
+          tooltipPosition="left"
+          (click)="logout()"
+        ></i>
+      </div>
+    </ng-template>
+  </p-menubar>
+</div>
 <div class="lesson-list-container">
   <p-toast />
   <div class="lesson-add-header">
@@ -48,7 +64,7 @@
 </div>
 
 <div style="height: auto"></div>
-
+<!--
 <footer class="footer">
   <div class="footer-content">
     <div class="footer-content-image">
@@ -77,4 +93,4 @@
       </div>
     </div>
   </div>
-</footer>
+</footer> -->

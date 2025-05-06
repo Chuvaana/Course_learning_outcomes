@@ -31,6 +31,8 @@ import { TeacherService } from '../../../../services/teacherService';
 import { ToastModule } from 'primeng/toast';
 import { AssessmentService } from '../../../../services/assessmentService';
 import { CloPointPlanService } from '../../../../services/cloPointPlanService';
+import { MenubarModule } from 'primeng/menubar';
+import { TooltipModule } from 'primeng/tooltip';
 
 interface Lesson {
   id: string;
@@ -94,6 +96,8 @@ interface Info {
     ReactiveFormsModule,
     FormsModule,
     ToastModule,
+    MenubarModule,
+    TooltipModule,
   ],
   providers: [MessageService],
   templateUrl: './lesson-list.component.html',
@@ -516,5 +520,10 @@ export class LessonListComponent implements OnInit {
           });
       });
     });
+  }
+
+  logout() {
+    localStorage.clear(); // clear tokens or user info
+    this.router.navigate(['/teacher-login']); // redirect to login
   }
 }

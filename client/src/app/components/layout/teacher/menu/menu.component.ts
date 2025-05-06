@@ -8,6 +8,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { MenubarModule } from 'primeng/menubar';
 import { RippleModule } from 'primeng/ripple';
 import { AssessmentService } from '../../../../services/assessmentService';
+import { TooltipModule } from 'primeng/tooltip';
 
 @Component({
   selector: 'app-menu',
@@ -20,6 +21,7 @@ import { AssessmentService } from '../../../../services/assessmentService';
     RippleModule,
     CommonModule,
     RouterModule,
+    TooltipModule,
   ],
   templateUrl: './menu.component.html',
   styleUrl: './menu.component.scss',

@@ -39,7 +39,7 @@ import { ToastModule } from 'primeng/toast';
 export class RegisterLoginComponent {
   ingredient!: string;
 
-  isRegister = true;
+  isRegister = false;
   teacherForm: FormGroup;
   branches: any[] = [];
   departments: any[] = [];
@@ -109,12 +109,6 @@ export class RegisterLoginComponent {
               summary: 'Амжилттай',
               detail: 'Амжилттай бүртгэгдлээ',
             });
-            if (data.message) {
-              alert(data.message);
-            }
-            if (data.teacher) {
-              console.log('Teacher created:', data.teacher);
-            }
             this.teacherForm.reset(); // Reset form after successful registration
           },
           (error) => {
