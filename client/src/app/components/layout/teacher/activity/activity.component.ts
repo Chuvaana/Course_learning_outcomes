@@ -11,16 +11,15 @@ import { InputTextModule } from 'primeng/inputtext';
 import { TableModule } from 'primeng/table';
 import { ToastModule } from 'primeng/toast';
 import { ActivityService } from '../../../../services/activityService';
-import { StudentService } from '../../../../services/studentService';
 import { AssessmentService } from '../../../../services/assessmentService';
-import { map } from 'rxjs';
+import { StudentService } from '../../../../services/studentService';
 interface ActivityRecord {
   student: {
     name: string;
     code: string;
     studentId: string;
   };
-  activity: { [weekNumber: string]: number }; // Week number as key, activity status as value
+  activity: { [weekNumber: string]: number };
 }
 
 @Component({

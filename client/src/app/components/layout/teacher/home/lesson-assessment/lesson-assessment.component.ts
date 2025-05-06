@@ -161,6 +161,37 @@ export class LessonAssessmentComponent {
           });
         });
       });
+
+    this.assessProcess
+      .studentActivityPoint(this.lessonId, this.pointPlan, this.cloPlan)
+      .subscribe((data) => {
+        const pointMap = new Map<string, Map<string, number>>();
+
+        data.forEach((activity: any) => {
+          const key = `${activity.cloId}_${activity.subMethodId}`; // Composite key
+          if (!pointMap.has(key)) {
+            pointMap.set(key, new Map());
+          }
+
+          activity.sumPoints.forEach((sp: any) => {
+            const floatPoint = Number(parseFloat(sp.statusPoint).toFixed(2));
+            pointMap.get(key)!.set(sp.studentId, floatPoint);
+          });
+        });
+
+        // Update studentRow.points with values from pointMap
+        this.tabs.forEach((tab: any) => {
+          tab.content.forEach((studentRow: any) => {
+            studentRow.points.forEach((point: any) => {
+              const key = `${tab.id}_${point.subMethodId}`;
+              const studentPoints = pointMap.get(key);
+              if (studentPoints && studentPoints.has(studentRow.studentId)) {
+                point.point = studentPoints.get(studentRow.studentId);
+              }
+            });
+          });
+        });
+      });
   }
 
   getLetterGrade(percent: number): string {
