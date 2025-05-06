@@ -16,6 +16,7 @@ import { StudentService } from '../../../../../../services/studentService';
 import { FileUploadModule } from 'primeng/fileupload';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
+import { SharedDictService } from '../../../shared';
 
 interface Student {
   lessonId: string;
@@ -56,11 +57,7 @@ export class LesStudentComponent {
   onlyId: string[] = [];
   tableData: any[][] = [];
 
-  lessonTypes = [
-    { id: 'ALEC', name: 'Лекц' },
-    { id: 'BSEM', name: 'Семинар' },
-    { id: 'CLAB', name: 'Лаборатори' },
-  ];
+  lessonTypes: any[] = [];
 
   weeks = [
     { id: 'Monday', name: 'Даваа' },
@@ -88,7 +85,8 @@ export class LesStudentComponent {
     private fb: FormBuilder,
     private service: StudentService,
     private route: ActivatedRoute,
-    private msgService: MessageService
+    private msgService: MessageService,
+    private shared: SharedDictService
   ) {
     this.studentForm = this.fb.group({
       week: ['', Validators.required],
@@ -100,6 +98,9 @@ export class LesStudentComponent {
   ngOnInit(): void {
     this.route.parent?.paramMap.subscribe((params) => {
       this.lessonId = params.get('id')!;
+    });
+    this.shared.getDictionary(this.lessonId, false).subscribe((res) => {
+      this.lessonTypes = res;
     });
   }
 

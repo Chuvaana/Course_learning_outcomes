@@ -25,8 +25,8 @@
     <p-dropdown
       [(ngModel)]="selectedLessonType"
       [options]="lessonTypes"
-      optionLabel="name"
-      optionValue="id"
+      optionLabel="label"
+      optionValue="value"
       placeholder="Төрөл сонгох"
       (onChange)="filterStudents()"
       class="dropdown-filter"
@@ -91,82 +91,82 @@
         <td>{{ student.studentName }}</td>
         <td>
           <div *ngIf="editActive">
-            <span *ngIf="student.lec?.day" style="display: flex">
+            <span *ngIf="student.alec?.day" style="display: flex">
               <p-dropdown
                 [options]="weeks"
                 optionLabel="name"
                 optionValue="id"
-                [(ngModel)]="student.lec.day"
+                [(ngModel)]="student.alec.day"
                 [style]="{ width: '100%' }"
                 placeholder="Select Lesson Type"
                 (onChange)="onWeekChange(student)"
               ></p-dropdown>
               <p-dropdown
                 [options]="timeSlots"
-                [(ngModel)]="student.lec.time"
+                [(ngModel)]="student.alec.time"
                 [style]="{ width: '100%' }"
                 placeholder="Select Time Slot"
               ></p-dropdown>
             </span>
           </div>
           <div *ngIf="!editActive">
-            <span *ngIf="student.lec?.day"
-              >{{ getDayInMongolian(student.lec.day) }} -
-              {{ student.lec.time }}пар</span
+            <span *ngIf="student.alec?.day"
+              >{{ getDayInMongolian(student.alec.day) }} -
+              {{ student.alec.time }}пар</span
             >
           </div>
         </td>
         <td>
           <div *ngIf="editActive">
-            <span *ngIf="student.sem?.day" style="display: flex">
+            <span *ngIf="student.bsem?.day" style="display: flex">
               <p-dropdown
                 [options]="weeks"
                 optionLabel="name"
                 optionValue="id"
-                [(ngModel)]="student.sem.day"
+                [(ngModel)]="student.bsem.day"
                 [style]="{ width: '100%' }"
                 placeholder="Select Lesson Type"
                 (onChange)="onWeekChange(student)"
               ></p-dropdown>
               <p-dropdown
                 [options]="timeSlots"
-                [(ngModel)]="student.sem.time"
+                [(ngModel)]="student.bsem.time"
                 [style]="{ width: '100%' }"
                 placeholder="Select Time Slot"
               ></p-dropdown>
             </span>
           </div>
           <div *ngIf="!editActive">
-            <span *ngIf="student.sem?.day"
-              >{{ getDayInMongolian(student.sem.day) }} -
-              {{ student.sem.time }}пар</span
+            <span *ngIf="student.bsem?.day"
+              >{{ getDayInMongolian(student.bsem.day) }} -
+              {{ student.bsem.time }}пар</span
             >
           </div>
         </td>
         <td>
           <div *ngIf="editActive">
-            <span *ngIf="student.lab?.day" style="display: flex">
+            <span *ngIf="student.clab?.day" style="display: flex">
               <p-dropdown
                 [options]="weeks"
                 optionLabel="name"
                 optionValue="id"
-                [(ngModel)]="student.lab.day"
+                [(ngModel)]="student.clab.day"
                 [style]="{ width: '100%' }"
                 placeholder="Select Lesson Type"
                 (onChange)="onWeekChange(student)"
               ></p-dropdown>
               <p-dropdown
                 [options]="timeSlots"
-                [(ngModel)]="student.lab.time"
+                [(ngModel)]="student.clab.time"
                 [style]="{ width: '100%' }"
                 placeholder="Select Time Slot"
               ></p-dropdown>
             </span>
           </div>
           <div *ngIf="!editActive">
-            <span *ngIf="student.lab?.day"
-              >{{ getDayInMongolian(student.lab.day) }} -
-              {{ student.lab.time }}пар</span
+            <span *ngIf="student.clab?.day"
+              >{{ getDayInMongolian(student.clab.day) }} -
+              {{ student.clab.time }}пар</span
             >
           </div>
         </td>

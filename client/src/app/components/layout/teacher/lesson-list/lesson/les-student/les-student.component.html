@@ -1,49 +1,73 @@
-<div style="margin: 10px;">
-    <p-toast />
-    <div class="title">
-        <span>Оюутан бүртгэх</span>
+<div style="margin: 10px">
+  <p-toast />
+  <div class="title">
+    <span>Оюутан бүртгэх</span>
+  </div>
+  <div class="content">
+    <div class="action-btn">
+      <p-fileupload
+        mode="basic"
+        chooseLabel="Choose"
+        chooseIcon="pi pi-upload"
+        name="file"
+        accept=".xls,.xlsx"
+        (onSelect)="onFileChange($event)"
+      />
     </div>
-    <div class="content">
-        <div class="action-btn">
-            <p-fileupload mode="basic" chooseLabel="Choose" chooseIcon="pi pi-upload" name="file"
-                accept=".xls,.xlsx" (onSelect)="onFileChange($event)" />
+    <div class="form">
+      <form [formGroup]="studentForm">
+        <div>
+          <p-dropdown
+            formControlName="lessonType"
+            [options]="lessonTypes"
+            optionLabel="label"
+            optionValue="value"
+            placeholder="Төрөл"
+            class="form-dropdown"
+          />
+          <p-dropdown
+            formControlName="week"
+            [options]="weeks"
+            optionLabel="name"
+            optionValue="id"
+            placeholder="Гараг"
+            class="form-dropdown"
+          />
+          <p-dropdown
+            formControlName="time"
+            [options]="times"
+            optionLabel="name"
+            optionValue="id"
+            placeholder="Цаг"
+            class="form-dropdown"
+          />
         </div>
-        <div class="form">
-            <form [formGroup]="studentForm">
-                <div>
-                    <p-dropdown formControlName="lessonType" [options]="lessonTypes" optionLabel="name" optionValue="id"
-                        placeholder="Төрөл" class="form-dropdown" />
-                    <p-dropdown formControlName="week" [options]="weeks" optionLabel="name" optionValue="id"
-                        placeholder="Гараг" class="form-dropdown" />
-                    <p-dropdown formControlName="time" [options]="times" optionLabel="name" optionValue="id"
-                        placeholder="Цаг" class="form-dropdown" />
-                </div>
-            </form>
-        </div>
-        <div class="action-btn">
-            <p-button mat-raised-button (click)="submit()">Хадгалах</p-button>
-        </div>
+      </form>
     </div>
+    <div class="action-btn">
+      <p-button mat-raised-button (click)="submit()">Хадгалах</p-button>
+    </div>
+  </div>
 
-    <div class="student-count">
-        <span>Нийт сурагчдын тоо:</span>
-        <span>{{ this.studentCount }}</span>
-    </div>
+  <div class="student-count">
+    <span>Нийт сурагчдын тоо:</span>
+    <span>{{ this.studentCount }}</span>
+  </div>
 
-    <div class="table-container">
-        <table *ngIf="tableData.length > 0" class="custom-table">
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th *ngFor="let header of tableData[0]">{{ header }}</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr *ngFor="let row of tableData.slice(1); let i = index">
-                    <td>{{ i + 1 }}</td>
-                    <td *ngFor="let cell of row">{{ cell }}</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
+  <div class="table-container">
+    <table *ngIf="tableData.length > 0" class="custom-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th *ngFor="let header of tableData[0]">{{ header }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let row of tableData.slice(1); let i = index">
+          <td>{{ i + 1 }}</td>
+          <td *ngFor="let cell of row">{{ cell }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </div>

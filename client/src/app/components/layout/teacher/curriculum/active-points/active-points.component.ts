@@ -18,6 +18,7 @@ import { lessonAssessmentService } from '../../../../../services/lessonAssessmen
 import { TableModule } from 'primeng/table';
 import { ActivatedRoute } from '@angular/router';
 import { InputTextModule } from 'primeng/inputtext';
+import { SharedDictService } from '../../shared';
 interface assessmentList {
   examType: any;
   lessonId: string;
@@ -72,7 +73,7 @@ export class ActivePointsComponent {
 
   constructor(
     private fb: FormBuilder,
-    private examService: ExamService,
+    private shared: SharedDictService,
     private route: ActivatedRoute,
     private dialog: MatDialog,
     private lessonAssessmentService: lessonAssessmentService
@@ -103,7 +104,10 @@ export class ActivePointsComponent {
       this.lessonId = params.get('id')!;
     });
 
-    this.selectlessonAssessment();
+    this.shared.getDictionary(this.lessonId, false).subscribe((res) => {
+      this.lessonTypes = res;
+      this.selectlessonAssessment();
+    });
   }
 
   selectlessonAssessment() {

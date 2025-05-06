@@ -80,11 +80,6 @@ export class ActivityComponent {
       { label: 'Пүрэв', value: 'Thursday' },
       { label: 'Баасан', value: 'Friday' },
     ];
-    this.classTypes = [
-      { label: 'Лекц', value: 'alec' },
-      { label: 'Семинар', value: 'bsem' },
-      { label: 'Лаборатори', value: 'clab' },
-    ];
 
     this.route.parent?.paramMap.subscribe((params) => {
       this.lessonId = params.get('id')!;

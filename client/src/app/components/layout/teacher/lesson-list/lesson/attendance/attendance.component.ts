@@ -11,6 +11,7 @@ import { TableModule } from 'primeng/table';
 import { ToastModule } from 'primeng/toast';
 import { AttendanceService } from '../../../../../../services/attendanceService';
 import { StudentService } from '../../../../../../services/studentService';
+import { SharedDictService } from '../../../shared';
 
 interface AttendanceRecord {
   student: {
@@ -64,7 +65,8 @@ export class AttendanceComponent {
     private studentService: StudentService,
     private route: ActivatedRoute,
     private attendanceService: AttendanceService,
-    private msgService: MessageService
+    private msgService: MessageService,
+    private shared: SharedDictService
   ) {}
 
   ngOnInit() {
@@ -75,23 +77,22 @@ export class AttendanceComponent {
       { label: 'Пүрэв', value: 'Thursday' },
       { label: 'Баасан', value: 'Friday' },
     ];
-    this.classTypes = [
-      { label: 'Лекц', value: 'alec' },
-      { label: 'Семинар', value: 'bsem' },
-      { label: 'Лаборатори', value: 'clab' },
-    ];
-
     this.route.parent?.paramMap.subscribe((params) => {
       this.lessonId = params.get('id')!;
     });
+    this.shared.getDictionary(this.lessonId, true).subscribe((res) => {
+      this.classTypes = res;
 
-    this.attendanceService.getConfig('First_day_of_school').subscribe((res) => {
-      if (res) {
-        this.startDate = new Date(res.itemValue);
-      }
+      this.attendanceService
+        .getConfig('First_day_of_school')
+        .subscribe((res) => {
+          if (res) {
+            this.startDate = new Date(res.itemValue);
+          }
+        });
+
+      this.onSelectionChange();
     });
-
-    this.onSelectionChange();
   }
 
   onSelectionChange(): void {

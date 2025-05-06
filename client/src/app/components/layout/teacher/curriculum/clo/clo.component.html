@@ -24,7 +24,7 @@
     </ng-template>
     <ng-template #groupheader let-clo>
       <tr pRowGroupHeader>
-        <td colspan="6">
+        <td colspan="7">
           <div class="flex items-center gap-2">
             <strong>
               {{ getGroupHeaderLabel(clo.type) }}
@@ -55,13 +55,14 @@
                 appendTo="body"
                 [(ngModel)]="clo.type"
                 [style]="{ width: '100%' }"
-              />
+              ></p-select>
             </ng-template>
             <ng-template #output>
-              <p-tag [value]="clo.type" />
+              <p-tag [value]="getCloTypeLabel(clo.type)" />
             </ng-template>
           </p-cellEditor>
         </td>
+
         <td>
           <p-cellEditor>
             <ng-template #input>
