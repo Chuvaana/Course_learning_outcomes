@@ -212,12 +212,25 @@ export class LesStudentListComponent {
     this.editActive = false;
     this.students = this.dataCheckPoint;
     this.filteredStudents = this.students;
+    this.loadStudents();
   }
 
   save() {
     this.filteredStudents.map((e : any) =>{
-      if(e.id === "" && e.id === null && e.id === undefined){
-        this.studentService.registerLesStudent(e).subscribe((res) =>{
+      if(e.id === ""){
+        const data = [];
+        data.push({
+          lessonId: e.lessonId,
+          studentCode: e.studentCode,
+          studentName: e.studentName,
+          lecDay: e.alec.day,
+          lecTime: e.alec.time,
+          labDay: e.clab.day,
+          labTime: e.clab.time,
+          semDay: e.bsem.day,
+          semTime: e.bsem.time,
+        });
+        this.studentService.registerLesStudent(data).subscribe((res) =>{
           console.log(res);
           // e = re
         });
@@ -238,15 +251,15 @@ export class LesStudentListComponent {
   add() {
     let studentData = {
       id: '',
-      lab: {
+      clab: {
         day: '',
         time: ''
       },
-      lec: {
+      alec: {
         day: '',
         time: ''
       },
-      sem: {
+      bsem: {
         day: '',
         time: ''
       },
@@ -256,5 +269,27 @@ export class LesStudentListComponent {
     };
 
     this.filteredStudents.unshift(studentData); // 👈 Add to the beginning
+  }
+
+  delete(student : any, rowIndex: any){
+    console.log('student '+student);
+    console.log('rowIndex '+rowIndex);
+    this.studentService.deleteLesStudents(student.id).subscribe((res : any) =>{
+      this.msgService.add({
+        severity: 'success',
+        summary: 'Амжилттай',
+        detail: 'Амжилттай устгалаа!',
+      });
+      this.loadStudents();
+    },
+    (err) => {
+      this.msgService.add({
+        severity: 'error',
+        summary: 'Алдаа',
+        detail:
+          'Устгахад алдаа гарлаа!: ' +
+          err.message,
+      });
+    })
   }
 }

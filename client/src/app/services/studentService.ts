@@ -67,4 +67,8 @@ export class StudentService {
   getCloList(id: string): Observable<any> {
     return this.http.get(`${this.apiUrl}/clos/${id}`);
   }
+
+  deleteLesStudents(id : any){
+    return this.http.delete(`${this.apiUrl}/lesStudents/${id}`);
+  }
 }
