@@ -220,3 +220,20 @@ p-tieredmenu {
     font-size:medium;
   }
 }
+
+
+.err-title{
+  display: flex;
+  justify-content: center;
+  margin: 200px 100px;
+  .err-text{
+    width: 400px;
+    align-content: center;
+    text-align: center;
+    font-size: 24px;
+  }
+  .err-img{
+    margin-left: 400px;
+
+  }
+}

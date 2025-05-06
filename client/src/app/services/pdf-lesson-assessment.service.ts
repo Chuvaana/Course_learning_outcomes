@@ -359,7 +359,6 @@ export class PdfLessonAssessmentService {
             widths,
             body: tableBody,
             dontBreakRows: true,
-            pageBreak: 'before' as any,
           },
         },
         { text: `Боловсруулсан багш: ${data.teacherName}`, style: 'footerCenter'}

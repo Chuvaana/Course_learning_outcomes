@@ -1,11 +1,23 @@
 <div class="lesson-body">
-  <div class="action-btn">
-    <p-button label="Хадгалах" (onClick)="save()"></p-button>
+  <div class="main-title">
+    <div class="action-btn" style="place-self: end;">
+      <p-button label="Хадгалах" (onClick)="save()"></p-button>
+    </div>
+    <div class="action-btn">
+      <label for="calendar-timeonly" class="font-bold block mb-2"> Эхлэх огноо </label>
+      <p-datepicker inputId="calendar-24h" [(ngModel)]="startDate" [showTime]="true" hourFormat="24" />
+    </div>
+    <div class="action-btn">
+      <label for="calendar-timeonly" class="font-bold block mb-2"> Дуусах огноо </label>
+      <p-datepicker inputId="calendar-24h" [(ngModel)]="endDate" [showTime]="true" hourFormat="24" />
+    </div>
   </div>
+  <p-toast />
   <div *ngFor="let question of dataQuestions; let qIndex = index" class="question">
     <div class="header-sub-title">
       <p-iftalabel>
-        <textarea class="no-resize-textarea" pSize="large" rows="3" cols="62" pTextarea [(ngModel)]="question.groupName"></textarea>
+        <textarea class="no-resize-textarea" pSize="large" rows="3" cols="62" pTextarea
+          [(ngModel)]="question.groupName"></textarea>
         <label for="username">Дэд нэр</label>
       </p-iftalabel>
     </div>
@@ -21,15 +33,8 @@
       <div class="action-dropdown">
         <div class="rating-frame">
           <p-floatlabel variant="on">
-            <p-dropdown
-              [(ngModel)]="answer.questionType"
-              id="code"
-              [options]="questionTypes"
-              optionLabel="name"
-              (onChange)="onBranchChange($event.value)"
-              autocomplete="off"
-              [style]="{ width: '200px'}"
-            >
+            <p-dropdown [(ngModel)]="answer.questionType" id="code" [options]="questionTypes" optionLabel="name"
+              (onChange)="onBranchChange($event.value)" autocomplete="off" [style]="{ width: '200px'}">
             </p-dropdown>
             <label for="school">Асуулгын төрөл</label>
           </p-floatlabel>

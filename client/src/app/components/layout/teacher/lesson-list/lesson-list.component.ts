@@ -6,7 +6,6 @@ import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { DropdownModule } from 'primeng/dropdown';
-import { Image } from 'primeng/image';
 import { InputTextModule } from 'primeng/inputtext';
 import { RippleModule } from 'primeng/ripple';
 import {
@@ -85,7 +84,6 @@ interface Info {
   selector: 'app-lesson-list',
   standalone: true,
   imports: [
-    Image,
     CommonModule,
     ButtonModule,
     InputTextModule,

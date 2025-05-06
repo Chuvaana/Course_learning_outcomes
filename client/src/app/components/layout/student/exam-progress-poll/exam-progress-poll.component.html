@@ -1,7 +1,16 @@
 <div class="lesson-body">
-  <div class="action-btn">
-    <p-button label="Илгээх" [disabled]="createActive" (onClick)="save()"></p-button>
+  <div class="action-btn" [hidden]="dateActive">
+    <p-button label="Илгээх" [disabled]="createActive || dateActive" (onClick)="save()"></p-button>
   </div>
+  <div class="err-title" [hidden]="!dateActive">
+    <div class="err-text">
+      <span>Санал асуулга үүсээгүй байгаа</span><br><span>тул үүсгэсний дараа орж ирнэ үү.</span>
+    </div>
+    <div class="err-img">
+      <p-image src="../../../../../assets/img/waitin-image.png" alt="Image" width="500" />
+    </div>
+  </div>
+  <p-toast />
   <div *ngFor="let question of dataQuestions; let qIndex = index" class="question">
     <div class="header-sub-title">
       <p-fieldset legend="Дэд нэр">

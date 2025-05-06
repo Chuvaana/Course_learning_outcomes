@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterModule } from '@angular/router';
-import { MenuItem } from 'primeng/api';
+import { MenuItem, MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { CheckboxModule } from 'primeng/checkbox';
 import { DropdownModule } from 'primeng/dropdown';
@@ -16,6 +16,7 @@ import { TieredMenuModule } from 'primeng/tieredmenu';
 import { ToastModule } from 'primeng/toast';
 import { forkJoin } from 'rxjs';
 import { ProgressPollService } from '../../../../services/progressPollService';
+import { Image } from 'primeng/image';
 
 interface Question {
   name: string;
@@ -62,7 +63,9 @@ interface questionPollList {
     TieredMenuModule,
     ToastModule,
     FormsModule,
+    Image,
   ],
+  providers: [MessageService],
   templateUrl: './exam-progress-poll.component.html',
   styleUrl: './exam-progress-poll.component.scss',
 })
@@ -72,6 +75,7 @@ export class ExamProgressPollComponent {
   value: string | undefined;
   loading: boolean = false;
   createActive: boolean = false;
+  dateActive: boolean = false;
   progressPollId!: string;
 
   questionItem: QuestionItem[] = [];
@@ -85,7 +89,7 @@ export class ExamProgressPollComponent {
   selectedCity: Question | undefined;
   dataQuestions: any;
 
-  studentCode: string = '';
+  studentCode: any;
 
   questions: {
     groupId: string;
@@ -103,21 +107,23 @@ export class ExamProgressPollComponent {
 
   constructor(
     private route: ActivatedRoute,
+    private messageService: MessageService,
     private service: ProgressPollService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.route.parent?.paramMap.subscribe((params) => {
       this.lessonId = params.get('id')!;
     });
+    this.studentCode = localStorage.getItem('studentCode') ?? '';
+    console.log(this.studentCode);
     if (this.lessonId) {
-      this.refreshStudentId();
+      this.refreshDetail();
     }
     this.questionTypes = [
       { name: 'Үнэлгээ өгөх', code: 'RATE' },
       { name: 'Хариулт бичих', code: 'FEEDBACK' },
     ];
-    this.studentCode = localStorage.getItem('studentCode') ?? '';
   }
 
   load() {
@@ -128,7 +134,7 @@ export class ExamProgressPollComponent {
     }, 2000);
   }
 
-  onAnswerClick() {}
+  onAnswerClick() { }
   onRemove(answerIndex: number, questionIndex: number) {
     const question = this.dataQuestions[questionIndex];
 
@@ -167,34 +173,62 @@ export class ExamProgressPollComponent {
 
   refreshDetail() {
     this.service.getAllLessonAssments(this.lessonId).subscribe((e: any) => {
-      this.progressPollId = e[0]._id;
       if (e.length > 0) {
-        if (e.studentId === this.studentCode) {
-          this.refreshStudentId();
+        const nowDate = new Date();
+        this.progressPollId = e[0]._id;
+        const startDate = new Date(e[0].startDate);
+        const endDate = new Date(e[0].endDate);
+        if (startDate > nowDate) {
+          this.messageService.add({
+            severity: 'warn',
+            summary: 'Анхааруулга',
+            detail: `Санал асуулга өгөх хугацаа болоогүй байна!`,
+          });
+          this.dateActive = true;
+        } else if (endDate < nowDate) {
+          this.messageService.add({
+            severity: 'warn',
+            summary: 'Анхааруулга',
+            detail: `Санал асуулга өгөх хугацаа өнгөрсөн байна!`,
+          });
+          this.dateActive = true;
+        } else {
+          this.dataQuestions = e[0].questions;
         }
-        this.dataQuestions = e;
+        this.refreshStudentId();
       }
-    });
+    },
+      (err) => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Алдаа',
+          detail: 'Алдаа гарлаа!: ' + err.message,
+        });
+      });
   }
 
   refreshStudentId() {
     this.service.getAllStudentsSendPollQuess().subscribe((e: any) => {
       let action = false;
       let data = null;
-
       e.map((i: any, index: any) => {
         if (i.studentId === this.studentCode) {
           action = true;
           data = i.groupList;
         }
       });
-      if (!action) {
-        this.refreshDetail();
-      } else {
+      if (action) {
         this.createActive = true;
         this.dataQuestions = data;
       }
-    });
+    },
+      (err) => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Алдаа',
+          detail: 'Алдаа гарлаа!: ' + err.message,
+        });
+      });
   }
   save() {
     if (this.dataQuestions.length > 0) {

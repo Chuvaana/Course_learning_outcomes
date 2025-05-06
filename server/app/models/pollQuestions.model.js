@@ -16,5 +16,14 @@ const PollQuestionsSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+const PollQuestions = new mongoose.Schema(
+  {
+    lessonId: { type: mongoose.Schema.Types.ObjectId, ref: 'Lesson', required: true },
+    startDate: { type: Date, required: true },
+    endDate: { type: Date, required: true },
+    questions: [PollQuestionsSchema],
+  },
+  { timestamps: true }
+);
 
-module.exports = mongoose.model('PollQuestions', PollQuestionsSchema);
+module.exports = mongoose.model('PollQuestions', PollQuestions);

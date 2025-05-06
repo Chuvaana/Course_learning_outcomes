@@ -17,6 +17,7 @@ import { OtherComponent } from './other/other.component';
 import { ScheduleComponent } from './schedule/schedule.component';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
+import { CloPointPlanService } from '../../../../services/cloPointPlanService';
 
 @Component({
   selector: 'app-curriculum',
@@ -57,13 +58,16 @@ export class CurriculumComponent {
   scheduleBdsData: any;
   cloPlanData: any;
   assessFooter: any;
+  pointPlan: any;
 
   constructor(
     private route: ActivatedRoute,
     private pdfService: PdfGeneratorService,
     private cloService: CLOService,
     private messageService: MessageService,
-    private service: AssessmentService
+    private service: AssessmentService,
+    private assessService: AssessmentService,
+    private cloPointPlanService: CloPointPlanService
   ) {}
 
   ngOnInit() {
@@ -85,21 +89,10 @@ export class CurriculumComponent {
       scheduleSems: this.service.getScheduleSems(this.lessonId),
       scheduleLabs: this.service.getScheduleLabs(this.lessonId),
       scheduleBds: this.service.getScheduleBds(this.lessonId),
+      pointPlan: this.cloPointPlanService.getPointPlan(this.lessonId),
+      assessmentByLesson: this.assessService.getAssessmentByLesson(this.lessonId),
     }).subscribe(
       (results) => {
-        // 🎯 Энд бүх үр дүн хадгалагдсан байна
-        // this.assessmentData = results.assessment;
-        this.additionalData = results.additional;
-        this.cloListData = results.cloList;
-        this.mainInfoData = results.mainInfo;
-        this.materialsData = results.materials;
-        this.methodData = results.method;
-        this.definitionData = results.definition;
-        this.schedulesData = results.schedules;
-        this.scheduleSemsData = results.scheduleSems;
-        this.scheduleLabsData = results.scheduleLabs;
-        this.scheduleBdsData = results.scheduleBds;
-
         console.log('Бүх өгөгдөл:', results);
         this.resultData = results;
         this.pdfService.generatePdfTest(this.resultData);

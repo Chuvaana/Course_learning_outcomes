@@ -19,7 +19,6 @@ import { LessonOverallAssessComponent } from './lesson-overall-assess/lesson-ove
 import { LessonPlanComponent } from './lesson-plan/lesson-plan.component';
 import { LessonPollAnalysisComponent } from './lesson-poll-analysis/lesson-poll-analysis.component';
 import { LessonAdvDisadvComponent } from './lesson-adv-disadv/lesson-adv-disadv.component';
-import { SharedDictService } from '../shared';
 
 @Component({
   selector: 'app-home',
@@ -61,7 +60,11 @@ export class HomeComponent {
   tabDatas!: [{ title: string; content: any; value: any }];
   students!: any;
 
-  types: any[] = [];
+  types = [
+    { label: 'Лекц', value: 'ALEC' },
+    { label: 'Семинар', value: 'BSEM' },
+    { label: 'Лаборатори', value: 'CLAB' },
+  ];
 
   constructor(
     private route: ActivatedRoute,
@@ -70,21 +73,17 @@ export class HomeComponent {
     private service: CurriculumService,
     private cloService: CLOService,
     private assessService: AssessmentService,
-    private cloPointPlanService: CloPointPlanService,
-    private shared: SharedDictService
-  ) {}
+    private cloPointPlanService: CloPointPlanService
+  ) { }
 
   ngOnInit() {
     this.route.parent?.paramMap.subscribe((params) => {
       this.lessonId = params.get('id')!;
     });
     this.teacherId = (localStorage.getItem('teacherId') as string) || '';
-    this.shared.getDictionary(this.lessonId, false).subscribe((res) => {
-      this.types = res;
-      this.readMainInfo();
-      this.readClos();
-      this.readPlan();
-    });
+    this.readMainInfo();
+    this.readClos();
+    this.readPlan();
   }
 
   readMainInfo() {
@@ -131,5 +130,23 @@ export class HomeComponent {
     });
   }
 
-  exportToExcel() {}
+  pdfToConvert() {
+    console.log('cloList : ' + this.cloList + '\n assessPlan : ' + this.assessPlan + '\n cloPlan : ' + this.cloPlan);
+    if (this.lessonId !== null && this.lessonId !== undefined) {
+      // forkJoin({
+
+      // }).subscribe(
+      //   (results) => {
+
+      //   },
+      //   (err) => {
+      //     this.msgService.add({
+      //       severity: 'error',
+      //       summary: 'Алдаа',
+      //       detail: 'Тайлан хэвлэхэд алдаа гарлаа бүтэн мэдээлэл оруулна уу!: ' + err.message,
+      //     });
+      //   }
+      // );
+    }
+  }
 }

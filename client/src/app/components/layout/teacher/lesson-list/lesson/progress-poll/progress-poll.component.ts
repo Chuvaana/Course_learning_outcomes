@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterModule } from '@angular/router';
-import { MenuItem } from 'primeng/api';
+import { MenuItem, MessageService } from 'primeng/api';
 import { CheckboxModule } from 'primeng/checkbox';
 import { DropdownModule } from 'primeng/dropdown';
 import { IftaLabelModule } from 'primeng/iftalabel';
@@ -14,6 +14,8 @@ import { ProgressPollService } from '../../../../../../services/progressPollServ
 import { ButtonModule } from 'primeng/button';
 import { FloatLabelModule } from 'primeng/floatlabel';
 import { CLOService } from '../../../../../../services/cloService';
+import { DatePicker } from 'primeng/datepicker';
+import { CalendarModule } from 'primeng/calendar';
 
 interface Question {
   name: string;
@@ -31,6 +33,12 @@ interface Ques {
   questionTitle: string;
   questionType: string | Question;
   questionTypeName: string;
+}
+interface mainData {
+  lessonId: string;
+  startDate: Date;
+  endDate: Date;
+  questions: QuestionList[];
 }
 
 type QuestionItem = Ques | QueWithClo;
@@ -58,7 +66,10 @@ interface QuestionList {
     TieredMenuModule,
     ToastModule,
     FormsModule,
+    DatePicker,
+    CalendarModule,
   ],
+  providers: [MessageService],
   templateUrl: './progress-poll.component.html',
   styleUrl: './progress-poll.component.scss',
 })
@@ -69,8 +80,10 @@ export class ProgressPollComponent {
   loading: boolean = false;
   createActive: boolean = false;
   progressPollId: string[] = [];
-
+  startDate: any;
+  endDate: any;
   questionTypes: Question[] | undefined;
+  mainData: any;
 
   checked: boolean = false;
   selectedCity: Question | undefined;
@@ -241,12 +254,14 @@ export class ProgressPollComponent {
   }[] = [{ text: '', questionType: 'RATE', questionTypeName: 'Үнэлгээ өгөх' }];
 
   questions: QuestionList[] = [];
+  id: any;
 
   constructor(
     private route: ActivatedRoute,
     private cloService: CLOService,
+    private messageService: MessageService,
     private service: ProgressPollService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.route.parent?.paramMap.subscribe((params) => {
@@ -255,6 +270,12 @@ export class ProgressPollComponent {
     if (this.lessonId) {
       this.refreshDetail();
     }
+    this.mainData = {
+      lessonId: this.lessonId,
+      startDate: null,
+      endDate: null,
+      questions: [],
+    };
     this.questionTypes = [
       { name: 'Үнэлгээ өгөх', code: 'RATE' },
       { name: 'Хариулт бичих', code: 'FEEDBACK' },
@@ -273,7 +294,6 @@ export class ProgressPollComponent {
       });
     });
     this.popQuestion;
-    this.cloQuestion();
   }
 
   load() {
@@ -284,7 +304,7 @@ export class ProgressPollComponent {
     }, 2000);
   }
 
-  onAnswerClick() {}
+  onAnswerClick() { }
   onRemove(answerIndex: number, questionIndex: number) {
     const question = this.dataQuestions[questionIndex];
 
@@ -370,46 +390,88 @@ export class ProgressPollComponent {
       console.log(e);
       if (e.length > 0) {
         e.map((i: any) => {
-          this.progressPollId.push(i._id);
-          i.questionList.map((ans: any) => {
-            this.questionTypes?.map((val: any) => {
-              if (ans.questionType !== undefined && ans.questionType !== null) {
-                if (val.code === ans.questionType) {
-                  ans.questionType = val;
+          //   this.progressPollId.push(i._id);
+          this.dataQuestions = i.questions;
+          i.questions.map((data1: any) => {
+            data1.questionList.map((ans: any) => {
+              this.questionTypes?.map((val: any) => {
+                if (ans.questionType !== undefined && ans.questionType !== null) {
+                  if (val.code === ans.questionType) {
+                    ans.questionType = val;
+                  }
                 }
-              }
+              });
             });
           });
+          this.id = i._id;
+          this.startDate = new Date(i.startDate);
+          this.endDate = new Date(i.endDate);
         });
-        // this.dataQuestions = e;
         this.createActive = true;
       }
+      this.cloQuestion();
     });
   }
   save() {
-    if (this.dataQuestions.length > 0) {
-      this.dataQuestions.map((i: any, index: any) => {
-        const id = this.progressPollId[index];
-        i.lessonId = this.lessonId;
-        i.questionList.map((answer: any) => {
-          if (
-            answer.questionType.code !== undefined &&
-            answer.questionType.code !== null
-          ) {
-            answer.questionTypeName = answer.questionType.name;
-            answer.questionType = answer.questionType.code;
-          }
+    if (this.startDate !== undefined && this.startDate !== null
+      && this.endDate !== undefined && this.endDate !== null
+    ) {
+      if (this.endDate < this.startDate) {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Алдаа',
+          detail: 'Дуусах огноо эхлэх огнооноос хойш байна!: ',
         });
-        if (!this.createActive) {
-          this.service.createPollQuestions(i).subscribe((e: any) => {
-            this.progressPollId.push(e._id);
-            this.refreshDetail();
+      } else {
+        if (this.dataQuestions.length > 0) {
+          this.dataQuestions.map((i: any, index: any) => {
+            const id = this.progressPollId[index];
+            i.lessonId = this.lessonId;
+            i.questionList.map((answer: any) => {
+              if (
+                answer.questionType.code !== undefined &&
+                answer.questionType.code !== null
+              ) {
+                answer.questionTypeName = answer.questionType.name;
+                answer.questionType = answer.questionType.code;
+              }
+            });
           });
-        } else {
-          this.service.updatePollQuestions(id, i).subscribe((e: any) => {
-            this.refreshDetail();
-          });
+
+          this.mainData.questions = this.dataQuestions;
+          this.mainData.startDate = this.startDate;
+          this.mainData.endDate = this.endDate;
+          if (!this.createActive) {
+            this.service.createPollQuestions(this.mainData).subscribe((e: any) => {
+              this.progressPollId.push(e._id);
+              this.refreshDetail();
+            },
+              (err) => {
+                this.messageService.add({
+                  severity: 'error',
+                  summary: 'Алдаа',
+                  detail: 'Хадгалхад алдаа гарлаа!: ' + err.message,
+                });
+              });
+          } else {
+            this.service.updatePollQuestions(this.id, this.mainData).subscribe((e: any) => {
+              this.refreshDetail();
+            },
+              (err) => {
+                this.messageService.add({
+                  severity: 'error',
+                  summary: 'Алдаа',
+                  detail: 'Засхад алдаа гарлаа!: ' + err.message,
+                });
+              });
+          }
         }
+      }
+    } else {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Алдаа',
+        detail: 'Эхлэх болон дуусах огноог оруулна уу!',
       });
     }
   }
