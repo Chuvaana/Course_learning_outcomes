@@ -71,7 +71,7 @@ export class LesStudentListComponent {
     private studentService: StudentService,
     private msgService: MessageService,
     private route: ActivatedRoute
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.route.parent?.paramMap.subscribe((params) => {
@@ -210,8 +210,16 @@ export class LesStudentListComponent {
   }
 
   save() {
+    this.filteredStudents.map((e : any) =>{
+      if(e.id === "" && e.id === null && e.id === undefined){
+        this.studentService.registerLesStudent(e).subscribe((res) =>{
+          console.log(res);
+          // e = re
+        });
+      }
+    })
     this.studentService
-      .updateStudents(this.studentSaveDatas)
+      .updateStudents(this.filteredStudents)
       .subscribe((res) => {
         this.msgService.add({
           severity: 'success',
@@ -220,5 +228,28 @@ export class LesStudentListComponent {
         });
         this.editActive = false;
       });
+  }
+
+  add() {
+    let studentData = {
+      id: '',
+      lab: {
+        day: '',
+        time: ''
+      },
+      lec: {
+        day: '',
+        time: ''
+      },
+      sem: {
+        day: '',
+        time: ''
+      },
+      lessonId: this.lessonId,
+      studentCode: '',
+      studentName: ''
+    };
+
+    this.filteredStudents.unshift(studentData); // 👈 Add to the beginning
   }
 }
