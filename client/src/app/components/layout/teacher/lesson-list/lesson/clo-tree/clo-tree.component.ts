@@ -105,13 +105,21 @@ export class CloTreeComponent {
           const planGroup = this.fb.group({
             id: this.fb.control<string>(plan._id),
             methodName: this.fb.control<string>(plan.methodName),
-            methodType: this.fb.control<string>(plan.methodType || ' '),
+            methodType: this.fb.control<string>(plan.methodType || null),
             secondMethodType: this.fb.control<string>(
               plan.secondMethodType || ' '
             ),
             frequency: this.fb.control<number>(plan.frequency),
             subMethods: subMethodsArray,
           });
+          if (plan.methodType) {
+            const match = this.methodTypes.find(
+              (e) => e.value === plan.methodType
+            );
+            if (match) {
+              planGroup.patchValue({ methodType: match.value }); // ✅ correct usage
+            }
+          }
 
           plansArray.push(planGroup);
           this.hideArray[index] = plan.methodType === 'PROC';

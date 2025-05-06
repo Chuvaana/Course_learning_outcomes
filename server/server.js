@@ -66,6 +66,7 @@ require('./app/routes/verb.routes')(app);
 require('./app/routes/finalExam.routes')(app);
 require('./app/routes/lessonFeedback.routes.')(app);
 require('./app/routes/finalExamQuestion.routes')(app);
+require('./app/routes/feedbackTask.routes')(app);
 
 // set port, listen for requests
 const PORT = process.env.PORT || 3000;

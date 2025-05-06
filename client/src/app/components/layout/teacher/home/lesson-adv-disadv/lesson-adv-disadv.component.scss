@@ -1,7 +1,6 @@
 .other {
   display: flex;
-  justify-content: center;
-  align-items: center;
+  flex-direction: row;
   margin: 20px;
 
   form {
@@ -19,8 +18,4 @@ p-textarea {
   width: 100%;
   font-size: 1rem;
   padding: 0.5rem;
-}
-
-button {
-  margin-top: 1rem;
 }
