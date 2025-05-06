@@ -463,7 +463,26 @@ export class CloPointPlanComponent {
   }
 
   excelConvert(): void {
-    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(this.cloPoint);
+    let convertData: any[] = [];
+    this.cloPoint.map((e: any, index : any) => {
+      let excelData: any = {
+        order: index,
+        cloName: e.cloName,
+      };
+      if (e.procPoints.length > 0) {
+        let i = 0;
+        for (i ; i < e.procPoints.length; i++) {
+          excelData[`point${i + 1}`] = e.procPoints[i].point;
+        }
+        for(let j = 1 ; j <= e.examPoints.length ; j++){
+          excelData[`point${j + i}`] = e.examPoints[j-1].point;
+        }
+      }
+      convertData.push(excelData);
+    })
+    console.log(convertData);
+
+    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(convertData);
     const workbook: XLSX.WorkBook = { Sheets: { 'data': worksheet }, SheetNames: ['data'] };
     const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
 

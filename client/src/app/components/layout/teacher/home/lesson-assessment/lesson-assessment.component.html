@@ -1,27 +1,28 @@
 <p-accordion [value]="0">
+  <div class="btn-margin">
+    <p-button severity="success" icon="pi pi-file-excel" label="Тайлан гаргах" (onClick)="pdfConvertAll(tabs)" />
+  </div>
   <ng-container *ngFor="let tab of tabs; trackBy: trackById">
     <p-accordion-panel [value]="tab.value">
       <p-accordion-header>{{ tab.title }}</p-accordion-header>
       <p-accordion-content>
-        <p-table
-          [value]="tab.content"
-          [paginator]="true"
-          [rows]="10"
-          [sortMode]="'multiple'"
-          rowGroupMode="subheader"
-          groupRowsBy="cloType"
-          class="custom-table"
-        >
+        <div class="excel-btn">
+          <div class="btn-margin">
+            <p-button severity="success" icon="pi pi-file-excel" label="Excel үүсгэх" (onClick)="excelConvert(tab)" />
+          </div>
+          <div class="btn-margin">
+            <p-button severity="success" icon="pi pi-file-excel" label="Тайлан гаргах" (onClick)="pdfConvert(tab)" />
+          </div>
+        </div>
+        <p-table [value]="tab.content" [paginator]="true" [rows]="10" [sortMode]="'multiple'" rowGroupMode="subheader"
+          groupRowsBy="cloType" class="custom-table">
           <ng-template pTemplate="header">
             <tr>
               <th style="background-color: rgb(72, 182, 255)">#</th>
               <th style="background-color: rgb(72, 182, 255)">
                 Оюутны нэр\Үнэлгээний аргууд
               </th>
-              <th
-                style="background-color: rgb(72, 182, 255)"
-                *ngFor="let col of tab.assessPlan"
-              >
+              <th style="background-color: rgb(72, 182, 255)" *ngFor="let col of tab.assessPlan">
                 {{ col.subMethodName }}
               </th>
               <th style="background-color: rgb(72, 182, 255)">Нийт оноо</th>

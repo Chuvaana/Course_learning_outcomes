@@ -75,6 +75,11 @@ export class NavbarComponent {
         routerLink: ['/main/admin/verb'],
       },
       {
+        label: 'Сурагч бүртгэлийн тохиргоо',
+        icon: 'pi pi-check',
+        routerLink: ['/main/admin/student-import'],
+      },
+      {
         label: 'Хичээлийн хөтөлбөр',
         icon: 'pi pi-book',
         routerLink: ['/main/teacher/lesson', this.lessonId, 'curriculum'],

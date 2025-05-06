@@ -115,6 +115,11 @@ export class MenuComponent implements OnInit {
         icon: 'pi pi-home',
         routerLink: ['/main/teacher/lesson', this.lessonId, 'report'],
       },
+      {
+        label: 'QR үүсгэх',
+        icon: 'pi pi-home',
+        routerLink: ['/main/teacher/lesson', this.lessonId, 'qr-code'],
+      },
     ];
 
     this.service.getAssessmentByLesson(this.lessonId).subscribe((res: any) => {
