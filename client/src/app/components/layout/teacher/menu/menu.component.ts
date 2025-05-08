@@ -40,26 +40,26 @@ export class MenuComponent implements OnInit {
     this.lessonId = this.route.snapshot.paramMap.get('id') || '';
 
     this.items = this.buildInitialMenu();
-    // this.service.getAssessmentByLesson(this.lessonId).subscribe((res: any) => {
-    //   const plansArray =
-    //     res?.plans?.filter((item: any) => item.methodType === 'PROC') || [];
+    this.service.getAssessmentByLesson(this.lessonId).subscribe((res: any) => {
+      const plansArray =
+        res?.plans?.filter((item: any) => item.methodType === 'PROC') || [];
 
-    //   const subMenu: MenuItem[] = plansArray.map((plan: any) => ({
-    //     label: plan.methodName,
-    //     icon: 'pi pi-graduation-cap',
-    //     routerLink: ['/main/teacher/lesson', this.lessonId, 'grade', plan._id],
-    //   }));
+      const subMenu: MenuItem[] = plansArray.map((plan: any) => ({
+        label: plan.methodName,
+        icon: 'pi pi-graduation-cap',
+        routerLink: ['/main/teacher/lesson', this.lessonId, 'grade', plan._id],
+      }));
 
-    //   if (subMenu.length > 0) {
-    //     const newItem: MenuItem = {
-    //       label: 'Явц',
-    //       icon: 'pi pi-graduation-cap',
-    //       items: subMenu,
-    //     };
+      if (subMenu.length > 0) {
+        const newItem: MenuItem = {
+          label: 'Явц',
+          icon: 'pi pi-graduation-cap',
+          items: subMenu,
+        };
 
-    //     this.items = [...(this.items || []), newItem];
-    //   }
-    // });
+        this.items = [...(this.items || []), newItem];
+      }
+    });
   }
 
   logout() {
