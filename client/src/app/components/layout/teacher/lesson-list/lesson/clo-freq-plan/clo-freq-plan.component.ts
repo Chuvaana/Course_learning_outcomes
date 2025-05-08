@@ -19,6 +19,7 @@ import { forkJoin, Observable } from 'rxjs';
 import { AssessmentService } from '../../../../../../services/assessmentService';
 import { CloPointPlanService } from '../../../../../../services/cloPointPlanService';
 import { ToastModule } from 'primeng/toast';
+import { AssessmentPlanService } from '../../../../../../services/assessmentPlanService';
 
 interface DataRow {
   formGroup: FormGroup;
@@ -56,7 +57,8 @@ export class CloFreqPlanComponent implements OnInit {
     private route: ActivatedRoute,
     private fb: FormBuilder,
     private msgService: MessageService,
-    private cloPointService: CloPointPlanService
+    private cloPointService: CloPointPlanService,
+    private assessPlan: AssessmentPlanService
   ) {}
 
   lessonId!: string;
@@ -66,6 +68,7 @@ export class CloFreqPlanComponent implements OnInit {
   pointPlanA: any[] = [];
 
   form!: FormGroup;
+  isNew = true;
 
   tableData: {
     type: string;
@@ -82,8 +85,106 @@ export class CloFreqPlanComponent implements OnInit {
   ngOnInit(): void {
     this.route.parent?.paramMap.subscribe((params) => {
       this.lessonId = params.get('id')!;
-      this.loadAssessment(this.lessonId);
       this.initializeWeekOptions();
+      this.assessPlan.getAssessmentPlan(this.lessonId).subscribe((res: any) => {
+        if (res.length != 0) {
+          this.isNew = false;
+          this.tableData = res.map((item: any) => ({
+            type: item.type,
+            week: item.week,
+            method: item.method,
+            methodName: item.methodName,
+            clo: item.clo,
+            cloName: item.cloName, // 👈 make sure this is present in your response
+            score: item.score,
+            weekNum: this.romanToNumber(item.week),
+          }));
+          this.form = this.fb.group({
+            rows: this.fb.array(
+              this.tableData.map((d) => this.createRowForm(d))
+            ),
+          });
+
+          this.groupData();
+        } else {
+          this.isNew = true;
+          this.loadAssessment(this.lessonId);
+        }
+      });
+    });
+  }
+
+  groupData() {
+    const allRows: DataRow[] = this.rows.controls.map((fg) => {
+      const week = fg.get('week')?.value!;
+      return {
+        formGroup: fg,
+        week: week,
+        weekNum: this.romanToNumber(week),
+        cloName: fg.get('cloName')?.value!,
+        type: fg.get('type')?.value!,
+        weekRowSpan: 0,
+        cloRowSpan: 0,
+        isFirstWeek: false,
+        isFirstClo: false,
+      };
+    });
+
+    allRows.sort((a, b) => {
+      if (a.type < b.type) return -1;
+      if (a.type > b.type) return 1;
+      if (a.weekNum < b.weekNum) return -1;
+      if (a.weekNum > b.weekNum) return 1;
+      if (a.cloName < b.cloName) return -1;
+      if (a.cloName > b.cloName) return 1;
+      return 0;
+    });
+
+    this.groupedDataSource = {};
+    allRows.forEach((row) => {
+      if (!this.groupedDataSource[row.type]) {
+        this.groupedDataSource[row.type] = [];
+      }
+      this.groupedDataSource[row.type].push(row);
+    });
+
+    Object.keys(this.groupedDataSource).forEach((type) => {
+      const group = this.groupedDataSource[type];
+
+      const weeksMap: { [week: string]: DataRow[] } = {};
+      group.forEach((row) => {
+        if (!weeksMap[row.week]) weeksMap[row.week] = [];
+        weeksMap[row.week].push(row);
+      });
+
+      Object.values(weeksMap).forEach((weekRows) => {
+        weekRows.forEach((r) => {
+          r.weekRowSpan = 0;
+          r.isFirstWeek = false;
+          r.cloRowSpan = 0;
+          r.isFirstClo = false;
+        });
+
+        if (weekRows.length === 0) return;
+        weekRows[0].weekRowSpan = weekRows.length;
+        weekRows[0].isFirstWeek = true;
+
+        const cloMap: { [cloName: string]: DataRow[] } = {};
+        weekRows.forEach((row) => {
+          if (!cloMap[row.cloName]) cloMap[row.cloName] = [];
+          cloMap[row.cloName].push(row);
+        });
+
+        Object.values(cloMap).forEach((cloRows) => {
+          cloRows.forEach((r) => {
+            r.cloRowSpan = 0;
+            r.isFirstClo = false;
+          });
+          if (cloRows.length === 0) return;
+          cloRows[0].cloRowSpan = cloRows.length;
+          cloRows[0].isFirstClo = true;
+        });
+      });
     });
   }
 
@@ -284,6 +385,7 @@ export class CloFreqPlanComponent implements OnInit {
 
   createRowForm(data: any): FormGroup {
     return this.fb.group({
+      lessonId: [{ value: this.lessonId, disabled: true }],
       type: [{ value: data.type, disabled: true }],
       week: [data.week],
       oldWeek: [data.week],
@@ -316,6 +418,7 @@ export class CloFreqPlanComponent implements OnInit {
   }
 
   checkData(data: any) {
+    let warn = false;
     const scoreSums: {
       [key: string]: {
         cloName: string;
@@ -351,6 +454,7 @@ export class CloFreqPlanComponent implements OnInit {
       const score = matching?.totalScore ?? 0;
 
       if (score !== ref.point && matching) {
+        warn = true;
         this.msgService.add({
           severity: 'warn',
           summary: 'Анхааруулга',
@@ -359,13 +463,34 @@ export class CloFreqPlanComponent implements OnInit {
         return;
       }
     });
-
     console.log(result);
+
+    return warn;
   }
 
   saveData() {
     const data = this.rows.getRawValue();
-    this.checkData(data);
+    if (!this.checkData(data)) {
+      if (this.isNew) {
+        this.assessPlan.addAssessmentPlan(data).subscribe((res) => {
+          this.msgService.add({
+            severity: 'success',
+            summary: 'Амжилттай',
+            detail: 'Амжилттай хадгалагдлаа',
+          });
+        });
+      } else {
+        this.assessPlan
+          .updateAssessmentPlan(this.lessonId, data)
+          .subscribe((res) => {
+            this.msgService.add({
+              severity: 'success',
+              summary: 'Амжилттай',
+              detail: 'Амжилттай хадгалагдлаа',
+            });
+          });
+      }
+    }
     console.log('All assessment data:', data);
   }
 }
