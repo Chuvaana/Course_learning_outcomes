@@ -81,11 +81,7 @@
       </svg>
     </ng-template>
     <ng-template pTemplate="item" let-item let-root="root">
-      <a
-        pRipple
-        class="flex align-items-center p-menuitem-link"
-        [routerLink]="item.link"
-      >
+      <a pRipple class="flex align-items-center p-menuitem-link">
         <span [class]="item.icon"></span>
         <span class="ml-2">{{ item.label }}</span>
         <p-badge
@@ -109,11 +105,6 @@
     </ng-template>
     <ng-template pTemplate="end">
       <div class="flex align-items-center gap-2">
-        <!-- <input type="text" pInputText placeholder="Search" class="w-8rem sm:w-auto" /> -->
-        <!-- <p-avatar
-          image="https://primefaces.org/cdn/primeng/images/demo/avatar/amyelsner.png"
-          shape="circle"
-        /> -->
         <i
           class="pi pi-sign-out"
           pTooltip="Гарах"

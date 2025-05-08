@@ -39,7 +39,36 @@ export class MenuComponent implements OnInit {
   ngOnInit(): void {
     this.lessonId = this.route.snapshot.paramMap.get('id') || '';
 
-    this.items = [
+    this.items = this.buildInitialMenu();
+    // this.service.getAssessmentByLesson(this.lessonId).subscribe((res: any) => {
+    //   const plansArray =
+    //     res?.plans?.filter((item: any) => item.methodType === 'PROC') || [];
+
+    //   const subMenu: MenuItem[] = plansArray.map((plan: any) => ({
+    //     label: plan.methodName,
+    //     icon: 'pi pi-graduation-cap',
+    //     routerLink: ['/main/teacher/lesson', this.lessonId, 'grade', plan._id],
+    //   }));
+
+    //   if (subMenu.length > 0) {
+    //     const newItem: MenuItem = {
+    //       label: 'Явц',
+    //       icon: 'pi pi-graduation-cap',
+    //       items: subMenu,
+    //     };
+
+    //     this.items = [...(this.items || []), newItem];
+    //   }
+    // });
+  }
+
+  logout() {
+    localStorage.clear(); // clear tokens or user info
+    this.router.navigate(['/teacher-login']); // redirect to login
+  }
+
+  buildInitialMenu() {
+    return [
       {
         label: 'Төлөвлөгөө',
         icon: 'pi pi-book',
@@ -48,6 +77,15 @@ export class MenuComponent implements OnInit {
             label: 'Дүнгийн төлөвлөлт',
             icon: 'pi pi-check',
             routerLink: ['/main/teacher/lesson', this.lessonId, 'clo-tree'],
+          },
+          {
+            label: 'Дүнгийн үзлэгийн төлөвлөлт',
+            icon: 'pi pi-check',
+            routerLink: [
+              '/main/teacher/lesson',
+              this.lessonId,
+              'clo-freq-plan',
+            ],
           },
           {
             label: 'Дүнгийн оноо төлөвлөлт',
@@ -134,38 +172,5 @@ export class MenuComponent implements OnInit {
         routerLink: ['/main/teacher/lesson', this.lessonId, 'qr-code'],
       },
     ];
-
-    this.service.getAssessmentByLesson(this.lessonId).subscribe((res: any) => {
-      const plansArray =
-        res?.plans?.filter((item: any) => item.methodType === 'PROC') || [];
-
-      const subMenu: { label: string; icon: string; routerLink: string[] }[] =
-        [];
-      plansArray.forEach((plan: any) => {
-        subMenu.push({
-          label: plan.methodName,
-          icon: 'pi pi-graduation-cap',
-          routerLink: [
-            '/main/teacher/lesson',
-            this.lessonId,
-            'grade',
-            plan._id,
-          ],
-        });
-      });
-      if (subMenu.length > 0) {
-        const newItem = {
-          label: 'Явц',
-          icon: 'pi pi-graduation-cap',
-          items: subMenu,
-        };
-        this.items = [...this.items!, newItem];
-      }
-    });
-  }
-
-  logout() {
-    localStorage.clear(); // clear tokens or user info
-    this.router.navigate(['/teacher-login']); // redirect to login
   }
 }

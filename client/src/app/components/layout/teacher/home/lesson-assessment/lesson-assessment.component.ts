@@ -33,9 +33,8 @@ export class LessonAssessmentComponent {
 
   constructor(
     private assessProcess: AssessProcessService,
-    private grade: GradeService,
-    private servicePdfLessAss: PdfLessonAssessmentService,
-  ) { }
+    private servicePdfLessAss: PdfLessonAssessmentService
+  ) {}
 
   ngOnChanges() {
     if (this.cloList?.length && this.tabs.length === 0) {
@@ -206,7 +205,7 @@ export class LessonAssessmentComponent {
     return 'F';
   }
 
-  ngOnInit() { }
+  ngOnInit() {}
 
   trackById(index: number, item: any): string {
     return item.id; // Assuming 'id' is a unique identifier for each tab
@@ -227,17 +226,17 @@ export class LessonAssessmentComponent {
     });
     return name;
   }
-  excelConvert(data : any): void {
+  excelConvert(data: any): void {
     let convertData: any[] = [];
-    data.content.map((e: any, index : any) => {
+    data.content.map((e: any, index: any) => {
       let excelData: any = {
         order: index,
         studentName: e.studentName,
         studentCode: e.studentCode,
       };
-      for ( let i = 0 ; i < e.points.length ; i++ ){
+      for (let i = 0; i < e.points.length; i++) {
         excelData[`point${i + 1}`] = e.points[i].point;
-      };
+      }
       excelData[`totalPoint`] = e.totalPoint;
       excelData[`percentage`] = e.percentage;
       excelData[`letterGrade`] = e.letterGrade;
@@ -247,8 +246,14 @@ export class LessonAssessmentComponent {
 
     console.log(convertData);
     const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(convertData);
-    const workbook: XLSX.WorkBook = { Sheets: { 'data': worksheet }, SheetNames: ['data'] };
-    const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+    const workbook: XLSX.WorkBook = {
+      Sheets: { data: worksheet },
+      SheetNames: ['data'],
+    };
+    const excelBuffer: any = XLSX.write(workbook, {
+      bookType: 'xlsx',
+      type: 'array',
+    });
 
     this.saveAsExcelFile(excelBuffer, data.title);
   }
@@ -258,11 +263,11 @@ export class LessonAssessmentComponent {
     FileSaver.saveAs(data, fileName + new Date().getTime() + '.xlsx');
   }
 
-  pdfConvert(e : any):void {
+  pdfConvert(e: any): void {
     console.log(e);
     this.servicePdfLessAss.generatePdf(e);
   }
-  pdfConvertAll(e : any):void {
+  pdfConvertAll(e: any): void {
     console.log(e);
     this.servicePdfLessAss.generatePdfAll(e);
   }
