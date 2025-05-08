@@ -72,9 +72,69 @@ export class CloPointPlanComponent {
 
   pdfSendData: any[] = [];
   dataTest = [
-    ['qw', 'Age', 'Country', 'Country', 'qw', 'Age', 'Country', 'Country', 'qw', 'Age', 'Country', 'Country', 'qw', 'Age', 'Country', 'Country', 'qw', 'Age', 'Country'],
-    ['qw', 'Age', 'Country', 'Country', 'qw', 'Age', 'Country', 'Country', 'qw', 'Age', 'Country', 'Country', 'qw', 'Age', 'Country', 'Country', 'qw', 'Age', 'Country'],
-    ['qw', 'Age', 'Country', 'Country', 'qw', 'Age', 'Country', 'Country', 'qw', 'Age', 'Country', 'Country', 'qw', 'Age', 'Country', 'Country', 'qw', 'Age', 'Country'],
+    [
+      'qw',
+      'Age',
+      'Country',
+      'Country',
+      'qw',
+      'Age',
+      'Country',
+      'Country',
+      'qw',
+      'Age',
+      'Country',
+      'Country',
+      'qw',
+      'Age',
+      'Country',
+      'Country',
+      'qw',
+      'Age',
+      'Country',
+    ],
+    [
+      'qw',
+      'Age',
+      'Country',
+      'Country',
+      'qw',
+      'Age',
+      'Country',
+      'Country',
+      'qw',
+      'Age',
+      'Country',
+      'Country',
+      'qw',
+      'Age',
+      'Country',
+      'Country',
+      'qw',
+      'Age',
+      'Country',
+    ],
+    [
+      'qw',
+      'Age',
+      'Country',
+      'Country',
+      'qw',
+      'Age',
+      'Country',
+      'Country',
+      'qw',
+      'Age',
+      'Country',
+      'Country',
+      'qw',
+      'Age',
+      'Country',
+      'Country',
+      'qw',
+      'Age',
+      'Country',
+    ],
   ];
   constructor(
     private fb: FormBuilder,
@@ -84,7 +144,7 @@ export class CloPointPlanComponent {
     private msgService: MessageService,
     private route: ActivatedRoute,
     private pdfGeneretorService: PdfCloGeneratorService
-  ) { }
+  ) {}
 
   async ngOnInit() {
     this.route.parent?.paramMap.subscribe((params) => {
@@ -95,7 +155,7 @@ export class CloPointPlanComponent {
 
   async readData() {
     this.isLoading = true;
-    this.pdfSendData = []
+    this.pdfSendData = [];
     forkJoin([
       this.service.getCloList(this.lessonId),
       this.cloPointPlanService.getPointPlan(this.lessonId),
@@ -464,34 +524,43 @@ export class CloPointPlanComponent {
 
   excelConvert(): void {
     let convertData: any[] = [];
-    this.cloPoint.map((e: any, index : any) => {
+    this.cloPoint.map((e: any, index: any) => {
       let excelData: any = {
         order: index,
         cloName: e.cloName,
       };
       if (e.procPoints.length > 0) {
         let i = 0;
-        for (i ; i < e.procPoints.length; i++) {
+        for (i; i < e.procPoints.length; i++) {
           excelData[`point${i + 1}`] = e.procPoints[i].point;
         }
-        for(let j = 1 ; j <= e.examPoints.length ; j++){
-          excelData[`point${j + i}`] = e.examPoints[j-1].point;
+        for (let j = 1; j <= e.examPoints.length; j++) {
+          excelData[`point${j + i}`] = e.examPoints[j - 1].point;
         }
       }
       convertData.push(excelData);
-    })
+    });
     console.log(convertData);
 
     const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(convertData);
-    const workbook: XLSX.WorkBook = { Sheets: { 'data': worksheet }, SheetNames: ['data'] };
-    const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+    const workbook: XLSX.WorkBook = {
+      Sheets: { data: worksheet },
+      SheetNames: ['data'],
+    };
+    const excelBuffer: any = XLSX.write(workbook, {
+      bookType: 'xlsx',
+      type: 'array',
+    });
 
     this.saveAsExcelFile(excelBuffer, 'exported-data');
   }
 
   private saveAsExcelFile(buffer: any, fileName: string): void {
     const data: Blob = new Blob([buffer], { type: 'application/octet-stream' });
-    FileSaver.saveAs(data, fileName + '_export_' + new Date().getTime() + '.xlsx');
+    FileSaver.saveAs(
+      data,
+      fileName + '_export_' + new Date().getTime() + '.xlsx'
+    );
   }
 
   pdfConvert() {
