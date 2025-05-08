@@ -25,6 +25,7 @@ import { TeacherService } from '../../../../../../services/teacherService';
 import { PdfCloGeneratorService } from '../../../../../../services/pdf-clo-generator.service';
 import * as XLSX from 'xlsx';
 import * as FileSaver from 'file-saver';
+import { PdfMainService } from '../../../../../../services/pdf-main.service';
 
 interface SubMethod {
   _id: string;
@@ -83,6 +84,7 @@ export class CloPointPlanComponent {
     private assessService: AssessmentService,
     private msgService: MessageService,
     private route: ActivatedRoute,
+    private pdfMainService : PdfMainService,
     private pdfGeneretorService: PdfCloGeneratorService
   ) { }
 
@@ -501,6 +503,7 @@ export class CloPointPlanComponent {
       this.pdfSendData.push(this.cloPoint);
       this.pdfSendData.push(this.cloPlan);
       this.pdfGeneretorService.generatePdf(this.pdfSendData);
+      // this.pdfMainService.generatePdfAll(this.pdfSendData);
     }
   }
 }

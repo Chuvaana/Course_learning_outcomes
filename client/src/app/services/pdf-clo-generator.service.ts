@@ -39,7 +39,6 @@ export class PdfCloGeneratorService {
       widths.push(`${percent.toFixed(2)}%`);
     }
 
-    console.log(widths);
 
     const defaultHeaders = [
       { text: 'Д/Д', rowSpan: 4, alignment: 'center', style: 'tableHeader' },
@@ -129,7 +128,79 @@ export class PdfCloGeneratorService {
       return headers; // flatMap учраас OK
     });
 
-    const cloColumn = enterRowData.flatMap((clo: any, index: any) => {
+    const cloLecColumn = enterRowData.flatMap((clo: any, index: any) => {
+      const headers = [];
+      const headersData = [];
+
+      // Extract points
+      let procAllPoint = 0;
+      clo.procPoints.map((procPoints: any) => {
+        procAllPoint = procAllPoint + procPoints.point
+      });
+      let examAllPoint = 0;
+      clo.examPoints.map((examPoints: any) => {
+        examAllPoint = examAllPoint + examPoints.point
+      });
+      if (clo.cloType !== 'CLAB') {
+
+
+        // Sum of all points
+        const allPoint = procAllPoint + examAllPoint
+        // Push headers
+        headers.push({
+          text: index + 1,
+          alignment: 'center',
+          style: 'tableGreen',
+        });
+
+        headers.push({
+          text: clo.cloName,
+          alignment: 'center',
+          style: 'tableGreen',
+        });
+
+        // Process procPoints
+        const subMethodproc = clo.procPoints.map((procPoints: any) => ({
+          text: procPoints.point,
+          alignment: 'center',
+          style: 'tableBlue',
+        }));
+        headers.push(...subMethodproc); // Add procPoints headers
+
+        // Add sum of procPoints
+        headers.push({
+          text: procAllPoint,
+          alignment: 'center',
+          style: 'tableGreen',
+        });
+
+        // Process examPoints
+        const subMethodExam = clo.examPoints.map((examPoints: any) => ({
+          text: examPoints.point,
+          alignment: 'center',
+          style: 'tableBlue',
+        }));
+        headers.push(...subMethodExam); // Add examPoints headers
+
+        // Add sum of examPoints
+        headers.push({
+          text: examAllPoint,
+          alignment: 'center',
+          style: 'tableGreen',
+        });
+
+        // Add total sum of all points
+        headers.push({
+          text: allPoint,
+          alignment: 'center',
+          style: 'tableGreen',
+        });
+        headersData.push(headers);
+      }
+
+      return headersData; // flatMap works to flatten the headers into a single array
+    });
+    const cloLabColumn = enterRowData.flatMap((clo: any, index: any) => {
       const headers = [];
       const headersData = [];
 
@@ -143,118 +214,63 @@ export class PdfCloGeneratorService {
         examAllPoint = examAllPoint + examPoints.point
       });
 
-      // Sum of all points
-      const allPoint = procAllPoint+ examAllPoint
-      // Push headers
-      headers.push({
-        text: index + 1,
-        alignment: 'center',
-        style: 'tableGreen',
-      });
+      if (clo.cloType === 'CLAB') {
+        // Sum of all points
+        const allPoint = procAllPoint + examAllPoint
+        // Push headers
+        headers.push({
+          text: index + 1,
+          alignment: 'center',
+          style: 'tableGreen',
+        });
 
-      headers.push({
-        text: clo.cloName,
-        alignment: 'center',
-        style: 'tableGreen',
-      });
+        headers.push({
+          text: clo.cloName,
+          alignment: 'center',
+          style: 'tableGreen',
+        });
 
-      // Process procPoints
-      const subMethodproc = clo.procPoints.map((procPoints: any) => ({
-        text: procPoints.point,
-        alignment: 'center',
-        style: 'tableBlue',
-      }));
-      headers.push(...subMethodproc); // Add procPoints headers
+        // Process procPoints
+        const subMethodproc = clo.procPoints.map((procPoints: any) => ({
+          text: procPoints.point,
+          alignment: 'center',
+          style: 'tableBlue',
+        }));
+        headers.push(...subMethodproc); // Add procPoints headers
 
-      // Add sum of procPoints
-      headers.push({
-        text: procAllPoint,
-        alignment: 'center',
-        style: 'tableGreen',
-      });
+        // Add sum of procPoints
+        headers.push({
+          text: procAllPoint,
+          alignment: 'center',
+          style: 'tableGreen',
+        });
 
-      // Process examPoints
-      const subMethodExam = clo.examPoints.map((examPoints: any) => ({
-        text: examPoints.point,
-        alignment: 'center',
-        style: 'tableBlue',
-      }));
-      headers.push(...subMethodExam); // Add examPoints headers
+        // Process examPoints
+        const subMethodExam = clo.examPoints.map((examPoints: any) => ({
+          text: examPoints.point,
+          alignment: 'center',
+          style: 'tableBlue',
+        }));
+        headers.push(...subMethodExam); // Add examPoints headers
 
-      // Add sum of examPoints
-      headers.push({
-        text: examAllPoint,
-        alignment: 'center',
-        style: 'tableGreen',
-      });
+        // Add sum of examPoints
+        headers.push({
+          text: examAllPoint,
+          alignment: 'center',
+          style: 'tableGreen',
+        });
 
-      // Add total sum of all points
-      headers.push({
-        text: allPoint,
-        alignment: 'center',
-        style: 'tableGreen',
-      });
-
-      headersData.push(headers);
+        // Add total sum of all points
+        headers.push({
+          text: allPoint,
+          alignment: 'center',
+          style: 'tableGreen',
+        });
+        headersData.push(headers);
+      }
       return headersData; // flatMap works to flatten the headers into a single array
     });
 
-    // const cloColumn = enterRowData.flatMap((clo : any, index : any) =>{
-    //   const headers = [];
-    //   const procAllPoint = clo.procPoints.map((procPoints : any) =>{procPoints.point});
-    //   const examAllPoint = clo.examPoints.map((examPoints: any) =>{examPoints.point});
-    //   const allPoint = 0;
-
-    //   headers.push({
-    //     text: index + 1,
-    //     alignment: 'center',
-    //     style: 'tableGreen',
-    //   });
-    //   headers.push({
-    //     text: clo.cloName,
-    //     alignment: 'center',
-    //     style: 'tableGreen',
-    //   });
-
-    //   const subMethodproc = clo.procPoints.map((procPoints : any) => ({
-    //     text: procPoints.point,
-    //     alignment: 'center',
-    //     style: 'tableDefault',
-    //   }));
-    //   headers.push(...subMethodproc); // нэг нэгээр нь push хийх хэрэгтэй
-
-    //   headers.push({
-    //     text: procAllPoint,
-    //     alignment: 'center',
-    //     style: 'tableGreen',
-    //   });
-
-    //   const subMethodExam = clo.procPoints.map((procPoints : any) => ({
-    //     text: procPoints.point,
-    //     alignment: 'center',
-    //     style: 'tableDefault',
-    //   }));
-
-    //   headers.push(...subMethodExam); // нэг нэгээр нь push хийх хэрэгтэй
-
-    //   headers.push({
-    //     text: examAllPoint,
-    //     alignment: 'center',
-    //     style: 'tableGreen',
-    //   });
-    //   headers.push({
-    //     text: allPoint,
-    //     alignment: 'center',
-    //     style: 'tableGreen',
-    //   });
-
-    //   return headers; // flatMap учраас OK
-    // })
-
-    console.log(dynamicHeaders);
-    console.log(dynamicTopHeaders);
-    console.log(dynamicSubHeaders);
-    console.log(cloColumn);
     function getStyleByMethodType(methodType: string): string {
       switch (methodType) {
         case 'PARTI':
@@ -319,11 +335,15 @@ export class PdfCloGeneratorService {
         { text: 'Лекц семинарын хичээлээр эзэмшсэн суралцхуйн үр дүнгүүд', colSpan: procPointsLength + 2, alignment: 'center', style: 'tableGoldenYellow' },
         ...Array((procPointsLength + 2) - 1).fill({}),
       ],
+      ...cloLecColumn.map((row: any) => {
+        // Ensure row.stack is an array or return an empty array if it's not
+        return Array.isArray(row) ? row : [];
+      }),
       [
         { text: 'Лабораторийн хичээлээр эзэмшсэн суралцхуйн үр дүнгүүд', colSpan: procPointsLength + 2, alignment: 'center', style: 'tableGoldenYellow' },
         ...Array((procPointsLength + 2) - 1).fill({}),
       ],
-      ...cloColumn.map((row: any) => {
+      ...cloLabColumn.map((row: any) => {
         // Ensure row.stack is an array or return an empty array if it's not
         return Array.isArray(row) ? row : [];
       })

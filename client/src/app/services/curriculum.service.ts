@@ -109,4 +109,9 @@ export class CurriculumService {
   getAllLessonCurriculums() {
     return this.http.get(`${this.apiUrl}/lessonCurriculum`);
   }
+
+
+  getCloList(id: string): Observable<any> {
+    return this.http.get(`${this.apiUrl}/clos/${id}`);
+  }
 }
