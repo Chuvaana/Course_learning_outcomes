@@ -1,5 +1,11 @@
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { ConfigService } from '../admin.service';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
@@ -20,10 +26,11 @@ import { ToastModule } from 'primeng/toast';
     InputTextModule,
     DropdownModule,
     TableModule,
-    ToastModule],
+    ToastModule,
+  ],
   providers: [MessageService],
   templateUrl: './config.component.html',
-  styleUrl: './config.component.scss'
+  styleUrl: './config.component.scss',
 })
 export class ConfigComponent {
   configForm: FormGroup;
@@ -37,12 +44,13 @@ export class ConfigComponent {
   constructor(
     private fb: FormBuilder,
     private configService: ConfigService,
-    private msgService: MessageService) {
+    private msgService: MessageService
+  ) {
     this.configForm = this.fb.group({
       branchId: ['', Validators.required],
       department: ['', Validators.required],
       name: ['', Validators.required],
-      itemCode: ['', [Validators.required, Validators.minLength(3)]],  // item_code validation (example)
+      itemCode: ['', [Validators.required, Validators.minLength(3)]], // item_code validation (example)
       itemValue: ['', Validators.required],
     });
   }
@@ -52,10 +60,10 @@ export class ConfigComponent {
     this.readData();
   }
 
-  readData(){
+  readData() {
     this.configService.getConfig().subscribe((res) => {
-      this.items = res
-    })
+      this.items = res;
+    });
   }
 
   loadBranches(): void {
@@ -63,11 +71,13 @@ export class ConfigComponent {
       // Add "All" option at the beginning
       this.branches = [
         { name: 'Бүгд', id: 'all' }, // This will be your "All" option
-        ...data.map(branch => ({ name: branch.name, id: branch.id || branch.name })),
+        ...data.map((branch) => ({
+          name: branch.name,
+          id: branch.id || branch.name,
+        })),
       ];
     });
   }
-
 
   onBranchChange(branch: any): void {
     if (branch.id == 'all') {
@@ -77,74 +87,113 @@ export class ConfigComponent {
     } else {
       this.configService.getDepartments(branch.id).subscribe((data: any[]) => {
         if (data) {
-          this.departments = data.map(dept => ({ name: dept.name, id: dept.id || dept.name }));
+          this.departments = data.map((dept) => ({
+            name: dept.name,
+            id: dept.id || dept.name,
+          }));
         }
       });
     }
   }
 
+  onBranchChangeTable(branch: any): void {
+    if (branch == 'all') {
+      this.departments = [
+        { name: 'Бүгд', id: 'all' }, // This will be your "All" option
+      ];
+    } else {
+      this.configService.getDepartments(branch).subscribe((data: any[]) => {
+        if (data) {
+          this.departments = data.map((dept) => ({
+            name: dept.name,
+            id: dept.id || dept.name,
+          }));
+        }
+      });
+    }
+  }
+
+  getBranchName(id: string): string {
+    const branch = this.branches.find((b) => b.id === id);
+    this.onBranchChangeTable(id);
+    return branch ? branch.name : '';
+  }
+
+  getDepartmentName(id: string): string {
+    const dept = this.departments.find((d) => d.id === id);
+    return dept ? dept.name : '';
+  }
 
   onRowEditInit(config: any, index: number) {
-    this.index = index + 1;
-    this.editingRowId = config.id;
+    this.index = index;
+    if (!this.clonedConfig) this.clonedConfig = {};
+    this.clonedConfig[config._id] = { ...config }; // save original before editing
+    this.editingRowId = config._id;
   }
 
   onRowEditCancel(config: any, index: number) {
-    this.items[index] = { ...this.clonedConfig[config.id] };
-    delete this.clonedConfig[config.id];
+    if (this.clonedConfig && this.clonedConfig[config._id]) {
+      this.items[index] = { ...this.clonedConfig[config._id] };
+      delete this.clonedConfig[config._id];
+    }
     this.editingRowId = null;
   }
 
   onRowEditSave(config: any) {
+    const cleanedData = {
+      ...config,
+      department: config.department?.id || config.department,
+      branchId: config.branchId?.id || config.branchId,
+    };
 
-    if (config._id === null || config._id === undefined) {
-      this.configService.submitConfig(config).subscribe(
-        (res: any) => {
-          this.msgService.add({
-            severity: 'success',
-            summary: 'Амжилттай',
-            detail: 'Амжилттай хадгалагдлаа!',
-          });
-        },
-        (err) => {
-          this.msgService.add({
-            severity: 'error',
-            summary: 'Алдаа',
-            detail: 'Алдаа гарлаа: ' + err.message,
-          });
-        }
-      );
-    } else {
-      this.configService.updateConfig(config).subscribe(
-        (res) => {
-          this.msgService.add({
-            severity: 'success',
-            summary: 'Амжилттай',
-            detail: 'config updated successfully!',
-          });
-        },
-        (err) => {
-          this.msgService.add({
-            severity: 'error',
-            summary: 'Алдаа',
-            detail: 'Failed to update config: ' + err.message,
-          });
-        }
-      );
+    if (
+      !cleanedData.department ||
+      !cleanedData.branchId ||
+      !cleanedData.name ||
+      !cleanedData.itemCode ||
+      !cleanedData.itemValue
+    ) {
+      this.msgService.add({
+        severity: 'error',
+        summary: 'Invalid Input',
+        detail: 'Please fill in all fields correctly before saving.',
+      });
+      return;
     }
+
+    const apiCall = config._id
+      ? this.configService.updateConfig(cleanedData)
+      : this.configService.submitConfig(cleanedData);
+
+    apiCall.subscribe(
+      (res: any) => {
+        this.msgService.add({
+          severity: 'success',
+          summary: 'Амжилттай',
+          detail: config._id ? 'Амжилттай заслаа!' : 'Амжилттай нэмлээ!',
+        });
+        this.readData();
+      },
+      (err) => {
+        this.msgService.add({
+          severity: 'error',
+          summary: 'Алдаа',
+          detail: 'Алдаа гарлаа: ' + err.message,
+        });
+      }
+    );
+
     this.editingRowId = null;
   }
 
   // On form submit
   onSubmit(): void {
     if (this.configForm.valid) {
-
       const config = this.configForm.value;
       const cleanedData = {
         ...config,
         department: config.department.id,
         branchId: config.branchId.id,
-
       };
       this.configService.submitConfig(cleanedData).subscribe(
         (response: any) => {
