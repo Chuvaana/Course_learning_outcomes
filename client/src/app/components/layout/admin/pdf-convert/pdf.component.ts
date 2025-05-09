@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { PdfGeneratorService } from '../../../../services/pdf-generator.service';
 import { PdfCloGeneratorService } from '../../../../services/pdf-clo-generator.service';
+import { PdfHeaderTitleService } from '../../../../services/pdf-header-title.service';
+import { PdfMainService } from '../../../../services/pdf-main.service';
 
 @Component({
   selector: 'pdf-root',
@@ -21,7 +23,12 @@ export class PdfComponent {
     ['qw', 'Age', 'Country', 'Country','qw', 'Age', 'Country', 'Country','qw', 'Age', 'Country', 'Country','qw', 'Age', 'Country', 'Country','qw', 'Age', 'Country'],
   ];
 
-  constructor(private pdfService: PdfGeneratorService, private pdfCloService : PdfCloGeneratorService) {}
+  constructor(
+    private pdfService: PdfGeneratorService,
+    private pdfCloService : PdfCloGeneratorService,
+    private pdfTitleHeaderService : PdfHeaderTitleService,
+    private pdfMainService : PdfMainService
+  ) {}
 
   createPdf() {
     console.log(this.body);
@@ -30,5 +37,13 @@ export class PdfComponent {
   generatePdf(){
     // this.pdfCloService.generatePdf(this.data);
 
+  }
+
+  mainTitle(){
+    this.pdfTitleHeaderService.generatePdfAll(this.body);
+  }
+
+  PdfMainService(){
+    this.pdfMainService.generatePdfAll(this.body);
   }
 }
