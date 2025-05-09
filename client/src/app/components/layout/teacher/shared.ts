@@ -12,6 +12,11 @@ export class SharedDictService {
     { label: 'Семинар', value: 'BSEM' },
     { label: 'Лаборатори', value: 'CLAB' },
   ];
+  types1 = [
+    { label: 'Семинар', value: 'BSEM' },
+    { label: 'Лаборатори', value: 'CLAB' },
+    { label: 'Бие даалт', value: 'BD' },
+  ];
 
   constructor(private service: CurriculumService) {}
 
@@ -23,6 +28,37 @@ export class SharedDictService {
         const weeklyLab = response.weeklyHours.lab;
 
         let filteredTypes = [...this.types];
+
+        if (!weeklyLecture || weeklyLecture === 0) {
+          filteredTypes = filteredTypes.filter((t) => t.value !== 'ALEC');
+        }
+        if (!weeklySeminar || weeklySeminar === 0) {
+          filteredTypes = filteredTypes.filter((t) => t.value !== 'BSEM');
+        }
+        if (!weeklyLab || weeklyLab === 0) {
+          filteredTypes = filteredTypes.filter((t) => t.value !== 'CLAB');
+        }
+
+        if (lower) {
+          filteredTypes = filteredTypes.map((type) => ({
+            ...type,
+            value: type.value.toLowerCase(),
+          }));
+        }
+
+        return filteredTypes;
+      })
+    );
+  }
+
+  getDictionaryWithBd(lessonId: string, lower: boolean): Observable<any[]> {
+    return this.service.getMainInfo(lessonId).pipe(
+      map((response: any) => {
+        const weeklyLecture = response.weeklyHours.lecture;
+        const weeklySeminar = response.weeklyHours.seminar;
+        const weeklyLab = response.weeklyHours.lab;
+
+        let filteredTypes = [...this.types1];
 
         if (!weeklyLecture || weeklyLecture === 0) {
           filteredTypes = filteredTypes.filter((t) => t.value !== 'ALEC');

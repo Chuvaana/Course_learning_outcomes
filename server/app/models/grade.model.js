@@ -35,6 +35,7 @@ const GradeSchema = new mongoose.Schema(
         grades: [
           {
             id: String,
+            cloId: String,
             point: Number,
           },
         ],

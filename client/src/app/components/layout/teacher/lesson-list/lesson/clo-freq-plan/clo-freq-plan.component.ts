@@ -95,7 +95,7 @@ export class CloFreqPlanComponent implements OnInit {
             method: item.method,
             methodName: item.methodName,
             clo: item.clo,
-            cloName: item.cloName, // 👈 make sure this is present in your response
+            cloName: item.cloName,
             score: item.score,
             weekNum: this.romanToNumber(item.week),
           }));

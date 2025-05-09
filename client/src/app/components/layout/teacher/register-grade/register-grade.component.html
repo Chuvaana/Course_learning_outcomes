@@ -1,0 +1,120 @@
+<div class="p-fluid">
+  <p-toast />
+  <div class="filter-section">
+    <p-dropdown
+      [options]="gradeTypes"
+      [(ngModel)]="selectedType"
+      (onChange)="onTypeChange()"
+      placeholder="Төрөл"
+    >
+    </p-dropdown>
+    <p-dropdown
+      *ngIf="selectedType !== 'BD'"
+      [options]="weekdays"
+      [(ngModel)]="selectedWeekday"
+      (onChange)="onSelectionChange()"
+      placeholder="Гариг"
+    >
+    </p-dropdown>
+    <p-dropdown
+      *ngIf="selectedType !== 'BD'"
+      [options]="times"
+      [(ngModel)]="selectedTimes"
+      (onChange)="onSelectionChange()"
+      placeholder="Цаг"
+    >
+    </p-dropdown>
+    <input
+      type="text"
+      pInputText
+      [(ngModel)]="searchQuery"
+      (input)="onSelectionChange()"
+      placeholder="Нэр эсвэл ID хайх..."
+      class="search-input"
+    />
+    <p-button
+      label="Шүүлт цэвэрлэх"
+      icon="pi pi-refresh"
+      (click)="clearFilter()"
+      class="refresh-btn"
+    ></p-button>
+    <button
+      pButton
+      type="button"
+      label="Дүн засах"
+      (click)="toggleShowEdit()"
+    ></button>
+    <button pButton type="button" label="Хадгалах" (click)="save()"></button>
+  </div>
+
+  <p-table [value]="gradeRecords" *ngIf="data">
+    <ng-template pTemplate="header">
+      <tr>
+        <th rowspan="4">№</th>
+        <th rowspan="4">Оюутан</th>
+        <ng-container *ngFor="let col of formData">
+          <th [attr.colspan]="calculateColspan(col)">
+            {{ col.week }}
+          </th>
+        </ng-container>
+      </tr>
+      <tr>
+        <ng-container *ngFor="let col of formData">
+          <ng-container *ngFor="let clo of col.cloGroups">
+            <th [attr.colspan]="clo.points.length">{{ clo.cloName }}</th>
+          </ng-container>
+        </ng-container>
+      </tr>
+      <tr>
+        <ng-container *ngFor="let col of formData">
+          <ng-container *ngFor="let clo of col.cloGroups">
+            <ng-container *ngFor="let po of clo.points">
+              <th>{{ po.name }}</th>
+            </ng-container>
+          </ng-container>
+        </ng-container>
+      </tr>
+      <tr>
+        <ng-container *ngFor="let col of formData">
+          <ng-container *ngFor="let clo of col.cloGroups">
+            <ng-container *ngFor="let po of clo.points">
+              <th>{{ po.point }}</th>
+              <!-- This is where the points are displayed -->
+            </ng-container>
+          </ng-container>
+        </ng-container>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-record let-ri="rowIndex">
+      <tr>
+        <td>{{ ri + 1 }}</td>
+        <td>{{ record.student.code }} - {{ record.student.name }}</td>
+        <ng-container *ngFor="let col of formData">
+          <ng-container *ngFor="let clo of col.cloGroups">
+            <ng-container *ngFor="let po of clo.points">
+              <td>
+                <div *ngIf="showEdit">
+                  <p-inputNumber
+                    class="max-w-3rem"
+                    inputStyleClass="max-w-3rem"
+                    [(ngModel)]="
+                      record.grades[col.week + '_' + po.id + '_' + clo.cloId]
+                    "
+                    [min]="0"
+                    [max]="po.point"
+                  ></p-inputNumber>
+                </div>
+                <div *ngIf="!showEdit">
+                  {{
+                    record.grades[col.week + "_" + po.id + "_" + clo.cloId] ??
+                      "-"
+                  }}
+                </div>
+              </td>
+            </ng-container>
+          </ng-container>
+        </ng-container>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
