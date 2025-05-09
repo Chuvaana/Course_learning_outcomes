@@ -2,20 +2,6 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
-interface GradeRecord {
-  _id?: string;
-  lessonId: string;
-  weekDay: string;
-  type: 'lec' | 'sem' | 'lab' | '';
-  time: number;
-  weekNumber: string;
-  labGrade: {
-    studentId: string;
-    grade1: number;
-    grade2: number;
-  };
-}
-
 @Injectable({
   providedIn: 'root',
 })
@@ -24,7 +10,6 @@ export class GradeService {
 
   constructor(private http: HttpClient) {}
 
-  // ✅ Create labGrade record
   createGrade(labGrade: any): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}`, labGrade);
   }
@@ -35,34 +20,28 @@ export class GradeService {
     });
   }
 
-  // ✅ Get labGrade records by filters (lessonId, weekNumber, type)
   getGrade(
     lessonId: string,
     weekDay?: string,
     type?: string,
     time?: number
-  ): Observable<GradeRecord[]> {
+  ): Observable<any[]> {
     let queryParams = `?lessonId=${lessonId}`;
     if (weekDay !== undefined) queryParams += `&weekDay=${weekDay}`;
     if (type) queryParams += `&type=${type}`;
     if (time) queryParams += `&time=${time}`;
 
-    return this.http.get<GradeRecord[]>(`${this.apiUrl}${queryParams}`);
+    return this.http.get<any[]>(`${this.apiUrl}${queryParams}`);
   }
 
-  getGradeByLesson(lessonId: string): Observable<GradeRecord[]> {
-    return this.http.get<GradeRecord[]>(`${this.apiUrl}/${lessonId}`);
+  getGradeByLesson(lessonId: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/${lessonId}`);
   }
 
-  // ✅ Update an labGrade record
-  updateGrade(
-    id: string,
-    labGrade: Partial<GradeRecord>
-  ): Observable<GradeRecord> {
-    return this.http.put<GradeRecord>(`${this.apiUrl}/${id}`, labGrade);
+  updateGrade(id: string, labGrade: Partial<any>): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/${id}`, labGrade);
   }
 
-  // ✅ Delete an labGrade record
   deleteGrade(id: string): Observable<{ message: string }> {
     return this.http.delete<{ message: string }>(`${this.apiUrl}/${id}`);
   }

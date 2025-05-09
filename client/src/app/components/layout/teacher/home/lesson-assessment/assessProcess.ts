@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
 import { forkJoin, map, Observable } from 'rxjs';
+import { ActivityService } from '../../../../../services/activityService';
+import { AssessmentPlanService } from '../../../../../services/assessmentPlanService';
 import { AssessmentService } from '../../../../../services/assessmentService';
 import { AttendanceService } from '../../../../../services/attendanceService';
 import { GradeService } from '../../../../../services/gradeService';
 import { lessonAssessmentService } from '../../../../../services/lessonAssessment';
-import { KNOB_VALUE_ACCESSOR } from 'primeng/knob';
-import { ActivityService } from '../../../../../services/activityService';
 
 @Injectable({
   providedIn: 'root',
@@ -15,7 +15,8 @@ export class AssessProcessService {
     private assess: AssessmentService,
     private attend: AttendanceService,
     private activityService: ActivityService,
-    private grade: GradeService,
+    private assessPlan: AssessmentPlanService,
+    private gradeService: GradeService,
     private lessonAssessmentService: lessonAssessmentService
   ) {}
 
@@ -95,6 +96,7 @@ export class AssessProcessService {
       })
     );
   }
+
   studentExamPointProcess(lessonId: string, cloList: any[]): Observable<any[]> {
     const studentPoints: {
       students: any;
@@ -331,78 +333,55 @@ export class AssessProcessService {
     );
   }
 
-  gradePoint(lessonId: string, cloList: any) {
+  gradePoint(lessonId: string) {
     return forkJoin({
-      grade: this.grade.getGradeByLesson(lessonId),
-      weekAndCloLab: this.clo(lessonId, cloList, 'lab'),
-      weekAndCloSem: this.clo(lessonId, cloList, 'sem'),
-      weekAndCloBd: this.clo(lessonId, cloList, 'bd'),
+      grade: this.gradeService.getGradeByLesson(lessonId),
+      assess: this.assessPlan.getAssessmentPlan(lessonId),
     }).pipe(
-      map(({ grade, weekAndCloLab, weekAndCloSem, weekAndCloBd }) => {
-        const adata: any[] = [];
+      map(({ grade, assess }) => {
+        const cloMap = new Map<string, { cloId: string; sumPoints: any[] }>();
 
-        adata.push(
-          ...this.dddd(weekAndCloLab, grade),
-          ...this.dddd(weekAndCloSem, grade),
-          ...this.dddd(weekAndCloBd, grade)
-        );
+        for (const g of grade) {
+          for (const student of g.studentGrades) {
+            const studentId = student.studentId.id;
 
+            for (const gr of student.grades) {
+              const cloId = gr.cloId;
+              const subMethodId = gr.id;
+              const point = gr.point;
+
+              if (!cloMap.has(cloId)) {
+                cloMap.set(cloId, {
+                  cloId,
+                  sumPoints: [],
+                });
+              }
+
+              const cloData = cloMap.get(cloId)!;
+
+              // Бэлэн эсэхийг шалгах
+              const existing = cloData.sumPoints.find(
+                (sp) =>
+                  sp.studentId === studentId && sp.subMethodId === subMethodId
+              );
+
+              if (existing) {
+                existing.point += point;
+              } else {
+                cloData.sumPoints.push({
+                  studentId,
+                  point,
+                  subMethodId,
+                });
+              }
+            }
+          }
+        }
+
+        const adata = Array.from(cloMap.values());
         console.log(adata);
         return adata;
       })
     );
-  }
-
-  dddd(data: any, grade: any) {
-    const adata: any[] = [];
-    data.forEach((wkc: any) => {
-      const cloAttPoint = {
-        cloId: wkc.id,
-        avahOnoo: 0,
-        sumPoints: [] as {
-          studentId: string;
-          point: number;
-          subMethodId: string;
-        }[],
-      };
-
-      const pointMap: Record<string, Record<string, number>> = {};
-
-      wkc.week.forEach((week: string) => {
-        grade.forEach((a: any) => {
-          if (a.weekNumber === week) {
-            a.studentGrades.forEach((a1: any) => {
-              const studentId = a1.studentId?.id || a1.studentId;
-
-              a1.grades.forEach((item: any) => {
-                const subMethodId = item.id;
-                const point = item.point;
-
-                if (!pointMap[studentId]) {
-                  pointMap[studentId] = {};
-                }
-
-                pointMap[studentId][subMethodId] =
-                  (pointMap[studentId][subMethodId] || 0) + point;
-              });
-            });
-          }
-        });
-      });
-
-      // Convert pointMap to cloAttPoint.sumPoints[]
-      for (const studentId in pointMap) {
-        for (const subMethodId in pointMap[studentId]) {
-          cloAttPoint.sumPoints.push({
-            studentId,
-            point: pointMap[studentId][subMethodId],
-            subMethodId,
-          });
-        }
-      }
-
-      adata.push(cloAttPoint);
-    });
-    return adata;
   }
 }

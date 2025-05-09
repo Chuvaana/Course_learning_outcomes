@@ -46,7 +46,7 @@ import { AssessProcessService } from './lesson-assessment/assessProcess';
 export class HomeComponent {
   lessonId!: string;
   teacherId!: string;
-  cloPoint : any;
+  cloPoint: any;
 
   // үндсэн мэдээлэл
   pdfSendData: any[] = [];
@@ -84,7 +84,7 @@ export class HomeComponent {
     private assessService: AssessmentService,
     private pdfMainService: PdfMainService,
     private cloPointPlanService: CloPointPlanService
-  ) { }
+  ) {}
 
   ngOnInit() {
     this.route.parent?.paramMap.subscribe((params) => {
@@ -139,7 +139,7 @@ export class HomeComponent {
       this.cloPlan = cloPlan;
     });
   }
-createRows(cloList: any, cloPlan: any) {
+  createRows(cloList: any, cloPlan: any) {
     this.cloPoint = [];
 
     const cloRows = cloList.map((item: any) => {
@@ -209,54 +209,61 @@ createRows(cloList: any, cloPlan: any) {
       }));
       this.read();
 
-    if (this.assessPlan.plans && this.tabs.length) {
-      const assessPlanMap = new Map();
-      this.cloPlan.forEach((plan: any) => {
-        const assessPlan = [...plan.examPoints, ...plan.procPoints].filter(
-          (ePoint) => ePoint.point !== 0
-        );
-        assessPlanMap.set(plan.cloId, assessPlan);
-      });
-
-      this.tabs.forEach((item: any) => {
-        const assessPlan = assessPlanMap.get(item.id) || [];
-        item.assessPlan = assessPlan.map((col: { subMethodId: string }) => ({
-          ...col,
-          subMethodName: this.getSubMethodName(col.subMethodId), // Precompute the name
-        }));
-        item.totalPoint = assessPlan.reduce(
-          (acc: any, curr: { point: any }) => acc + (curr.point || 0),
-          0
-        );
-      });
-
-      if (this.students) {
-        this.tabs.forEach((item: any) => {
-          item.content = this.students.map((stu: any) => {
-            const points = item.assessPlan.map((plan: any) => ({
-              subMethodId: plan.subMethodId,
-              point: 0,
-            }));
-
-            return {
-              studentId: stu.id,
-              studentCode: stu.studentCode,
-              studentName: stu.studentName,
-              points,
-              totalPoint: 0,
-              percentage: 0,
-              letterGrade: '',
-            };
-          });
+      if (this.assessPlan.plans && this.tabs.length) {
+        const assessPlanMap = new Map();
+        this.cloPlan.forEach((plan: any) => {
+          const assessPlan = [...plan.examPoints, ...plan.procPoints].filter(
+            (ePoint) => ePoint.point !== 0
+          );
+          assessPlanMap.set(plan.cloId, assessPlan);
         });
+
+        this.tabs.forEach((item: any) => {
+          const assessPlan = assessPlanMap.get(item.id) || [];
+          item.assessPlan = assessPlan.map((col: { subMethodId: string }) => ({
+            ...col,
+            subMethodName: this.getSubMethodName(col.subMethodId), // Precompute the name
+          }));
+          item.totalPoint = assessPlan.reduce(
+            (acc: any, curr: { point: any }) => acc + (curr.point || 0),
+            0
+          );
+        });
+
+        if (this.students) {
+          this.tabs.forEach((item: any) => {
+            item.content = this.students.map((stu: any) => {
+              const points = item.assessPlan.map((plan: any) => ({
+                subMethodId: plan.subMethodId,
+                point: 0,
+              }));
+
+              return {
+                studentId: stu.id,
+                studentCode: stu.studentCode,
+                studentName: stu.studentName,
+                points,
+                totalPoint: 0,
+                percentage: 0,
+                letterGrade: '',
+              };
+            });
+          });
+        }
       }
-    }
     });
-    console.log('cloList : ' + this.cloList + '\n assessPlan : ' + this.assessPlan + '\n cloPlan : ' + this.cloPlan);
+    console.log(
+      'cloList : ' +
+        this.cloList +
+        '\n assessPlan : ' +
+        this.assessPlan +
+        '\n cloPlan : ' +
+        this.cloPlan
+    );
     if (this.lessonId !== null && this.lessonId !== undefined) {
     }
   }
-  pdfTo(){
+  pdfTo() {
     this.pdfMainService.generatePdfAll(this.pdfSendData);
   }
 
@@ -273,44 +280,40 @@ createRows(cloList: any, cloPlan: any) {
   }
 
   read() {
-    this.assessProcess
-      .gradePoint(this.lessonId, this.cloList)
-      .subscribe((gradeData) => {
-        this.tabs.forEach((item: any) => {
-          item.content.forEach((studentRow: any) => {
-            let total = 0;
+    this.assessProcess.gradePoint(this.lessonId).subscribe((gradeData) => {
+      this.tabs.forEach((item: any) => {
+        item.content.forEach((studentRow: any) => {
+          let total = 0;
 
-            studentRow.points.forEach((pointItem: any) => {
-              const grade = gradeData
-                .find((g: any) =>
-                  g.sumPoints.find(
-                    (s: any) =>
-                      s.studentId === studentRow.studentId &&
-                      s.subMethodId === pointItem.subMethodId
-                  )
-                )
-                ?.sumPoints.find(
+          studentRow.points.forEach((pointItem: any) => {
+            const grade = gradeData
+              .find((g: any) =>
+                g.sumPoints.find(
                   (s: any) =>
                     s.studentId === studentRow.studentId &&
                     s.subMethodId === pointItem.subMethodId
-                );
+                )
+              )
+              ?.sumPoints.find(
+                (s: any) =>
+                  s.studentId === studentRow.studentId &&
+                  s.subMethodId === pointItem.subMethodId
+              );
 
-              if (grade) {
-                pointItem.point = grade.point;
-                total += grade.point;
-              }
-            });
-
-            studentRow.totalPoint = total;
-            studentRow.percentage = +((total / item.totalPoint) * 100).toFixed(
-              2
-            );
-            studentRow.letterGrade = this.getLetterGrade(studentRow.percentage);
+            if (grade) {
+              pointItem.point = grade.point;
+              total += grade.point;
+            }
           });
+
+          studentRow.totalPoint = total;
+          studentRow.percentage = +((total / item.totalPoint) * 100).toFixed(2);
+          studentRow.letterGrade = this.getLetterGrade(studentRow.percentage);
         });
-        this.pdfSendData.push(this.tabs);
-        this.pdfTo();
       });
+      this.pdfSendData.push(this.tabs);
+      this.pdfTo();
+    });
     this.assessProcess
       .studentAttPoint(
         this.lessonId,
