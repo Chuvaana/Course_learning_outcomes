@@ -14,7 +14,6 @@ import { CommonModule } from '@angular/common';
 import { FileUploadModule } from 'primeng/fileupload';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
-import { GoogleFormsService } from '../../../../../../../services/google-forms.service';
 
 @Component({
   selector: 'app-attendance-import',
@@ -56,7 +55,6 @@ export class AttendanceImportComponent {
     private fb: FormBuilder,
     private dialog: MatDialog,
     private msgService: MessageService,
-    private formService: GoogleFormsService,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {
     this.studentForm = this.fb.group({
@@ -210,25 +208,4 @@ export class AttendanceImportComponent {
     this.branchId = e.id;
   }
 
-
-  generateForm() {
-    const quiz = {
-      title: 'Math Quiz',
-      questions: [
-        {
-          question: 'What is 2 + 2?',
-          options: ['3', '4', '5']
-        },
-        {
-          question: 'What is 5 * 3?',
-          options: ['15', '10', '20']
-        }
-      ]
-    };
-
-    this.formService.createQuizForm(quiz.title, quiz.questions).subscribe({
-      next: res => console.log('Form created', res),
-      error: err => console.error('Error:', err)
-    });
-  }
 }
