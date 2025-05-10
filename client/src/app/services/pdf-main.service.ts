@@ -879,7 +879,7 @@ export class PdfMainService {
       const mainPointHeaderAssessment = assessPlanAssessment.map((plan: { point: any; }) => ({
         text: plan.point,
         alignment: 'center',
-        style: 'bodyCenterAssessment',
+        style: 'bodyCenterFoAssessment',
       }));
 
       const mainPointAssessment = contentAssessment.map((student: any, index: number) => {
@@ -912,9 +912,9 @@ export class PdfMainService {
           { text: 'Авбал зохих оноо', colSpan: 2, alignment: 'center', style: 'titleAssessment' },
           {},
           ...mainPointHeaderAssessment,
-          { text: data.totalPoint, alignment: 'center', style: 'bodyCenterAssessment' },
-          { text: '100%', alignment: 'center', style: 'bodyCenterAssessment' },
-          { text: 'A', alignment: 'center', style: 'bodyCenterAssessment' },
+          { text: data.totalPoint, alignment: 'center', style: 'bodyCenterFoAssessment' },
+          { text: '100%', alignment: 'center', style: 'bodyCenterFoAssessment' },
+          { text: 'A', alignment: 'center', style: 'bodyCenterFoAssessment' },
         ],
         ...mainPointAssessment,
       ];
@@ -1208,7 +1208,8 @@ export class PdfMainService {
         },
         tableGreenAssessment: { fontSize: 10, fontStyle: 'Arial', color: 'black', fillColor: '#D9EADA'},
         bodyAssessment: { fontSize: 10, bold: false, fontStyle: 'Arial' },
-        bodyCenterAssessment: { fontSize: 10, bold: false, fontStyle: 'Arial', alignment: 'center' as const },
+        bodyCenterAssessment: { fontSize: 8, bold: false, fontStyle: 'Arial', alignment: 'center' as const },
+        bodyCenterFoAssessment: { fontSize: 10, bold: false, fontStyle: 'Arial', alignment: 'center' as const },
         titleAssessment: { fontSize: 11, bold: true, fontStyle: 'Times New Roman', alignment: 'center' as const},
         footerCenterAssessment: { fontSize: 12, alignment: 'center' as const},
       }

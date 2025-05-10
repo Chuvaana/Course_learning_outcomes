@@ -16,7 +16,40 @@ export class PdfExamQuestionService {
   generatePdf(data: any) {
     // if (data.length === 0) return;
     console.log(data.clos);
+    let cloListData: any[] = [];
+    data.cloList.map((row: { cloName: any; }, index: any) => {
+      index = index + 1;
+      const data = {
+        name: 'CLO ' + index,
+        code: row.cloName,
+        order: index,
+      }
+      cloListData.push(data);
+    });
     // const testPart2Exists = data.testData.some((row: { testPart: number }) => row.testPart === 2);
+    const versions = [...new Set(data.finalExamQuestions.map((q: any) => q.version))]; // ялгаатай хувилбарууд
+
+    const questionSectionRows = versions.flatMap(version => {
+      const filtered = data.finalExamQuestions.filter((q: any) => q.version === version);
+      if (filtered.length === 0) return [];
+
+      const headerRow = [
+        { text: `Тестийн ${version}-р хэсэг`, colSpan: 4, alignment: 'center', style: 'tableHeader' },
+        {}, {}, {}
+      ];
+
+      const questionRows = filtered.map((row: any, index: number) => {
+        const matchedClo = cloListData.find(clo => clo.code === row.cloName);
+        return [
+          { text: index + 1, alignment: 'center', style: 'body' },
+          { text: row.verbName, alignment: 'left', style: 'body' },
+          { text: row.blmLvl, alignment: 'center', style: 'body' },
+          { text: matchedClo ? matchedClo.name : 'N/A', alignment: 'center', style: 'body' }
+        ];
+      });
+
+      return [headerRow, ...questionRows];
+    });
 
     const allPont = [
       {
@@ -56,7 +89,7 @@ export class PdfExamQuestionService {
       ],
       [
         { text: 'Сургалтын нийт цаг', alignment: 'left', style: 'tableHeader' },
-        { text: 'Лекц ('+ data.mainInfo.totalHours.lecture+'цаг),Лаборатори ('+ data.mainInfo.totalHours.lab+' цаг), Бие даан суралцах ('+ data.mainInfo.totalHours.practice+' цаг)', alignment: 'left', style: 'body' }
+        { text: 'Лекц (' + data.mainInfo.totalHours.lecture + 'цаг),Лаборатори (' + data.mainInfo.totalHours.lab + ' цаг), Бие даан суралцах (' + data.mainInfo.totalHours.practice + ' цаг)', alignment: 'left', style: 'body' }
       ],
       [
         { text: 'Шалгалтын хэлбэр', alignment: 'left', style: 'tableHeader' },
@@ -74,9 +107,9 @@ export class PdfExamQuestionService {
         { text: 'Шалгалтаар үнэлэх суралцахуйн үр дүнгүүд (CLOs)', colSpan: 2, alignment: 'left', style: 'tableHeader' },
         {}
       ],
-      ...data.cloList.map((row: { cloName: any; }) => [
+      ...data.cloList.map((row: { cloName: any; }, index: any) => [
         {
-          text: row.cloName,
+          text: cloListData[index].name,
           alignment: 'left',
           style: 'tableHeader'
 
@@ -96,73 +129,74 @@ export class PdfExamQuestionService {
         { text: 'Блумын түвшин', alignment: 'center', style: 'tableHeader' },
         { text: 'Аль CLO-г үнэлэх', alignment: 'center', style: 'tableHeader' }
       ],
-      [
-        { text: 'Тестийн 1-р хэсэг', colSpan: 4, alignment: 'center', style: 'tableHeader' },
-        {},
-        {},
-        {},
-      ],
-      ...data.finalExamQuestions
-        .filter((row: { version: string; }) => row.version === '1').map((row: {
-          CloLevel: any; blmLvl: any; verbName: any; cloName: any;
-        }, index: number) => [
-            {
-              text: index + 1,
-              alignment: 'center',
-              style: 'body'
+      ...questionSectionRows,
+      // [
+      //   { text: 'Тестийн 1-р хэсэг', colSpan: 4, alignment: 'center', style: 'tableHeader' },
+      //   {},
+      //   {},
+      //   {},
+      // ],
+      // ...data.finalExamQuestions
+      //   .filter((row: { version: string; }) => row.version === '1').map((row: {
+      //     CloLevel: any; blmLvl: any; verbName: any; cloName: any;
+      //   }, index: number) => [
+      //       {
+      //         text: index + 1,
+      //         alignment: 'center',
+      //         style: 'body'
 
-            },
-            {
-              text: row.verbName,
-              alignment: 'left',
-              style: 'body'
+      //       },
+      //       {
+      //         text: row.verbName,
+      //         alignment: 'left',
+      //         style: 'body'
 
-            },
-            {
-              text: row.blmLvl,
-              alignment: 'center',
-              style: 'body'
-            },
-            {
-              text: row.cloName,
-              alignment: 'center',
-              style: 'body'
-            },
-          ]),
-          ...(data.finalExamQuestions.some((row: { version: string }) => row.version === '2')
-          ? [[
-              { text: 'Тестийн 2-р хэсэг', colSpan: 4, alignment: 'center', style: 'tableHeader' },
-              {}, {}, {}
-            ]]
-          : []
-        ),
-          ...data.finalExamQuestions
-        .filter((row: { version: string; }) => row.version === '2').map((row: {
-          CloLevel: any; blmLvl: any; verbName: any; cloName: any;
-        }, index: number) => [
-            {
-              text: index + 1,
-              alignment: 'center',
-              style: 'body'
+      //       },
+      //       {
+      //         text: row.blmLvl,
+      //         alignment: 'center',
+      //         style: 'body'
+      //       },
+      //       {
+      //         text: row.cloName,
+      //         alignment: 'center',
+      //         style: 'body'
+      //       },
+      //     ]),
+      //     ...(data.finalExamQuestions.some((row: { version: string }) => row.version === '2')
+      //     ? [[
+      //         { text: 'Тестийн 2-р хэсэг', colSpan: 4, alignment: 'center', style: 'tableHeader' },
+      //         {}, {}, {}
+      //       ]]
+      //     : []
+      //   ),
+      //     ...data.finalExamQuestions
+      //   .filter((row: { version: string; }) => row.version === '2').map((row: {
+      //     CloLevel: any; blmLvl: any; verbName: any; cloName: any;
+      //   }, index: number) => [
+      //       {
+      //         text: index + 1,
+      //         alignment: 'center',
+      //         style: 'body'
 
-            },
-            {
-              text: row.verbName,
-              alignment: 'left',
-              style: 'body'
+      //       },
+      //       {
+      //         text: row.verbName,
+      //         alignment: 'left',
+      //         style: 'body'
 
-            },
-            {
-              text: row.blmLvl,
-              alignment: 'center',
-              style: 'body'
-            },
-            {
-              text: row.cloName,
-              alignment: 'center',
-              style: 'body'
-            },
-          ]),
+      //       },
+      //       {
+      //         text: row.blmLvl,
+      //         alignment: 'center',
+      //         style: 'body'
+      //       },
+      //       {
+      //         text: row.cloName,
+      //         alignment: 'center',
+      //         style: 'body'
+      //       },
+      //     ]),
     ];
     // Dynamically generate widths based on number of columns
     const documentDefinition = {
