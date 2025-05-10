@@ -25,6 +25,7 @@ import { ExamProgressPollComponent } from '../student/exam-progress-poll/exam-pr
 import { FinalExamQuestionsComponent } from './final-exam/final-exam.component';
 import { ActivityComponent } from './activity/activity.component';
 import { CloFreqPlanComponent } from './lesson-list/lesson/clo-freq-plan/clo-freq-plan.component';
+import { AttendanceImportComponent } from './lesson-list/lesson/attendance/attendance-import/attendance-import.component';
 
 const routes: Routes = [
   {
@@ -43,6 +44,7 @@ const routes: Routes = [
           { path: 'clo-freq-plan', component: CloFreqPlanComponent },
           { path: 'clo-point-plan', component: CloPointPlanComponent },
           { path: 'attendance', component: AttendanceComponent },
+          { path: 'attendance-import', component: AttendanceImportComponent },
           { path: 'activity', component: ActivityComponent },
           { path: 'curriculum', component: CurriculumComponent },
           { path: 'grade/:planId', component: GradeComponent },
