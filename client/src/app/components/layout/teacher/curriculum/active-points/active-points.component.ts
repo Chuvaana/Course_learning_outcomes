@@ -114,7 +114,6 @@ export class ActivePointsComponent {
     this.lessonAssessmentService
       .getLesAssessment(this.lessonId)
       .subscribe((res) => {
-        console.log(res);
         this.examList = res;
         this.allExamList = res;
       });
@@ -134,7 +133,6 @@ export class ActivePointsComponent {
       this.lessonAssessmentService
         .getLesAssessment(this.lessonId)
         .subscribe((res) => {
-          console.log(res);
           this.examList = res;
         });
     }

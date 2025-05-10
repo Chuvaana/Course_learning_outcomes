@@ -105,7 +105,6 @@ export class AttendanceComponent {
           this.selectedTimes
         )
         .subscribe((res: any) => {
-          console.log(res);
           this.attendanceRecords = this.generateAttendance(res);
           if (this.attendanceRecords.length == 0) {
             this.studentService
@@ -124,7 +123,6 @@ export class AttendanceComponent {
       this.attendanceService
         .getAttendanceByLesson(this.lessonId)
         .subscribe((res) => {
-          console.log(res);
           this.attendanceRecords = this.generateAttendance(res);
           if (this.attendanceRecords.length == 0) {
             this.studentService
@@ -281,7 +279,6 @@ export class AttendanceComponent {
     } else {
       const weeks = this.getAllWeeks();
       const lessonId = this.lessonId;
-      console.log(weeks);
       const attendanceDatas = weeks.map((item) => {
         return {
           lessonId: lessonId,

@@ -155,7 +155,6 @@ export class LesStudentComponent {
           this.studentForm.get('lessonType')?.value == 'BSEM' ? time : '',
       });
     }
-    console.log(this.studentList);
 
     if (this.studentForm.valid && this.studentList.length > 0) {
       this.service.registerLesStudent(this.studentList).subscribe(

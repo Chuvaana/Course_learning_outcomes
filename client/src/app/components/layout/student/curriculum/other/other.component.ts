@@ -7,13 +7,13 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
+import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
+import { DividerModule } from 'primeng/divider';
 import { FloatLabelModule } from 'primeng/floatlabel';
 import { TextareaModule } from 'primeng/textarea';
 import { ToastModule } from 'primeng/toast';
 import { OtherService } from '../../../../../services/other.service';
-import { MessageService } from 'primeng/api';
-import { DividerModule } from 'primeng/divider';
 
 @Component({
   selector: 'app-other',
@@ -105,7 +105,11 @@ export class OtherComponent {
           );
       }
     } else {
-      console.log('Форм буруу байна');
+      this.msgService.add({
+        severity: 'warn',
+        summary: 'Анхааруулга',
+        detail: 'Форм буруу байна',
+      });
     }
   }
 }

@@ -89,7 +89,6 @@ exports.createActivityAll = async (req, res) => {
         });
       }
 
-      // Save after each record update
       await activityRecord.save();
     }
 
@@ -99,11 +98,9 @@ exports.createActivityAll = async (req, res) => {
   }
 };
 
-// ✅ Get activity records by `lessonId`, `weekNumber`, and `type`
 exports.getActivityByFilter = async (req, res) => {
   try {
     const { lessonId, weekDay, type, time } = req.query;
-    console.log(lessonId, weekDay, type, time);
     const filter = {};
 
     if (lessonId) filter.lessonId = lessonId;
@@ -112,7 +109,6 @@ exports.getActivityByFilter = async (req, res) => {
     if (time) filter.time = time;
 
     const activityRecords = await Activity.find(filter).populate('activity.studentId', 'studentName studentCode');
-    console.log(activityRecords);
     res.json(activityRecords);
   } catch (error) {
     res.status(500).json({ message: error.message });

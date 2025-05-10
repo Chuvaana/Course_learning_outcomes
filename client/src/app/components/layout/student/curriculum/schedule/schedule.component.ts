@@ -20,7 +20,6 @@ import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { ToastModule } from 'primeng/toast';
 import { AssessmentService } from '../../../../../services/assessmentService';
-import { CloPointPlanService } from '../../../../../services/cloPointPlanService';
 import { CurriculumService } from '../../../../../services/curriculum.service';
 import { ScheduleService } from '../../../../../services/schedule.service';
 import { TabRefreshService } from '../tabRefreshService';
@@ -70,7 +69,6 @@ export class ScheduleComponent {
   closLec: any;
   closSem: any;
   closLab: any;
-  // cloPlan: any;
 
   labSumPoint = 0;
   semSumPoint = 0;
@@ -90,8 +88,7 @@ export class ScheduleComponent {
     private msgService: MessageService,
     private tabRefreshService: TabRefreshService,
     private mainService: CurriculumService,
-    private assessService: AssessmentService,
-    private cloPointPlanService: CloPointPlanService
+    private assessService: AssessmentService
   ) {}
 
   async ngOnInit() {
@@ -107,19 +104,19 @@ export class ScheduleComponent {
     }
 
     this.scheduleLecForm = this.fb.group({
-      schedules: this.fb.array([]), // This will hold the schedules data
+      schedules: this.fb.array([]),
     });
 
     this.scheduleSemForm = this.fb.group({
-      scheduleSems: this.fb.array([]), // This will hold the schedules data
+      scheduleSems: this.fb.array([]),
     });
 
     this.scheduleLabForm = this.fb.group({
-      scheduleLabs: this.fb.array([]), // This will hold the schedules data
+      scheduleLabs: this.fb.array([]),
     });
 
     this.scheduleBdForm = this.fb.group({
-      scheduleBds: this.fb.array([]), // This will hold the schedules data
+      scheduleBds: this.fb.array([]),
     });
 
     if (this.lessonId) {
@@ -199,9 +196,6 @@ export class ScheduleComponent {
       const resBd = await this.service
         .getScheduleBds(this.lessonId)
         .toPromise();
-      // const cloPlan = await this.cloService
-      //   .getCloPlan(this.lessonId)
-      //   .toPromise();
       const scheduleArray = this.scheduleLecForm.get('schedules') as FormArray;
       const scheduleSemArray = this.scheduleSemForm.get(
         'scheduleSems'
@@ -216,7 +210,6 @@ export class ScheduleComponent {
       scheduleSemArray.clear();
       scheduleLabArray.clear();
       scheduleBdArray.clear();
-      // this.cloPlan = cloPlan;
 
       if (resLec && resLec.length > 0) {
         this.setSchedules(resLec);
@@ -286,16 +279,6 @@ export class ScheduleComponent {
       });
       scheduleArray.push(lessonGroup);
     });
-    // let cloRelevanceCounts: { [key: string]: number } = {};
-    // const data = scheduleArray.value;
-    // data.forEach((item: any) => {
-    //   const clo = item.cloRelevance;
-    //   if (clo) {
-    //     cloRelevanceCounts[clo] = (cloRelevanceCounts[clo] || 0) + 1;
-    //   }
-    // });
-    // this.cloRelevanceCounts = cloRelevanceCounts;
-    // console.log(this.cloRelevanceCounts);
   }
 
   setScheduleSems(res: any[]): void {
@@ -308,7 +291,7 @@ export class ScheduleComponent {
         lessonId: [schedule.lessonId],
         cloRelevance: [
           schedule.cloRelevance?.id || schedule.cloRelevance || null,
-        ], // Ensure it is always an array
+        ],
         week: [{ value: schedule.week, disabled: true }],
         title: [schedule.title],
         time: [schedule.time],
@@ -335,7 +318,7 @@ export class ScheduleComponent {
         lessonId: [schedule.lessonId],
         cloRelevance: [
           schedule.cloRelevance?.id || schedule.cloRelevance || '',
-        ], // Ensure it is always an array
+        ],
         week: [schedule.week],
         title: [schedule.title],
         time: [schedule.time],
@@ -360,7 +343,7 @@ export class ScheduleComponent {
         lessonId: [schedule.lessonId],
         cloRelevance: [
           schedule.cloRelevance?.id || schedule.cloRelevance || null,
-        ], // Ensure it is always an array
+        ],
         week: [schedule.week],
         title: [schedule.title],
         adviceTime: [schedule.adviceTime],

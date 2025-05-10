@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import {
   FormBuilder,
@@ -6,14 +7,13 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { ConfigService } from '../admin.service';
-import { ButtonModule } from 'primeng/button';
-import { InputTextModule } from 'primeng/inputtext';
-import { DropdownModule } from 'primeng/dropdown';
-import { CommonModule } from '@angular/common';
-import { TableModule } from 'primeng/table';
 import { MessageService } from 'primeng/api';
+import { ButtonModule } from 'primeng/button';
+import { DropdownModule } from 'primeng/dropdown';
+import { InputTextModule } from 'primeng/inputtext';
+import { TableModule } from 'primeng/table';
 import { ToastModule } from 'primeng/toast';
+import { ConfigService } from '../admin.service';
 
 @Component({
   selector: 'app-config',
@@ -68,9 +68,8 @@ export class ConfigComponent {
 
   loadBranches(): void {
     this.configService.getBranches().subscribe((data: any[]) => {
-      // Add "All" option at the beginning
       this.branches = [
-        { name: 'Бүгд', id: 'all' }, // This will be your "All" option
+        { name: 'Бүгд', id: 'all' },
         ...data.map((branch) => ({
           name: branch.name,
           id: branch.id || branch.name,
@@ -81,9 +80,7 @@ export class ConfigComponent {
 
   onBranchChange(branch: any): void {
     if (branch.id == 'all') {
-      this.departments = [
-        { name: 'Бүгд', id: 'all' }, // This will be your "All" option
-      ];
+      this.departments = [{ name: 'Бүгд', id: 'all' }];
     } else {
       this.configService.getDepartments(branch.id).subscribe((data: any[]) => {
         if (data) {
@@ -98,9 +95,7 @@ export class ConfigComponent {
 
   onBranchChangeTable(branch: any): void {
     if (branch == 'all') {
-      this.departments = [
-        { name: 'Бүгд', id: 'all' }, // This will be your "All" option
-      ];
+      this.departments = [{ name: 'Бүгд', id: 'all' }];
     } else {
       this.configService.getDepartments(branch).subscribe((data: any[]) => {
         if (data) {
@@ -127,7 +122,7 @@ export class ConfigComponent {
   onRowEditInit(config: any, index: number) {
     this.index = index;
     if (!this.clonedConfig) this.clonedConfig = {};
-    this.clonedConfig[config._id] = { ...config }; // save original before editing
+    this.clonedConfig[config._id] = { ...config };
     this.editingRowId = config._id;
   }
 
@@ -197,22 +192,27 @@ export class ConfigComponent {
       };
       this.configService.submitConfig(cleanedData).subscribe(
         (response: any) => {
-          console.log('Form submitted successfully', response);
-          alert('Configuration added successfully!');
+          this.msgService.add({
+            severity: 'success',
+            summary: 'Амжилттай',
+            detail: config._id ? 'Амжилттай заслаа!' : 'Амжилттай нэмлээ!',
+          });
           this.readData();
         },
         (error: any) => {
-          console.error('Error submitting form', error);
-          alert('An error occurred while submitting the form.');
+          this.msgService.add({
+            severity: 'error',
+            summary: 'Алдаа',
+            detail: 'Алдаа гарлаа: ' + error.message,
+          });
         }
       );
     } else {
-      console.log('Form is invalid');
+      this.msgService.add({
+        severity: 'warn',
+        summary: 'Анхааруулга',
+        detail: 'Формыг зөв бөглөнө үү',
+      });
     }
-  }
-
-  saveItem(item: any) {
-    console.log('Saved item:', item);
-    // Save the item after editing
   }
 }

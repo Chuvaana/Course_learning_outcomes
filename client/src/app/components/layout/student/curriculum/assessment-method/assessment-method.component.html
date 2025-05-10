@@ -1,8 +1,5 @@
 <div class="card">
   <p-toast></p-toast>
-  <div>
-    <!-- <p-button label="Хадгалах" class="submit-button" (click)="save()" /> -->
-  </div>
 
   <p-table
     [value]="cloPoint"
@@ -48,7 +45,6 @@
         <td>{{ ri + 1 }}</td>
         <td>{{ getCloName(row.cloId) }}</td>
 
-        <!-- Явцын үнэлгээ -->
         <ng-container *ngFor="let proc of row.procPoints">
           <td>
             <p-checkbox
@@ -58,7 +54,6 @@
             ></p-checkbox>
           </td>
         </ng-container>
-        <!-- Шалгалтын үнэлгээ -->
         <ng-container *ngFor="let exam of row.examPoints">
           <td>
             <p-checkbox

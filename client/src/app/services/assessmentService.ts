@@ -80,7 +80,6 @@ export class AssessmentService {
   }
 
   getMaterials(lessonCode: string) {
-    console.log(lessonCode + 'fff');
     return this.http.get(`${this.apiUrl}/materials/${lessonCode}`);
   }
 

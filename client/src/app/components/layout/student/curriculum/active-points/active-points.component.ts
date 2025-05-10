@@ -110,7 +110,6 @@ export class ActivePointsComponent {
     this.lessonAssessmentService
       .getLesAssessment(this.lessonId)
       .subscribe((res) => {
-        console.log(res);
         this.examList = res;
         this.allExamList = res;
       });
@@ -125,12 +124,12 @@ export class ActivePointsComponent {
       height: '600px',
     });
   }
+
   loadStudents() {
     if (this.lessonId !== null && this.lessonId !== undefined) {
       this.lessonAssessmentService
         .getLesAssessment(this.lessonId)
         .subscribe((res) => {
-          console.log(res);
           this.examList = res;
         });
     }

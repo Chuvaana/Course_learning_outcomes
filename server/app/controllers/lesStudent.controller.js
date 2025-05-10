@@ -4,7 +4,6 @@ const Lesson = require('../models/lesson.model');
 // Create a new student
 exports.createStudent = async (req, res) => {
   try {
-    console.log(req.body);
     const studentData = new Student(req.body); // Use the request body to create a new student
     const student = await studentData.save(); // Save student to database
     res.status(201).json(student); // Respond with the created student
@@ -83,59 +82,58 @@ exports.updateStudents = async (req, res) => {
       const lesson = await Lesson.findById(lessonId);
       if (!lesson) {
         return res.status(400).json({ message: `Lesson ${lessonId} not found` });
+      }
+
+      let existingStudent = await Student.findOne({ studentCode: studentCode, lessonId: lessonId });
+
+      if (existingStudent) {
+        if (labDay && labTime) {
+          existingStudent.clab = { day: labDay, time: labTime };
+        }
+        if (semDay && semTime) {
+          existingStudent.bsem = { day: semDay, time: semTime };
+        }
+
+        if (lecDay && lecTime) {
+          existingStudent.alec = { day: lecDay, time: lecTime };
+        }
+
+        await existingStudent.save();
+        updatedStudents.push(existingStudent);
+      } else {
+        const newStudent = new Student({
+          lessonId: lessonId,
+          studentCode: studentCode,
+          studentName: studentName,
+          alec: {
+            day: lecDay,
+            time: lecTime,
+          },
+          bsem: {
+            day: semDay,
+            time: semTime,
+          },
+          clab: {
+            day: labDay,
+            time: labTime,
+          },
+        });
+
+        await newStudent.save();
+        updatedStudents.push(newStudent);
+      }
     }
 
-    let existingStudent = await Student.findOne({ studentCode: studentCode, lessonId: lessonId });
-
-    if (existingStudent) {
-      if (labDay && labTime) {
-        existingStudent.clab = { day: labDay, time: labTime };
-      }
-      if (semDay && semTime) {
-        existingStudent.bsem = { day: semDay, time: semTime };
-      }
-
-      if (lecDay && lecTime) {
-        existingStudent.alec = { day: lecDay, time: lecTime };
-      }
-
-      await existingStudent.save();
-      updatedStudents.push(existingStudent);
-    } else {
-      const newStudent = new Student({
-        lessonId: lessonId,
-        studentCode: studentCode,
-        studentName: studentName,
-        alec: {
-          day: lecDay,
-          time: lecTime,
-        },
-        bsem: {
-          day: semDay,
-          time: semTime,
-        },
-        clab: {
-          day: labDay,
-          time: labTime,
-        },
-      });
-
-      await newStudent.save();
-      updatedStudents.push(newStudent);
-    }
-  }
-    
     return res.status(200).json({ message: 'Students processed successfully', data: updatedStudents });
-} catch (error) {
-  console.error('Error processing students:', error);
-  return res.status(500).json({ message: 'Internal server error' });
-}
+  } catch (error) {
+    console.error('Error processing students:', error);
+    return res.status(500).json({ message: 'Internal server error' });
+  }
 };
 
 exports.uploadStudents = async (req, res) => {
   try {
     const studentData = req.body;
-    console.log(studentData);
     if (!studentData || !Array.isArray(studentData)) {
       return res.status(400).json({ message: 'Invalid student data' });
     }
@@ -146,53 +144,53 @@ exports.uploadStudents = async (req, res) => {
       const lesson = await Lesson.findById(lessonId);
       if (!lesson) {
         return res.status(400).json({ message: `Lesson ${lessonId} not found` });
+      }
+
+      let existingStudent = await Student.findOne({ studentCode: studentCode, lessonId: lessonId });
+
+      if (existingStudent) {
+        if (labDay && labTime) {
+          existingStudent.clab = { day: labDay, time: labTime };
+        }
+        if (semDay && semTime) {
+          existingStudent.bsem = { day: semDay, time: semTime };
+        }
+
+        if (lecDay && lecTime) {
+          existingStudent.alec = { day: lecDay, time: lecTime };
+        }
+
+        await existingStudent.save();
+        updatedStudents.push(existingStudent);
+      } else {
+        const newStudent = new Student({
+          lessonId: lessonId,
+          studentCode: studentCode,
+          studentName: studentName,
+          alec: {
+            day: lecDay,
+            time: lecTime,
+          },
+          bsem: {
+            day: semDay,
+            time: semTime,
+          },
+          clab: {
+            day: labDay,
+            time: labTime,
+          },
+        });
+
+        await newStudent.save();
+        updatedStudents.push(newStudent);
+      }
     }
-
-    let existingStudent = await Student.findOne({ studentCode: studentCode, lessonId: lessonId });
-
-    if (existingStudent) {
-      if (labDay && labTime) {
-        existingStudent.clab = { day: labDay, time: labTime };
-      }
-      if (semDay && semTime) {
-        existingStudent.bsem = { day: semDay, time: semTime };
-      }
-
-      if (lecDay && lecTime) {
-        existingStudent.alec = { day: lecDay, time: lecTime };
-      }
-
-      await existingStudent.save();
-      updatedStudents.push(existingStudent);
-    } else {
-      const newStudent = new Student({
-        lessonId: lessonId,
-        studentCode: studentCode,
-        studentName: studentName,
-        alec: {
-          day: lecDay,
-          time: lecTime,
-        },
-        bsem: {
-          day: semDay,
-          time: semTime,
-        },
-        clab: {
-          day: labDay,
-          time: labTime,
-        },
-      });
-
-      await newStudent.save();
-      updatedStudents.push(newStudent);
-    }
-  }
 
     return res.status(200).json({ message: 'Students processed successfully', data: updatedStudents });
-} catch (error) {
-  console.error('Error processing students:', error);
-  return res.status(500).json({ message: 'Internal server error' });
-}
+  } catch (error) {
+    console.error('Error processing students:', error);
+    return res.status(500).json({ message: 'Internal server error' });
+  }
 };
 
 exports.getStudentsByClassTypeAndDay = async (req, res) => {

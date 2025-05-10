@@ -144,7 +144,7 @@ export class CloPointPlanComponent {
     private assessService: AssessmentService,
     private msgService: MessageService,
     private route: ActivatedRoute,
-    private pdfMainService : PdfMainService,
+    private pdfMainService: PdfMainService,
     private pdfGeneretorService: PdfCloGeneratorService
   ) {}
 
@@ -232,7 +232,6 @@ export class CloPointPlanComponent {
   getPointsControls(cloId: string): FormGroup[] {
     const cloRowsArray = this.cloForm.get('cloRows') as FormArray;
 
-    // cloId-р тохирох мөрийг хайж олно
     const cloRow = cloRowsArray.controls.find(
       (row: AbstractControl) => row.get('cloId')?.value === cloId
     ) as FormGroup;
@@ -252,19 +251,6 @@ export class CloPointPlanComponent {
       )
       .filter((ctrl) => !!ctrl) as FormGroup[];
   }
-
-  // getPointsControl(rowIndex: number): FormGroup[] {
-  //   const pointsArray = this.getRowFormGroup(rowIndex).get(
-  //     'procPoints'
-  //   ) as FormArray;
-  //   return this.subMethodOrder
-  //     .map((id) =>
-  //       pointsArray.controls.find(
-  //         (ctrl) => ctrl.get('subMethodId')?.value === id
-  //       )
-  //     )
-  //     .filter((ctrl) => !!ctrl) as FormGroup[];
-  // }
 
   getPointsControl(rowIndex: number): FormGroup[] {
     const pointsArray = this.getRowFormGroup(rowIndex).get(
@@ -416,7 +402,6 @@ export class CloPointPlanComponent {
         this.cloList.find((c: any) => (c.id || c._id) === clo.cloId)?.cloName ??
         '-',
     }));
-    console.log(this.cloPoint);
     const tmp = [];
     tmp.push(
       this.cloPoint.filter((item: any) => {
@@ -428,16 +413,13 @@ export class CloPointPlanComponent {
         return item.cloType === 'BSEM';
       })
     );
-    console.log(tmp);
     tmp.push(
       this.cloPoint.filter((item: any) => {
         return item.cloType === 'CLAB';
       })
     );
 
-    console.log('Before merge:', this.cloPoint);
     this.cloPoint = [...tmp[0], ...tmp[1], ...tmp[2]];
-    console.log('After merge:', this.cloPoint);
   }
 
   checkPointsConsistency(): boolean {
@@ -542,7 +524,6 @@ export class CloPointPlanComponent {
       }
       convertData.push(excelData);
     });
-    console.log(convertData);
 
     const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(convertData);
     const workbook: XLSX.WorkBook = {

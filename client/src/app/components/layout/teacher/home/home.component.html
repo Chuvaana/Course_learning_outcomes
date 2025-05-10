@@ -56,7 +56,13 @@
         ></app-lesson-assessment>
       </p-tabpanel>
       <p-tabpanel value="4">
-        <app-lesson-overall-assess></app-lesson-overall-assess>
+        <app-lesson-overall-assess
+          [cloList]="cloList"
+          [lessonId]="lessonId"
+          [pointPlan]="assessPlan"
+          [cloPlan]="cloPlan"
+          [students]="students"
+        ></app-lesson-overall-assess>
       </p-tabpanel>
       <p-tabpanel value="5">
         <app-lesson-indirect-assess
