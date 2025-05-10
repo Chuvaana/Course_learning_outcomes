@@ -72,8 +72,7 @@ export class CurriculumComponent {
 
   ngOnInit() {
     this.route.parent?.paramMap.subscribe((params) => {
-      this.lessonId = params.get('id')!; // Get "id" from the parent route
-      console.log('Lesson ID:', this.lessonId);
+      this.lessonId = params.get('id')!;
     });
   }
   loadLessonAllData() {
@@ -90,10 +89,11 @@ export class CurriculumComponent {
       scheduleLabs: this.service.getScheduleLabs(this.lessonId),
       scheduleBds: this.service.getScheduleBds(this.lessonId),
       pointPlan: this.cloPointPlanService.getPointPlan(this.lessonId),
-      assessmentByLesson: this.assessService.getAssessmentByLesson(this.lessonId),
+      assessmentByLesson: this.assessService.getAssessmentByLesson(
+        this.lessonId
+      ),
     }).subscribe(
       (results) => {
-        console.log('Бүх өгөгдөл:', results);
         this.resultData = results;
         this.pdfService.generatePdfTest(this.resultData);
       },

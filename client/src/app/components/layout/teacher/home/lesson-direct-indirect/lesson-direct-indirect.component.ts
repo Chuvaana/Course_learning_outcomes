@@ -64,10 +64,6 @@ export class LessonDirectIndirectComponent {
           type: 'grade',
         },
       ];
-
-      console.log(this.summaryData);
-
-      console.log(this.cloData);
     });
   }
 

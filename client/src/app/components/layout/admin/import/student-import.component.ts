@@ -117,7 +117,6 @@ export class AdminStudentImportComponent {
       const worksheet: XLSX.WorkSheet = workbook.Sheets[sheetName];
 
       this.tableData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-      // console.log(this.tableData);
       this.checkData(this.tableData);
     };
 
@@ -134,12 +133,6 @@ export class AdminStudentImportComponent {
         this.onlyEmail.push(e[0] + '@must.edu.mn');
       }
     });
-    console.log(this.onlyName);
-    console.log(this.onlyId);
-    console.log(this.onlyStudentName);
-    console.log(this.onlyPassword);
-    console.log(this.onlyEmail);
-    console.log(this.onlyBranch);
   }
 
   openPopup() {

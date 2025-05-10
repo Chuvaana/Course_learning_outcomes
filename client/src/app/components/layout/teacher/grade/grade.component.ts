@@ -335,8 +335,6 @@ export class GradeComponent {
       })
     );
 
-    console.log('Grade Payload:', gradeData);
-
     this.gradeService.createGradeAll(gradeData).subscribe(
       (res) => {
         this.msgService.add({

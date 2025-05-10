@@ -268,7 +268,6 @@ export class LessonAdvDisadvComponent {
           this.tasks.map((task) => new FormControl(task.selected || false))
         ),
       });
-      console.log(this.form);
     });
   }
 
@@ -300,7 +299,6 @@ export class LessonAdvDisadvComponent {
       return;
     }
 
-    console.log(this.tasks);
     this.tasks.forEach((task, i) => {
       const control = this.taskFormArray.at(i);
       if (control) {

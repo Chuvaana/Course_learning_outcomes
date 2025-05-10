@@ -1,20 +1,16 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const Student = require('../models/student.model'); // Make sure the path is correct
-// POST route to save student data
+const Student = require('../models/student.model');
+
 exports.create = async (req, res) => {
   try {
-    // Extract all required fields from req.body
-    console.log(req.body);
     const { name, code, password, email, branch, department } = req.body;
 
-    // Validate required fields
     if (!name || !password || !email || !branch || !department) {
       return res.status(400).json({ message: 'All fields are required' });
     }
 
-    // Check if the student already exists by email
     const existingStudent = await Student.findOne({ code: code });
     if (existingStudent) {
       return res.status(400).json({ message: 'Student with this id already exists' });
@@ -24,10 +20,8 @@ exports.create = async (req, res) => {
       return res.status(400).json({ message: 'Invalid branch or department ID!' });
     }
 
-    // Hash the password before saving
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create a new Student document
     const newStudent = new Student({
       name,
       code,
@@ -37,10 +31,8 @@ exports.create = async (req, res) => {
       password: hashedPassword,
     });
 
-    // Save the new Student to the database
     await newStudent.save();
 
-    // Send a success response with the new Student data
     res.status(201).json({
       message: 'Student created successfully',
       student: newStudent,
@@ -114,8 +106,6 @@ exports.findAll = async (req, res) => {
 
 exports.findOne = async (req, res) => {
   try {
-    console.log('body = ' + req.body);
-    console.log('req.params = ' + req.params.id);
     const student = await Student.findById(req.params.id).populate('branch', 'name').populate('department', 'name');
     if (!student) return res.status(404).send({ message: 'student not found' });
     res.status(200).json(student);
@@ -124,7 +114,6 @@ exports.findOne = async (req, res) => {
   }
 };
 
-// Update a student by ID
 exports.update = async (req, res) => {
   try {
     const updatedStudent = await Student.findByIdAndUpdate(req.params.id, req.body, { new: true });
@@ -135,7 +124,6 @@ exports.update = async (req, res) => {
   }
 };
 
-// Delete a Student by ID
 exports.delete = async (req, res) => {
   try {
     const deletedStudent = await Student.findByIdAndRemove(req.params.id);
@@ -146,7 +134,6 @@ exports.delete = async (req, res) => {
   }
 };
 
-// Assign Courses to a Student
 exports.assignCourses = async (req, res) => {
   try {
     const student = await Student.findById(req.params.id);

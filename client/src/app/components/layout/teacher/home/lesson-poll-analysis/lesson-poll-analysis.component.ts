@@ -39,7 +39,6 @@ export class LessonPollAnalysisComponent {
           .flatMap((qe: any) => qe.questionList || [])
       );
       this.getData(this.data);
-      console.log(this.cloData);
     });
   }
 
@@ -86,7 +85,5 @@ export class LessonPollAnalysisComponent {
         ),
       })
     );
-
-    console.log(this.feedbackByGroups);
   }
 }

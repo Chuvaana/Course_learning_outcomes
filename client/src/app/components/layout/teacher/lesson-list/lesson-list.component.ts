@@ -155,7 +155,6 @@ export class LessonListComponent implements OnInit {
       }
       if (season) {
         this.selectedSeason = season.itemValue;
-        console.log(this.selectedSeason);
       }
 
       this.readData(this.teacherId, this.selectedInterval, this.selectedSeason);
@@ -269,7 +268,6 @@ export class LessonListComponent implements OnInit {
         checkManagerDatetime: '',
       };
 
-      // Save lesson and chain further logic
       this.cirService.saveLesson(info).subscribe((response: any) => {
         const newLessonId = response.lesson.id;
         const data = {
@@ -354,10 +352,9 @@ export class LessonListComponent implements OnInit {
                 bd: this.scheService.getScheduleBds(lesson.id),
               }).pipe(
                 switchMap(({ lec, sem, lab, bd }) => {
-                  // Function to transform the arrays and check if they are non-empty
                   const transform = (arr: any[]) =>
                     arr
-                      .filter((item) => item && Object.keys(item).length > 0) // Filter out empty items or empty arrays
+                      .filter((item) => item && Object.keys(item).length > 0)
                       .map((item: any) => {
                         delete item._id;
                         delete item.__v;
@@ -370,7 +367,6 @@ export class LessonListComponent implements OnInit {
                         return item;
                       });
 
-                  // Check if the arrays have items, only make requests for non-empty arrays
                   const requests = [];
                   if (lec.length > 0)
                     requests.push(
@@ -389,8 +385,7 @@ export class LessonListComponent implements OnInit {
                       this.scheService.addScheduleBdsArray(transform(bd))
                     );
 
-                  // Only proceed if we have valid requests to send
-                  return requests.length > 0 ? forkJoin(requests) : of([]); // If no requests, return an empty observable
+                  return requests.length > 0 ? forkJoin(requests) : of([]);
                 })
               );
             }),
@@ -451,9 +446,7 @@ export class LessonListComponent implements OnInit {
                         oldSubMethodIds.forEach((oldId, index) => {
                           oldNewSubMethodMap.set(oldId, newSubMethodIds[index]);
                         });
-                        console.log(oldNewSubMethodMap);
-
-                        return oldNewSubMethodMap; // return the mapping
+                        return oldNewSubMethodMap;
                       })
                     );
                 })
@@ -462,36 +455,31 @@ export class LessonListComponent implements OnInit {
             switchMap((oldNewSubMethodMap) =>
               this.cloPointPlanService.getPointPlan(lesson.id).pipe(
                 map((res: any[]) => {
-                  // Assuming res is an array of objects
                   return res.map((item) => {
-                    // Update lessonId and remove unnecessary fields
                     item.lessonId = newLessonId;
                     if (item._id) delete item._id;
                     if (item.__v) delete item.__v;
 
-                    // Remap cloId
                     item.cloId = oldNewCloMap.get(item.cloId) || item.cloId;
 
-                    // Remap subMethodIds in procPoints
                     item.procPoints = item.procPoints?.map((p: any) => ({
                       ...p,
                       subMethodId:
                         oldNewSubMethodMap.get(p.subMethodId) || p.subMethodId,
                     }));
 
-                    // Remap subMethodIds in examPoints
                     item.examPoints = item.examPoints?.map((p: any) => ({
                       ...p,
                       subMethodId:
                         oldNewSubMethodMap.get(p.subMethodId) || p.subMethodId,
                     }));
 
-                    return item; // Return the updated item
+                    return item;
                   });
                 }),
                 switchMap((updated) =>
                   this.cloPointPlanService.saveCloPlan(updated)
-                ) // Save the updated item
+                )
               )
             )
           )
@@ -521,7 +509,7 @@ export class LessonListComponent implements OnInit {
   }
 
   logout() {
-    localStorage.clear(); // clear tokens or user info
-    this.router.navigate(['/teacher-login']); // redirect to login
+    localStorage.clear();
+    this.router.navigate(['/teacher-login']);
   }
 }

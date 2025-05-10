@@ -94,13 +94,11 @@ export class ActivityComponent {
     this.assessService
       .getAssessmentByLesson(this.lessonId)
       .subscribe((res: any) => {
-        console.log(res);
         res.plans.map((item: any) => {
           if (item.methodType === 'PARTI') {
             if (item.subMethods.length != 0) {
               item.subMethods.map((po: any) => {
                 this.activityPoint = po.point;
-                console.log(this.activityPoint);
               });
             }
           }
@@ -137,7 +135,6 @@ export class ActivityComponent {
       this.activityService
         .getActivityByLesson(this.lessonId)
         .subscribe((res: any) => {
-          console.log(res);
           this.activityRecords = this.generateActivity(res);
           if (this.activityRecords.length == 0) {
             this.studentService
@@ -170,17 +167,14 @@ export class ActivityComponent {
   generateActivity(data: any): ActivityRecord[] {
     const studentActivityMap: { [studentId: string]: ActivityRecord } = {};
 
-    // Step 1: Get all unique weekNumbers
     const allWeekNumbers: string[] = Array.from(
       new Set(data.map((weekData: any) => weekData.weekNumber))
     );
 
-    // Step 2: Process each week's data
     data.forEach((weekData: any) => {
       weekData.activity.forEach((item: any) => {
         const studentId = item.studentId.id;
 
-        // If student not added yet, initialize with 0 for all weeks
         if (!studentActivityMap[studentId]) {
           const activity: { [week: string]: number } = {};
           allWeekNumbers.forEach((week: string) => {
@@ -197,7 +191,6 @@ export class ActivityComponent {
           };
         }
 
-        // Overwrite with actual value for this week
         studentActivityMap[studentId].activity[weekData.weekNumber] =
           item.point;
       });
@@ -324,7 +317,6 @@ export class ActivityComponent {
     } else {
       const weeks = this.getAllWeeks();
       const lessonId = this.lessonId;
-      console.log(weeks);
       const attendanceDatas = weeks.map((item) => {
         return {
           lessonId: lessonId,

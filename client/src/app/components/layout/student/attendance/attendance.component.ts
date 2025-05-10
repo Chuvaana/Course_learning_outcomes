@@ -12,15 +12,6 @@ import { ToastModule } from 'primeng/toast';
 import { AttendanceService } from '../../../../services/attendanceService';
 import { SharedDictService } from '../../teacher/shared';
 
-interface AttendanceRecord {
-  student: {
-    name: string;
-    code: string;
-    studentId: string;
-  };
-  attendance: { [weekNumber: string]: boolean }; // Week number as key, attendance status as value
-}
-
 @Component({
   selector: 'app-attendance',
   standalone: true,
@@ -46,7 +37,7 @@ export class AttendanceComponent {
 
   typeColumns: string[] = [];
   transposedWeeks: any[] = [];
-  allowedTypes: string[] = []; // allowed types from classTypes
+  allowedTypes: string[] = [];
 
   constructor(
     private route: ActivatedRoute,
@@ -62,9 +53,6 @@ export class AttendanceComponent {
     });
     this.shared.getDictionary(this.lessonId, true).subscribe((res) => {
       this.classTypes = res;
-      console.log(this.classTypes);
-
-      // allowedTypes should be populated from classTypes
       this.allowedTypes = this.classTypes.map((type) => type.value);
 
       this.attendanceService
@@ -81,10 +69,9 @@ export class AttendanceComponent {
 
   getTypeName(value: string): string {
     const found = this.classTypes.find((t) => t.value === value);
-    return found ? found.label : value; // not found, return the value itself
+    return found ? found.label : value;
   }
 
-  // Filter the grouped data based on allowedTypes
   get filteredGroupedData() {
     return this.groupedData.filter((row) =>
       this.allowedTypes.includes(row.type)
@@ -119,7 +106,6 @@ export class AttendanceComponent {
         this.typeColumns = Object.keys(grouped);
         const allWeeks = this.getAllWeeks();
 
-        // Transpose data
         this.transposedWeeks = allWeeks.map((week) => {
           const weekNumber = week;
           const row: any = { week: weekNumber };
@@ -128,7 +114,7 @@ export class AttendanceComponent {
             row[type] =
               grouped[type][weekNumber] !== undefined
                 ? grouped[type][weekNumber]
-                : null; // Handle undefined
+                : null;
           });
 
           return row;

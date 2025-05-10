@@ -73,7 +73,7 @@ export class LesStudentListComponent {
     private msgService: MessageService,
     private route: ActivatedRoute,
     private shared: SharedDictService
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.route.parent?.paramMap.subscribe((params) => {
@@ -216,8 +216,8 @@ export class LesStudentListComponent {
   }
 
   save() {
-    this.filteredStudents.map((e : any) =>{
-      if(e.id === ""){
+    this.filteredStudents.map((e: any) => {
+      if (e.id === '') {
         const data = [];
         data.push({
           lessonId: e.lessonId,
@@ -230,12 +230,12 @@ export class LesStudentListComponent {
           semDay: e.bsem.day,
           semTime: e.bsem.time,
         });
-        this.studentService.registerLesStudent(data).subscribe((res) =>{
+        this.studentService.registerLesStudent(data).subscribe((res) => {
           console.log(res);
           // e = re
         });
       }
-    })
+    });
     this.studentService
       .updateStudents(this.filteredStudents)
       .subscribe((res) => {
@@ -253,43 +253,41 @@ export class LesStudentListComponent {
       id: '',
       clab: {
         day: '',
-        time: ''
+        time: '',
       },
       alec: {
         day: '',
-        time: ''
+        time: '',
       },
       bsem: {
         day: '',
-        time: ''
+        time: '',
       },
       lessonId: this.lessonId,
       studentCode: '',
-      studentName: ''
+      studentName: '',
     };
 
     this.filteredStudents.unshift(studentData); // 👈 Add to the beginning
   }
 
-  delete(student : any, rowIndex: any){
-    console.log('student '+student);
-    console.log('rowIndex '+rowIndex);
-    this.studentService.deleteLesStudents(student.id).subscribe((res : any) =>{
-      this.msgService.add({
-        severity: 'success',
-        summary: 'Амжилттай',
-        detail: 'Амжилттай устгалаа!',
-      });
-      this.loadStudents();
-    },
-    (err) => {
-      this.msgService.add({
-        severity: 'error',
-        summary: 'Алдаа',
-        detail:
-          'Устгахад алдаа гарлаа!: ' +
-          err.message,
-      });
-    })
+  delete(student: any, rowIndex: any) {
+    this.studentService.deleteLesStudents(student.id).subscribe(
+      (res: any) => {
+        this.msgService.add({
+          severity: 'success',
+          summary: 'Амжилттай',
+          detail: 'Амжилттай устгалаа!',
+        });
+        this.loadStudents();
+      },
+      (err) => {
+        this.msgService.add({
+          severity: 'error',
+          summary: 'Алдаа',
+          detail: 'Устгахад алдаа гарлаа!: ' + err.message,
+        });
+      }
+    );
   }
 }

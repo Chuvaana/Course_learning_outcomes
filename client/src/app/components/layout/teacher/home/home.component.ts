@@ -252,16 +252,6 @@ export class HomeComponent {
         }
       }
     });
-    console.log(
-      'cloList : ' +
-        this.cloList +
-        '\n assessPlan : ' +
-        this.assessPlan +
-        '\n cloPlan : ' +
-        this.cloPlan
-    );
-    if (this.lessonId !== null && this.lessonId !== undefined) {
-    }
   }
   pdfTo() {
     this.pdfMainService.generatePdfAll(this.pdfSendData);

@@ -315,9 +315,7 @@ export class CloTreeComponent {
     const subMethodsControl = planGroup.at(planIndex).get('subMethods');
 
     if (subMethodsControl instanceof FormArray) {
-      console.log('Before remove:', subMethodsControl.value);
       subMethodsControl.removeAt(answerIndex);
-      console.log('After remove:', subMethodsControl.value);
     } else {
       console.error('subMethods is not a FormArray', subMethodsControl);
     }
@@ -355,16 +353,15 @@ export class CloTreeComponent {
   }
 
   onSubmit() {
-    console.log(this.planForm.getRawValue());
     const formData = this.planForm.getRawValue();
     const payload = formData.plans.map((plan) => ({
-      id: plan.id, // Include plan id
+      id: plan.id,
       methodName: plan.methodName,
       methodType: plan.methodType,
       secondMethodType: plan?.secondMethodType,
       frequency: plan.frequency,
       subMethods: plan.subMethods.map((sub) => ({
-        id: sub.id, // Include subMethod id
+        id: sub.id,
         subMethod: sub.subMethod,
         point: sub.point,
       })),

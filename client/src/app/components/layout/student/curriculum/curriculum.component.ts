@@ -61,8 +61,7 @@ export class CurriculumComponent {
 
   ngOnInit() {
     this.route.parent?.paramMap.subscribe((params) => {
-      this.lessonId = params.get('id')!; // Get "id" from the parent route
-      console.log('Lesson ID:', this.lessonId);
+      this.lessonId = params.get('id')!;
     });
   }
 

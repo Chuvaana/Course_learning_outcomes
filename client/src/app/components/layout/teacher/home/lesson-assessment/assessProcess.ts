@@ -232,7 +232,6 @@ export class AssessProcessService {
           });
         });
 
-        console.log(adata);
         return adata;
       })
     );
@@ -267,8 +266,6 @@ export class AssessProcessService {
               }
             });
           });
-
-          console.log(points);
 
           points.map((po: any) => {
             const cloAttPoint = {
@@ -325,8 +322,6 @@ export class AssessProcessService {
               if (remaining <= 0) break;
             }
           });
-
-          console.log(adata);
         }
         return adata;
       })
@@ -379,7 +374,6 @@ export class AssessProcessService {
         }
 
         const adata = Array.from(cloMap.values());
-        console.log(adata);
         return adata;
       })
     );

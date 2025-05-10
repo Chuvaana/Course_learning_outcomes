@@ -190,28 +190,22 @@ exports.getTeacherLessons = async (req, res) => {
   try {
     const { teacherId, yearIntervals, selectedSeason } = req.params;
 
-    console.log(teacherId, yearIntervals, selectedSeason);
-
     const teacher = await Teacher.findById(teacherId);
 
     if (!teacher) {
       return res.status(404).json({ message: 'Багш олдсонгүй' });
     }
-
-    // Determine the semester filter
     let semesterFilter = [selectedSeason];
     if (selectedSeason === 'spring' || selectedSeason === 'autumn') {
       semesterFilter.push('any');
     }
 
-    // Fetch lessons with teacher or assistantTeacher matching
     const lessons = await Lesson.find({
       $or: [{ 'teacher.email': teacher.email }, { 'assistantTeacher.email': teacher.email }],
       schoolYear: yearIntervals,
       recommendedSemester: { $in: semesterFilter },
     });
 
-    console.log('lessons', lessons);
     return res.status(200).json({ lessons });
   } catch (error) {
     console.error('Error fetching lessons:', error);

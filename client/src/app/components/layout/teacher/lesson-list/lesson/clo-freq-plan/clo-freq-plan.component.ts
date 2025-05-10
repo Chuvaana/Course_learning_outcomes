@@ -463,8 +463,6 @@ export class CloFreqPlanComponent implements OnInit {
         return;
       }
     });
-    console.log(result);
-
     return warn;
   }
 
@@ -491,6 +489,5 @@ export class CloFreqPlanComponent implements OnInit {
           });
       }
     }
-    console.log('All assessment data:', data);
   }
 }

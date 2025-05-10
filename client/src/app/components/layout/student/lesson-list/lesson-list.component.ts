@@ -66,7 +66,6 @@ export class LessonListComponent implements OnInit {
   ngOnInit(): void {
     this.studentCode = localStorage.getItem('studentCode') || '';
 
-    // Load both schoolYear and season in parallel and wait for them
     forkJoin({
       schoolYear: this.confService.getConfig('School_year'),
       season: this.confService.getConfig('season'),
@@ -76,7 +75,6 @@ export class LessonListComponent implements OnInit {
       }
       if (season) {
         this.selectedSeason = season.itemValue;
-        console.log(this.selectedSeason);
       }
 
       this.readData(
@@ -84,7 +82,6 @@ export class LessonListComponent implements OnInit {
         this.selectedInterval,
         this.selectedSeason
       );
-      // Now fetch teacher lessons after both values are set
     });
 
     this.generateYearIntervals(
@@ -131,7 +128,7 @@ export class LessonListComponent implements OnInit {
     for (let year = startYear; year < endYear; year++) {
       this.yearIntervals.push(`${year}-${year + 1}`);
     }
-    this.selectedInterval = this.yearIntervals[0]; // Default selection
+    this.selectedInterval = this.yearIntervals[0];
   }
 
   addLesson() {

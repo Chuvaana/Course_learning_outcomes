@@ -188,16 +188,23 @@ export class LessonAssessmentComponent {
           });
         });
 
-        // Update studentRow.points with values from pointMap
         this.tabs.forEach((tab: any) => {
           tab.content.forEach((studentRow: any) => {
+            let total = 0;
             studentRow.points.forEach((point: any) => {
               const key = `${tab.id}_${point.subMethodId}`;
               const studentPoints = pointMap.get(key);
               if (studentPoints && studentPoints.has(studentRow.studentId)) {
                 point.point = studentPoints.get(studentRow.studentId);
+                total += studentPoints.get(studentRow.studentId) || 0;
               }
             });
+            studentRow.totalPoint += total;
+            studentRow.percentage = +(
+              (studentRow.totalPoint / tab.totalPoint) *
+              100
+            ).toFixed(2);
+            studentRow.letterGrade = this.getLetterGrade(studentRow.percentage);
           });
         });
       });
@@ -250,7 +257,6 @@ export class LessonAssessmentComponent {
       convertData.push(excelData);
     });
 
-    console.log(convertData);
     const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(convertData);
     const workbook: XLSX.WorkBook = {
       Sheets: { data: worksheet },

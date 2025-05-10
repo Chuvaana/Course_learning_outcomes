@@ -111,9 +111,6 @@ exports.getGradeByFilter = async (req, res) => {
     if (weekDay) filter.weekDay = weekDay;
     if (type) filter.type = type;
     if (time) filter.time = time;
-    console.log('type:' + type);
-    console.log('filter: ' + filter.type);
-
     const attendanceRecords = await Grade.find(filter).populate('studentGrades.studentId', 'studentName studentCode');
     res.json(attendanceRecords);
   } catch (error) {
