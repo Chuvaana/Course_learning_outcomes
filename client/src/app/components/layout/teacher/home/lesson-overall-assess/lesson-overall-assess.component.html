@@ -16,12 +16,18 @@
       <ng-container *ngFor="let tab of tabs">
         <th class="table-header">{{ tab.title }}</th>
       </ng-container>
+      <!-- <th class="table-header">Нийт оноо</th>
+      <th class="table-header">Дундаж оноо</th>
+      <th class="table-header">Дундаж хувь</th> -->
     </tr>
     <tr>
       <th colspan="2">Авбал зохих нийт оноо</th>
       <ng-container *ngFor="let tab of tabs">
         <th>{{ tab.totalPoint }}</th>
       </ng-container>
+      <!-- <th>100</th>
+      <th>10</th>
+      <th>100</th> -->
     </tr>
   </ng-template>
 
@@ -32,6 +38,9 @@
       <ng-container *ngFor="let tab of tabs">
         <td>{{ getStudentLetterGrade(student.id, tab.id) }}</td>
       </ng-container>
+      <!-- <td>{{ student.totalPoint }}</td>
+      <td>{{ student.averagePoint }}</td>
+      <td>{{ student.averagePercent }}%</td> -->
     </tr>
   </ng-template>
 
@@ -72,7 +81,6 @@
   </ng-template>
 </p-table>
 
-<!-- Графикууд -->
 <div class="charts-wrapper" *ngIf="tabsReady">
   <h3 class="chart-title">
     C ба түүнээс дээш үнэлгээтэй оюутны тоо (Bar Chart)

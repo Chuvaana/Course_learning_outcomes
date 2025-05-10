@@ -10,6 +10,7 @@
     <tr>
       <td>{{ row.label }}</td>
       <td
+        style="text-align: center"
         *ngFor="let clo of cloList"
         [ngStyle]="getCellStyle(row.values[clo], row.type)"
       >
