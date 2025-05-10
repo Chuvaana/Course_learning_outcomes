@@ -1,57 +1,80 @@
 <div>
   <p-toast />
-  <div style="font-size: 50px; margin-left: 5%; margin-top: 20px">
-    <span>Сурагч бүртгэх</span>
+  <div style="font-size: 30px; margin-left: 5%; margin-top: 30px; font-weight: bold">
+    <span>Оюутны ирцийн оноо бүртгэх</span>
   </div>
   <div></div>
-  <div
-    style="
+  <div style="
       display: flex;
       justify-content: space-between;
       padding: 0px 10%;
       margin-top: 50px;
-    "
-  >
+    ">
     <div class="action-btn">
-      <p-fileupload
-        mode="basic"
-        chooseLabel="Choose"
-        chooseIcon="pi pi-upload"
-        name="file"
-        accept=".xls,.xlsx"
-        (onSelect)="onFileChange($event)"
-      />
+      <p-fileupload mode="basic" chooseLabel="Choose" chooseIcon="pi pi-upload" name="file" accept=".xls,.xlsx"
+        (onSelect)="onFileChange($event)" />
     </div>
     <div class="action-btn">
-      <p-dropdown
-        id="id"
-        formControlName="branch"
-        [options]="branches"
-        optionLabel="name"
-        placeholder="Select a branch"
-        (onChange)="onChangeBranch($event.value)"
-      ></p-dropdown>
+      <p-dropdown [options]="weekdays" [(ngModel)]="selectedWeekday" (onChange)="onSelectionChange()"
+        placeholder="Гариг">
+      </p-dropdown>
+    </div>
+    <div class="action-btn">
+      <p-dropdown [options]="classTypes" [(ngModel)]="selectedClassType" (onChange)="onSelectionChange()"
+        placeholder="Төрөл">
+      </p-dropdown>
+    </div>
+    <div class="action-btn">
+      <p-dropdown [options]="times" [(ngModel)]="selectedTimes" (onChange)="onSelectionChange()" placeholder="Цаг">
+      </p-dropdown>
+    </div>
+    <div class="action-btn">
+      <p-dropdown [(ngModel)]="branch" [options]="branches" optionLabel="label" placeholder="Хичээлийн 7 хоног"
+        (onChange)="onChangeBranch($event.value)" id="branch"></p-dropdown>
     </div>
     <div class="action-btn">
       <p-button mat-raised-button (click)="submit()">Хадгалах</p-button>
     </div>
   </div>
   <div class="table-container">
-    <table *ngIf="tableData.length > 0" class="custom-table">
-      <thead>
-        <tr>
-          <th>#</th>
-          <!-- Row count header -->
-          <th *ngFor="let header of tableData[0]">{{ header }}</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let row of tableData.slice(1); let i = index">
-          <td>{{ i + 1 }}</td>
-          <!-- Row count -->
-          <td *ngFor="let cell of row">{{ cell }}</td>
-        </tr>
-      </tbody>
-    </table>
+    <div>
+      <p-table [value]="attendanceRecords" class="custom-table">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>№</th>
+            <th>Оюутан</th>
+            <th>{{ branch.label }}</th>
+            <th>Нийт</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-record let-ri="rowIndex">
+          <tr>
+            <td>{{ ri + 1 }}</td>
+            <td>{{ record.student.code }} - {{ record.student.name }}</td>
+            <td>
+              <p-checkbox [(ngModel)]="record.attendance[branch.value]" [binary]="true" [disabled]="true"></p-checkbox>
+            </td>
+            <td>{{ getAttendanceSum(record) }}</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+    <div style="margin-left: 10px;">
+      <p-table *ngIf="tableData.length > 0" [value]="tableData.slice(1)" class="custom-table">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>№</th>
+            <th *ngFor="let header of tableData[0]">{{ header }}</th>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-row let-i="rowIndex">
+          <tr>
+            <td>{{ i + 1 }}</td>
+            <td *ngFor="let cell of row">{{ cell }}</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
   </div>
 </div>

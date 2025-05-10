@@ -2,6 +2,7 @@ import { Component, Inject } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
+  FormsModule,
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
@@ -12,8 +13,24 @@ import { PasswordModule } from 'primeng/password';
 import { ButtonModule } from 'primeng/button';
 import { CommonModule } from '@angular/common';
 import { FileUploadModule } from 'primeng/fileupload';
-import { MessageService } from 'primeng/api';
+import { MessageService, SelectItem } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
+import { SharedDictService } from '../../../../shared';
+import { AttendanceService } from '../../../../../../../services/attendanceService';
+import { StudentService } from '../../../../../../../services/studentService';
+import { CheckboxModule } from 'primeng/checkbox';
+import { TableModule } from 'primeng/table';
+
+
+interface AttendanceRecord {
+  student: {
+    name: string;
+    code: string;
+    studentId: string;
+  };
+  attendance: { [weekNumber: string]: boolean }; // Week number as key, attendance status as value
+}
+
 
 @Component({
   selector: 'app-attendance-import',
@@ -26,6 +43,9 @@ import { ToastModule } from 'primeng/toast';
     CommonModule,
     FileUploadModule,
     ToastModule,
+    FormsModule,
+    CheckboxModule,
+    TableModule,
   ],
   providers: [MessageService],
   templateUrl: './attendance-import.component.html',
@@ -33,7 +53,9 @@ import { ToastModule } from 'primeng/toast';
 })
 export class AttendanceImportComponent {
   studentForm: FormGroup;
-  branches: any[] = [];
+  weekdays: SelectItem[] = [];
+  classTypes: SelectItem[] = [];
+
   departments: any[] = [];
 
   error = 'ERROR';
@@ -41,20 +63,59 @@ export class AttendanceImportComponent {
   firstType = true;
   selectedBranch: string = '';
   filteredDepartments = [];
-  onlyName: string[] = []; // Define the type explicitly
-  onlyId: string[] = [];
-  onlyStudentName: string[] = [];
-  onlyPassword: string[] = [];
   onlyEmail: string[] = [];
-  onlyBranch: string[] = [];
   studentAllData: string[] = [];
+  attendanceRecords: any[] = [];
   tableData: any[][] = [];
   branchId: any;
+  lessonId: any;
+  students: any[] = [];
+  branch = {
+    value: 'I',
+    label: 'I-р долоо хоног',
+  };
 
+  startDate!: Date;
+
+  selectedWeekday: string = 'Monday';
+  selectedClassType: 'alec' | 'bsem' | 'clab' = 'alec';
+  selectedTimes: number = 1;
+  branches = [
+    { value: 'I', label: 'I-р долоо хоног' },
+    { value: 'II', label: 'II-р долоо хоног' },
+    { value: 'III', label: 'III-р долоо хоног' },
+    { value: 'IV', label: 'IV-р долоо хоног' },
+    { value: 'V', label: 'V-р долоо хоног' },
+    { value: 'VI', label: 'VI-р долоо хоног' },
+    { value: 'VII', label: 'VII-р долоо хоног' },
+    { value: 'VIII', label: 'VIII-р долоо хоног' },
+    { value: 'IX', label: 'IX-р долоо хоног' },
+    { value: 'X', label: 'X-р долоо хоног' },
+    { value: 'XI', label: 'XI-р долоо хоног' },
+    { value: 'XII', label: 'XII-р долоо хоног' },
+    { value: 'XIII', label: 'XIII-р долоо хоног' },
+    { value: 'XIV', label: 'XIV-р долоо хоног' },
+    { value: 'XV', label: 'XV-р долоо хоног' },
+    { value: 'XVI', label: 'XVI-р долоо хоног' },
+  ];
+
+  times = [
+    { value: 1, label: '1-р цаг' },
+    { value: 2, label: '2-р цаг' },
+    { value: 3, label: '3-р цаг' },
+    { value: 4, label: '4-р цаг' },
+    { value: 5, label: '5-р цаг' },
+    { value: 6, label: '6-р цаг' },
+    { value: 7, label: '7-р цаг' },
+    { value: 8, label: '8-р цаг' },
+  ];
   constructor(
     private fb: FormBuilder,
     private dialog: MatDialog,
     private msgService: MessageService,
+    private shared: SharedDictService,
+    private studentService: StudentService,
+    private attendanceService: AttendanceService,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {
     this.studentForm = this.fb.group({
@@ -75,8 +136,29 @@ export class AttendanceImportComponent {
   }
 
   ngOnInit(): void {
+    this.weekdays = [
+      { label: 'Даваа', value: 'Monday' },
+      { label: 'Мягмар', value: 'Tuesday' },
+      { label: 'Лхагва', value: 'Wednesday' },
+      { label: 'Пүрэв', value: 'Thursday' },
+      { label: 'Баасан', value: 'Friday' },
+    ];
     this.loadBranches();
-    console.log('popup data.lessonId : '+ this.data.lessonId);
+    console.log('popup data.lessonId : ' + this.data.lessonId);
+
+    this.lessonId = this.data.lessonId;
+
+    this.shared.getDictionary(this.lessonId, true).subscribe((res) => {
+      this.classTypes = res;
+
+      this.attendanceService
+        .getConfig('First_day_of_school')
+        .subscribe((res) => {
+          if (res) {
+            this.startDate = new Date(res.itemValue);
+          }
+        });
+    });
   }
 
   loadBranches(): void {
@@ -89,12 +171,7 @@ export class AttendanceImportComponent {
   }
 
   onFileChange(event: any) {
-    this.onlyName = []; // Define the type explicitly
-    this.onlyId = [];
-    this.onlyStudentName = [];
-    this.onlyPassword = [];
     this.onlyEmail = [];
-    this.onlyBranch = [];
     const file = event.files[0];
     if (!file) {
       console.error('No file selected');
@@ -110,8 +187,10 @@ export class AttendanceImportComponent {
 
       const sheetName: string = workbook.SheetNames[0];
       const worksheet: XLSX.WorkSheet = workbook.Sheets[sheetName];
-
       this.tableData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+      this.tableData.map((e : any) =>{
+        e.splice(0, 1);
+      });
       // console.log(this.tableData);
       this.checkData(this.tableData);
     };
@@ -122,90 +201,171 @@ export class AttendanceImportComponent {
   checkData(data: any) {
     data.map((e: any, index: any) => {
       if (index > 0) {
-        this.onlyName.push(e[1]);
-        this.onlyId.push(e[0]);
-        this.onlyStudentName.push(e[1].substring(2, 6));
-        this.onlyPassword.push(e[0].substring(6, 10));
-        this.onlyEmail.push(e[0] + '@must.edu.mn');
+        // this.onlyEmail.push(e[0].toUpperCase());
+        this.onlyEmail.push(e[1].slice(0, 10));
       }
     });
-    console.log(this.onlyName);
-    console.log(this.onlyId);
-    console.log(this.onlyStudentName);
-    console.log(this.onlyPassword);
     console.log(this.onlyEmail);
-    console.log(this.onlyBranch);
   }
 
   openPopup() {
-    // this.dialog.open(TeacherComponent, {
-    //   width: '800px',
-    //   height: '600px',
-    // });
   }
 
   submit() {
-    for (let i = 0; i < this.onlyName.length; i++) {
-      const studentData = {
-        name: this.onlyName[i],
-        id: this.onlyId[i],
-        userName: this.onlyName[i],
-        email: this.onlyEmail[i],
-        password: this.onlyPassword[i],
-        branch: this.branchId,
+    const currentWeek = this.branch.value;
+      const lessonId = this.lessonId;
+      const attendanceData = {
+        lessonId: lessonId,
+        weekDay: this.selectedWeekday,
+        type: this.selectedClassType,
+        time: this.selectedTimes,
+        weekNumber: currentWeek,
+        attendance: this.attendanceRecords.flatMap((record) =>
+          Object.keys(record.attendance)
+            .flatMap((date) => {
+              return this.onlyEmail
+                .filter((i: any) => record.student.code === i && date === currentWeek)
+                .map(() => ({
+                  studentId: record.student.studentId,
+                  status: true,
+                }));
+            })
+        ),
       };
 
-      // this.studentService.getStudentId(studentData.id).subscribe(
-      //   (res) => {
-      //     this.msgService.add({
-      //       severity: 'success',
-      //       summary: 'Амжилттай',
-      //       detail: `Оюутан (${studentData.name}) бүртгэлтэй байна.`,
-      //     });
-      //   },
-      //   (error) => {
-      //     const errorMsg = error?.error?.message || '';
-
-      //     if (
-      //       (error.status === 404 && errorMsg === 'Student not found') ||
-      //       (error.status === 400 && errorMsg === 'Student ID is required')
-      //     ) {
-      //       this.registerData(studentData);
-      //     } else {
-      //       this.msgService.add({
-      //         severity: 'error',
-      //         summary: 'Алдаа',
-      //         detail: `Оюутан (${studentData.name}) бүртгэхэд алдаа гарлаа.`,
-      //       });
-      //     }
-      //   }
-      // );
-    }
+      this.attendanceService.createAttendance(attendanceData).subscribe(
+        (response) => {
+          this.onSelectionChange();
+          this.msgService.add({
+            severity: 'success',
+            summary: 'Амжилттай',
+            detail: 'Амжилттай хадгалагдлаа',
+          });
+        },
+        (error) => {
+          this.msgService.add({
+            severity: 'error',
+            summary: 'Алдаа',
+            detail: `Алдаа гарлаа: ${error.message}`,
+          });
+        }
+      );
   }
 
   registerData(e: any) {
-    // this.studentService.registerStudent(e).subscribe(
-    //   (data: { message: string; student: any }) => {
-    //     if (data.message) {
-    //     }
-    //     if (data.student) {
-    //       console.log('Teacher created:', data.student);
-    //     }
-    //   },
-    //   (error) => {
-    //     // Handle error response
-    //     let errorMessage = 'Error registering teacher';
-
-    //     if (error && error.error && error.error.message) {
-    //       errorMessage = error.error.message;
-    //     }
-    //     console.error('Error:', error);
-    //   }
-    // );
   }
 
   onChangeBranch(e: any) {
-    this.branchId = e.id;
+    this.branchId = e.value;
   }
 
+
+  onSelectionChange(): void {
+
+    this.attendanceService
+      .getAttendance(
+        this.lessonId,
+        this.selectedWeekday,
+        this.selectedClassType,
+        this.selectedTimes
+      )
+      .subscribe((res: any) => {
+        this.attendanceRecords = this.generateAttendance(res);
+        if (this.attendanceRecords.length == 0) {
+          this.studentService
+            .getStudentByClasstypeAndDayTime(
+              this.selectedClassType,
+              this.selectedWeekday,
+              this.selectedTimes
+            )
+            .subscribe((students: any[]) => {
+              this.students = students;
+              this.attendanceRecords = this.generateAttendanceRecords();
+            });
+        }
+      });
+  }
+
+
+
+  generateAttendance(data: any): AttendanceRecord[] {
+    const studentAttendanceMap: { [studentId: string]: AttendanceRecord } = {};
+
+    data.forEach((weekData: any) => {
+      weekData.attendance.forEach((item: any) => {
+        if (!studentAttendanceMap[item.studentId.id]) {
+          studentAttendanceMap[item.studentId.id] = {
+            student: {
+              name: item.studentId.studentName,
+              code: item.studentId.studentCode,
+              studentId: item.studentId.id,
+            },
+            attendance: {},
+          };
+        }
+
+        studentAttendanceMap[item.studentId.id].attendance[
+          weekData.weekNumber
+        ] = item.status;
+      });
+    });
+
+    return Object.values(studentAttendanceMap);
+  }
+  generateAttendanceRecords() {
+    let dates = this.getAllWeeks().sort();
+    return this.students.map((student) => ({
+      student: {
+        name: student.studentName,
+        code: student.studentCode,
+        studentId: student.id,
+      },
+      attendance: dates.reduce((acc, date) => ({ ...acc, [date]: false }), {}),
+    }));
+  }
+
+
+  getAllWeeks() {
+    let today = new Date();
+
+    let diffInTime = today.getTime() - this.startDate.getTime();
+    let diffInDays = Math.floor(diffInTime / (1000 * 3600 * 24));
+    let currentWeek = Math.floor(diffInDays / 7) + 1;
+
+    let weeks = [];
+    for (let week = 1; week <= currentWeek; week++) {
+      weeks.push(this.toRoman(week));
+    }
+
+    return weeks;
+  }
+
+  toRoman(num: number): string {
+    const romanNumerals = [
+      'I',
+      'II',
+      'III',
+      'IV',
+      'V',
+      'VI',
+      'VII',
+      'VIII',
+      'IX',
+      'X',
+      'XI',
+      'XII',
+      'XIII',
+      'XIV',
+      'XV',
+      'XVI',
+    ];
+    return romanNumerals[num - 1] || '';
+  }
+
+  getAttendanceSum(record: AttendanceRecord): number {
+    return Object.values(record.attendance).reduce(
+      (sum, val) => sum + (val ? 1 : 0),
+      0
+    );
+  }
 }
