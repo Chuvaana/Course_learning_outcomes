@@ -188,7 +188,8 @@ export class AttendanceImportComponent {
       const sheetName: string = workbook.SheetNames[0];
       const worksheet: XLSX.WorkSheet = workbook.Sheets[sheetName];
       this.tableData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-      this.tableData.map((e : any) =>{
+
+      this.tableData.map((e: any) => {
         e.splice(0, 1);
       });
       // console.log(this.tableData);
@@ -199,20 +200,45 @@ export class AttendanceImportComponent {
   }
 
   checkData(data: any) {
+    const failedEmails: any[] = [];
+    let wrongInData = true;
     data.map((e: any, index: any) => {
       if (index > 0) {
-        // this.onlyEmail.push(e[0].toUpperCase());
-        this.onlyEmail.push(e[1].slice(0, 10));
+        const email = e[1].toUpperCase();
+        const checkEmail = email.slice(10);
+        if (checkEmail !== '@MUST.EDU.MN') {
+          failedEmails.push(e[1]);
+        } else if (checkEmail === '@MUST.EDU.MN'){
+          this.onlyEmail.push(email.slice(0, 10));
+          wrongInData = false;
+        }
       }
     });
-    console.log(this.onlyEmail);
+    if(wrongInData){
+      this.msgService.add({
+        severity: 'error',
+        summary: 'Алдаа',
+        detail: 'Алдаатай файл оруулсан байна',
+      });
+      this.tableData = [];
+      this.onlyEmail = [];
+    }
+    if (failedEmails.length > 0 && !wrongInData) {
+      this.msgService.add({
+        severity: 'warn',
+        summary: 'Анхааруулга',
+        detail: 'Ирцийн оруулсан файлаас дараах оюутны мэйл хаяг алдаатай бичигдсэн байна.' + failedEmails,
+      });
+    }
   }
 
   openPopup() {
   }
 
   submit() {
-    const currentWeek = this.branch.value;
+    console.log
+    if (this.onlyEmail.length > 0) {
+      const currentWeek = this.branch.value;
       const lessonId = this.lessonId;
       const attendanceData = {
         lessonId: lessonId,
@@ -250,6 +276,13 @@ export class AttendanceImportComponent {
           });
         }
       );
+    } else {
+      this.msgService.add({
+        severity: 'warn',
+        summary: 'Анхааруулга',
+        detail: 'Ирцийн файл оруулна уу!',
+      });
+    }
   }
 
   registerData(e: any) {
@@ -258,7 +291,6 @@ export class AttendanceImportComponent {
   onChangeBranch(e: any) {
     this.branchId = e.value;
   }
-
 
   onSelectionChange(): void {
 
