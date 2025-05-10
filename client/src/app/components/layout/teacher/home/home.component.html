@@ -71,7 +71,10 @@
       </p-tabpanel>
       <p-tabpanel value="6">
         <app-lesson-direct-indirect
+          [pointPlan]="assessPlan"
+          [cloPlan]="cloPlan"
           [lessonId]="lessonId"
+          [students]="students"
         ></app-lesson-direct-indirect>
       </p-tabpanel>
       <p-tabpanel value="7">

@@ -221,15 +221,21 @@ export class AssessProcessService {
         processClo(weekAndCloSem, 'bsem');
         processClo(weekAndCloLab, 'clab');
 
-        adata.map((item: any) => {
-          points.map((po: any) => {
-            if (po.cloId === item.cloId) {
-              item.sumPoints.map((sp: any) => {
-                sp.statusPoint = (sp.statusPoint * po.point) / item.avahOnoo;
-              });
-              item.cloId = po.cloId;
-            }
-          });
+        adata.forEach((item: any) => {
+          const match = points.find((po: any) => po.cloId === item.cloId);
+
+          if (match) {
+            item.sumPoints.forEach((sp: any) => {
+              if (item.avahOnoo > 0 && match.point > 0) {
+                sp.statusPoint = (sp.statusPoint * match.point) / item.avahOnoo;
+              }
+            });
+          } else {
+            // Хэрвээ тохирох cloId байхгүй бол бүгдийг 0 болгоно
+            item.sumPoints.forEach((sp: any) => {
+              sp.statusPoint = 0;
+            });
+          }
         });
 
         return adata;

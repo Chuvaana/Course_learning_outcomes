@@ -3,6 +3,9 @@ import { Component, Input } from '@angular/core';
 import { TableModule } from 'primeng/table';
 import { ProgressPollService } from '../../../../../services/progressPollService';
 import { CLOService } from '../../../../../services/cloService';
+import { AssessProcessService } from '../lesson-assessment/assessProcess';
+import { forkJoin } from 'rxjs';
+import { CloPointPlanService } from '../../../../../services/cloPointPlanService';
 
 @Component({
   selector: 'app-lesson-direct-indirect',
@@ -13,16 +16,27 @@ import { CLOService } from '../../../../../services/cloService';
 })
 export class LessonDirectIndirectComponent {
   @Input() lessonId!: string;
+  @Input() pointPlan: any;
+  @Input() cloPlan: any;
+  @Input() students: any;
   cloListObj: any[] = [];
   cloList: any[] = [];
   data: any[] = [];
   cloData: any[] = [];
   summaryData: any[] = [];
+  tabs: {
+    id: string;
+    title: string;
+    totalPoint: number;
+    content: any;
+  }[] = [];
 
-  // cloList = ['CLO-1', 'CLO-2', 'CLO-3', 'CLO-4', 'CLO-5', 'CLO-6', 'CLO-7'];
+  averagePercentages: any;
 
   constructor(
     private service: ProgressPollService,
+    private assessProcess: AssessProcessService,
+    private cloPointPlanService: CloPointPlanService,
     private cloService: CLOService
   ) {}
 
@@ -32,6 +46,42 @@ export class LessonDirectIndirectComponent {
       res.map((clo: any) => {
         this.cloList.push(clo.id);
       });
+    });
+    this.cloPointPlanService.getPointPlan(this.lessonId).subscribe((res) => {
+      if (res.length != 0) {
+        res.map((item: any) => {
+          let totalPoint = 0;
+          item.examPoints.map((exam: any) => {
+            totalPoint += exam.point;
+          });
+          item.procPoints.map((exam: any) => {
+            totalPoint += exam.point;
+          });
+          this.tabs.push({
+            id: item.cloId,
+            title: this.getCloName(item.cloId),
+            totalPoint: totalPoint,
+            content: '',
+          });
+        });
+        if (this.tabs.length) {
+          if (this.students) {
+            this.tabs.forEach((item: any) => {
+              item.content = this.students.map((stu: any) => {
+                return {
+                  studentId: stu.id,
+                  studentCode: stu.studentCode,
+                  studentName: stu.studentName,
+                  totalPoint: 0,
+                  percentage: 0,
+                  letterGrade: '',
+                };
+              });
+            });
+          }
+        }
+        this.readData();
+      }
     });
     this.service.getPollQuesLesson(this.lessonId).subscribe((res: any) => {
       this.data = res;
@@ -98,6 +148,138 @@ export class LessonDirectIndirectComponent {
     });
 
     return result;
+  }
+
+  readData() {
+    forkJoin([
+      this.assessProcess.gradePoint(this.lessonId),
+      this.assessProcess.studentAttPoint(
+        this.lessonId,
+        this.cloList,
+        this.pointPlan,
+        this.cloPlan
+      ),
+      this.assessProcess.studentActivityPoint(
+        this.lessonId,
+        this.pointPlan,
+        this.cloPlan
+      ),
+    ]).subscribe(([gradeData, attData, actData]) => {
+      this.tabs.forEach((item: any) => {
+        gradeData.forEach((grades: any) => {
+          if (item.id === grades.cloId) {
+            type StudentPoint = {
+              studentId: string;
+              point: number;
+            };
+
+            const grouped = grades.sumPoints.reduce(
+              (acc: Record<string, number>, curr: StudentPoint) => {
+                acc[curr.studentId] = (acc[curr.studentId] || 0) + curr.point;
+                return acc;
+              },
+              {}
+            );
+
+            item.content.forEach((studentRow: any) => {
+              const total = grouped[studentRow.studentId] || 0;
+
+              studentRow.totalPoint = total;
+              studentRow.percentage = +(
+                (total / item.totalPoint) *
+                100
+              ).toFixed(2);
+              studentRow.letterGrade = this.getLetterGrade(
+                studentRow.percentage
+              );
+            });
+          }
+        });
+      });
+      this.tabs.forEach((item: any) => {
+        attData.forEach((attendance: any) => {
+          if (item.id === attendance.cloId) {
+            item.content.forEach((studentRow: any) => {
+              attendance.sumPoints.map((poi: any) => {
+                if (poi.studentId == studentRow.studentId) {
+                  studentRow.totalPoint += poi.statusPoint;
+                }
+              });
+              studentRow.percentage = +(
+                (studentRow.totalPoint / item.totalPoint) *
+                100
+              ).toFixed(2);
+              studentRow.letterGrade = this.getLetterGrade(
+                studentRow.percentage
+              );
+            });
+          }
+        });
+      });
+      this.tabs.forEach((item: any) => {
+        actData.forEach((activity: any) => {
+          if (item.id === activity.cloId) {
+            item.content.forEach((studentRow: any) => {
+              activity.sumPoints.map((poi: any) => {
+                if (poi.studentId == studentRow.studentId) {
+                  studentRow.totalPoint += poi.statusPoint;
+                }
+              });
+              studentRow.percentage = +(
+                (studentRow.totalPoint / item.totalPoint) *
+                100
+              ).toFixed(2);
+              studentRow.letterGrade = this.getLetterGrade(
+                studentRow.percentage
+              );
+            });
+          }
+        });
+      });
+      this.averagePercentages = this.getCloAveragePercentages();
+
+      const percentValues: { [key: string]: number } = {};
+      const gradeValues: { [key: string]: string } = {};
+
+      this.averagePercentages.forEach((item: any) => {
+        percentValues[item.clo] = item.percentage;
+        gradeValues[item.clo] = item.letter;
+      });
+      this.summaryData.push(
+        {
+          label: 'Шууд үнэлгээний дундаж хувь',
+          values: percentValues,
+          type: 'percent',
+        },
+        {
+          label: 'Шалгуур хангасан байдал',
+          values: gradeValues,
+          type: 'grade',
+        }
+      );
+
+      console.log(this.averagePercentages);
+    });
+  }
+
+  getCloAveragePercentages(): {
+    clo: string;
+    percentage: number;
+    letter: string;
+  }[] {
+    return this.tabs.map((tab) => {
+      const students = tab.content || [];
+      const totalPercent = students.reduce((sum: number, student: any) => {
+        return sum + (student.percentage || 0);
+      }, 0);
+      const average = students.length ? totalPercent / students.length : 0;
+      const rounded = +average.toFixed(2);
+      return {
+        clo: tab.id,
+        percentage: rounded,
+        letter: this.getLetterGrade(rounded),
+      };
+    });
   }
 
   getLetterGrade(percent: number): string {

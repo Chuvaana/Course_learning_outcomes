@@ -6,6 +6,7 @@ import { TableModule } from 'primeng/table';
 import { CloPointPlanService } from '../../../../../services/cloPointPlanService';
 import { AssessProcessService } from '../lesson-assessment/assessProcess';
 import { ChartModule } from 'primeng/chart';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-lesson-overall-assess',
@@ -83,9 +84,22 @@ export class LessonOverallAssessComponent {
   }
 
   readData() {
-    this.assessProcess.gradePoint(this.lessonId).subscribe((gradeData) => {
+    forkJoin([
+      this.assessProcess.gradePoint(this.lessonId),
+      this.assessProcess.studentAttPoint(
+        this.lessonId,
+        this.cloList,
+        this.pointPlan,
+        this.cloPlan
+      ),
+      this.assessProcess.studentActivityPoint(
+        this.lessonId,
+        this.pointPlan,
+        this.cloPlan
+      ),
+    ]).subscribe(([gradeData, attData, actData]) => {
       this.tabs.forEach((item: any) => {
-        gradeData.map((grades: any) => {
+        gradeData.forEach((grades: any) => {
           if (item.id === grades.cloId) {
             type StudentPoint = {
               studentId: string;
@@ -100,17 +114,10 @@ export class LessonOverallAssessComponent {
               {}
             );
 
-            const result = Object.entries(grouped).map(
-              ([studentId, totalPoint]) => ({
-                studentId,
-                totalPoint,
-              })
-            );
-
             item.content.forEach((studentRow: any) => {
-              let total = 0;
+              const total = grouped[studentRow.studentId] || 0;
 
-              studentRow.totalPoint = grouped[studentRow.studentId];
+              studentRow.totalPoint = total;
               studentRow.percentage = +(
                 (total / item.totalPoint) *
                 100
@@ -122,65 +129,73 @@ export class LessonOverallAssessComponent {
           }
         });
       });
+      this.tabs.forEach((item: any) => {
+        attData.forEach((attendance: any) => {
+          if (item.id === attendance.cloId) {
+            item.content.forEach((studentRow: any) => {
+              attendance.sumPoints.map((poi: any) => {
+                if (poi.studentId == studentRow.studentId) {
+                  studentRow.totalPoint += poi.statusPoint;
+                }
+              });
+              studentRow.percentage = +(
+                (studentRow.totalPoint / item.totalPoint) *
+                100
+              ).toFixed(2);
+              studentRow.letterGrade = this.getLetterGrade(
+                studentRow.percentage
+              );
+            });
+          }
+        });
+      });
+      this.tabs.forEach((item: any) => {
+        actData.forEach((activity: any) => {
+          if (item.id === activity.cloId) {
+            item.content.forEach((studentRow: any) => {
+              activity.sumPoints.map((poi: any) => {
+                if (poi.studentId == studentRow.studentId) {
+                  studentRow.totalPoint += poi.statusPoint;
+                }
+              });
+              studentRow.percentage = +(
+                (studentRow.totalPoint / item.totalPoint) *
+                100
+              ).toFixed(2);
+              studentRow.letterGrade = this.getLetterGrade(
+                studentRow.percentage
+              );
+            });
+          }
+        });
+      });
     });
-
-    this.assessProcess
-      .studentAttPoint(
-        this.lessonId,
-        this.cloList,
-        this.pointPlan,
-        this.cloPlan
-      )
-      .subscribe((data) => {
-        this.tabs.forEach((item: any) => {
-          data.forEach((attendance: any) => {
-            if (item.id === attendance.cloId) {
-              item.content.forEach((studentRow: any) => {
-                attendance.sumPoints.map((poi: any) => {
-                  if (poi.studentId == studentRow.studentId) {
-                    studentRow.totalPoint += poi.statusPoint;
-                  }
-                });
-                studentRow.percentage = +(
-                  (studentRow.totalPoint / item.totalPoint) *
-                  100
-                ).toFixed(2);
-                studentRow.letterGrade = this.getLetterGrade(
-                  studentRow.percentage
-                );
-              });
-            }
-          });
-        });
-      });
-
-    this.assessProcess
-      .studentActivityPoint(this.lessonId, this.pointPlan, this.cloPlan)
-      .subscribe((data) => {
-        this.tabs.forEach((item: any) => {
-          data.forEach((activity: any) => {
-            if (item.id === activity.cloId) {
-              item.content.forEach((studentRow: any) => {
-                activity.sumPoints.map((poi: any) => {
-                  if (poi.studentId == studentRow.studentId) {
-                    studentRow.totalPoint += poi.statusPoint;
-                  }
-                });
-                studentRow.percentage = +(
-                  (studentRow.totalPoint / item.totalPoint) *
-                  100
-                ).toFixed(2);
-                studentRow.letterGrade = this.getLetterGrade(
-                  studentRow.percentage
-                );
-              });
-            }
-          });
-        });
-      });
 
     setTimeout(() => {
       this.tabsReady = true;
+      if (this.students && this.tabs.length) {
+        this.students.forEach((stu: any) => {
+          let totalPoints = 0;
+          let totalPercentage = 0;
+          let count = 0;
+
+          this.tabs.forEach((tab: any) => {
+            const studentRow = tab.content.find(
+              (s: any) => s.studentId === stu.id
+            );
+            if (studentRow) {
+              totalPoints += studentRow.totalPoint;
+              totalPercentage += studentRow.percentage;
+              count++;
+            }
+          });
+          stu.totalPoint = +totalPoints.toFixed(2);
+          stu.averagePoint = count ? +(totalPoints / count).toFixed(2) : 0;
+          stu.averagePercent = count
+            ? +(totalPercentage / count).toFixed(2)
+            : 0;
+        });
+      }
       this.prepareChartData();
     }, 300);
   }
@@ -264,7 +279,7 @@ export class LessonOverallAssessComponent {
     const clo = this.tabs.find((t) => t.id === cloId);
     if (!clo) return '-';
     const student = clo.content.find((s: any) => s.studentId === studentId);
-    return student?.letterGrade || '-';
+    return student?.letterGrade || '0';
   }
 
   getCloName(cloId: string): string {
