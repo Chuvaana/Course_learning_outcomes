@@ -93,42 +93,40 @@ export class LessonAssessmentComponent {
   }
 
   read() {
-    this.assessProcess
-      .gradePoint(this.lessonId, this.cloList)
-      .subscribe((gradeData) => {
-        this.tabs.forEach((item: any) => {
-          item.content.forEach((studentRow: any) => {
-            let total = 0;
+    this.assessProcess.gradePoint(this.lessonId).subscribe((gradeData) => {
+      this.tabs.forEach((item: any) => {
+        gradeData.map((grades: any) => {
+          if (item.id === grades.cloId) {
+            item.content.forEach((studentRow: any) => {
+              let total = 0;
 
-            studentRow.points.forEach((pointItem: any) => {
-              const grade = gradeData
-                .find((g: any) =>
-                  g.sumPoints.find(
-                    (s: any) =>
-                      s.studentId === studentRow.studentId &&
-                      s.subMethodId === pointItem.subMethodId
-                  )
-                )
-                ?.sumPoints.find(
-                  (s: any) =>
-                    s.studentId === studentRow.studentId &&
-                    s.subMethodId === pointItem.subMethodId
+              studentRow.points.forEach((pointItem: any) => {
+                const grade = grades.sumPoints.find(
+                  (g: any) =>
+                    g.studentId === studentRow.studentId &&
+                    g.subMethodId === pointItem.subMethodId
                 );
 
-              if (grade) {
-                pointItem.point = grade.point;
-                total += grade.point;
-              }
-            });
+                if (grade) {
+                  pointItem.point = grade.point;
+                  total += grade.point;
+                }
+              });
 
-            studentRow.totalPoint = total;
-            studentRow.percentage = +((total / item.totalPoint) * 100).toFixed(
-              2
-            );
-            studentRow.letterGrade = this.getLetterGrade(studentRow.percentage);
-          });
+              studentRow.totalPoint = total;
+              studentRow.percentage = +(
+                (total / item.totalPoint) *
+                100
+              ).toFixed(2);
+              studentRow.letterGrade = this.getLetterGrade(
+                studentRow.percentage
+              );
+            });
+          }
         });
       });
+    });
+
     this.assessProcess
       .studentAttPoint(
         this.lessonId,
@@ -154,13 +152,21 @@ export class LessonAssessmentComponent {
         // Update studentRow.points with values from pointMap
         this.tabs.forEach((tab: any) => {
           tab.content.forEach((studentRow: any) => {
+            let total = 0;
             studentRow.points.forEach((point: any) => {
               const key = `${tab.id}_${point.subMethodId}`;
               const studentPoints = pointMap.get(key);
               if (studentPoints && studentPoints.has(studentRow.studentId)) {
                 point.point = studentPoints.get(studentRow.studentId);
+                total += studentPoints.get(studentRow.studentId) || 0;
               }
             });
+            studentRow.totalPoint += total;
+            studentRow.percentage = +(
+              (studentRow.totalPoint / tab.totalPoint) *
+              100
+            ).toFixed(2);
+            studentRow.letterGrade = this.getLetterGrade(studentRow.percentage);
           });
         });
       });

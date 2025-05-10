@@ -7,7 +7,6 @@ import { BadgeModule } from 'primeng/badge';
 import { InputTextModule } from 'primeng/inputtext';
 import { MenubarModule } from 'primeng/menubar';
 import { RippleModule } from 'primeng/ripple';
-import { AssessmentService } from '../../../../services/assessmentService';
 import { TooltipModule } from 'primeng/tooltip';
 
 @Component({
@@ -30,45 +29,25 @@ export class MenuComponent implements OnInit {
   lessonId: string = '';
   items: MenuItem[] | undefined;
 
-  constructor(
-    private route: ActivatedRoute,
-    private service: AssessmentService,
-    private router: Router
-  ) {}
+  constructor(private route: ActivatedRoute, private router: Router) {}
 
   ngOnInit(): void {
     this.lessonId = this.route.snapshot.paramMap.get('id') || '';
-
     this.items = this.buildInitialMenu();
-    this.service.getAssessmentByLesson(this.lessonId).subscribe((res: any) => {
-      const plansArray =
-        res?.plans?.filter((item: any) => item.methodType === 'PROC') || [];
-
-      const subMenu: MenuItem[] = plansArray.map((plan: any) => ({
-        label: plan.methodName,
-        icon: 'pi pi-graduation-cap',
-        routerLink: ['/main/teacher/lesson', this.lessonId, 'grade', plan._id],
-      }));
-
-      if (subMenu.length > 0) {
-        const newItem: MenuItem = {
-          label: 'Явц',
-          icon: 'pi pi-graduation-cap',
-          items: subMenu,
-        };
-
-        this.items = [...(this.items || []), newItem];
-      }
-    });
   }
 
   logout() {
-    localStorage.clear(); // clear tokens or user info
-    this.router.navigate(['/teacher-login']); // redirect to login
+    localStorage.clear();
+    this.router.navigate(['/teacher-login']);
   }
 
   buildInitialMenu() {
     return [
+      {
+        label: 'Хичээл',
+        icon: 'pi pi-home',
+        routerLink: ['/main/teacher/lessonList'],
+      },
       {
         label: 'Төлөвлөгөө',
         icon: 'pi pi-book',
@@ -133,7 +112,17 @@ export class MenuComponent implements OnInit {
             icon: 'pi pi-graduation-cap',
             routerLink: ['/main/teacher/lesson', this.lessonId, 'activity'],
           },
+          {
+            label: 'QR үүсгэх',
+            icon: 'pi pi-home',
+            routerLink: ['/main/teacher/lesson', this.lessonId, 'qr-code'],
+          },
         ],
+      },
+      {
+        label: 'Дүнгийн бүртгэл',
+        icon: 'pi pi-book',
+        routerLink: ['/main/teacher/lesson', this.lessonId, 'register-grade'],
       },
       {
         label: 'Шалгалт',
@@ -165,11 +154,6 @@ export class MenuComponent implements OnInit {
         label: 'Тайлан',
         icon: 'pi pi-home',
         routerLink: ['/main/teacher/lesson', this.lessonId, 'report'],
-      },
-      {
-        label: 'QR үүсгэх',
-        icon: 'pi pi-home',
-        routerLink: ['/main/teacher/lesson', this.lessonId, 'qr-code'],
       },
     ];
   }
