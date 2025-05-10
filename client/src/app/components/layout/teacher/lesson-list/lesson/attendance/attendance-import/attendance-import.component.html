@@ -1,0 +1,60 @@
+<div>
+  <p-toast />
+  <div style="font-size: 50px; margin-left: 5%; margin-top: 20px">
+    <span>Сурагч бүртгэх</span>
+  </div>
+  <div></div>
+  <div
+    style="
+      display: flex;
+      justify-content: space-between;
+      padding: 0px 10%;
+      margin-top: 50px;
+    "
+  >
+    <div class="action-btn">
+      <p-fileupload
+        mode="basic"
+        chooseLabel="Choose"
+        chooseIcon="pi pi-upload"
+        name="file"
+        accept=".xls,.xlsx"
+        (onSelect)="onFileChange($event)"
+      />
+    </div>
+    <div class="action-btn">
+      <p-dropdown
+        id="id"
+        formControlName="branch"
+        [options]="branches"
+        optionLabel="name"
+        placeholder="Select a branch"
+        (onChange)="onChangeBranch($event.value)"
+      ></p-dropdown>
+    </div>
+    <div class="action-btn">
+      <p-button mat-raised-button (click)="submit()">Хадгалах</p-button>
+    </div>
+    <div class="action-btn">
+      <p-button mat-raised-button (click)="generateForm()">Асуулт үүсгэх</p-button>
+    </div>
+  </div>
+  <div class="table-container">
+    <table *ngIf="tableData.length > 0" class="custom-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <!-- Row count header -->
+          <th *ngFor="let header of tableData[0]">{{ header }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let row of tableData.slice(1); let i = index">
+          <td>{{ i + 1 }}</td>
+          <!-- Row count -->
+          <td *ngFor="let cell of row">{{ cell }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

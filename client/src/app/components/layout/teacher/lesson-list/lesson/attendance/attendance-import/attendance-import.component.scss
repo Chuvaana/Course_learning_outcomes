@@ -1,0 +1,92 @@
+table {
+  width: 80%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+th, td {
+  padding: 8px;
+  border: 1px solid #ccc;
+  text-align: left;
+}
+
+th {
+  background-color: #f4f4f4;
+}
+
+.row {
+  display: flex;
+  gap: 10px; /* Spacing between columns */
+}
+
+.col {
+  flex: 1; /* Equal width columns */
+}
+
+.col:nth-child(1) {
+  flex: 2; /* Make the first column wider if needed */
+}
+.container {
+  display: flex;
+  justify-content: space-between; /* Spread elements evenly */
+  align-items: center; /* Align items vertically */
+  gap: 10px; /* Add spacing between items (optional) */
+}
+
+.custom-table {
+  width: 90%;
+  border-collapse: collapse; /* Remove lines */
+}
+
+.custom-table th,
+.custom-table td {
+  text-align-last: center;
+  background-color: #f7fcff; /* Light gray background */
+}
+
+.custom-table th {
+  background-color: #afd2ff; /* Slightly darker gray for header */
+  font-weight: bold;
+}
+
+.custom-table tr:nth-child(even) td {
+  background-color: #dbecff; /* Alternate row color */
+}
+
+.custom-table tr:hover td {
+  background-color: #e6e6e6; /* Hover effect */
+}
+
+.custom-table th, .custom-table td {
+  border: none; /* Remove table lines */
+}
+
+
+button{
+  color: white;
+  border-radius: 30px;
+  width: 140px;
+  height: 40px;
+  background: #0A0065;
+  border: 0px;
+  font-size: medium;
+}
+
+button:hover{
+  background-color: #6e5ff5; /* Hover effect */
+  border: solid 1px #0A0065;
+  transition: 500ms;
+}
+
+.action-btn{
+  text-align: center;
+  align-content: center;
+  width: 200px;
+  height: 40px;
+}
+
+.table-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 2%;
+}
