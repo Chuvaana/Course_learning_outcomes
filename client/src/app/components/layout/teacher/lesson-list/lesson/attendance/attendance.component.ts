@@ -12,6 +12,8 @@ import { ToastModule } from 'primeng/toast';
 import { AttendanceService } from '../../../../../../services/attendanceService';
 import { StudentService } from '../../../../../../services/studentService';
 import { SharedDictService } from '../../../shared';
+import { MatDialog } from '@angular/material/dialog';
+import { AttendanceImportComponent } from './attendance-import/attendance-import.component';
 
 interface AttendanceRecord {
   student: {
@@ -66,8 +68,9 @@ export class AttendanceComponent {
     private route: ActivatedRoute,
     private attendanceService: AttendanceService,
     private msgService: MessageService,
-    private shared: SharedDictService
-  ) {}
+    private shared: SharedDictService,
+    private dialog: MatDialog
+  ) { }
 
   ngOnInit() {
     this.weekdays = [
@@ -323,5 +326,14 @@ export class AttendanceComponent {
         }
       );
     }
+  }
+
+  importScreen(): void {
+    this.dialog.open(AttendanceImportComponent, {
+      width: '60vw',
+      height: '50vh',
+      maxWidth: 'none',
+      data: { lessonId: this.lessonId }
+    });
   }
 }

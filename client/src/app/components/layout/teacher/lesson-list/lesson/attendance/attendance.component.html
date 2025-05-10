@@ -37,6 +37,13 @@
       (click)="togglePreviousWeeks()"
     ></button>
     <button pButton type="button" label="Хадгалах" (click)="save()"></button>
+    <button
+      pButton
+      type="button"
+      *ngIf="!showPreviousWeeks"
+      label="Ирцийн оноо оруулах"
+      (click)="importScreen()"
+    ></button>
   </div>
 
   <p-table [value]="attendanceRecords">
