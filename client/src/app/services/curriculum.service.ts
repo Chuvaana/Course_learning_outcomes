@@ -114,4 +114,8 @@ export class CurriculumService {
   getCloList(id: string): Observable<any> {
     return this.http.get(`${this.apiUrl}/clos/${id}`);
   }
+
+  getPollQuesLesson(lessonId: string) {
+    return this.http.get(`${this.apiUrl}/studentsSendPollQues/lesson/${lessonId}`);
+  }
 }

@@ -367,11 +367,6 @@ export class PdfMainService {
       return headersData; // flatMap works to flatten the headers into a single array
     });
 
-    console.log('pdfMain : ' + dynamicHeaders);
-    console.log('pdfMain : ' + dynamicTopHeaders);
-    console.log('pdfMain : ' + dynamicSubHeaders);
-    console.log('pdfMain : ' + cloLecColumn);
-    console.log('pdfMain : ' + cloLabColumn);
     function getStyleByMethodType(methodType: string): string {
       switch (methodType) {
         case 'PARTI':
@@ -845,11 +840,11 @@ export class PdfMainService {
       if (!data || !data.assessPlan || !data.content) return;
 
       let assessPlanAssessment: any[] = [];
-      let contentAssessment: any[]  = [];
-      if(data.assessPlan.length > 0){
+      let contentAssessment: any[] = [];
+      if (data.assessPlan.length > 0) {
         assessPlanAssessment = data.assessPlan;
         contentAssessment = data.content;
-      }else{
+      } else {
         return;
       }
       const assessPlanAssessmentCount = assessPlanAssessment.length + 5;
@@ -921,7 +916,7 @@ export class PdfMainService {
 
       // Append to contentAssessment
       contentAssessmentArray.push(
-        { text: `Хүснэгт ${dataIndex + 5}. ${data.title}`, style: 'bodyRightInBold', margin: [20, 20, 20, 5] as [number, number, number, number]},
+        { text: `Хүснэгт ${dataIndex + 5}. ${data.title}`, style: 'bodyRightInBold', margin: [20, 20, 20, 5] as [number, number, number, number] },
         {
           table: {
             headerRows: 0, // Don't repeat headers on new pages
@@ -935,6 +930,281 @@ export class PdfMainService {
         { text: '', pageBreak: 'before' as const },
       );
     });
+
+    const overallWidths: string[] = ['5%', '10%', '10%'];
+    const cloListData: any[] = [];
+    const cloData = daty[2];
+    let countOverallNotZero = 0;
+    let overallStudentCount = 0;
+    cloData.map((row: { content: any; assessPlan: any; id: any; title: any; cloName: any; }, index: any) => {
+      overallStudentCount = row.content.length;
+      if (row.assessPlan.length > 0) {
+        index = index + 1;
+        countOverallNotZero = countOverallNotZero + 1;
+        const data = {
+          cloName: 'CLO ' + index,
+          name: row.title,
+          code: row.id,
+          order: index,
+        }
+        cloListData.push(data);
+      }
+    });
+
+    const overallPercent = 75 / countOverallNotZero; // багана болж хуваагдах хэмжээ
+    const overallCount = cloData.length;
+
+    for (let i = 0; i < procPointsLength; i++) {
+      overallWidths.push(`${overallPercent.toFixed(2)}%`);
+    }
+
+    const overallCloList = cloListData.map((plan: { cloName: any; }) => ({
+      text: plan.cloName,
+      alignment: 'center',
+      style: 'tableGreenBoldAssessment',
+    }));
+    // 1. Нийт оноог бодох хэсэг
+    const colpoint = enterRowData.map((a: any) => {
+      const examTotal = a.examPoints.reduce((sum: number, e: any) => sum + e.point, 0);
+      const procTotal = a.procPoints.reduce((sum: number, e: any) => sum + e.point, 0);
+      return examTotal + procTotal;
+    });
+
+    // 2. CLO бүрт холбогдсон дүнг тохируулах (энэ хэсэгт зорилго тодорхой биш тул өөрчлөлт хийв)
+    const overallCloPoint = cloListData.map((plan: { cloName: any }, index: number) => ({
+      text: colpoint[index] ?? 0, // тухайн index-д харгалзах оноо
+      alignment: 'center',
+      style: 'tableHeader',
+    }));
+
+
+
+    const overallAllStudent = cloListData.map((plan: { cloName: any }, index: number) => ({
+      text: overallStudentCount, // тухайн index-д харгалзах оноо
+      alignment: 'center',
+      style: 'tableHeader',
+    }));
+
+    const studentsMap: { [studentCode: string]: any[] } = {};
+
+    cloData.forEach((clo: any, cloIndex: number) => {
+      clo.content.forEach((e: any, contentIndex: number) => {
+        if (e.percentage >= 0) {
+          const studentData = {
+            studentName: e.studentName,
+            studentCode: e.studentCode,
+            studentId: e.studentId,
+            letterGrade: e.letterGrade,
+            percentage: e.percentage,
+            totalPoint: e.totalPoint,
+          };
+
+          if (!studentsMap[e.studentCode]) {
+            studentsMap[e.studentCode] = [];
+          }
+
+          studentsMap[e.studentCode].push(studentData);
+        }
+      });
+    });
+
+
+    // Хэрвээ array хэлбэрээр хэрэгтэй бол:
+    const studentsCloEvaluation = Object.values(studentsMap);
+
+    const overallCOverStudent = cloData.map((data: any) => {
+      if (data.assessPlan.length > 0) {
+        let aLetterGrade = 0;
+        let aMinusLetterGrade = 0;
+        let bPlusLetterGrade = 0;
+        let bLetterGrade = 0;
+        let bMinusLetterGrade = 0;
+        let cPlusLetterGrade = 0;
+        let cLetterGrade = 0;
+        let badLetterGrade = 0;
+        let cOverCounts = 0;
+
+        data.content.forEach((e: any) => {
+          if (e.percentage >= 0) {
+            cOverCounts++;
+            switch (e.letterGrade) {
+              case 'A': aLetterGrade++; break;
+              case 'A-': aMinusLetterGrade++; break;
+              case 'B+': bPlusLetterGrade++; break;
+              case 'B': bLetterGrade++; break;
+              case 'B-': bMinusLetterGrade++; break;
+              case 'C+': cPlusLetterGrade++; break;
+              case 'C': cLetterGrade++; break;
+              default:
+                badLetterGrade++;
+                cOverCounts--; // invalid grade
+            }
+          }
+        });
+
+        const cOverPercents = ((data.content.length - badLetterGrade) / data.content.length) * 100;
+        return {
+          aLetterGrade,
+          aMinusLetterGrade,
+          bPlusLetterGrade,
+          bLetterGrade,
+          bMinusLetterGrade,
+          cPlusLetterGrade,
+          cLetterGrade,
+          cOverCounts,
+          cOverPercents: cOverPercents.toFixed(1) + '%',
+        };
+      } else {
+        return undefined;
+      }
+    }).filter((item: undefined) => item !== undefined); // undefined-үүдийг хаяна;
+
+    console.log(overallCOverStudent);
+    const overallCloMain = studentsCloEvaluation.map((data: any, index: number) => {
+      const row = [
+        { text: index + 1, alignment: 'center', style: 'bodyCenterAssessment' },
+        { text: data[0].studentName, colSpan: 2, alignment: 'center', style: 'bodyCenterAssessment' },
+        {},
+        ...data.map((p: { letterGrade: any; }) => ({
+          text: p.letterGrade,
+          alignment: 'center',
+          style: 'bodyAssessment',
+        })),
+      ];
+      return row;
+    });
+    const overallAssesmentInd = [
+      [
+        { text: 'д/д', alignment: 'center', style: 'tableGreenBoldAssessment' },
+        { text: 'Оюутны нэрс/ CLOs', colSpan: 2, alignment: 'center', style: 'tableGreenBoldAssessment' },
+        {},
+        ...overallCloList,
+      ],
+      [
+        { text: 'Авбал зохих нийт оноо', colSpan: 3, alignment: 'center', style: 'tableHeader' },
+        {},
+        {},
+        ...overallCloPoint,
+      ],
+      ...overallCloMain,
+      [
+        { text: 'Үнэлгээний нэгтгэл:', colSpan: (countOverallNotZero + 3), alignment: 'center', style: 'tableHeader' },
+        ...Array((countOverallNotZero + 3) - 1).fill({})
+      ],
+      [
+        { text: 'Нийт үнэлэгдсэн оюутны тоо', colSpan: 3, alignment: 'center', style: 'tableHeader' },
+        {},
+        {},
+        ...overallAllStudent,
+      ],
+      [
+        { text: 'С  ба түүнээс дээш үнэлгээтэй оюутны тоо', colSpan: 3, alignment: 'center', style: 'tableHeader' },
+        {},
+        {},
+        ...overallCOverStudent.map((e: any) => ({
+          text: e.cOverCounts,
+          alignment: 'center',
+          style: 'tableGreenAssessment',
+        }))
+      ],
+      [
+        { text: 'Үүнээс:', colSpan: 2, alignment: 'center', style: 'tableHeader' },
+        {},
+        { text: 'A', alignment: 'center', style: 'tableHeader' },
+        ...overallCOverStudent.map((e: any) => ({
+          text: e.aLetterGrade,
+          alignment: 'center',
+          style: 'tableGreenAssessment',
+        }))
+      ],
+      [
+        { text: '', colSpan: 2, alignment: 'center', style: 'tableHeader' },
+        {},
+        { text: 'A-', alignment: 'center', style: 'tableHeader' },
+        ...overallCOverStudent.map((e: any) => ({
+          text: e.aMinusLetterGrade,
+          alignment: 'center',
+          style: 'tableGreenAssessment',
+        }))
+      ],
+      [
+        { text: '', colSpan: 2, alignment: 'center', style: 'tableHeader' },
+        {},
+        { text: 'B+', alignment: 'center', style: 'tableHeader' },
+        ...overallCOverStudent.map((e: any) => ({
+          text: e.bPlusLetterGrade,
+          alignment: 'center',
+          style: 'tableGreenAssessment',
+        }))
+      ],
+      [
+        { text: '', colSpan: 2, alignment: 'center', style: 'tableHeader' },
+        {},
+        { text: 'B', alignment: 'center', style: 'tableHeader' },
+        ...overallCOverStudent.map((e: any) => ({
+          text: e.bLetterGrade,
+          alignment: 'center',
+          style: 'tableGreenAssessment',
+        }))
+      ],
+      [
+        { text: '', colSpan: 2, alignment: 'center', style: 'tableHeader' },
+        {},
+        { text: 'B-', alignment: 'center', style: 'tableHeader' },
+        ...overallCOverStudent.map((e: any) => ({
+          text: e.bMinusLetterGrade,
+          alignment: 'center',
+          style: 'tableGreenAssessment',
+        }))
+      ],
+      [
+        { text: '', colSpan: 2, alignment: 'center', style: 'tableHeader' },
+        {},
+        { text: 'C+', alignment: 'center', style: 'tableHeader' },
+        ...overallCOverStudent.map((e: any) => ({
+          text: e.cPlusLetterGrade,
+          alignment: 'center',
+          style: 'tableGreenAssessment',
+        }))
+      ],
+      [
+        { text: '', colSpan: 2, alignment: 'center', style: 'tableHeader' },
+        {},
+        { text: 'C', alignment: 'center', style: 'tableHeader' },
+        ...overallCOverStudent.map((e: any) => ({
+          text: e.cLetterGrade,
+          alignment: 'center',
+          style: 'tableGreenAssessment',
+        }))
+      ],
+      [
+        { text: 'С  ба түүнээс дээш үнэлгээтэй\nоюутны эзлэх хувь', colSpan: 3, alignment: 'center', style: 'tableHeader' },
+        {},
+        {},
+        ...overallCOverStudent.map((e: any) => ({
+          text: e.cOverPercents,
+          alignment: 'center',
+          style: 'tableGreenAssessment',
+        }))
+      ],
+    ];
+
+
+    const indirectAssesmentTable = [
+      [
+        { text: '\nCLO/үнэлгээний\nтүвшин', colSpan: 2, alignment: 'center', style: 'tableHeader' },
+        {},
+        { text: '\nМаш сайн\n(5)', alignment: 'center', style: 'tableHeader' },
+        { text: '\nСайн\n(4)', alignment: 'center', style: 'tableHeader' },
+        { text: '\nДунд\n(3)', alignment: 'center', style: 'tableHeader' },
+        { text: '\nМуу\n(2)', alignment: 'center', style: 'tableHeader' },
+        { text: '\nМаш муу\n(1)', alignment: 'center', style: 'tableHeader' },
+        { text: '\nНийт\nхариулт', alignment: 'center', style: 'tableHeader' },
+        { text: '4 ба 5 оноотой\nхариулт тоо,\nэзлэх хувь', alignment: 'center', style: 'tableHeader' },
+      ],
+      // ...cloAssessmentLevel
+    ];
+
 
     const documentDefinition = {
       content: [
@@ -1094,7 +1364,12 @@ export class PdfMainService {
           margin: [0, 0, 0, 0] as [number, number, number, number],
         },
         {
+          text: '1',
+          style: 'bodyCenter',
+        },
+        {
           text: '', pageBreak: 'before' as const,
+          style: 'bodyCenter',
           pageOrientation: 'landscape' as const
         },
         { text: '4.	ХИЧЭЭЛИЙН СУРАЛЦАХУЙН ҮР ДҮНГҮҮДИЙН ҮНЭЛГЭЭНИЙ ТӨЛӨВЛӨЛТ ', fontSize: 12, bold: true, margin: [0, 0, 0, 5] as [number, number, number, number] },
@@ -1140,6 +1415,45 @@ export class PdfMainService {
           margin: [40, 0, 20, 5] as [number, number, number, number]
         },
         ...contentAssessmentArray,
+        {
+          text: '5.1.2.	ХИЧЭЭЛИЙН СУРАЛЦАХУЙН ҮР ДҮНГИЙН ҮНЭЛГЭЭНИЙ НЭГДСЭН ҮЗҮҮЛЭЛТ',
+          fontSize: 12,
+          bold: true,
+          margin: [40, 0, 20, 5] as [number, number, number, number]
+        },
+        { text: 'Хүснэгт 7. Зургын боловсруулалт хичээлийн нийт суралцахуйн үр дүнд харгалзах\nоюутны гүйцэтгэлийн үнэлгээ/үсгэн үнэлгээгээр/', style: 'bodyRightBol' },
+        {
+          table: {
+            headerRows: 1,
+            widths: overallWidths,
+            body: overallAssesmentInd,
+          },
+        },
+        {
+          text: '', pageBreak: 'before' as const,
+          style: 'bodyCenter',
+        },
+        {
+          text: '5.2.	ХИЧЭЭЛИЙН СУРАЛЦАХУЙН ҮР ДҮНГИЙН ШУУД БУС ҮНЭЛГЭЭНИЙ ГҮЙЦЭТГЭЛ',
+          fontSize: 12,
+          bold: true,
+          margin: [20, 0, 20, 5] as [number, number, number, number]
+        },
+        { text: 'Хичээлийн суралцахуйн үр дүнг хавсралт 1-д үзүүлсэн санал асуулгын дагуу үнэлсэн бөгөөд CLO бүрээр харгалзах хариултуудыг оноогоор нь ялган, 4 ба 5 оноо буюу “маш сайн”, “сайн” гэсэн хариултын эзлэх хувийг тодорхойлсон.', style: 'bodyLeftNoBold' },
+        {
+          text: '5.2.2.	........ХИЧЭЭЛИЙН СУРАЛЦАХУЙН ҮР ДҮНГИЙН САНАЛ АСУУЛГЫН ДҮН',
+          fontSize: 12,
+          bold: true,
+          margin: [40, 0, 20, 5] as [number, number, number, number],
+        },
+        { text: 'Хүснэгт 8. Cуралцахуйн үр дүнгийн шууд бус үнэлгээний үр дүн', style: 'bodyRightBol' },
+        {
+          table: {
+            headerRows: 1,
+            widths: ['8%', '19%', '11%', '11%', '11%', '10%', '10%', '10%', '14%',],
+            body: indirectAssesmentTable,
+          },
+        },
       ],
       styles: {
 
@@ -1193,10 +1507,12 @@ export class PdfMainService {
         title: { fontSize: 11, bold: true, fontStyle: 'Times New Roman', alignment: 'center' as const },
         leftMargin: { fontSize: 10, bold: false, alignment: 'left' as const, margin: [50, 10, 0, 0] as [number, number, number, number], },
         contents: { fontSize: 10, bold: true },
+        bodyLeftNoBold: { fontSize: 11, alignment: 'left' as const, bold: false },
         bodyLeft: { fontSize: 11, alignment: 'left' as const, bold: true },
         bodyLeftInBold: { fontSize: 11, alignment: 'left' as const, bold: true },
         titleLeft: { fontSize: 14, alignment: 'left' as const, bold: true },
         bodyRight: { fontSize: 10, alignment: 'right' as const },
+        bodyRightBol: { fontSize: 10, alignment: 'right' as const, bold: true },
         bodyRightInBold: { fontSize: 13, alignment: 'right' as const, bold: true },
         footerCenter: { fontSize: 12, alignment: 'center' as const },
         mainTitleStyle: { fontSize: 14, bold: true, alignment: 'center' as const, margin: [0, 0, 0, 30] as [number, number, number, number], },
@@ -1206,12 +1522,13 @@ export class PdfMainService {
           color: 'red',
           margin: [0, 0, 0, 0] as [number, number, number, number] // ✅ Force it to be a tuple
         },
-        tableGreenAssessment: { fontSize: 10, fontStyle: 'Arial', color: 'black', fillColor: '#D9EADA'},
+        tableGreenAssessment: { fontSize: 10, fontStyle: 'Arial', color: 'black', fillColor: '#D9EADA' },
+        tableGreenBoldAssessment: { fontSize: 10, fontStyle: 'Arial', color: 'black', bold: true, fillColor: '#D9EADA' },
         bodyAssessment: { fontSize: 10, bold: false, fontStyle: 'Arial' },
         bodyCenterAssessment: { fontSize: 8, bold: false, fontStyle: 'Arial', alignment: 'center' as const },
         bodyCenterFoAssessment: { fontSize: 10, bold: false, fontStyle: 'Arial', alignment: 'center' as const },
-        titleAssessment: { fontSize: 11, bold: true, fontStyle: 'Times New Roman', alignment: 'center' as const},
-        footerCenterAssessment: { fontSize: 12, alignment: 'center' as const},
+        titleAssessment: { fontSize: 11, bold: true, fontStyle: 'Times New Roman', alignment: 'center' as const },
+        footerCenterAssessment: { fontSize: 12, alignment: 'center' as const },
       }
     };
 

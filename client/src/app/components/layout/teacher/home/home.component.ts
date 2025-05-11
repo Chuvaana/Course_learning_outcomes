@@ -62,6 +62,7 @@ export class HomeComponent {
   cloPlan = [];
   cloForm!: FormGroup;
   tabs: any;
+  pollData: any;
 
   // clo дүн
   tabDatas!: [{ title: string; content: any; value: any }];
@@ -188,11 +189,13 @@ export class HomeComponent {
     this.pdfSendData = [];
     forkJoin([
       this.service.getCloList(this.lessonId),
+      this.service.getPollQuesLesson(this.lessonId),
       this.cloPointPlanService.getPointPlan(this.lessonId),
       this.assessService.getAssessmentByLesson(this.lessonId),
-    ]).subscribe(([cloList, cloPlan, assessPlan]) => {
+    ]).subscribe(([cloList, pollData, cloPlan, assessPlan]) => {
       this.cloList = cloList;
       this.assessPlan = assessPlan;
+      this.pollData = pollData;
       this.pdfSendData.push(this.assessPlan);
       this.pdfSendData.push(this.cloPlan);
       this.cloPlan = cloPlan;
@@ -254,6 +257,7 @@ export class HomeComponent {
     });
   }
   pdfTo() {
+    this.pdfSendData.push(this.pollData);
     this.pdfMainService.generatePdfAll(this.pdfSendData);
   }
 
