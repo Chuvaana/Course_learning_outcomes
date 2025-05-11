@@ -13,6 +13,7 @@ import { StudentComponent } from './student.component';
 import { LessonComponent } from './lesson/lesson.component';
 import { LessonPlanComponent } from './lesson-plan/lesson-plan.component';
 import { AttendanceComponent } from './attendance/attendance.component';
+import { GradeComponent } from './grade/grade.component';
 
 const routes: Routes = [
   {
@@ -30,6 +31,7 @@ const routes: Routes = [
         children: [
           { path: 'curriculum', component: CurriculumComponent },
           { path: 'attendance', component: AttendanceComponent },
+          { path: 'grade', component: GradeComponent },
           { path: 'plan', component: LessonPlanComponent },
           { path: 'student', component: LesStudentComponent },
           { path: 'exam-progress-poll', component: ExamProgressPollComponent },

@@ -12,14 +12,12 @@ import { ButtonModule } from 'primeng/button';
 import { DividerModule } from 'primeng/divider';
 import { FloatLabelModule } from 'primeng/floatlabel';
 import { TextareaModule } from 'primeng/textarea';
-import { ToastModule } from 'primeng/toast';
 import { OtherService } from '../../../../../services/other.service';
 
 @Component({
   selector: 'app-other',
   standalone: true,
   imports: [
-    ToastModule,
     CommonModule,
     ButtonModule,
     FormsModule,
@@ -38,11 +36,7 @@ export class OtherComponent {
   otherForm!: FormGroup;
   isNew = true;
 
-  constructor(
-    private fb: FormBuilder,
-    private service: OtherService,
-    private msgService: MessageService
-  ) {}
+  constructor(private fb: FormBuilder, private service: OtherService) {}
 
   ngOnInit() {
     this.otherForm = this.fb.group({
@@ -61,54 +55,6 @@ export class OtherComponent {
             goal: res.goal,
           });
         }
-      });
-    }
-  }
-
-  onSubmit() {
-    if (this.otherForm.valid) {
-      if (this.isNew) {
-        this.service.addDefinition(this.otherForm.value).subscribe(
-          (res: any) => {
-            this.msgService.add({
-              severity: 'success',
-              summary: 'Амжилттай',
-              detail: 'Амжилттай хадгалагдлаа!',
-            });
-          },
-          (err) => {
-            this.msgService.add({
-              severity: 'error',
-              summary: 'Алдаа',
-              detail: 'Алдаа гарлаа: ' + err.message,
-            });
-          }
-        );
-      } else {
-        this.service
-          .updateDefinition(this.lessonId, this.otherForm.value)
-          .subscribe(
-            (res: any) => {
-              this.msgService.add({
-                severity: 'success',
-                summary: 'Амжилттай',
-                detail: 'Амжилттай шинэчлэгдлээ!',
-              });
-            },
-            (err) => {
-              this.msgService.add({
-                severity: 'error',
-                summary: 'Алдаа',
-                detail: 'Алдаа гарлаа: ' + err.message,
-              });
-            }
-          );
-      }
-    } else {
-      this.msgService.add({
-        severity: 'warn',
-        summary: 'Анхааруулга',
-        detail: 'Форм буруу байна',
       });
     }
   }

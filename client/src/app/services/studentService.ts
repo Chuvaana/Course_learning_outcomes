@@ -17,11 +17,14 @@ export class StudentService {
   getLessons(): Observable<any> {
     return this.http.get(`${this.apiUrl}/lesson`);
   }
-  getStudentByLessons(studentCode: string): Observable<any> {
-    return this.http.get(`${this.apiUrl}/lesStudents/lesson/${studentCode}`);
+  getStudentByLessons(lessonCode: string): Observable<any> {
+    return this.http.get(`${this.apiUrl}/lesStudents/lesson/${lessonCode}`);
   }
 
-  // Fetch departments by branch ID
+  getStudentByCode(studentCode: string): Observable<any> {
+    return this.http.get(`${this.apiUrl}/lesStudents/student/${studentCode}`);
+  }
+
   getDepartments(branchId: string): Observable<any> {
     return this.http.get(`${this.apiUrl}/branches/${branchId}/departments`);
   }
@@ -68,7 +71,7 @@ export class StudentService {
     return this.http.get(`${this.apiUrl}/clos/${id}`);
   }
 
-  deleteLesStudents(id : any){
+  deleteLesStudents(id: any) {
     return this.http.delete(`${this.apiUrl}/lesStudents/${id}`);
   }
 }

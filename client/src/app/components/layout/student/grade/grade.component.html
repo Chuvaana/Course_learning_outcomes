@@ -1,0 +1,63 @@
+<div class="p-fluid">
+  <div class="filter-section">
+    <p-dropdown
+      [options]="gradeTypes"
+      [(ngModel)]="selectedType"
+      (onChange)="onTypeChange()"
+      placeholder="Төрөл"
+    >
+    </p-dropdown>
+  </div>
+
+  <p-table [value]="gradeRecords" *ngIf="data">
+    <ng-template pTemplate="header">
+      <tr>
+        <ng-container *ngFor="let col of formData">
+          <th [attr.colspan]="calculateColspan(col)">
+            {{ col.week }}
+          </th>
+        </ng-container>
+      </tr>
+      <tr>
+        <ng-container *ngFor="let col of formData">
+          <ng-container *ngFor="let clo of col.cloGroups">
+            <th [attr.colspan]="clo.points.length">{{ clo.cloName }}</th>
+          </ng-container>
+        </ng-container>
+      </tr>
+      <tr>
+        <ng-container *ngFor="let col of formData">
+          <ng-container *ngFor="let clo of col.cloGroups">
+            <ng-container *ngFor="let po of clo.points">
+              <th>{{ po.name }}</th>
+            </ng-container>
+          </ng-container>
+        </ng-container>
+      </tr>
+      <tr>
+        <ng-container *ngFor="let col of formData">
+          <ng-container *ngFor="let clo of col.cloGroups">
+            <ng-container *ngFor="let po of clo.points">
+              <th>{{ po.point }}</th>
+            </ng-container>
+          </ng-container>
+        </ng-container>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-record let-ri="rowIndex">
+      <tr>
+        <ng-container *ngFor="let col of formData">
+          <ng-container *ngFor="let clo of col.cloGroups">
+            <ng-container *ngFor="let po of clo.points">
+              <td>
+                {{
+                  record.grades[col.week + "_" + po.id + "_" + clo.cloId] ?? "-"
+                }}
+              </td>
+            </ng-container>
+          </ng-container>
+        </ng-container>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>

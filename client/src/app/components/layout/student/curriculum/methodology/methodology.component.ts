@@ -84,7 +84,7 @@ export class MethodologyComponent {
     if (this.lessonId) {
       this.loadData();
       this.tabRefreshService.refresh$.subscribe(() => {
-        this.loadData(); // Датаг дахин ачаалах функц
+        this.loadData();
       });
     }
   }
@@ -103,7 +103,7 @@ export class MethodologyComponent {
           classroom: item.classroom,
           electronic: item.electronic,
           combined: item.combined,
-          cloRelevance: item.cloRelevance.map((clo: any) => clo.id), // Extract only CLO IDs
+          cloRelevance: item.cloRelevance.map((clo: any) => clo.id),
         }));
       }
     });

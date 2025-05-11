@@ -11,7 +11,6 @@ import { FloatLabelModule } from 'primeng/floatlabel';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { InputTextModule } from 'primeng/inputtext';
 import { PanelModule } from 'primeng/panel';
-import { ToastModule } from 'primeng/toast';
 import { CurriculumService } from '../../../../../services/curriculum.service';
 import { SharedService } from '../../../../../services/sharedService';
 import { TeacherService } from '../../../../../services/teacherService';
@@ -29,7 +28,6 @@ import { TabRefreshService } from '../tabRefreshService';
     InputTextModule,
     InputNumberModule,
     CalendarModule,
-    ToastModule,
     PanelModule,
     DividerModule,
   ],

@@ -8,7 +8,6 @@ import { InputTextModule } from 'primeng/inputtext';
 import { SelectModule } from 'primeng/select';
 import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
-import { ToastModule } from 'primeng/toast';
 import { CLOService } from '../../../../../services/cloService';
 import { SharedDictService } from '../../../teacher/shared';
 import { TabRefreshService } from '../tabRefreshService';
@@ -34,7 +33,6 @@ interface Clo1 {
   standalone: true,
   imports: [
     TableModule,
-    ToastModule,
     CommonModule,
     TagModule,
     SelectModule,

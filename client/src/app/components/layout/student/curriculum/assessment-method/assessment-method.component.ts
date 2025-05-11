@@ -24,7 +24,6 @@ import { TeacherService } from '../../../../../services/teacherService';
     CommonModule,
     TableModule,
     FormsModule,
-    ToastModule,
     TagModule,
     ButtonModule,
     SelectModule,

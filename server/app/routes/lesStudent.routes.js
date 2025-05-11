@@ -11,6 +11,8 @@ module.exports = (app) => {
   // Get all students
   router.get('/', studentController.getAllStudents);
 
+  router.get('/student/:id', studentController.getStudentByCode);
+
   // Get student by ID
   router.get('/:id', studentController.getStudentById);
 

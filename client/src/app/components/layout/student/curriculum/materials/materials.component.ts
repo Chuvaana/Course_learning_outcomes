@@ -9,12 +9,12 @@ import {
 } from '@angular/forms';
 import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
+import { DividerModule } from 'primeng/divider';
 import { DropdownModule } from 'primeng/dropdown';
 import { FloatLabelModule } from 'primeng/floatlabel';
 import { InputTextModule } from 'primeng/inputtext';
-import { MaterialService } from '../../../../../services/materialService';
 import { PanelModule } from 'primeng/panel';
-import { DividerModule } from 'primeng/divider';
+import { MaterialService } from '../../../../../services/materialService';
 
 @Component({
   selector: 'app-materials',

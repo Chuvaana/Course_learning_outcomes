@@ -59,9 +59,7 @@ export class LessonComponent {
       {
         label: 'Явцын дүн харах',
         icon: 'pi pi-star',
-        command: () => {
-          this.router.navigate(['/main/student/exam']);
-        },
+        routerLink: ['/main/student', this.lessonId, 'grade'],
       },
       {
         label: 'Ирц явцын оноо харах',
@@ -80,12 +78,12 @@ export class LessonComponent {
         label: 'Гарах',
         icon: 'pi pi-sign-out',
         command: () => this.logout(),
-        styleClass: 'logout-button', // This class will be used for custom styling if needed
+        styleClass: 'logout-button',
       },
     ];
   }
   logout() {
-    localStorage.clear(); // clear tokens or user info
-    this.router.navigate(['/student-login']); // redirect to login
+    localStorage.clear();
+    this.router.navigate(['/student-login']);
   }
 }
