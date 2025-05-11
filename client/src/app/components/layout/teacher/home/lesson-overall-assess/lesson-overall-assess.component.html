@@ -81,7 +81,8 @@
   </ng-template>
 </p-table>
 
-<div class="charts-wrapper" *ngIf="tabsReady">
+<p-button (click)="exportPDF()">Export PDF</p-button>
+<div class="charts-wrapper" *ngIf="tabsReady" #chartWrapper>
   <h3 class="chart-title">
     C ба түүнээс дээш үнэлгээтэй оюутны тоо (Bar Chart)
   </h3>
