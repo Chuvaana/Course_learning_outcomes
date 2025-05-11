@@ -1,12 +1,14 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { Component, ElementRef, Input, ViewChild } from '@angular/core';
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
 import { ButtonModule } from 'primeng/button';
+import { ChartModule } from 'primeng/chart';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { TableModule } from 'primeng/table';
+import { forkJoin } from 'rxjs';
 import { CloPointPlanService } from '../../../../../services/cloPointPlanService';
 import { AssessProcessService } from '../lesson-assessment/assessProcess';
-import { ChartModule } from 'primeng/chart';
-import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-lesson-overall-assess',
@@ -38,6 +40,8 @@ export class LessonOverallAssessComponent {
   chartOptions: any;
   percentageChartData: any;
   percentageChartOptions: any;
+
+  @ViewChild('chartWrapper') chartWrapper!: ElementRef;
 
   constructor(
     private assessProcess: AssessProcessService,
@@ -325,5 +329,17 @@ export class LessonOverallAssessComponent {
     if (total === 0) return '0.00';
     const aboveC = this.getAboveCCount(tab);
     return ((aboveC / total) * 100).toFixed(2);
+  }
+
+  exportPDF() {
+    html2canvas(this.chartWrapper.nativeElement).then((canvas) => {
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+
+      pdf.addImage(imgData, 'PNG', 0, 10, pdfWidth, pdfHeight);
+      pdf.save('charts-summary.pdf');
+    });
   }
 }

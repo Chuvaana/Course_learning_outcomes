@@ -66,7 +66,6 @@ export class GradeComponent {
   selectedWeekday = 'Monday';
   selectedTimes = 1;
   selectedType = 'CLAB';
-  searchQuery: string = '';
   students: any[] = [];
   gradeRecords: GradeRecord[] = [];
   lessonId!: string;
@@ -75,30 +74,7 @@ export class GradeComponent {
   gradeType!: 'BSEM' | 'CLAB' | 'BD';
   gradeTypes: any;
   formData: Lesson[] = [];
-  showEdit = false;
-
-  time = 0;
-  week = '';
   studentCode: any;
-
-  times = [
-    { value: 1, label: '1-р цаг' },
-    { value: 2, label: '2-р цаг' },
-    { value: 3, label: '3-р цаг' },
-    { value: 4, label: '4-р цаг' },
-    { value: 5, label: '5-р цаг' },
-    { value: 6, label: '6-р цаг' },
-    { value: 7, label: '7-р цаг' },
-    { value: 8, label: '8-р цаг' },
-  ];
-
-  weekdays = [
-    { label: 'Даваа', value: 'Monday' },
-    { label: 'Мягмар', value: 'Tuesday' },
-    { label: 'Лхагва', value: 'Wednesday' },
-    { label: 'Пүрэв', value: 'Thursday' },
-    { label: 'Баасан', value: 'Friday' },
-  ];
 
   constructor(
     private studentService: StudentService,
