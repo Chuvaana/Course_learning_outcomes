@@ -25,7 +25,7 @@ exports.updateFeedback = async (req, res) => {
   }
 };
 
-exports.getFedbackByLesson = async (req, res) => {
+exports.getFeedbackByLesson = async (req, res) => {
   try {
     const feedBack = await LessonFeedback.find({ lessonId: req.params.id });
     res.status(200).json(feedBack);

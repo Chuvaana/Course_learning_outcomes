@@ -18,6 +18,4 @@ const MethodSchema = new mongoose.Schema({
   ],
 });
 
-const MethodModel = mongoose.model('Method', MethodSchema);
-
-module.exports = MethodModel;
+module.exports = mongoose.model('Method', MethodSchema);

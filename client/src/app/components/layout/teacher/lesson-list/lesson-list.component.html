@@ -37,7 +37,7 @@
     />
   </div>
 
-  <div class="lesson-cards">
+  <div class="lesson-cards" *ngIf="courses.length !== 0">
     <div *ngFor="let lesson of courses" class="lesson-card">
       <p-card [style]="{ width: '100%', overflow: 'hidden' }">
         <ng-template #title> {{ lesson.department }}</ng-template>
@@ -60,6 +60,11 @@
         />
       </p-card>
     </div>
+  </div>
+  <div *ngIf="courses.length === 0" style="padding: 100px">
+    <!-- <p-card [style]="{ width: '100%', overflow: 'hidden' }"> -->
+    <h1>Хичээл бүртгэгдээгүй байна.</h1>
+    <!-- </p-card> -->
   </div>
 </div>
 

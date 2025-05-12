@@ -5,6 +5,16 @@ exports.createLesson = async (req, res) => {
   try {
     const data = req.body;
 
+    const existingLesson = await Lesson.findOne({
+      recommendedSemester: data.recommendedSemester,
+      schoolYear: data.schoolYear,
+      lessonCode: data.lessonCode,
+    });
+
+    if (existingLesson) {
+      return res.status(409).json({ message: 'Энэ хичээл өмнө нь бүртгэгдсэн байна.' });
+    }
+
     const cleanData = {
       ...data,
       lessonCredit: Number(data.lessonCredit) || 0,
