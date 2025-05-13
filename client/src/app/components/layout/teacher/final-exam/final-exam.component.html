@@ -25,19 +25,10 @@
       </p-floatlabel>
     </div>
     <div class="action-btn">
-      <!-- <p-iftalabel class="">
-        <p-select [(ngModel)]="finalExams.finalExamName" inputId="exam-types" [options]="examTypes" optionValue="value"
-          optionLabel="label" />
-        <label for="exam-types">Шалгалтын төрөл</label>
-      </p-iftalabel> -->
-
-      <p-floatlabel variant="on" class="w-full">
+      <p-floatlabel variant="in" class="w-full">
         <p-select id="value" [options]="examTypes" appendTo="body" [(ngModel)]="finalExams.finalExamName"
           optionLabel="label" [style]="{'width':'100%'}" (onChange)="onBranchChange($event.value)" />
-        <!-- <p-dropdown formControlName="finalExams.finalExamName" id="value" (onChange)="onBranchChange($event.value)"
-          [options]="examTypes" optionLabel="label" class="w-full">
-        </p-dropdown> -->
-        <label for="finalExams.finalExamName">Сургууль</label>
+        <label for="finalExams.finalExamName">Шалгалтын төрөл</label>
       </p-floatlabel>
     </div>
   </div>
@@ -59,11 +50,12 @@
       <tr>
         <th style="width:10%">Асуулт</th>
         <th style="width:20%">Үйл үг</th>
-        <th style="width:10%">Блумын түвшин <p-sortIcon field="finalExamQuestions.blmLvl" /></th>
-        <th style="width:20%">Аль CLO-г үнэлэх</th>
+        <th style="width:15%">Блумын түвшин <p-sortIcon field="finalExamQuestions.blmLvl" /></th>
+        <th style="width:10%">Аль CLO-г үнэлэх</th>
+        <th style="width:10%">Дэд бүлэг</th>
         <th style="width:10%">Тестийн хэсэг</th>
         <th style="width:10%">Шалгалтын төрөл</th>
-        <th style="width:20%"></th>
+        <th style="width:15%"></th>
       </tr>
     </ng-template>
     <ng-template #body let-finalExamQuestions let-editing="editing" let-ri="rowIndex">
@@ -104,11 +96,22 @@
         <td>
           <p-cellEditor>
             <ng-template #input>
-              <p-select id="id" [options]="clos" appendTo="body" [(ngModel)]="finalExamQuestions.cloCode"
-                optionLabel="name" [style]="{'width':'100%'}" />
+              <p-select id="id" [options]="cloTypes" appendTo="body" [(ngModel)]="finalExamQuestions.cloCode"
+                optionLabel="name" [style]="{'width':'100%'}" (onChange)="onMethodChange($event.value.id)" />
             </ng-template>
             <ng-template #output>
               <p-tag [value]="finalExamQuestions.cloName" />
+            </ng-template>
+          </p-cellEditor>
+        </td>
+        <td>
+          <p-cellEditor>
+            <ng-template #input>
+              <p-select id="id" [options]="subMethodsClone" appendTo="body" [(ngModel)]="finalExamQuestions.subMethod"
+                optionLabel="label" [style]="{'width':'100%'}" />
+            </ng-template>
+            <ng-template #output>
+              <p-tag [value]="finalExamQuestions.subMethodName" />
             </ng-template>
           </p-cellEditor>
         </td>

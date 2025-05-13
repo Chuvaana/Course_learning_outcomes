@@ -30,4 +30,8 @@ export class ExamService {
   registerExam(branchId: string): Observable<any> {
     return this.http.get(`${this.apiUrl}/branches/${branchId}/departments`);
   }
+
+  getLessonDataFinalExams(id : any) {
+    return this.http.get(`${this.apiUrl}/finalExamQuestion/${id}`);
+  }
 }

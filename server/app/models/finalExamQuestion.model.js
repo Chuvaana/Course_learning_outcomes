@@ -10,6 +10,8 @@ const FinalExamQuestionCurriculumSchema = new mongoose.Schema({
     blmLvl: { type: Number },
     cloCode: { type: mongoose.Schema.Types.ObjectId, ref: 'Clo' },
     cloName: { type : String , required: true },
+    subMethod: { type: String , required: true },
+    subMethodName: { type: String , required: true },
     finalExamType: { type: String , required: true },
     finalExamTypeName: { type: String , required: true },
 });

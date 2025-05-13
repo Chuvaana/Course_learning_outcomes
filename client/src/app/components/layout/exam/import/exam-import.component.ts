@@ -24,6 +24,7 @@ import { ExamService } from '../../../../services/examService';
 import { lessonAssessmentService } from '../../../../services/lessonAssessment';
 import { AssessmentService } from '../../../../services/assessmentService';
 import { CloPointPlanService } from '../../../../services/cloPointPlanService';
+import { Select, SelectModule } from 'primeng/select';
 
 interface City {
   name: string;
@@ -47,6 +48,8 @@ interface City {
     InputNumberModule,
     TableModule,
     FloatLabelModule,
+    // Select,
+    // SelectModule,
   ],
   templateUrl: './exam-import.component.html',
   styleUrls: ['./exam-import.component.scss'],
@@ -70,12 +73,14 @@ export class ExamImportComponent {
   checked: boolean = false;
   lessonAllStudents: any;
   subMethods: any[] = [];
+  // subMethodsy: any[] = [];
 
   cities: City[] | undefined;
 
   examTypeAction = false;
   examType: any = null;
   examTypeData: any = null;
+  cloRanges: { [cloId: string]: { min: number, max: number } } = {};
 
   @ViewChild('minV') minV!: ElementRef;
   @ViewChild('maxV') maxV!: ElementRef;
@@ -127,6 +132,32 @@ export class ExamImportComponent {
     this.route.parent?.paramMap.subscribe((params) => {
       this.lessonId = params.get('id')!;
     });
+
+    let subMethod: any[] = [];
+
+    // this.service.getLessonDataFinalExams(this.lessonId).subscribe((res: any) => {
+    //   if (res.length > -1) {
+    //     this.examTypes.map((e) => {
+    //       this.assessService.getAssessmentByLesson(this.lessonId)
+    //         .subscribe((res: any) => {
+    //           const data = res?.plans.filter((item: any) => {
+    //             return item.methodType === e.value;
+    //           });
+
+    //           data[0].subMethods.map((e: any) => {
+    //             const dataSub = {
+    //               id: e._id,
+    //               label: e.subMethod,
+    //               point: e.point,
+    //             };
+    //             subMethod.push(dataSub);
+    //           });
+    //           this.subMethodsy = subMethod;
+    //           console.log(data);
+    //         });
+    //     });
+    //   }
+    // });
   }
 
   loadClo(e: string): void {
@@ -241,20 +272,84 @@ export class ExamImportComponent {
       const fileLogic = this.checkData(defaultData);
       let checkFirstLength = 0;
       let checkAction = false;
-      defaultData.map((data : any, index : any) =>{
-        if( !checkAction ){
-          if(data.slice(0, 2) === 'Q.'){
+      defaultData.map((data: any, index: any) => {
+        if (!checkAction) {
+          if (data.slice(0, 2) === 'Q.') {
             checkFirstLength = defaultData.length - index;
             checkAction = true;
           }
         }
       })
+      let checkFirstLengthIn = defaultData.length - checkFirstLength;
       console.log(checkFirstLength);
 
-      // const data: any[] = [];
-      // this.tableData.splice(1, 0, data); // 1-р индекс дээр оруулна
-      const emptyRow = new Array(defaultData.length).fill('12');   // '' эсвэл null зэргээр дүүргэж болно
-      this.tableData.splice(1, 0, emptyRow);
+      let emptyRow: any[] = [];
+      emptyRow = new Array((checkFirstLengthIn + 1)).fill('xD');   // Fill with '' or null as needed
+      this.service.getLessonDataFinalExams(this.lessonId).subscribe((res: any) => {
+        this.cloRanges = {};
+        let checkNumber = '';
+        let countLength = 0;
+        let beforeMax = 1;
+        let beforeMin = 1;
+
+        res.map((subs: any, index: any) => {
+          if (checkNumber === '') {
+            checkNumber = subs.cloCode;
+            countLength = 1;
+          } else if (checkNumber === subs.cloCode) {
+            countLength++;
+          } else {
+            this.cloRanges[checkNumber] = {
+              min: beforeMax,
+              max: beforeMax + countLength - 1
+            };
+            this.checkValue(checkNumber, beforeMax, 'min');
+            this.checkValue(checkNumber, (beforeMax + countLength - 1), 'max');
+            beforeMax += countLength;
+
+            checkNumber = subs.cloCode;
+            countLength = 1;
+          }
+
+          if (index === res.length - 1) {
+            this.cloRanges[checkNumber] = {
+              min: beforeMax,
+              max: checkFirstLength
+            };
+            this.checkValue(checkNumber, beforeMax, 'min');
+            this.checkValue(checkNumber, checkFirstLength, 'max');
+          }
+          if (subs.finalExamType === this.examType.value) {
+            this.subMethods.map((subsData: any) => {
+              if (subs.subMethod === subsData._id) {
+                const dataSub = {
+                  _id: subsData._id,
+                  label: subsData.subMethod,
+                  point: subsData.point,
+                };
+                emptyRow.push(dataSub);
+              }
+            });
+          }
+        });
+
+        if (emptyRow.length !== defaultData.length) {
+          const defaultValue = {
+            _id: this.subMethods[0]._id,
+            label: this.subMethods[0].subMethod,
+            point: this.subMethods[0].point,
+          }
+          const guitseelt = defaultData.length - emptyRow.length;
+          let count = 0;
+          while (guitseelt > count) {
+            count++;
+            emptyRow.push(defaultValue);
+          }
+        }
+
+        this.tableData.splice(1, 0, emptyRow);
+      });
+
       this.activeFileLogic = fileLogic;
       if (!fileLogic) {
         this.tableData = [];
@@ -506,13 +601,14 @@ export class ExamImportComponent {
               detail: `Шалгалтын төрлөө сонгоно уу!`,
             });
           } else {
+            const subMethodClolumn = this.tableData[1];
             this.service
               .getAllLessonAssments(this.lessonId)
               .subscribe((res) => {
                 this.lessonAllStudents = res;
                 // tableData-д ажиллана
                 this.tableData.forEach((e, index) => {
-                  if (index !== 0) {
+                  if (index > 1) {
                     // Хоёрдугаар мөрөөс эхэлнэ
                     const assessmentFormData = {
                       lessonId: '',
@@ -533,6 +629,8 @@ export class ExamImportComponent {
                         cloId: string;
                         allPoint: number;
                         takePoint: number;
+                        subMethodId: string,
+                        subMethodName: string,
                       }[],
                     };
                     assessmentFormData.lessonId = this.lessonId;
@@ -556,10 +654,13 @@ export class ExamImportComponent {
                       cloId: any;
                       allPoint: number;
                       takePoint: any;
+                      subMethodId: string;
+                      subMethodName: string;
                     }[] = [];
 
                     let countQuetion = 1;
                     for (let j = 9; j < e.length; j++) {
+                      const col = subMethodClolumn[j + 1] ?? subMethodClolumn[j];
                       this.cloQuestionData.map((data) => {
                         if (
                           data.min <= countQuetion &&
@@ -573,6 +674,8 @@ export class ExamImportComponent {
                                 ? Number(this.tableData[0][j].substring(8, 12))
                                 : Number(this.tableData[0][j].substring(6, 12)),
                             takePoint: e[j],
+                            subMethodId: col?._id,
+                            subMethodName: col?.label,
                           };
 
                           questions.push(question);
@@ -668,7 +771,7 @@ export class ExamImportComponent {
     this.loadClo(e.value);
   }
 
-  subMethodTypesData(e : any){
+  subMethodTypesData(e: any) {
 
   }
 }

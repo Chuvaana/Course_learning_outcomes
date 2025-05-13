@@ -21,6 +21,8 @@ import { BlmInfoComponent } from './blm-info/blm-info.component';
 import { IftaLabelModule } from 'primeng/iftalabel';
 import { InputIconModule } from 'primeng/inputicon';
 import { IconFieldModule } from 'primeng/iconfield';
+import { AssessmentService } from '../../../../services/assessmentService';
+import { CloPointPlanService } from '../../../../services/cloPointPlanService';
 
 interface finalExamModel {
   finalExamName: any;
@@ -40,6 +42,8 @@ interface finalExamQuestionModel {
   cloCode: any;
   cloName: string;
   examType: string;
+  subMethod: any;
+  subMethodName: string;
   finalExamType: string;
   finalExamTypeName: string;
 }
@@ -63,8 +67,8 @@ interface verbs {
     TagModule,
     InputNumber,
     Select,
-    FloatLabel,
     SelectModule,
+    FloatLabel,
     IftaLabelModule,
     InputIconModule,
     IconFieldModule,
@@ -92,6 +96,9 @@ export class FinalExamQuestionsComponent implements OnInit {
   selectedExamType: any;
   searchQuery: string = '';
   searchValue: string | undefined;
+  subMethods: any[] = [];
+  subMethodsClone: any;
+  cloTypes: any[] = [];
 
   tableFilters: { [s: string]: any } = {
     'finalExamTypeName': { value: 'Тест', matchMode: 'contains' }  // Change 'Тест' to your desired default
@@ -108,6 +115,8 @@ export class FinalExamQuestionsComponent implements OnInit {
 
   constructor(private pdfService: PdfExamQuestionService,
     private dialog: MatDialog,
+    private cloPointPlanService: CloPointPlanService,
+    private assessService: AssessmentService,
     private cloService: CLOService, private route: ActivatedRoute, private service: FinalExamService, private messageService: MessageService) { }
   ngOnInit() {
     this.finalExams = {
@@ -123,19 +132,6 @@ export class FinalExamQuestionsComponent implements OnInit {
     });
 
     this.finalExamQuestions = [];
-    this.service.getCloList(this.lessonId).subscribe((data: any) => {
-      let cloData: any[] = [];
-      data.map((e: any) => {
-        let verbs = {
-          id: '',
-          name: '',
-        };
-        verbs.id = e.id;
-        verbs.name = e.cloName;
-        cloData.push(verbs);
-      });
-      this.clos = cloData;
-    });
 
     this.service.getVerb().subscribe((data: any) => {
       let verbData: any[] = [];
@@ -151,8 +147,22 @@ export class FinalExamQuestionsComponent implements OnInit {
       this.verbs = verbData;
     });
 
+    this.service.getCloList(this.lessonId).subscribe((data: any) => {
+      let cloData: any[] = [];
+      data.map((e: any) => {
+        let verbs = {
+          id: '',
+          name: '',
+        };
+        verbs.id = e.id;
+        verbs.name = e.cloName;
+        cloData.push(verbs);
+      });
+      this.clos = cloData;
+      this.cloTypes = cloData;
+      this.onRefresh();
+    });
     // this.dt.filter('EXAM', 'text', 'text');
-    this.onRefresh();
   }
 
   onRefresh() {
@@ -183,21 +193,34 @@ export class FinalExamQuestionsComponent implements OnInit {
   }
 
   onRowEditInit(finalExam: finalExamQuestionModel) {
-
+    this.onCloChange()
     if (finalExam._id !== "" && finalExam._id !== null && finalExam._id !== undefined) {
       this.isNew = false;
-      this.service.getDetailVerb(finalExam.verb).subscribe((res: any) => {
-        let dataType = {
-          verbCode: '',
-          verbName: '',
+      const cloId = typeof finalExam.cloCode === 'string' ? finalExam.cloCode : finalExam.cloCode?.id;
+      this.onMethodChange(cloId);
+      const verbId = typeof finalExam.verb === 'string' ? finalExam.verb : finalExam.verb?.verbCode;
+
+      this.service.getDetailVerb(verbId).subscribe((res: any) => {
+        finalExam.verb = {
+          verbCode: res._id,
+          verbName: res.verbName
         };
-        dataType.verbCode = res._id;
-        dataType.verbName = res.verbName;
-        finalExam.verb = dataType;
+      });
+
+      const subMethodId = typeof finalExam.subMethod === 'string' ? finalExam.subMethod : finalExam.subMethod?.id;
+      this.subMethods.map((e: any) => {
+        if (e.id === subMethodId) {
+          const dataSub = {
+            id: e.id,
+            label: e.label,
+            point: e.point,
+          };
+          finalExam.subMethod = dataSub;
+        }
       });
       this.cloService.getCloList(this.lessonId).subscribe((res: any) => {
         res.map((e: any) => {
-          if (e.id === finalExam.cloCode) {
+          if (e.id === cloId) {
             let dataType = {
               id: '',
               name: '',
@@ -215,6 +238,8 @@ export class FinalExamQuestionsComponent implements OnInit {
   }
 
   onRowEditSave(finalExam: finalExamQuestionModel) {
+    finalExam.subMethodName = finalExam.subMethod.label;
+    finalExam.subMethod = finalExam.subMethod.id;
     finalExam.verbName = finalExam.verb.verbName;
     finalExam.verb = finalExam.verb.verbCode;
     finalExam.cloName = finalExam.cloCode.name;
@@ -346,6 +371,8 @@ export class FinalExamQuestionsComponent implements OnInit {
       cloCode: '',
       cloName: 'NULL',
       examType: 'null',
+      subMethod: '',
+      subMethodName: '',
       finalExamType: finalExamType.value,
       finalExamTypeName: finalExamType.label,
     };
@@ -394,12 +421,12 @@ export class FinalExamQuestionsComponent implements OnInit {
             results.cloList.map((i: any) => {
               let active = true;
               if (i.id === e.cloCode) {
-                cloList.map((j : any) =>{
-                  if(j.id === i.id){
+                cloList.map((j: any) => {
+                  if (j.id === i.id) {
                     active = false;
                   }
                 });
-                if(active){
+                if (active) {
                   cloList.push(i);
                 }
               }
@@ -407,11 +434,10 @@ export class FinalExamQuestionsComponent implements OnInit {
           }
         });
       }
-      if(cloList.length  > 0){
+      if (cloList.length > 0) {
         results.cloList = cloList;
       }
-      // results.finalExamQuestions = this.finalExamQuestions; // 👈 Add here properl
-      results.finalExamQuestions = finalExamQuestion; // 👈 Add here properl
+      results.finalExamQuestions = finalExamQuestion;
       results.finalExams = this.finalExams;
       console.log('Бүх өгөгдөл:', results);
       this.resultData = results;
@@ -439,6 +465,33 @@ export class FinalExamQuestionsComponent implements OnInit {
     console.log(e);
     this.searchQuery = e.label;
     this.onSearchInput();
+
+    this.loadClo(e);
+  }
+  loadClo(e: any): void {
+    let subMethods: any[] = [];
+    let subMethodOrder: any[] = [];
+    let cloList: any[] = [];
+    let subMethod: any[] = [];
+    this.subMethods = [];
+    this.assessService.getAssessmentByLesson(this.lessonId)
+      .subscribe((res: any) => {
+        const data = res?.plans.filter((item: any) => {
+          return item.methodType === e.value;
+        });
+
+        data[0].subMethods.map((e: any) => {
+          const dataSub = {
+            id: e._id,
+            label: e.subMethod,
+            point: e.point,
+          };
+          subMethod.push(dataSub);
+        });
+        this.subMethods = subMethod;
+        console.log(data);
+      });
+    this.onCloChange();
   }
   clear(table: Table) {
     table.clear();
@@ -447,5 +500,96 @@ export class FinalExamQuestionsComponent implements OnInit {
   onSearchInput() {
     // Trigger the global filter
     this.dt.filterGlobal(this.searchQuery, 'contains');
+  }
+
+  onCloChange() {
+    let cloData: any[] = [];
+
+    this.cloPointPlanService.getPointPlan(this.lessonId).subscribe((data: any) => {
+      this.subMethods.map((i: any) => {
+        data.map((e: any) => {
+          e.examPoints.map((method: any) => {
+            let alreadyIn = false;
+            if (i.id === method.subMethodId && method.point > 0) {
+              const daty = this.clos?.find((item: any) => item.id === e.cloId);
+              if (cloData.length > 0) {
+                cloData.map((inData: any) => {
+                  if (inData.id === daty.id) {
+                    alreadyIn = true;
+                  }
+                });
+              }
+              if (daty && !alreadyIn) {
+                cloData.push(daty);
+              }
+            }
+          });
+          e.procPoints.map((method: any) => {
+            let alreadyIn = false;
+            if (i.id === method.subMethodId && method.point > 0) {
+              const daty = this.clos?.find((item: any) => item.id === e.cloId);
+              if (cloData.length > 0) {
+                cloData.map((inData: any) => {
+                  if (inData.id === daty.id) {
+                    alreadyIn = true;
+                  }
+                });
+              }
+              if (daty && !alreadyIn) {
+                cloData.push(daty);
+              }
+            }
+          });
+        });
+      });
+      console.log(cloData);
+      this.cloTypes = cloData;
+    });
+  }
+  onMethodChange(cloId: any) {
+    let cloData: any[] = [];
+
+    this.cloPointPlanService.getPointPlan(this.lessonId).subscribe((data: any) => {
+      this.subMethods.map((i: any) => {
+        data.map((e: any) => {
+          if (cloId === e.cloId) {
+            e.examPoints.map((method: any) => {
+              let alreadyIn = false;
+              if (i.id === method.subMethodId && method.point > 0) {
+                const daty = this.subMethods?.find((item: any) => item.id === method.subMethodId);
+                if (cloData.length > 0) {
+                  cloData.map((inData: any) => {
+                    if (inData.id === daty.id) {
+                      alreadyIn = true;
+                    }
+                  });
+                }
+                if (daty && !alreadyIn) {
+                  cloData.push(daty);
+                }
+              }
+            });
+            e.procPoints.map((method: any) => {
+              let alreadyIn = false;
+              if (i.id === method.subMethodId && method.point > 0) {
+                const daty = this.subMethods?.find((item: any) => item.id === method.subMethodId);
+                if (cloData.length > 0) {
+                  cloData.map((inData: any) => {
+                    if (inData.id === daty.id) {
+                      alreadyIn = true;
+                    }
+                  });
+                }
+                if (daty && !alreadyIn) {
+                  cloData.push(daty);
+                }
+              }
+            });
+          }
+        });
+      });
+      console.log(cloData);
+      this.subMethodsClone = cloData;
+    });
   }
 }

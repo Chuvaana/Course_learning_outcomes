@@ -5,6 +5,8 @@ const QuestionSchema = new mongoose.Schema({
   cloId: { type: String, required: true },
   allPoint: { type: Number, required: true },
   takePoint: { type: String, required: true },
+  subMethodId: { type: String},
+  subMethodName: { type: String },
 });
 
 const LessonAssessmentsSchema = new mongoose.Schema(

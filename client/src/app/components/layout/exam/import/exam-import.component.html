@@ -35,11 +35,13 @@
       <div class="flex">
         <p-floatlabel variant="on">
           <p-inputNumber #minV inputStyleClass="w-6rem" [max]="questionAmount"
+          [ngModel]="cloRanges[clo.id]?.min"
             (onInput)="checkValue(clo.id, minV.value, 'min')" id="start"></p-inputNumber>
           <label for="start">Эхлэх</label>
         </p-floatlabel>
         <p-floatlabel variant="on">
           <p-inputNumber #maxV inputStyleClass="w-6rem" [max]="questionAmount"
+          [ngModel]="cloRanges[clo.id]?.max"
             (onInput)="checkValue(clo.id, maxV.value, 'max')" id="end"></p-inputNumber>
           <label for="end">Дуусах</label>
         </p-floatlabel>
@@ -85,12 +87,14 @@
         <td [pEditableColumn]="row[j]" [pEditableColumnField]="'col' + j">
           <p-cellEditor>
             <ng-template pTemplate="input">
-              <p-dropdown [(ngModel)]="tableData[i + 1][j]" [options]="subMethods" optionLabel="subMethod" optionValue="subMethod"
+              <!-- <p-select id="_id" [options]="subMethods" appendTo="body" [(ngModel)]="tableData[i + 1][j]"
+                optionLabel="label" [style]="{'width':'100%'}" (onChange)="subMethodTypesData($event.value.id)" /> -->
+              <p-dropdown [(ngModel)]="tableData[i + 1][j]" [options]="subMethods" optionLabel="subMethod" optionValue="_id"
                 placeholder="Дэд арга" (onChange)="subMethodTypesData($event.value)"
                 class="dropdown-filter"></p-dropdown>
             </ng-template>
             <ng-template pTemplate="output">
-              {{ tableData[i + 1][j] }}
+              {{ tableData[i + 1][j]  === 'string' ? tableData[i + 1][j] : tableData[i + 1][j]?.label }}
             </ng-template>
           </p-cellEditor>
         </td>
