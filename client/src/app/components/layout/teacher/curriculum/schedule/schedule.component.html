@@ -103,7 +103,6 @@
               <th>Семинарын сэдэв</th>
               <th>Семинарын цаг</th>
               <th>CLOs хамаарал</th>
-              <th>Оноо</th>
             </tr>
           </ng-template>
           <ng-template pTemplate="body" let-lesson>
@@ -158,39 +157,6 @@
                   </ng-template>
                 </p-cellEditor>
               </td>
-              <!-- <td [pEditableColumn]>
-                <p-cellEditor>
-                  <ng-template pTemplate="input">
-                    <p-inputNumber formControlName="point"></p-inputNumber>
-                  </ng-template>
-                  <ng-template pTemplate="output">
-                    <ng-container
-                      *ngIf="lesson.get('point')?.value > 0; else zeroPoint"
-                    >
-                      <p-tag [value]="lesson.get('point').value"></p-tag>
-                    </ng-container>
-                    <ng-template #zeroPoint>0</ng-template>
-                  </ng-template>
-                </p-cellEditor>
-              </td> -->
-              <td>
-                <div
-                  *ngFor="
-                    let pCtrl of lesson.get('point')['controls'];
-                    let i = index
-                  "
-                  [formGroup]="pCtrl"
-                  class="point-row"
-                >
-                  <span
-                    >{{ getSemMethodNameById(pCtrl.get("id").value) }}:</span
-                  >
-                  <p-inputNumber
-                    formControlName="point"
-                    [min]="0"
-                  ></p-inputNumber>
-                </div>
-              </td>
             </tr>
           </ng-template>
         </p-table>
@@ -220,10 +186,8 @@
               <th>Лаборатори/практикийн сэдэв</th>
               <th>Цаг</th>
               <th>CLOs хамаарал</th>
-              <th>Оноо</th>
             </tr>
           </ng-template>
-
           <ng-template pTemplate="body" let-lesson>
             <tr [formGroup]="lesson">
               <td>
@@ -275,22 +239,6 @@
                   </ng-template>
                 </p-cellEditor>
               </td>
-              <td [pEditableColumn]>
-                <div
-                  *ngFor="
-                    let pCtrl of lesson.get('point')['controls'];
-                    let i = index
-                  "
-                  [formGroup]="pCtrl"
-                  class="point-row"
-                >
-                  <span>{{ getMethodNameById(pCtrl.get("id").value) }}:</span>
-                  <p-inputNumber
-                    formControlName="point"
-                    [min]="0"
-                  ></p-inputNumber>
-                </div>
-              </td>
             </tr>
           </ng-template>
         </p-table>
@@ -319,7 +267,6 @@
               <th>Танхимд зөвлөгөө авах, үнэлүүлэх цаг</th>
               <th>Бие даан суралцах цаг</th>
               <th>CLOs хамаарал</th>
-              <th>Оноо</th>
             </tr>
           </ng-template>
 
@@ -383,37 +330,6 @@
                     ></p-tag>
                   </ng-template>
                 </p-cellEditor>
-              </td>
-              <!-- <td [pEditableColumn]>
-                <p-cellEditor>
-                  <ng-template pTemplate="input">
-                    <p-inputNumber formControlName="point"></p-inputNumber>
-                  </ng-template>
-                  <ng-template pTemplate="output">
-                    <ng-container
-                      *ngIf="lesson.get('point')?.value > 0; else zeroPoint"
-                    >
-                      <p-tag [value]="lesson.get('point').value"></p-tag>
-                    </ng-container>
-                    <ng-template #zeroPoint>0</ng-template>
-                  </ng-template>
-                </p-cellEditor>
-              </td> -->
-              <td>
-                <div
-                  *ngFor="
-                    let pCtrl of lesson.get('point')['controls'];
-                    let i = index
-                  "
-                  [formGroup]="pCtrl"
-                  class="point-row"
-                >
-                  <span>{{ getBdMethodNameById(pCtrl.get("id").value) }}:</span>
-                  <p-inputNumber
-                    formControlName="point"
-                    [min]="0"
-                  ></p-inputNumber>
-                </div>
               </td>
             </tr>
           </ng-template>

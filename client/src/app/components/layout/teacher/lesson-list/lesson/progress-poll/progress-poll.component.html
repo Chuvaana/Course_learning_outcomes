@@ -1,23 +1,50 @@
 <div class="lesson-body">
   <div class="main-title">
-    <div class="action-btn" style="place-self: end;">
+    <div class="action-btn" style="place-self: end">
       <p-button label="Хадгалах" (onClick)="save()"></p-button>
     </div>
     <div class="action-btn">
-      <label for="calendar-timeonly" class="font-bold block mb-2"> Эхлэх огноо </label>
-      <p-datepicker inputId="calendar-24h" [(ngModel)]="startDate" [showTime]="true" hourFormat="24" />
+      <label for="calendar-timeonly" class="font-bold block mb-2">
+        Эхлэх огноо
+      </label>
+      <p-datepicker
+        inputId="calendar-24h"
+        [(ngModel)]="startDate"
+        [showTime]="true"
+        hourFormat="24"
+      />
     </div>
     <div class="action-btn">
-      <label for="calendar-timeonly" class="font-bold block mb-2"> Дуусах огноо </label>
-      <p-datepicker inputId="calendar-24h" [(ngModel)]="endDate" [showTime]="true" hourFormat="24" />
+      <label for="calendar-timeonly" class="font-bold block mb-2">
+        Дуусах огноо
+      </label>
+      <p-datepicker
+        inputId="calendar-24h"
+        [(ngModel)]="endDate"
+        [showTime]="true"
+        hourFormat="24"
+      />
+    </div>
+    <!-- Асуулт нэмэх товч -->
+    <div class="action-btn" style="place-self: end">
+      <p-button label="Асуулт нэмэх" (onClick)="addQuestion()"></p-button>
     </div>
   </div>
   <p-toast />
-  <div *ngFor="let question of dataQuestions; let qIndex = index" class="question">
+  <div
+    *ngFor="let question of dataQuestions; let qIndex = index"
+    class="question"
+  >
     <div class="header-sub-title">
       <p-iftalabel>
-        <textarea class="no-resize-textarea" pSize="large" rows="3" cols="62" pTextarea
-          [(ngModel)]="question.groupName"></textarea>
+        <textarea
+          class="no-resize-textarea"
+          pSize="large"
+          rows="3"
+          cols="62"
+          pTextarea
+          [(ngModel)]="question.groupName"
+        ></textarea>
         <label for="username">Дэд нэр</label>
       </p-iftalabel>
     </div>
@@ -25,7 +52,12 @@
       <div class="header-title">
         <div class="title">
           <p-iftalabel>
-            <textarea rows="5" cols="70" pTextarea [(ngModel)]="answer.questionTitle"></textarea>
+            <textarea
+              rows="5"
+              cols="70"
+              pTextarea
+              [(ngModel)]="answer.questionTitle"
+            ></textarea>
             <label for="username">Асуулт</label>
           </p-iftalabel>
         </div>
@@ -33,12 +65,23 @@
       <div class="action-dropdown">
         <div class="rating-frame">
           <p-floatlabel variant="on">
-            <p-dropdown [(ngModel)]="answer.questionType" id="code" [options]="questionTypes" optionLabel="name"
-              (onChange)="onBranchChange($event.value)" autocomplete="off" [style]="{ width: '200px'}">
+            <p-dropdown
+              [(ngModel)]="answer.questionType"
+              id="code"
+              [options]="questionTypes"
+              optionLabel="name"
+              (onChange)="onBranchChange($event.value)"
+              autocomplete="off"
+              [style]="{ width: '200px' }"
+            >
             </p-dropdown>
             <label for="school">Асуулгын төрөл</label>
           </p-floatlabel>
-          <button class="answer-button" (click)="onRemove(i, qIndex)" type="button">
+          <button
+            class="answer-button"
+            (click)="onRemove(i, qIndex)"
+            type="button"
+          >
             <i class="pi pi-times" style="color: green"></i>
           </button>
         </div>
@@ -46,11 +89,10 @@
     </div>
     <!-- Асуулт нэмэх товч -->
     <div class="add-answer">
-      <p-button label="Дэд Асуулт нэмэх" (onClick)="addAnswer(qIndex)"></p-button>
+      <p-button
+        label="Дэд Асуулт нэмэх"
+        (onClick)="addAnswer(qIndex)"
+      ></p-button>
     </div>
-  </div>
-  <!-- Асуулт нэмэх товч -->
-  <div class="action-btn">
-    <p-button label="Асуулт нэмэх" (onClick)="addQuestion()"></p-button>
   </div>
 </div>

@@ -172,3 +172,30 @@
     </div>
   </div>
 </p-panel>
+
+<p-divider></p-divider>
+
+<p-panel header="Баталгаажуулалт" toggleable>
+  <div class="p-grid p-formgrid gap-container">
+    <div class="p-field p-col-12 p-md-6">
+      <label>Боловсруулсан багш:</label>
+      <div class="p-inputtext">{{ lesson.createdTeacherBy }}</div>
+    </div>
+    <div class="p-field p-col-12 p-md-6">
+      <label>Огноо:</label>
+      <div class="p-inputtext">
+        {{ lesson.createdTeacherDatetime | date : "yyyy-MM-dd" }}
+      </div>
+    </div>
+    <div class="p-field p-col-12 p-md-6">
+      <label>Хянасан салбарын эрхлэгч:</label>
+      <div class="p-inputtext">{{ lesson.checkManagerBy }}</div>
+    </div>
+    <div class="p-field p-col-12 p-md-6">
+      <label>Огноо:</label>
+      <div class="p-inputtext">
+        {{ lesson.checkManagerDatetime | date : "yyyy-MM-dd" }}
+      </div>
+    </div>
+  </div>
+</p-panel>

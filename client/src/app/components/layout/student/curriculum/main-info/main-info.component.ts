@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ReactiveFormsModule } from '@angular/forms';
 import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { CalendarModule } from 'primeng/calendar';
@@ -13,8 +12,6 @@ import { InputTextModule } from 'primeng/inputtext';
 import { PanelModule } from 'primeng/panel';
 import { CurriculumService } from '../../../../../services/curriculum.service';
 import { SharedService } from '../../../../../services/sharedService';
-import { TeacherService } from '../../../../../services/teacherService';
-import { TabRefreshService } from '../tabRefreshService';
 
 @Component({
   selector: 'app-main-info',
@@ -49,12 +46,7 @@ export class MainInfoComponent {
 
   guaranteeData = {};
   constructor(
-    private fb: FormBuilder,
     private service: CurriculumService,
-    private teacherService: TeacherService,
-    private msgService: MessageService,
-    private router: Router,
-    private tabRefreshService: TabRefreshService,
     private sharedService: SharedService
   ) {}
 
@@ -141,6 +133,11 @@ export class MainInfoComponent {
           selfStudyLab: response.selfStudyHours.lab,
           selfStudyAssignment: response.selfStudyHours.assignment,
           selfStudyPractice: response.selfStudyHours.practice,
+
+          createdTeacherBy: response.createdTeacherBy,
+          createdTeacherDatetime: new Date(response.createdTeacherDatetime),
+          checkManagerBy: response.checkManagerBy,
+          checkManagerDatetime: new Date(response.checkManagerDatetime),
         };
       }
     });

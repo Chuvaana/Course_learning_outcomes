@@ -62,7 +62,7 @@ export class LessonComponent {
         routerLink: ['/main/student', this.lessonId, 'grade'],
       },
       {
-        label: 'Ирц явцын оноо харах',
+        label: 'Ирцийн оноо харах',
         icon: 'pi pi-star',
         routerLink: ['/main/student', this.lessonId, 'attendance'],
       },

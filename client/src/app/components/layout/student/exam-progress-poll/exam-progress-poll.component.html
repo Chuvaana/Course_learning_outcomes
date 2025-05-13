@@ -1,65 +1,102 @@
 <div class="lesson-body">
-  <div class="action-btn" [hidden]="dateActive">
-    <p-button label="Илгээх" [disabled]="createActive || dateActive" (onClick)="save()"></p-button>
+  <div class="action-btn" *ngIf="!dateActive">
+    <p-button
+      label="Илгээх"
+      [disabled]="createActive || dateActive"
+      (onClick)="save()"
+    ></p-button>
   </div>
-  <div class="err-title" [hidden]="!dateActive">
+  <div class="err-title" *ngIf="dateActive">
     <div class="err-text">
-      <span>Санал асуулга үүсээгүй байгаа</span><br><span>тул үүсгэсний дараа орж ирнэ үү.</span>
+      <span>Санал асуулга үүсээгүй байгаа</span><br /><span
+        >тул үүсгэсний дараа орж ирнэ үү.</span
+      >
     </div>
     <div class="err-img">
-      <p-image src="../../../../../assets/img/waitin-image.png" alt="Image" width="500" />
+      <p-image
+        src="../../../../../assets/img/waitin-image.png"
+        alt="Image"
+        width="500"
+      />
     </div>
   </div>
   <p-toast />
-  <div *ngFor="let question of dataQuestions; let qIndex = index" class="question">
-    <div class="header-sub-title">
-      <p-fieldset legend="Дэд нэр">
+  <div class="questionFrame" *ngIf="!dateActive">
+    <div
+      *ngFor="let question of dataQuestions; let qIndex = index"
+      class="question"
+    >
+      <div class="header-sub-title">
+        <p-fieldset legend="Дэд нэр">
           <p class="m-0">
-            {{question.groupName}}
+            {{ question.groupName }}
           </p>
-      </p-fieldset>
-    </div>
-    <div *ngFor="let answer of question.questionList; let i = index">
-      <div class="header-title">
-        <div class="title">
-          <p-fieldset legend="Асуулт">
+        </p-fieldset>
+      </div>
+      <div *ngFor="let answer of question.questionList; let i = index">
+        <div class="header-title">
+          <div class="title">
+            <p-fieldset legend="Асуулт">
               <p class="m-0">
-                {{answer.questionTitle}}
+                {{ answer.questionTitle }}
               </p>
-          </p-fieldset>
+            </p-fieldset>
+          </div>
         </div>
-      </div>
-      <div class="action-dropdown">
-        <div class="rating-frame">
-          <div class="answer-box" *ngIf="answer.questionType == 'RATE'">
-            <div class="answer-value">
-              <span>Муу</span>
-              <p-rating [(ngModel)]="answer.answerValue" stars="5">
-                <ng-template #cancelicon>
-                  <img src="https://primefaces.org/cdn/primeng/images/demo/rating/cancel.png" height="24" width="24" />
-                </ng-template>
-                <ng-template #onicon>
-                  <img src="https://primefaces.org/cdn/primeng/images/demo/rating/custom-icon-active.png" height="24"
-                  width="24" />
-                </ng-template>
-                <ng-template #officon>
-                  <img src="https://primefaces.org/cdn/primeng/images/demo/rating/custom-icon.png" height="24"
-                  width="24" />
-                </ng-template>
-              </p-rating>
-              <span>Сайн</span>
+        <div class="action-dropdown">
+          <div class="rating-frame">
+            <div class="answer-box" *ngIf="answer.questionType == 'RATE'">
+              <div class="answer-value">
+                <span>Муу</span>
+                <p-rating [(ngModel)]="answer.answerValue" stars="5">
+                  <ng-template #cancelicon>
+                    <img
+                      src="https://primefaces.org/cdn/primeng/images/demo/rating/cancel.png"
+                      height="24"
+                      width="24"
+                    />
+                  </ng-template>
+                  <ng-template #onicon>
+                    <img
+                      src="https://primefaces.org/cdn/primeng/images/demo/rating/custom-icon-active.png"
+                      height="24"
+                      width="24"
+                    />
+                  </ng-template>
+                  <ng-template #officon>
+                    <img
+                      src="https://primefaces.org/cdn/primeng/images/demo/rating/custom-icon.png"
+                      height="24"
+                      width="24"
+                    />
+                  </ng-template>
+                </p-rating>
+                <span>Сайн</span>
+              </div>
             </div>
+            <div class="answer-value" *ngIf="answer.questionType == 'FEEDBACK'">
+              <p-iftalabel>
+                <textarea
+                  pSize="large"
+                  rows="2"
+                  cols="40"
+                  pTextarea
+                  [(ngModel)]="answer.answerValue"
+                ></textarea>
+                <label for="username">Хариулт</label>
+              </p-iftalabel>
+            </div>
+            <button
+              class="answer-button"
+              (click)="onRemove(i, qIndex)"
+              type="button"
+              *ngIf="false"
+            >
+              <i class="pi pi-times" style="color: green"></i>
+            </button>
           </div>
-          <div class="answer-value" *ngIf="answer.questionType == 'FEEDBACK'">
-            <p-iftalabel>
-              <textarea pSize="large" rows="2" cols="40" pTextarea [(ngModel)]="answer.answerValue"></textarea>
-              <label for="username">Хариулт</label>
-            </p-iftalabel>
-          </div>
-          <button class="answer-button" (click)="onRemove(i, qIndex)" type="button" *ngIf="false">
-            <i class="pi pi-times" style="color: green"></i>
-          </button>
         </div>
       </div>
     </div>
+  </div>
 </div>

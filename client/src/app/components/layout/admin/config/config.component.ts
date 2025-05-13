@@ -62,8 +62,38 @@ export class ConfigComponent {
 
   readData() {
     this.configService.getConfig().subscribe((res) => {
-      this.items = res;
+      if (res.length != 0) {
+        this.items = res;
+      } else {
+        this.setDefaultItems();
+      }
     });
+  }
+
+  setDefaultItems() {
+    this.items.push(
+      {
+        branchId: 'All',
+        department: 'All',
+        name: 'Хичээлийн эхний өдөр',
+        itemCode: 'First_day_of_school',
+        itemValue: '2025-02-04',
+      },
+      {
+        branchId: 'All',
+        department: 'All',
+        name: 'Хичээлийн жил',
+        itemCode: 'School_year',
+        itemValue: '2024-2025',
+      },
+      {
+        branchId: 'All',
+        department: 'All',
+        name: 'Улирал',
+        itemCode: 'season',
+        itemValue: 'spring',
+      }
+    );
   }
 
   loadBranches(): void {
@@ -179,40 +209,5 @@ export class ConfigComponent {
     );
 
     this.editingRowId = null;
-  }
-
-  // On form submit
-  onSubmit(): void {
-    if (this.configForm.valid) {
-      const config = this.configForm.value;
-      const cleanedData = {
-        ...config,
-        department: config.department.id,
-        branchId: config.branchId.id,
-      };
-      this.configService.submitConfig(cleanedData).subscribe(
-        (response: any) => {
-          this.msgService.add({
-            severity: 'success',
-            summary: 'Амжилттай',
-            detail: config._id ? 'Амжилттай заслаа!' : 'Амжилттай нэмлээ!',
-          });
-          this.readData();
-        },
-        (error: any) => {
-          this.msgService.add({
-            severity: 'error',
-            summary: 'Алдаа',
-            detail: 'Алдаа гарлаа: ' + error.message,
-          });
-        }
-      );
-    } else {
-      this.msgService.add({
-        severity: 'warn',
-        summary: 'Анхааруулга',
-        detail: 'Формыг зөв бөглөнө үү',
-      });
-    }
   }
 }

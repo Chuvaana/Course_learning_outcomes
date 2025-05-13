@@ -1,27 +1,27 @@
 .container {
+  display: flex;
+  gap: 20px;
+  align-items: baseline;
+
+  .col {
     display: flex;
-    gap: 20px;
-    align-items: baseline;
+    flex-direction: column;
+    justify-content: center;
 
-    .col {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
+    .col2 {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
 
-        .col2 {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-
-            // Set a fixed width for all input fields and dropdowns
-            p-floatlabel {
-                width: 100%; // Make sure it takes full width of the parent
-            }
-
-            .p-float-label p-inputnumber:-webkit-autofill+label {
-                top: -0.75rem;
-                font-size: 12px;
-            }
-        }
+      .p-float-label p-inputnumber:-webkit-autofill + label {
+        top: -0.75rem;
+        font-size: 12px;
+      }
     }
+
+    .col3 {
+      display: flex;
+      justify-content: space-between;
+    }
+  }
 }

@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import {
-  AbstractControl,
   FormArray,
   FormBuilder,
   FormGroup,
@@ -15,16 +14,16 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { InputTextModule } from 'primeng/inputtext';
 import { PanelModule } from 'primeng/panel';
 import { TableModule } from 'primeng/table';
+import { ToastModule } from 'primeng/toast';
 import { forkJoin, Observable } from 'rxjs';
+import { AssessmentPlanService } from '../../../../../../services/assessmentPlanService';
 import { AssessmentService } from '../../../../../../services/assessmentService';
 import { CloPointPlanService } from '../../../../../../services/cloPointPlanService';
-import { ToastModule } from 'primeng/toast';
-import { AssessmentPlanService } from '../../../../../../services/assessmentPlanService';
 
 interface DataRow {
   formGroup: FormGroup;
-  week: string; // Roman numeral week string
-  weekNum: number; // numeric week for sorting
+  week: string;
+  weekNum: number;
   cloName: string;
   type: string;
   weekRowSpan?: number;
@@ -77,7 +76,7 @@ export class CloFreqPlanComponent implements OnInit {
     methodName: string;
     clo: string;
     score: number;
-    weekNum?: number; // keep number added
+    weekNum?: number;
   }[] = [];
 
   groupedDataSource: { [type: string]: DataRow[] } = {};

@@ -1,85 +1,83 @@
 .lesson-body {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-.header-sub-title{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.header-sub-title {
   width: 90%;
   margin: 50px 0px 0px 0px;
-  font-size:large;
+  font-size: large;
 }
-.title{
+.title {
   width: 90%;
 }
 
 .card {
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    padding: 0;
-    /* No padding */
-    background: none;
-    /* No background color */
-    border: none;
-    /* No border */
-    box-shadow: none;
-    /* No shadow */
-    height: 100%;
-    width: 18%;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 0;
+  /* No padding */
+  background: none;
+  /* No background color */
+  border: none;
+  /* No border */
+  box-shadow: none;
+  /* No shadow */
+  height: 100%;
+  width: 18%;
 }
 
 .routerOutlet {
-    width: 82%;
-    height: 100%;
+  width: 82%;
+  height: 100%;
 }
 
 p-tieredmenu {
-    width: 100%;
-    height: 100%;
-    // background-color: #ffffff;
+  width: 100%;
+  height: 100%;
+  // background-color: #ffffff;
+  border: none;
+  box-shadow: none;
+
+  ::ng-deep .p-tieredmenu .p-tieredmenu-header {
+    background-color: transparent;
+    color: #333;
+  }
+
+  ::ng-deep .p-tieredmenu .p-tieredmenu-content {
+    padding: 1rem;
+    background-color: #ffffff;
+  }
+
+  ::ng-deep .p-tieredmenu .p-menuitem {
+    padding: 1rem;
+    font-size: 1rem;
+    font-weight: 500;
+    color: #333;
+    /* Dark color for menu items */
+    transition: background-color 0.3s ease;
     border: none;
-    box-shadow: none;
 
-    ::ng-deep .p-tieredmenu .p-tieredmenu-header {
-        background-color: transparent;
-        color: #333;
+    &:hover {
+      background-color: #f0f0f0;
+      /* Subtle hover effect */
     }
+  }
 
-    ::ng-deep .p-tieredmenu .p-tieredmenu-content {
-        padding: 1rem;
-        background-color: #ffffff;
-    }
+  ::ng-deep .p-tieredmenu .p-menuitem-link {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
 
-    ::ng-deep .p-tieredmenu .p-menuitem {
-        padding: 1rem;
-        font-size: 1rem;
-        font-weight: 500;
-        color: #333;
-        /* Dark color for menu items */
-        transition: background-color 0.3s ease;
-        border: none;
-
-        &:hover {
-            background-color: #f0f0f0;
-            /* Subtle hover effect */
-        }
-    }
-
-    ::ng-deep .p-tieredmenu .p-menuitem-link {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-
-    ::ng-deep .p-tieredmenu .p-menuitem-icon {
-        color: #333;
-        /* Icon color */
-    }
-
-
+  ::ng-deep .p-tieredmenu .p-menuitem-icon {
+    color: #333;
+    /* Icon color */
+  }
 }
 
-.action-btn{
+.action-btn {
   margin: 30px 0px;
 }
 
@@ -87,48 +85,48 @@ p-tieredmenu {
   width: 300px; // or 100%, 50%, etc.
   margin-right: 20px;
 }
-.custom-dropdown{
+.custom-dropdown {
   margin-left: 20px;
   align-items: center;
 }
-.add-answer{
+.add-answer {
   margin-bottom: 30px;
 }
-.answer-box{
+.answer-box {
   display: flex;
 }
-.question{
+.question {
   border: black solid 1px;
   border-radius: 10px;
   width: 40%;
   overflow-y: auto;
   display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-bottom: 50px;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 50px;
 }
 
-.action-dropdown{
+.action-dropdown {
   display: flex;
   place-self: center;
   margin: 10px 0px;
 }
 
-.rating-frame{
+.rating-frame {
   display: flex;
   justify-content: space-between;
   place-self: center;
   margin: 10px 0px;
   width: 60%;
 
-  .answer-check-box{
+  .answer-check-box {
     width: 50px;
     height: 50px;
     align-content: center;
     text-align: center;
   }
 
-  .answer-button{
+  .answer-button {
     width: 50px;
     height: 50px;
     align-content: center;
@@ -148,8 +146,8 @@ p-tieredmenu {
     transform: scale(0.95);
   }
 }
-.header-title{
-  margin: 10px 0px 0px 0px ;
+.header-title {
+  margin: 10px 0px 0px 0px;
   display: flex;
   justify-content: center;
 }
@@ -172,7 +170,7 @@ p-tieredmenu {
   animation: popFadeIn 0.6s ease-out;
 }
 
-.answer-add-button{
+.answer-add-button {
   width: 50px;
   height: 50px;
   margin-bottom: 20px;
@@ -191,7 +189,7 @@ p-tieredmenu {
 .answer-add-button:active {
   transform: scale(0.95);
 }
-.queston-add-button{
+.queston-add-button {
   width: 50px;
   height: 50px;
   align-content: center;
@@ -210,30 +208,33 @@ p-tieredmenu {
   transform: scale(0.95);
 }
 
-
-.answer-value{
+.answer-value {
   display: flex;
   align-items: center;
 
-  span{
+  span {
     margin: 0px 20px;
-    font-size:medium;
+    font-size: medium;
   }
 }
 
-
-.err-title{
+.err-title {
   display: flex;
   justify-content: center;
   margin: 200px 100px;
-  .err-text{
+  .err-text {
     width: 400px;
     align-content: center;
     text-align: center;
     font-size: 24px;
   }
-  .err-img{
+  .err-img {
     margin-left: 400px;
-
   }
+}
+
+.questionFrame {
+  display: flex;
+  justify-content: center;
+  // align-items: center;
 }

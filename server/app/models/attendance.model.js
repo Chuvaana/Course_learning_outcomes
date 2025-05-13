@@ -4,7 +4,7 @@ const AttendanceSchema = new mongoose.Schema(
   {
     lessonId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Lesson', // Reference to Lesson model
+      ref: 'Lesson',
       required: true,
     },
     weekDay: {
@@ -14,7 +14,7 @@ const AttendanceSchema = new mongoose.Schema(
     },
     type: {
       type: String,
-      enum: ['alec', 'bsem', 'clab'], // Lecture, Seminar, Laboratory
+      enum: ['alec', 'bsem', 'clab'],
       required: true,
     },
     time: {

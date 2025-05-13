@@ -5,6 +5,16 @@ exports.createLesson = async (req, res) => {
   try {
     const data = req.body;
 
+    const existingLesson = await Lesson.findOne({
+      recommendedSemester: data.recommendedSemester,
+      schoolYear: data.schoolYear,
+      lessonCode: data.lessonCode,
+    });
+
+    if (existingLesson) {
+      return res.status(409).json({ message: 'Энэ хичээл өмнө нь бүртгэгдсэн байна.' });
+    }
+
     const cleanData = {
       ...data,
       lessonCredit: Number(data.lessonCredit) || 0,
@@ -82,7 +92,6 @@ exports.updateLesson = async (req, res) => {
       return res.status(404).json({ message: 'Lesson not found' });
     }
 
-    // Update the lesson with the new data
     const updatedData = {
       ...lesson.toObject(),
       lessonName: data.lessonName ?? lesson.lessonName,
@@ -93,6 +102,10 @@ exports.updateLesson = async (req, res) => {
       lessonLevel: data.lessonLevel ?? lesson.lessonLevel,
       lessonType: data.lessonType ?? lesson.lessonType,
       recommendedSemester: data.recommendedSemester ?? lesson.recommendedSemester,
+      checkManagerBy: data.checkManagerBy ?? lesson.checkManagerBy,
+      checkManagerDatetime: data.checkManagerDatetime ?? lesson.checkManagerDatetime,
+      createdTeacherBy: data.createdTeacherBy ?? lesson.createdTeacherBy,
+      createdTeacherDatetime: data.createdTeacherDatetime ?? lesson.createdTeacherDatetime,
       assistantTeacher: {
         name: data.assistantTeacherName ?? lesson.assistantTeacher.name,
         room: data.assistantTeacherRoom ?? lesson.assistantTeacher.room,

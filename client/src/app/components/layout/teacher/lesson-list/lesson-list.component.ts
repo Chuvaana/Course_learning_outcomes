@@ -32,6 +32,7 @@ import { AssessmentService } from '../../../../services/assessmentService';
 import { CloPointPlanService } from '../../../../services/cloPointPlanService';
 import { MenubarModule } from 'primeng/menubar';
 import { TooltipModule } from 'primeng/tooltip';
+import { AssessmentPlanService } from '../../../../services/assessmentPlanService';
 
 interface Lesson {
   id: string;
@@ -129,6 +130,8 @@ export class LessonListComponent implements OnInit {
   season!: string;
   teacherId!: string;
 
+  cloList: any;
+
   constructor(
     private service: TeacherService,
     private router: Router,
@@ -141,7 +144,8 @@ export class LessonListComponent implements OnInit {
     private scheService: ScheduleService,
     private msgService: MessageService,
     private assessService: AssessmentService,
-    private cloPointPlanService: CloPointPlanService
+    private cloPointPlanService: CloPointPlanService,
+    private assessPlan: AssessmentPlanService
   ) {}
 
   ngOnInit(): void {
@@ -230,7 +234,7 @@ export class LessonListComponent implements OnInit {
     this.cirService.getMainInfo(lesson.id).subscribe((mainInfo: any) => {
       const info: Info = {
         lessonName: `${mainInfo.lessonName} copy`,
-        lessonCode: mainInfo.lessonCode,
+        lessonCode: `${mainInfo.lessonCode} copy`,
         lessonCredit: mainInfo.lessonCredit,
         school: mainInfo.school,
         department: mainInfo.department,
@@ -268,246 +272,282 @@ export class LessonListComponent implements OnInit {
         checkManagerDatetime: '',
       };
 
-      this.cirService.saveLesson(info).subscribe((response: any) => {
-        const newLessonId = response.lesson.id;
-        const data = {
-          lessonId: response.lesson.id,
-          teacherId: this.teacherId,
-        };
+      this.cirService.saveLesson(info).subscribe(
+        (response: any) => {
+          const newLessonId = response.lesson.id;
+          const data = {
+            lessonId: response.lesson.id,
+            teacherId: this.teacherId,
+          };
 
-        this.cirService
-          .addLessonToTeacher(this.teacherId, data)
-          .subscribe((res) => {
-            console.log(res);
-          });
-
-        this.matService
-          .getMaterials(lesson.id)
-          .subscribe((materialsResponse: any) => {
-            delete materialsResponse._id;
-            delete materialsResponse.createdAt;
-            delete materialsResponse.updatedAt;
-            delete materialsResponse.__v;
-            materialsResponse.lessonId = newLessonId;
-
-            this.matService.addMaterials(materialsResponse).subscribe((res) => {
+          this.cirService
+            .addLessonToTeacher(this.teacherId, data)
+            .subscribe((res) => {
               console.log(res);
             });
-          });
 
-        this.otherService
-          .getDefinition(lesson.id)
-          .subscribe((defResponse: any) => {
-            defResponse.forEach((def: any) => {
-              delete def._id;
-              delete def.__v;
-              def.lessonId = newLessonId;
+          this.matService
+            .getMaterials(lesson.id)
+            .subscribe((materialsResponse: any) => {
+              delete materialsResponse._id;
+              delete materialsResponse.createdAt;
+              delete materialsResponse.updatedAt;
+              delete materialsResponse.__v;
+              materialsResponse.lessonId = newLessonId;
+
+              this.matService
+                .addMaterials(materialsResponse)
+                .subscribe((res) => {
+                  console.log(res);
+                });
             });
-            this.otherService.addDefinition(defResponse[0]).subscribe((res) => {
-              console.log(res);
+
+          this.otherService
+            .getDefinition(lesson.id)
+            .subscribe((defResponse: any) => {
+              defResponse.forEach((def: any) => {
+                delete def._id;
+                delete def.__v;
+                def.lessonId = newLessonId;
+              });
+              this.otherService
+                .addDefinition(defResponse[0])
+                .subscribe((res) => {
+                  console.log(res);
+                });
             });
-          });
 
-        this.addService
-          .getAdditional(lesson.id)
-          .subscribe((addResponse: any) => {
-            delete addResponse._id;
-            delete addResponse.__v;
-            addResponse.lessonId = newLessonId;
+          this.addService
+            .getAdditional(lesson.id)
+            .subscribe((addResponse: any) => {
+              delete addResponse._id;
+              delete addResponse.__v;
+              addResponse.lessonId = newLessonId;
 
-            this.addService.addAdditional(addResponse).subscribe((res) => {
-              console.log(res);
+              this.addService.addAdditional(addResponse).subscribe((res) => {
+                console.log(res);
+              });
             });
-          });
 
-        const oldNewCloMap = new Map<string, string>();
+          const oldNewCloMap = new Map<string, string>();
+          const oldNewSubMethodMap = new Map<string, string>();
 
-        this.cloService
-          .getCloList(lesson.id)
-          .pipe(
-            switchMap((cloList: any[]) => {
-              return from(cloList).pipe(
-                concatMap((item: any) => {
-                  const oldId = item.id;
-                  delete item.id;
+          this.cloService
+            .getCloList(lesson.id)
+            .pipe(
+              switchMap((cloList: any[]) => {
+                return from(cloList).pipe(
+                  concatMap((item: any) => {
+                    const oldId = item.id;
+                    delete item.id;
+                    delete item.createdAt;
+                    delete item.updatedAt;
+                    item.lessonId = newLessonId;
+
+                    return this.cloService.registerClo(item).pipe(
+                      tap((registeredClo: any) => {
+                        oldNewCloMap.set(oldId, registeredClo.id);
+                      })
+                    );
+                  }),
+                  toArray()
+                );
+              }),
+
+              switchMap(() => {
+                return forkJoin({
+                  lec: this.scheService.getSchedules(lesson.id),
+                  sem: this.scheService.getScheduleSems(lesson.id),
+                  lab: this.scheService.getScheduleLabs(lesson.id),
+                  bd: this.scheService.getScheduleBds(lesson.id),
+                }).pipe(
+                  switchMap(({ lec, sem, lab, bd }) => {
+                    const transform = (arr: any[]) =>
+                      arr
+                        .filter((item) => item && Object.keys(item).length > 0)
+                        .map((item: any) => {
+                          delete item._id;
+                          delete item.__v;
+                          item.lessonId = newLessonId;
+                          if (item.cloRelevance?.id) {
+                            item.cloRelevance = oldNewCloMap.get(
+                              item.cloRelevance.id
+                            );
+                          }
+                          return item;
+                        });
+
+                    const requests = [];
+                    if (lec.length > 0)
+                      requests.push(
+                        this.scheService.addSchedulesArray(transform(lec))
+                      );
+                    if (sem.length > 0)
+                      requests.push(
+                        this.scheService.addScheduleSemsArray(transform(sem))
+                      );
+                    if (lab.length > 0)
+                      requests.push(
+                        this.scheService.addScheduleLabsArray(transform(lab))
+                      );
+                    if (bd.length > 0)
+                      requests.push(
+                        this.scheService.addScheduleBdsArray(transform(bd))
+                      );
+
+                    return requests.length > 0 ? forkJoin(requests) : of([]);
+                  })
+                );
+              }),
+              switchMap(() => this.methodService.getMethod(lesson.id)),
+              switchMap((methodResponse: any[]) => {
+                const updatedMethods = methodResponse.map((item: any) => {
+                  delete item._id;
                   delete item.createdAt;
                   delete item.updatedAt;
+                  delete item.__v;
                   item.lessonId = newLessonId;
 
-                  return this.cloService.registerClo(item).pipe(
-                    tap((registeredClo: any) => {
-                      oldNewCloMap.set(oldId, registeredClo.id);
-                    })
-                  );
-                }),
-                toArray()
-              );
-            }),
+                  item.cloRelevance = item.cloRelevance.map((clo: any) => {
+                    return oldNewCloMap.get(clo.id) || clo.id;
+                  });
+                  return item;
+                });
 
-            switchMap(() => {
-              return forkJoin({
-                lec: this.scheService.getSchedules(lesson.id),
-                sem: this.scheService.getScheduleSems(lesson.id),
-                lab: this.scheService.getScheduleLabs(lesson.id),
-                bd: this.scheService.getScheduleBds(lesson.id),
-              }).pipe(
-                switchMap(({ lec, sem, lab, bd }) => {
-                  const transform = (arr: any[]) =>
-                    arr
-                      .filter((item) => item && Object.keys(item).length > 0)
-                      .map((item: any) => {
-                        delete item._id;
-                        delete item.__v;
-                        item.lessonId = newLessonId;
-                        if (item.cloRelevance?.id) {
-                          item.cloRelevance = oldNewCloMap.get(
-                            item.cloRelevance.id
-                          );
-                        }
-                        return item;
+                return this.methodService.createMethods(updatedMethods);
+              }),
+              switchMap(() =>
+                this.assessService.getAssessmentByLesson(lesson.id).pipe(
+                  switchMap((res: any) => {
+                    const oldSubMethodIds: string[] = [];
+
+                    const cleanedPlans = res.plans.map((plan: any) => {
+                      const subMethods = plan.subMethods.map((sub: any) => {
+                        oldSubMethodIds.push(sub._id);
+                        return {
+                          subMethod: sub.subMethod,
+                          point: sub.point,
+                        };
                       });
 
-                  const requests = [];
-                  if (lec.length > 0)
-                    requests.push(
-                      this.scheService.addSchedulesArray(transform(lec))
-                    );
-                  if (sem.length > 0)
-                    requests.push(
-                      this.scheService.addScheduleSemsArray(transform(sem))
-                    );
-                  if (lab.length > 0)
-                    requests.push(
-                      this.scheService.addScheduleLabsArray(transform(lab))
-                    );
-                  if (bd.length > 0)
-                    requests.push(
-                      this.scheService.addScheduleBdsArray(transform(bd))
-                    );
-
-                  return requests.length > 0 ? forkJoin(requests) : of([]);
-                })
-              );
-            }),
-            switchMap(() => this.methodService.getMethod(lesson.id)),
-            switchMap((methodResponse: any[]) => {
-              const updatedMethods = methodResponse.map((item: any) => {
-                delete item._id;
-                delete item.createdAt;
-                delete item.updatedAt;
-                delete item.__v;
-                item.lessonId = newLessonId;
-
-                item.cloRelevance = item.cloRelevance.map((clo: any) => {
-                  return oldNewCloMap.get(clo.id) || clo.id;
-                });
-                return item;
-              });
-
-              return this.methodService.createMethods(updatedMethods);
-            }),
-            switchMap(() =>
-              this.assessService.getAssessmentByLesson(lesson.id).pipe(
-                switchMap((res: any) => {
-                  const oldSubMethodIds: string[] = [];
-
-                  const cleanedPlans = res.plans.map((plan: any) => {
-                    const subMethods = plan.subMethods.map((sub: any) => {
-                      oldSubMethodIds.push(sub._id);
                       return {
-                        subMethod: sub.subMethod,
-                        point: sub.point,
+                        methodName: plan.methodName,
+                        methodType: plan.methodType,
+                        secondMethodType: plan.secondMethodType,
+                        frequency: plan.frequency,
+                        subMethods: subMethods,
                       };
                     });
 
-                    return {
-                      methodName: plan.methodName,
-                      methodType: plan.methodType,
-                      secondMethodType: plan.secondMethodType,
-                      frequency: plan.frequency,
-                      subMethods: subMethods,
-                    };
-                  });
-
-                  return this.assessService
-                    .saveAssessmentMethod({
-                      lessonId: newLessonId,
-                      plans: cleanedPlans,
-                    })
-                    .pipe(
-                      map((saved: any) => {
-                        const newSubMethodIds: string[] = [];
-
-                        saved.plans.forEach((plan: any) => {
-                          newSubMethodIds.push(...plan.subMethods);
-                        });
-
-                        const oldNewSubMethodMap = new Map<string, string>();
-                        oldSubMethodIds.forEach((oldId, index) => {
-                          oldNewSubMethodMap.set(oldId, newSubMethodIds[index]);
-                        });
-                        return oldNewSubMethodMap;
+                    return this.assessService
+                      .saveAssessmentMethod({
+                        lessonId: newLessonId,
+                        plans: cleanedPlans,
                       })
-                    );
-                })
-              )
-            ),
-            switchMap((oldNewSubMethodMap) =>
-              this.cloPointPlanService.getPointPlan(lesson.id).pipe(
-                map((res: any[]) => {
-                  return res.map((item) => {
-                    item.lessonId = newLessonId;
-                    if (item._id) delete item._id;
-                    if (item.__v) delete item.__v;
+                      .pipe(
+                        map((saved: any) => {
+                          const newSubMethodIds: string[] = [];
 
-                    item.cloId = oldNewCloMap.get(item.cloId) || item.cloId;
+                          saved.plans.forEach((plan: any) => {
+                            newSubMethodIds.push(...plan.subMethods);
+                          });
 
-                    item.procPoints = item.procPoints?.map((p: any) => ({
-                      ...p,
-                      subMethodId:
-                        oldNewSubMethodMap.get(p.subMethodId) || p.subMethodId,
-                    }));
+                          oldSubMethodIds.forEach((oldId, index) => {
+                            oldNewSubMethodMap.set(
+                              oldId,
+                              newSubMethodIds[index]
+                            );
+                          });
+                          return oldNewSubMethodMap;
+                        })
+                      );
+                  })
+                )
+              ),
+              switchMap(() =>
+                this.cloPointPlanService.getPointPlan(lesson.id).pipe(
+                  map((res: any[]) => {
+                    return res.map((item) => {
+                      item.lessonId = newLessonId;
+                      if (item._id) delete item._id;
+                      if (item.__v) delete item.__v;
 
-                    item.examPoints = item.examPoints?.map((p: any) => ({
-                      ...p,
-                      subMethodId:
-                        oldNewSubMethodMap.get(p.subMethodId) || p.subMethodId,
-                    }));
+                      item.cloId = oldNewCloMap.get(item.cloId) || item.cloId;
 
-                    return item;
-                  });
-                }),
-                switchMap((updated) =>
-                  this.cloPointPlanService.saveCloPlan(updated)
+                      item.procPoints = item.procPoints?.map((p: any) => ({
+                        ...p,
+                        subMethodId:
+                          oldNewSubMethodMap.get(p.subMethodId) ||
+                          p.subMethodId,
+                      }));
+
+                      item.examPoints = item.examPoints?.map((p: any) => ({
+                        ...p,
+                        subMethodId:
+                          oldNewSubMethodMap.get(p.subMethodId) ||
+                          p.subMethodId,
+                      }));
+
+                      return item;
+                    });
+                  }),
+                  switchMap((updated) =>
+                    this.cloPointPlanService.saveCloPlan(updated)
+                  )
+                )
+              ),
+              switchMap(() =>
+                this.assessPlan.getAssessmentPlan(lesson.id).pipe(
+                  map((res: any) => {
+                    return res.map((item: any) => {
+                      item.lessonId = newLessonId;
+                      if (item._id) delete item._id;
+                      if (item.__v) delete item.__v;
+
+                      item.cloId = oldNewCloMap.get(item.cloId) || item.cloId;
+                      item.method =
+                        oldNewSubMethodMap.get(item.method) || item.cloId;
+                      return item;
+                    });
+                  }),
+                  switchMap((updated) =>
+                    this.assessPlan.addAssessmentPlan(updated)
+                  )
                 )
               )
             )
-          )
-          .subscribe({
-            next: (result) => {
-              this.readData(
-                this.teacherId,
-                this.selectedInterval,
-                this.selectedSeason
-              );
-              this.msgService.add({
-                severity: 'success',
-                summary: 'Амжилттай',
-                detail: 'Амжилттай хуулагдлаа!',
-              });
-            },
-            error: (err) => {
-              this.msgService.add({
-                severity: 'error',
-                summary: 'Алдаа',
-                detail: 'Алдаа гарлаа: ' + err.error.message,
-              });
-            },
+            .subscribe({
+              next: (result) => {
+                this.readData(
+                  this.teacherId,
+                  this.selectedInterval,
+                  this.selectedSeason
+                );
+                this.msgService.add({
+                  severity: 'success',
+                  summary: 'Амжилттай',
+                  detail: 'Амжилттай хуулагдлаа!',
+                });
+              },
+              error: (err) => {
+                this.msgService.add({
+                  severity: 'error',
+                  summary: 'Алдаа',
+                  detail: 'Алдаа гарлаа: ' + err.error.message,
+                });
+              },
+            });
+        },
+        (err) => {
+          this.msgService.add({
+            severity: 'error',
+            summary: 'Алдаа',
+            detail: 'Алдаа гарлаа: ' + err.error.message,
           });
-      });
+        }
+      );
     });
   }
-
   logout() {
     localStorage.clear();
     this.router.navigate(['/teacher-login']);

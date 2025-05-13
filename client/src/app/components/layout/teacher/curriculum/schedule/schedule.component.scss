@@ -33,3 +33,22 @@
   text-align: center;
   vertical-align: middle;
 }
+
+/* Толгой хэсгийг зүүн тал руу */
+.p-datatable-thead > tr > th,
+::ng-deep .p-datatable-thead > tr > th {
+  text-align: left !important;
+  padding-left: 1rem; /* Тааруулж болно */
+}
+
+/* Мэдээллийн нүднүүдийг зүүн тал руу */
+.p-datatable-tbody > tr > td {
+  text-align: left !important;
+  padding-left: 1rem;
+}
+
+/* Мэдээллийн доторх элементүүдийг зүүн талд байрлуулах */
+.p-datatable-tbody > tr > td * {
+  justify-content: flex-start !important;
+  text-align: left !important;
+}

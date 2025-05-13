@@ -11,7 +11,6 @@ import { MultiSelectModule } from 'primeng/multiselect';
 import { SelectModule } from 'primeng/select';
 import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
-import { ToastModule } from 'primeng/toast';
 import { forkJoin } from 'rxjs';
 import { AssessmentService } from '../../../../../services/assessmentService';
 import { CloPointPlanService } from '../../../../../services/cloPointPlanService';
