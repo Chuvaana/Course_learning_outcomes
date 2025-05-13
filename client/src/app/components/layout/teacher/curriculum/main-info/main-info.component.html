@@ -15,197 +15,205 @@
           Ерөнхий мэдээлэл
         </h3>
         <div class="col2">
-          <p-floatlabel variant="on" class="w-full">
-            <input
-              pInputText
-              formControlName="lessonName"
-              id="lessonName"
-              autocomplete="off"
-              class="w-full"
-            />
-            <label for="lessonName">Хичээлийн нэр</label>
-          </p-floatlabel>
+          <div class="col3" style="gap: 20px">
+            <p-floatlabel variant="on" class="w-full">
+              <input
+                pInputText
+                formControlName="lessonName"
+                id="lessonName"
+                autocomplete="off"
+                class="w-full"
+              />
+              <label for="lessonName">Хичээлийн нэр</label>
+            </p-floatlabel>
 
-          <p-floatlabel variant="on" class="w-full">
-            <input
-              pInputText
-              formControlName="lessonCode"
-              id="lessonCode"
-              autocomplete="off"
-              class="w-full"
-            />
-            <label for="lessonCode">Хичээлийн код</label>
-          </p-floatlabel>
+            <p-floatlabel variant="on" class="w-full">
+              <input
+                pInputText
+                formControlName="lessonCode"
+                id="lessonCode"
+                autocomplete="off"
+                class="w-full"
+              />
+              <label for="lessonCode">Хичээлийн код</label>
+            </p-floatlabel>
 
-          <p-floatlabel variant="on" class="w-full">
-            <p-inputNumber
-              formControlName="lessonCredit"
-              id="lessonCredit"
-              autocomplete="off"
-              class="w-full"
-            ></p-inputNumber>
-            <label for="lessonCredit">Кредит</label>
-          </p-floatlabel>
+            <p-floatlabel variant="on" class="w-full">
+              <p-inputNumber
+                formControlName="lessonCredit"
+                id="lessonCredit"
+                autocomplete="off"
+                class="w-full"
+              ></p-inputNumber>
+              <label for="lessonCredit">Кредит</label>
+            </p-floatlabel>
+          </div>
+          <div class="col3" style="gap: 20px">
+            <p-floatlabel variant="on" class="w-full">
+              <p-dropdown
+                formControlName="school"
+                id="id"
+                [options]="branches"
+                optionLabel="name"
+                (onChange)="onBranchChange($event.value)"
+                autocomplete="off"
+                class="w-full"
+              >
+              </p-dropdown>
+              <label for="school">Сургууль</label>
+            </p-floatlabel>
 
-          <p-floatlabel variant="on" class="w-full">
-            <p-dropdown
-              formControlName="school"
-              id="id"
-              [options]="branches"
-              optionLabel="name"
-              (onChange)="onBranchChange($event.value)"
-              autocomplete="off"
-              class="w-full"
-            >
-            </p-dropdown>
-            <label for="school">Сургууль</label>
-          </p-floatlabel>
-
-          <p-floatlabel variant="on" class="w-full">
-            <p-dropdown
-              formControlName="department"
-              id="id"
-              [options]="departments"
-              optionLabel="name"
-              autocomplete="off"
-              class="w-full"
-            >
-            </p-dropdown>
-            <label for="department">Салбар/Тэнхим</label>
-          </p-floatlabel>
+            <p-floatlabel variant="on" class="w-full">
+              <p-dropdown
+                formControlName="department"
+                id="id"
+                [options]="departments"
+                optionLabel="name"
+                autocomplete="off"
+                class="w-full"
+              >
+              </p-dropdown>
+              <label for="department">Салбар/Тэнхим</label>
+            </p-floatlabel>
+          </div>
         </div>
-
         <h3 class="text-lg font-semibold text-gray-800 border-b pb-2 mt-6">
           Үндсэн багш
         </h3>
         <div class="col2">
-          <p-floatlabel variant="on" class="w-full">
-            <input
-              pInputText
-              formControlName="teacherName"
-              id="teacherName"
-              autocomplete="off"
-              class="w-full"
-            />
-            <label for="teacherName">Нэр</label>
-          </p-floatlabel>
+          <div class="col3" style="gap: 20px">
+            <p-floatlabel variant="on" class="w-full">
+              <input
+                pInputText
+                formControlName="teacherName"
+                id="teacherName"
+                autocomplete="off"
+                class="w-full"
+              />
+              <label for="teacherName">Нэр</label>
+            </p-floatlabel>
 
-          <p-floatlabel variant="on" class="w-full">
-            <input
-              pInputText
-              formControlName="teacherRoom"
-              id="teacherRoom"
-              autocomplete="off"
-              class="w-full"
-            />
-            <label for="teacherRoom">Өрөөний дугаар</label>
-          </p-floatlabel>
+            <p-floatlabel variant="on" class="w-full">
+              <input
+                pInputText
+                formControlName="teacherRoom"
+                id="teacherRoom"
+                class="w-full"
+                autocomplete="off"
+              />
+              <label for="teacherRoom">Өрөөний дугаар</label>
+            </p-floatlabel>
 
-          <p-floatlabel variant="on" class="w-full">
-            <input
-              pInputText
-              formControlName="teacherEmail"
-              id="teacherEmail"
-              autocomplete="off"
-              class="w-full"
-            />
-            <label for="teacherEmail">И-мэйл</label>
-          </p-floatlabel>
+            <p-floatlabel variant="on" class="w-full">
+              <input
+                pInputText
+                class="w-full"
+                formControlName="teacherEmail"
+                id="teacherEmail"
+                autocomplete="off"
+              />
+              <label for="teacherEmail">И-мэйл</label>
+            </p-floatlabel>
 
-          <p-floatlabel variant="on" class="w-full">
-            <input
-              pInputText
-              formControlName="teacherPhone"
-              id="teacherPhone"
-              autocomplete="off"
-              class="w-full"
-            />
-            <label for="teacherPhone">Утас</label>
-          </p-floatlabel>
+            <p-floatlabel variant="on" class="w-full">
+              <input
+                pInputText
+                class="w-full"
+                formControlName="teacherPhone"
+                id="teacherPhone"
+                autocomplete="off"
+              />
+              <label for="teacherPhone">Утас</label>
+            </p-floatlabel>
+          </div>
         </div>
 
         <h3 class="text-lg font-semibold text-gray-800 border-b pb-2 mt-6">
           Туслах багш
         </h3>
         <div class="col2">
-          <p-floatlabel variant="on" class="w-full">
-            <input
-              pInputText
-              formControlName="assistantTeacherName"
-              id="assistantTeacherName"
-              autocomplete="off"
-              class="w-full"
-            />
-            <label for="assistantTeacherName">Нэр</label>
-          </p-floatlabel>
+          <div class="col3" style="gap: 20px">
+            <p-floatlabel variant="on" class="w-full">
+              <input
+                pInputText
+                formControlName="assistantTeacherName"
+                id="assistantTeacherName"
+                autocomplete="off"
+                class="w-full"
+              />
+              <label for="assistantTeacherName">Нэр</label>
+            </p-floatlabel>
 
-          <p-floatlabel variant="on" class="w-full">
-            <input
-              pInputText
-              formControlName="assistantTeacherRoom"
-              id="assistantTeacherRoom"
-              autocomplete="off"
-              class="w-full"
-            />
-            <label for="assistantTeacherRoom">Өрөөний дугаар</label>
-          </p-floatlabel>
+            <p-floatlabel variant="on" class="w-full">
+              <input
+                pInputText
+                formControlName="assistantTeacherRoom"
+                id="assistantTeacherRoom"
+                autocomplete="off"
+                class="w-full"
+              />
+              <label for="assistantTeacherRoom">Өрөөний дугаар</label>
+            </p-floatlabel>
 
-          <p-floatlabel variant="on" class="w-full">
-            <input
-              pInputText
-              formControlName="assistantTeacherEmail"
-              id="assistantTeacherEmail"
-              autocomplete="off"
-              class="w-full"
-            />
-            <label for="assistantTeacherEmail">И-мэйл</label>
-          </p-floatlabel>
+            <p-floatlabel variant="on" class="w-full">
+              <input
+                pInputText
+                formControlName="assistantTeacherEmail"
+                id="assistantTeacherEmail"
+                autocomplete="off"
+                class="w-full"
+              />
+              <label for="assistantTeacherEmail">И-мэйл</label>
+            </p-floatlabel>
 
-          <p-floatlabel variant="on" class="w-full">
-            <input
-              pInputText
-              formControlName="assistantTeacherPhone"
-              id="assistantTeacherPhone"
-              autocomplete="off"
-              class="w-full"
-            />
-            <label for="assistantTeacherPhone">Утас</label>
-          </p-floatlabel>
+            <p-floatlabel variant="on" class="w-full">
+              <input
+                pInputText
+                formControlName="assistantTeacherPhone"
+                id="assistantTeacherPhone"
+                autocomplete="off"
+                class="w-full"
+              />
+              <label for="assistantTeacherPhone">Утас</label>
+            </p-floatlabel>
+          </div>
         </div>
 
         <h3 class="text-lg font-semibold text-gray-800 border-b pb-2 mt-6">
           Нэмэлт мэдээлэл
         </h3>
         <div class="col2">
-          <p-floatlabel variant="on" class="w-full">
-            <p-dropdown
-              formControlName="lessonLevel"
-              [options]="lessonLevel"
-              optionLabel="label"
-              class="w-full"
-            />
-            <label for="lessonLevel">Түвшин</label>
-          </p-floatlabel>
-          <p-floatlabel variant="on" class="w-full">
-            <p-dropdown
-              formControlName="lessonType"
-              [options]="lessonType"
-              optionLabel="label"
-              class="w-full"
-              autocomplete="off"
-            />
-            <label for="lessonType">Төрөл</label>
-          </p-floatlabel>
-          <p-floatlabel variant="on" class="w-full">
-            <p-dropdown
-              formControlName="recommendedSemester"
-              [options]="recommendedSemester"
-              optionLabel="label"
-              class="w-full"
-              autocomplete="off"
-            />
-            <label for="recommendedSemester">Санал болгох улирал</label>
-          </p-floatlabel>
+          <div class="col3" style="gap: 20px">
+            <p-floatlabel variant="on" class="w-full">
+              <p-dropdown
+                formControlName="lessonLevel"
+                [options]="lessonLevel"
+                optionLabel="label"
+                class="w-full"
+              />
+              <label for="lessonLevel">Түвшин</label>
+            </p-floatlabel>
+            <p-floatlabel variant="on" class="w-full">
+              <p-dropdown
+                formControlName="lessonType"
+                [options]="lessonType"
+                optionLabel="label"
+                class="w-full"
+                autocomplete="off"
+              />
+              <label for="lessonType">Төрөл</label>
+            </p-floatlabel>
+            <p-floatlabel variant="on" class="w-full">
+              <p-dropdown
+                formControlName="recommendedSemester"
+                [options]="recommendedSemester"
+                optionLabel="label"
+                class="w-full"
+                autocomplete="off"
+              />
+              <label for="recommendedSemester">Санал болгох улирал</label>
+            </p-floatlabel>
+          </div>
         </div>
       </div>
       <div class="col">
@@ -213,148 +221,127 @@
           7 хоногт ногдох сургалтын цаг
         </h3>
         <div class="col2">
-          <p-floatlabel variant="on" class="w-full">
-            <p-inputnumber
-              formControlName="weeklyLecture"
-              id="weeklyLecture"
-              autocomplete="off"
-              class="w-full"
-              (onInput)="onValueChange($event)"
-            />
-            <label for="weeklyLecture">Лекц (7 хоногт)</label>
-          </p-floatlabel>
-          <p-floatlabel variant="on" class="w-full">
-            <p-inputnumber
-              formControlName="weeklySeminar"
-              id="weeklySeminar"
-              autocomplete="off"
-              class="w-full"
-              (onInput)="onValueChangeSem($event)"
-            />
-            <label for="weeklySeminar">Семинар</label>
-          </p-floatlabel>
-          <p-floatlabel variant="on" class="w-full">
-            <p-inputnumber
-              formControlName="weeklyLab"
-              id="weeklyLab"
-              autocomplete="off"
-              class="w-full"
-              (onInput)="onValueChangeLab($event)"
-            />
-            <label for="weeklyLab">Лаборатори</label>
-          </p-floatlabel>
-          <p-floatlabel variant="on" class="w-full">
-            <p-inputnumber
-              formControlName="weeklyAssignment"
-              id="weeklyAssignment"
-              autocomplete="off"
-              class="w-full"
-              (onInput)="onValueChangeAssign($event)"
-            />
-            <label for="weeklyAssignment">Бие даалт</label>
-          </p-floatlabel>
-          <p-floatlabel variant="on" class="w-full">
-            <p-inputnumber
-              formControlName="weeklyPractice"
-              id="weeklyPractice"
-              autocomplete="off"
-              class="w-full"
-              (onInput)="onValueChangePrac($event)"
-            />
-            <label for="weeklyPractice">Практик</label>
-          </p-floatlabel>
+          <div class="col3">
+            <p-floatlabel variant="on">
+              <p-inputnumber
+                formControlName="weeklyLecture"
+                id="weeklyLecture"
+                autocomplete="off"
+                (onInput)="onValueChange($event)"
+              />
+              <label for="weeklyLecture">Лекц (7 хоногт)</label>
+            </p-floatlabel>
+            <p-floatlabel variant="on">
+              <p-inputnumber
+                formControlName="weeklySeminar"
+                id="weeklySeminar"
+                autocomplete="off"
+                (onInput)="onValueChangeSem($event)"
+              />
+              <label for="weeklySeminar">Семинар</label>
+            </p-floatlabel>
+            <p-floatlabel variant="on">
+              <p-inputnumber
+                formControlName="weeklyLab"
+                id="weeklyLab"
+                autocomplete="off"
+                (onInput)="onValueChangeLab($event)"
+              />
+              <label for="weeklyLab">Лаборатори</label>
+            </p-floatlabel>
+            <p-floatlabel variant="on">
+              <p-inputnumber
+                formControlName="weeklyAssignment"
+                id="weeklyAssignment"
+                autocomplete="off"
+                (onInput)="onValueChangeAssign($event)"
+              />
+              <label for="weeklyAssignment">Бие даалт</label>
+            </p-floatlabel>
+            <p-floatlabel variant="on">
+              <p-inputnumber
+                formControlName="weeklyPractice"
+                id="weeklyPractice"
+                autocomplete="off"
+                (onInput)="onValueChangePrac($event)"
+              />
+              <label for="weeklyPractice">Практик</label>
+            </p-floatlabel>
+          </div>
         </div>
 
         <h3 class="text-lg font-semibold text-gray-800 border-b pb-2 mt-6">
           Нийт танхимын цаг
         </h3>
         <div class="col2">
-          <p-floatlabel variant="on" class="w-full">
-            <p-inputnumber
-              formControlName="totalLecture"
-              id="totalLecture"
-              class="w-full"
-            />
-            <label for="totalLecture">Лекц</label>
-          </p-floatlabel>
-          <p-floatlabel variant="on" class="w-full">
-            <p-inputnumber
-              formControlName="totalSeminar"
-              id="totalSeminar"
-              class="w-full"
-            />
-            <label for="totalSeminar">Семинар</label>
-          </p-floatlabel>
-          <p-floatlabel variant="on" class="w-full">
-            <p-inputnumber
-              formControlName="totalLab"
-              id="totalLab"
-              class="w-full"
-            />
-            <label for="totalLab">Лаборатори</label>
-          </p-floatlabel>
-          <p-floatlabel variant="on" class="w-full">
-            <p-inputnumber
-              formControlName="totalAssignment"
-              id="totalAssignment"
-              class="w-full"
-            />
-            <label for="totalAssignment">Бие даалт</label>
-          </p-floatlabel>
-          <p-floatlabel variant="on" class="w-full">
-            <p-inputnumber
-              formControlName="totalPractice"
-              id="totalPractice"
-              class="w-full"
-            />
-            <label for="totalPractice">Практик</label>
-          </p-floatlabel>
+          <div class="col3">
+            <p-floatlabel variant="on">
+              <p-inputnumber formControlName="totalLecture" id="totalLecture" />
+              <label for="totalLecture">Лекц</label>
+            </p-floatlabel>
+            <p-floatlabel variant="on">
+              <p-inputnumber formControlName="totalSeminar" id="totalSeminar" />
+              <label for="totalSeminar">Семинар</label>
+            </p-floatlabel>
+            <p-floatlabel variant="on">
+              <p-inputnumber formControlName="totalLab" id="totalLab" />
+              <label for="totalLab">Лаборатори</label>
+            </p-floatlabel>
+            <p-floatlabel variant="on">
+              <p-inputnumber
+                formControlName="totalAssignment"
+                id="totalAssignment"
+              />
+              <label for="totalAssignment">Бие даалт</label>
+            </p-floatlabel>
+            <p-floatlabel variant="on">
+              <p-inputnumber
+                formControlName="totalPractice"
+                id="totalPractice"
+              />
+              <label for="totalPractice">Практик</label>
+            </p-floatlabel>
+          </div>
         </div>
 
         <h3 class="text-lg font-semibold text-gray-800 border-b pb-2 mt-6">
           Бие даан суралцах цаг
         </h3>
         <div class="col2">
-          <p-floatlabel variant="on" class="w-full">
-            <p-inputnumber
-              formControlName="selfStudyLecture"
-              id="selfStudyLecture"
-              class="w-full"
-            />
-            <label for="selfStudyLecture">Лекц</label>
-          </p-floatlabel>
-          <p-floatlabel variant="on" class="w-full">
-            <p-inputnumber
-              formControlName="selfStudySeminar"
-              id="selfStudySeminar"
-              class="w-full"
-            />
-            <label for="selfStudySeminar">Семинар</label>
-          </p-floatlabel>
-          <p-floatlabel variant="on" class="w-full">
-            <p-inputnumber
-              formControlName="selfStudyLab"
-              id="selfStudyLab"
-              class="w-full"
-            />
-            <label for="selfStudyLab">Лаборатори</label>
-          </p-floatlabel>
-          <p-floatlabel variant="on" class="w-full">
-            <p-inputnumber
-              formControlName="selfStudyAssignment"
-              id="selfStudyAssignment"
-              class="w-full"
-            />
-            <label for="selfStudyAssignment">Бие даалт</label>
-          </p-floatlabel>
-          <p-floatlabel variant="on" class="w-full">
-            <p-inputnumber
-              formControlName="weeklyPractice"
-              id="weeklyPractice"
-              class="w-full"
-            />
-            <label for="weeklyPractice">Практик</label>
-          </p-floatlabel>
+          <div class="col3">
+            <p-floatlabel variant="on">
+              <p-inputnumber
+                formControlName="selfStudyLecture"
+                id="selfStudyLecture"
+              />
+              <label for="selfStudyLecture">Лекц</label>
+            </p-floatlabel>
+            <p-floatlabel variant="on">
+              <p-inputnumber
+                formControlName="selfStudySeminar"
+                id="selfStudySeminar"
+              />
+              <label for="selfStudySeminar">Семинар</label>
+            </p-floatlabel>
+            <p-floatlabel variant="on">
+              <p-inputnumber formControlName="selfStudyLab" id="selfStudyLab" />
+              <label for="selfStudyLab">Лаборатори</label>
+            </p-floatlabel>
+            <p-floatlabel variant="on">
+              <p-inputnumber
+                formControlName="selfStudyAssignment"
+                id="selfStudyAssignment"
+              />
+              <label for="selfStudyAssignment">Бие даалт</label>
+            </p-floatlabel>
+            <p-floatlabel variant="on">
+              <p-inputnumber
+                formControlName="weeklyPractice"
+                id="weeklyPractice"
+              />
+              <label for="weeklyPractice">Практик</label>
+            </p-floatlabel>
+          </div>
         </div>
 
         <h3 class="text-lg font-semibold text-gray-800 border-b pb-2 mt-6">
