@@ -10,16 +10,16 @@
     <div class="label-txt">
       <span>Шалгалтын төрөл</span>
       <div style="margin-top: 10px;">
-      <p-dropdown [options]="examTypes" [(ngModel)]="examType" optionLabel="label" placeholder="Шалгалтын төрөл"
-        (onChange)="examTypesData($event.value)" />
-    </div>
+        <p-dropdown [options]="examTypes" [(ngModel)]="examType" optionLabel="label" placeholder="Шалгалтын төрөл"
+          (onChange)="examTypesData($event.value)" />
+      </div>
     </div>
   </div>
   <div class="action-btn">
     <div class="label-txt">
       <span>Өмнө бүртгэсэн сурагчдын дүнг шинжилж оруулах</span>
       <div style="margin-top: 10px;">
-        <p-checkbox [(ngModel)]="checked" [binary]="true"/>
+        <p-checkbox [(ngModel)]="checked" [binary]="true" />
       </div>
     </div>
   </div>
@@ -63,18 +63,49 @@
 </div>
 
 <div class="mt-3 overflow-auto px-6">
-  <p-table *ngIf="tableData.length > 0" [value]="tableData.slice(1)">
+  <p-table *ngIf="tableData.length > 1" [value]="tableData.slice(1)" dataKey="id"
+    [tableStyle]="{ 'min-width': '50rem' }">
+
     <ng-template pTemplate="header">
       <tr>
         <th>#</th>
-        <th *ngFor="let header of tableData[0]">{{ header }}</th>
+        <th *ngFor="let header of tableData[0]">
+          {{ header }}
+        </th>
       </tr>
     </ng-template>
+
     <ng-template pTemplate="body" let-row let-i="rowIndex">
       <tr>
         <td>{{ i + 1 }}</td>
-        <td *ngFor="let cell of row">{{ cell }}</td>
+        <td *ngFor="let cell of row; let j = index">
+
+          <!-- Зөвхөн эхний мөр (index === 0 буюу tableData[1]) edit болох -->
+          <ng-container *ngIf="i === 0; else readOnlyCell">
+        <td [pEditableColumn]="row[j]" [pEditableColumnField]="'col' + j">
+          <p-cellEditor>
+            <ng-template pTemplate="input">
+              <p-dropdown [(ngModel)]="tableData[i + 1][j]" [options]="subMethods" optionLabel="subMethod" optionValue="subMethod"
+                placeholder="Дэд арга" (onChange)="subMethodTypesData($event.value)"
+                class="dropdown-filter"></p-dropdown>
+            </ng-template>
+            <ng-template pTemplate="output">
+              {{ tableData[i + 1][j] }}
+            </ng-template>
+          </p-cellEditor>
+        </td>
+        </ng-container>
+
+        <!-- Readonly хувилбар -->
+        <ng-template #readOnlyCell>
+          <td>
+            {{ tableData[i + 1][j] }}
+          </td>
+        </ng-template>
+
+        </td>
       </tr>
     </ng-template>
   </p-table>
+
 </div>

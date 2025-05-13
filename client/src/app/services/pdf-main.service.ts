@@ -117,10 +117,12 @@ export class PdfMainService {
 
     let headerRowData: any = {};
     let enterRowData: any = {};
+    let indirectAssesment: any = {};
 
     if (daty.length >= 2) {
       headerRowData = daty[0];
       enterRowData = daty[1];
+      indirectAssesment = daty[3];
     }
     const progressPontCount = (enterRowData[0].procPoints?.length || 0);
     const examPointCount = (enterRowData[0].examPoints?.length || 0);
@@ -1190,6 +1192,152 @@ export class PdfMainService {
     ];
 
 
+    // const cloAssessmentLevel = indirectAssesment.map((clo: any) => {
+    //   const total = clo.questionList.length;
+
+    //     let excellent = 0;
+    //     let good = 0;
+    //     let average = 0;
+    //     let poor = 0;
+    //     let veryPoor = 0;
+
+    //     clo.questionList.map((e : any) =>{
+    //       if( e.questionType === 'RATE' ){
+    //         switch (e.letterGrade) {
+    //           case '5':  excellent++; break;
+    //           case '4':  good++; break;
+    //           case '3':  average++; break;
+    //           case '2':  poor++; break;
+    //           case '1':  veryPoor++; break;
+    //           default:
+    //             //badLetterGrade++;
+    //         }
+    //       }
+    //     });
+
+    //   const total45 = excellent + good;
+    //   const percent45 = total > 0 ? ((total45 / total) * 100).toFixed(0) : '0';
+
+    //   return [
+    //     { text: clo.cloName, rowSpan: 2, alignment: 'center' },
+    //     { text: 'Хариултын тоо', alignment: 'center' },
+    //     { text: excellent , alignment: 'center' },
+    //     { text: good , alignment: 'center' },
+    //     { text: average , alignment: 'center' },
+    //     { text: poor , alignment: 'center' },
+    //     { text: veryPoor, alignment: 'center' },
+    //     { text: total, alignment: 'center' },
+    //     { text: total45, alignment: 'center' },
+    //   ];
+    // }).flatMap((row: any, index: string | number) => {
+    //   const clo = cloListParameter[index];
+    //   const total =
+    //     clo.excellent + clo.good + clo.average + clo.poor + clo.veryPoor;
+
+    //   return [
+    //     row,
+    //     [
+    //       {}, // empty for rowSpan
+    //       { text: 'Эзлэх хувь(%)', alignment: 'center' },
+    //       {
+    //         text: total > 0 ? ((clo.excellent / total) * 100).toFixed(0) : '0',
+    //         alignment: 'center',
+    //       },
+    //       {
+    //         text: total > 0 ? ((clo.good / total) * 100).toFixed(0) : '0',
+    //         alignment: 'center',
+    //       },
+    //       {
+    //         text: total > 0 ? ((clo.average / total) * 100).toFixed(0) : '0',
+    //         alignment: 'center',
+    //       },
+    //       {
+    //         text: total > 0 ? ((clo.poor / total) * 100).toFixed(0) : '0',
+    //         alignment: 'center',
+    //       },
+    //       {
+    //         text: total > 0 ? ((clo.veryPoor / total) * 100).toFixed(0) : '0',
+    //         alignment: 'center',
+    //       },
+    //       { text: '100', alignment: 'center' },
+    //       { text: '', alignment: 'center' },
+    //     ]
+    //   ];
+    // });
+
+
+    const cloAssessmentLevel = indirectAssesment.flatMap((cla: any) => {
+      return cla.groupList.flatMap((clo: any, index : any) => {
+        const total = clo.questionList.length;
+
+        let excellent = 0;
+        let good = 0;
+        let average = 0;
+        let poor = 0;
+        let veryPoor = 0;
+
+        clo.questionList.forEach((e: any) => {
+          if (e.questionType === 'RATE') {
+            switch (e.answerValue) {
+              case '5': excellent++; break;
+              case '4': good++; break;
+              case '3': average++; break;
+              case '2': poor++; break;
+              case '1': veryPoor++; break;
+            }
+          }
+        });
+
+        const total45 = excellent + good;
+        const percent45 = total > 0 ? ((total45 / total) * 100).toFixed(0) : '0';
+
+        // First row: Хариултын тоо
+        const countRow = [
+          { text: 'CLO '+ (index+1), rowSpan: 2, alignment: 'center' },
+          { text: 'Хариултын тоо', alignment: 'center' },
+          { text: excellent, alignment: 'center' },
+          { text: good, alignment: 'center' },
+          { text: average, alignment: 'center' },
+          { text: poor, alignment: 'center' },
+          { text: veryPoor, alignment: 'center' },
+          { text: total, alignment: 'center' },
+          { text: total45, alignment: 'center' },
+        ];
+
+        // Second row: Эзлэх хувь
+        const percentRow = [
+          {}, // for rowSpan
+          { text: 'Эзлэх хувь(%)', alignment: 'center' },
+          {
+            text: total > 0 ? ((excellent / total) * 100).toFixed(0) : '0',
+            alignment: 'center',
+          },
+          {
+            text: total > 0 ? ((good / total) * 100).toFixed(0) : '0',
+            alignment: 'center',
+          },
+          {
+            text: total > 0 ? ((average / total) * 100).toFixed(0) : '0',
+            alignment: 'center',
+          },
+          {
+            text: total > 0 ? ((poor / total) * 100).toFixed(0) : '0',
+            alignment: 'center',
+          },
+          {
+            text: total > 0 ? ((veryPoor / total) * 100).toFixed(0) : '0',
+            alignment: 'center',
+          },
+          { text: '100', alignment: 'center' },
+          { text: percent45, alignment: 'center' },
+        ];
+
+        return [countRow, percentRow];
+      });
+    });
+
+
+
     const indirectAssesmentTable = [
       [
         { text: '\nCLO/үнэлгээний\nтүвшин', colSpan: 2, alignment: 'center', style: 'tableHeader' },
@@ -1202,7 +1350,7 @@ export class PdfMainService {
         { text: '\nНийт\nхариулт', alignment: 'center', style: 'tableHeader' },
         { text: '4 ба 5 оноотой\nхариулт тоо,\nэзлэх хувь', alignment: 'center', style: 'tableHeader' },
       ],
-      // ...cloAssessmentLevel
+      ...cloAssessmentLevel
     ];
 
 
@@ -1441,7 +1589,7 @@ export class PdfMainService {
         },
         { text: 'Хичээлийн суралцахуйн үр дүнг хавсралт 1-д үзүүлсэн санал асуулгын дагуу үнэлсэн бөгөөд CLO бүрээр харгалзах хариултуудыг оноогоор нь ялган, 4 ба 5 оноо буюу “маш сайн”, “сайн” гэсэн хариултын эзлэх хувийг тодорхойлсон.', style: 'bodyLeftNoBold' },
         {
-          text: '5.2.2.	........ХИЧЭЭЛИЙН СУРАЛЦАХУЙН ҮР ДҮНГИЙН САНАЛ АСУУЛГЫН ДҮН',
+          text: '5.2.1.	ХИЧЭЭЛИЙН СУРАЛЦАХУЙН ҮР ДҮНГИЙН САНАЛ АСУУЛГЫН ДҮН',
           fontSize: 12,
           bold: true,
           margin: [40, 0, 20, 5] as [number, number, number, number],

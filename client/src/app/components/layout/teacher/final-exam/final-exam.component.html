@@ -4,7 +4,7 @@
       <p-button label="Хадгалах" (onClick)="saveDataFull(finalExamQuestions)"></p-button>
     </div>
     <div class="action-btn">
-      <p-button label="Шинэ асуулт оруулах" (onClick)="addColumn()"></p-button>
+      <p-button label="Шинэ асуулт оруулах" (onClick)="addColumn(finalExams.finalExamName)"></p-button>
     </div>
     <div class="action-btn">
       <p-button label="Тайлан гаргах" (onClick)="pdfExport()"></p-button>
@@ -13,27 +13,56 @@
   <div class="column-input">
     <div class="action-btn">
       <p-floatlabel variant="in">
-        <input pInputText id="in_label" class="exam-type ng-invalid ng-dirty"  [(ngModel)]="finalExams.examType" autocomplete="off" />
+        <input pInputText id="in_label" class="exam-type ng-invalid ng-dirty" [(ngModel)]="finalExams.examType"
+          autocomplete="off" />
         <label for="in_label">Шалгалтын хэлбэр</label>
       </p-floatlabel>
     </div>
     <div class="action-btn">
       <p-floatlabel variant="in">
-    <p-inputnumber class="ng-invalid ng-dirty"  [(ngModel)]="finalExams.examTakeStudentCount" inputId="in_label"/>
+        <p-inputnumber class="ng-invalid ng-dirty" [(ngModel)]="finalExams.examTakeStudentCount" inputId="in_label" />
         <label for="in_label">Шалгалт өгөх сурагчдын тоо</label>
+      </p-floatlabel>
+    </div>
+    <div class="action-btn">
+      <!-- <p-iftalabel class="">
+        <p-select [(ngModel)]="finalExams.finalExamName" inputId="exam-types" [options]="examTypes" optionValue="value"
+          optionLabel="label" />
+        <label for="exam-types">Шалгалтын төрөл</label>
+      </p-iftalabel> -->
+
+      <p-floatlabel variant="on" class="w-full">
+        <p-select id="value" [options]="examTypes" appendTo="body" [(ngModel)]="finalExams.finalExamName"
+          optionLabel="label" [style]="{'width':'100%'}" (onChange)="onBranchChange($event.value)" />
+        <!-- <p-dropdown formControlName="finalExams.finalExamName" id="value" (onChange)="onBranchChange($event.value)"
+          [options]="examTypes" optionLabel="label" class="w-full">
+        </p-dropdown> -->
+        <label for="finalExams.finalExamName">Сургууль</label>
       </p-floatlabel>
     </div>
   </div>
   <p-toast />
-  <p-table [value]="finalExamQuestions" dataKey="_id" editMode="row" [tableStyle]="{'min-width': '50rem'}"
-    [customSort]="true">
+  <div class="flex">
+  <p-button label="Clear" [outlined]="true" icon="pi pi-filter-slash" (click)="clear(dt)" />
+
+  <p-iconfield iconPosition="left" class="ml-auto">
+    <p-inputicon>
+      <i class="pi pi-search"></i>
+    </p-inputicon>
+    <input pInputText type="text" disabled="true" readonly="true" [(ngModel)]="searchQuery" (input)="onSearchInput()" placeholder="Search keyword" />
+  </p-iconfield>
+</div>
+  <p-table #dt [value]="finalExamQuestions" dataKey="_id" editMode="row" [tableStyle]="{'min-heigth': '50rem'}"
+    [customSort]="true"
+    [globalFilterFields]="['finalExamTypeName', 'orderId', 'verbName', 'cloName']">
     <ng-template #header>
       <tr>
-        <th style="width:20%">Асуулт</th>
+        <th style="width:10%">Асуулт</th>
         <th style="width:20%">Үйл үг</th>
-        <th style="width:20%">Блумын түвшин <p-sortIcon field="finalExamQuestions.blmLvl" /></th>
+        <th style="width:10%">Блумын түвшин <p-sortIcon field="finalExamQuestions.blmLvl" /></th>
         <th style="width:20%">Аль CLO-г үнэлэх</th>
-        <th style="width:20%">Тестийн хэсэг</th>
+        <th style="width:10%">Тестийн хэсэг</th>
+        <th style="width:10%">Шалгалтын төрөл</th>
         <th style="width:20%"></th>
       </tr>
     </ng-template>
@@ -63,10 +92,12 @@
         <td>
           <p-cellEditor>
             <ng-template #input>
-              <input pInputText type="text" [(ngModel)]="finalExamQuestions.blmLvl" />
+              <input pInputText type="number" [(ngModel)]="finalExamQuestions.blmLvl" min="0" max="6" />
+              <p-button class="info" icon="pi pi-exclamation-circle" aria-label="Save" (onClick)="infoTo()" />
             </ng-template>
             <ng-template #output>
               {{finalExamQuestions.blmLvl}}
+              <p-button class="info" icon="pi pi-exclamation-circle" aria-label="Save" (onClick)="infoTo()" />
             </ng-template>
           </p-cellEditor>
         </td>
@@ -84,17 +115,20 @@
         <td>
           <p-cellEditor>
             <ng-template #input>
-              <p-inputnumber [(ngModel)]="finalExamQuestions.version" [showButtons]="true" buttonLayout="vertical" spinnerMode="vertical" inputId="vertical" [inputStyle]="{ width: '3rem' }">
-                <ng-template #incrementbuttonicon>
-                    <span class="pi pi-plus"></span>
-                </ng-template>
-                <ng-template #decrementbuttonicon>
-                    <span class="pi pi-minus"></span>
-                </ng-template>
-            </p-inputnumber>
+              <input pInputText type="number" [(ngModel)]="finalExamQuestions.version" min="0" max="10" />
             </ng-template>
             <ng-template #output>
               {{finalExamQuestions.version}}
+            </ng-template>
+          </p-cellEditor>
+        </td>
+        <td>
+          <p-cellEditor>
+            <ng-template #input>
+              {{finalExamQuestions.finalExamTypeName}}
+            </ng-template>
+            <ng-template #output>
+              {{finalExamQuestions.finalExamTypeName}}
             </ng-template>
           </p-cellEditor>
         </td>

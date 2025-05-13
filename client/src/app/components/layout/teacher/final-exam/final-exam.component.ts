@@ -1,24 +1,29 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { DropdownModule } from 'primeng/dropdown';
 import { CommonModule } from '@angular/common';
-import { TableModule } from 'primeng/table';
+import { Table, TableModule } from 'primeng/table';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { FinalExamService } from '../../../../services/finalExamService';
 import { TagModule } from 'primeng/tag';
-import { Select } from 'primeng/select';
+import { Select, SelectModule } from 'primeng/select';
 import { ActivatedRoute } from '@angular/router';
 import { CLOService } from '../../../../services/cloService';
 import { forkJoin } from 'rxjs';
 import { PdfExamQuestionService } from '../../../../services/pdf-exam-question.service';
 import { FloatLabel } from 'primeng/floatlabel';
 import { InputNumber } from 'primeng/inputnumber';
+import { MatDialog } from '@angular/material/dialog';
+import { BlmInfoComponent } from './blm-info/blm-info.component';
+import { IftaLabelModule } from 'primeng/iftalabel';
+import { InputIconModule } from 'primeng/inputicon';
+import { IconFieldModule } from 'primeng/iconfield';
 
 interface finalExamModel {
-  finalExamName: string;
+  finalExamName: any;
   lessonId: string;
   examType: string;
   examTakeStudentCount: any;
@@ -35,6 +40,8 @@ interface finalExamQuestionModel {
   cloCode: any;
   cloName: string;
   examType: string;
+  finalExamType: string;
+  finalExamTypeName: string;
 }
 
 interface verbs {
@@ -57,6 +64,10 @@ interface verbs {
     InputNumber,
     Select,
     FloatLabel,
+    SelectModule,
+    IftaLabelModule,
+    InputIconModule,
+    IconFieldModule,
     ToastModule],
   providers: [MessageService],
   templateUrl: './final-exam.component.html',
@@ -77,15 +88,30 @@ export class FinalExamQuestionsComponent implements OnInit {
   finalExamsId: any;
   examType: any;
   examTakeStudentCount: any;
+  cloneFinalExamQuestions: any;
+  selectedExamType: any;
+  searchQuery: string = '';
+  searchValue: string | undefined;
+
+  tableFilters: { [s: string]: any } = {
+    'finalExamTypeName': { value: 'Тест', matchMode: 'contains' }  // Change 'Тест' to your desired default
+  };
+
+  examTypes = [
+    { value: 'EXAM', label: 'Улирлын шалгалт' },
+    { value: 'QUIZ1', label: 'Сорил 1' },
+    { value: 'QUIZ2', label: 'Сорил 2' },
+  ];
 
   clonedFinalExam: { [s: string]: finalExamQuestionModel } = {};
+  @ViewChild('dt') dt!: Table;
 
   constructor(private pdfService: PdfExamQuestionService,
+    private dialog: MatDialog,
     private cloService: CLOService, private route: ActivatedRoute, private service: FinalExamService, private messageService: MessageService) { }
-
   ngOnInit() {
     this.finalExams = {
-      finalExamName: '',
+      finalExamName: null,
       lessonId: '',
       examType: '',
       examTakeStudentCount: null,
@@ -125,12 +151,20 @@ export class FinalExamQuestionsComponent implements OnInit {
       this.verbs = verbData;
     });
 
+    // this.dt.filter('EXAM', 'text', 'text');
     this.onRefresh();
   }
 
   onRefresh() {
     this.service.getLessonDataFinalExams(this.lessonId).subscribe((res: any) => {
       if (res.length > -1) {
+        // this.finalExams.finalExamName = res[0].finalExamName;
+        this.examTypes.map((e) => {
+          if (e.value === res[0].finalExamName) {
+            this.finalExams.finalExamName = e;
+            this.onBranchChange(e);
+          }
+        });
         this.finalExams.examType = res[0].examType;
         this.finalExams.examTakeStudentCount = res[0].examTakeStudentCount;
         this.finalExamsId = res[0]._id;
@@ -185,6 +219,8 @@ export class FinalExamQuestionsComponent implements OnInit {
     finalExam.verb = finalExam.verb.verbCode;
     finalExam.cloName = finalExam.cloCode.name;
     finalExam.cloCode = finalExam.cloCode.id;
+    finalExam.finalExamTypeName = this.finalExams.finalExamName.label;
+    finalExam.finalExamType = this.finalExams.finalExamName.value;
     delete this.clonedFinalExam[finalExam._id as string];
     this.save(finalExam);
   }
@@ -253,6 +289,7 @@ export class FinalExamQuestionsComponent implements OnInit {
   saveDataFull(data: any) {
     this.finalExams.finalExamQuestion = data;
     this.finalExams.lessonId = this.lessonId;
+    this.finalExams.finalExamName = this.finalExams.finalExamName.value;
     // this.finalExams.examType = this.examType;
     // this.finalExams.examTakeStudentCount = this.examTakeStudentCount;
 
@@ -297,7 +334,7 @@ export class FinalExamQuestionsComponent implements OnInit {
     }
   }
 
-  addColumn() {
+  addColumn(finalExamType: any) {
     const addData = {
       _id: null,
       lessonId: this.lessonId,
@@ -309,11 +346,13 @@ export class FinalExamQuestionsComponent implements OnInit {
       cloCode: '',
       cloName: 'NULL',
       examType: 'null',
+      finalExamType: finalExamType.value,
+      finalExamTypeName: finalExamType.label,
     };
 
     this.finalExamQuestions.unshift(addData); // 👈 Add to the beginning
     // this.finalExamQuestions.push(addData);
-
+    this.onBranchChange(finalExamType);
     this.onRowEditInit(addData);
   }
 
@@ -323,21 +362,21 @@ export class FinalExamQuestionsComponent implements OnInit {
       cloList: this.service.getCloList(this.lessonId),
       mainInfo: this.service.getMainInfo(this.lessonId),
     }).subscribe((results: any) => {
-      let cloData :any[] = [];
+      let cloData: any[] = [];
       this.finalExamQuestions.map((i: any) => {
-        results.cloList.map((e: any) =>{
-          if(i.cloCode === e.id){
-            if(cloData.length > 0){
+        results.cloList.map((e: any) => {
+          if (i.cloCode === e.id) {
+            if (cloData.length > 0) {
               let checkBeforeUse = false;
-              cloData.map((check : any)=>{
-                if(check.id === e.id){
+              cloData.map((check: any) => {
+                if (check.id === e.id) {
                   checkBeforeUse = true;
                 }
               });
-              if( !checkBeforeUse ){
+              if (!checkBeforeUse) {
                 cloData.push(e);
               }
-            }else{
+            } else {
               cloData.push(e);
             }
           }
@@ -346,19 +385,67 @@ export class FinalExamQuestionsComponent implements OnInit {
       results.cloList = cloData;
 
       this.mainInfoData = results.mainInfo;
-      results.finalExamQuestions = this.finalExamQuestions; // 👈 Add here properl
+      const finalExamQuestion: any[] = [];
+      const cloList: any[] = [];
+      if (this.finalExamQuestions.length > 0) {
+        this.finalExamQuestions.map((e: any) => {
+          if (e.finalExamTypeName === this.searchQuery) {
+            finalExamQuestion.push(e);
+            results.cloList.map((i: any) => {
+              let active = true;
+              if (i.id === e.cloCode) {
+                cloList.map((j : any) =>{
+                  if(j.id === i.id){
+                    active = false;
+                  }
+                });
+                if(active){
+                  cloList.push(i);
+                }
+              }
+            });
+          }
+        });
+      }
+      if(cloList.length  > 0){
+        results.cloList = cloList;
+      }
+      // results.finalExamQuestions = this.finalExamQuestions; // 👈 Add here properl
+      results.finalExamQuestions = finalExamQuestion; // 👈 Add here properl
       results.finalExams = this.finalExams;
       console.log('Бүх өгөгдөл:', results);
       this.resultData = results;
       this.pdfService.generatePdf(this.resultData);
     },
-    (err) => {
-      this.messageService.add({
-        severity: 'error',
-        summary: 'Алдаа',
-        detail: 'Тайлан хэвлэхэд алдаа гарлаа бүтэн мэдээлэл оруулна уу!: ' + err.message,
-      });
-    }
-  );
+      (err) => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Алдаа',
+          detail: 'Тайлан хэвлэхэд алдаа гарлаа бүтэн мэдээлэл оруулна уу!: ' + err.message,
+        });
+      }
+    );
+  }
+  infoTo() {
+    this.dialog.open(BlmInfoComponent, {
+      width: '60vw',
+      height: '50vh',
+      maxWidth: 'none',
+      data: { lessonId: this.lessonId }
+    });
+  }
+
+  onBranchChange(e: any) {
+    console.log(e);
+    this.searchQuery = e.label;
+    this.onSearchInput();
+  }
+  clear(table: Table) {
+    table.clear();
+    this.searchValue = ''
+  }
+  onSearchInput() {
+    // Trigger the global filter
+    this.dt.filterGlobal(this.searchQuery, 'contains');
   }
 }

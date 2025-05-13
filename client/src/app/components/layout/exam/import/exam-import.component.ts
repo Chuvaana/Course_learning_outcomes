@@ -69,6 +69,7 @@ export class ExamImportComponent {
   missingNumberCount: any;
   checked: boolean = false;
   lessonAllStudents: any;
+  subMethods: any[] = [];
 
   cities: City[] | undefined;
 
@@ -130,6 +131,7 @@ export class ExamImportComponent {
 
   loadClo(e: string): void {
     let subMethods: any[] = [];
+    let subMethodOrder: any[] = [];
     let cloList: any[] = [];
     this.assessService
       .getAssessmentByLesson(this.lessonId)
@@ -140,9 +142,11 @@ export class ExamImportComponent {
 
         data.forEach((item: any) => {
           item.subMethods.forEach((sub: any) => {
+            subMethodOrder.push(sub);
             subMethods.push(sub._id);
           });
         });
+        this.subMethods = subMethodOrder;
 
         this.cloPointPlanService
           .getPointPlan(this.lessonId)
@@ -230,9 +234,27 @@ export class ExamImportComponent {
       this.tableData = this.tableData.filter(e => e.length !== 0);
 
       this.studentCount = this.tableData.length - 1;
+      // this.tableData.push(data);
 
       // Зөв файл оруулж байгааг шалгах
-      const fileLogic = this.checkData(this.tableData[0]);
+      const defaultData = this.tableData[0];
+      const fileLogic = this.checkData(defaultData);
+      let checkFirstLength = 0;
+      let checkAction = false;
+      defaultData.map((data : any, index : any) =>{
+        if( !checkAction ){
+          if(data.slice(0, 2) === 'Q.'){
+            checkFirstLength = defaultData.length - index;
+            checkAction = true;
+          }
+        }
+      })
+      console.log(checkFirstLength);
+
+      // const data: any[] = [];
+      // this.tableData.splice(1, 0, data); // 1-р индекс дээр оруулна
+      const emptyRow = new Array(defaultData.length).fill('12');   // '' эсвэл null зэргээр дүүргэж болно
+      this.tableData.splice(1, 0, emptyRow);
       this.activeFileLogic = fileLogic;
       if (!fileLogic) {
         this.tableData = [];
@@ -273,7 +295,6 @@ export class ExamImportComponent {
       'Started',
       'Completed',
       'Duration',
-      'Grade/10.00',
     ];
 
     // Trim and normalize for case-insensitive comparison
@@ -299,9 +320,8 @@ export class ExamImportComponent {
       this.msgService.add({
         severity: 'error',
         summary: 'Алдаа',
-        detail: `Алдаа гарлаа: Дүнгийн файл зөрсөн байна! Алдаа -> '${
-          data[mismatchedIndex]
-        }' (${mismatchedIndex + 1}-р багана)`,
+        detail: `Алдаа гарлаа: Дүнгийн файл зөрсөн байна! Алдаа -> '${data[mismatchedIndex]
+          }' (${mismatchedIndex + 1}-р багана)`,
       });
       return false;
     }
@@ -453,7 +473,7 @@ export class ExamImportComponent {
       }[];
     }[] = [];
 
-    this.cloQuestionData.map((data) => {});
+    this.cloQuestionData.map((data) => { });
 
     // Логикийг шалгаж эхэлнэ
     if (!this.activeFileLogic) {
@@ -646,5 +666,9 @@ export class ExamImportComponent {
     console.log(e);
 
     this.loadClo(e.value);
+  }
+
+  subMethodTypesData(e : any){
+
   }
 }

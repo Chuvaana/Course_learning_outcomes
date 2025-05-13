@@ -10,6 +10,8 @@ const FinalExamQuestionCurriculumSchema = new mongoose.Schema({
     blmLvl: { type: Number },
     cloCode: { type: mongoose.Schema.Types.ObjectId, ref: 'Clo' },
     cloName: { type : String , required: true },
+    finalExamType: { type: String , required: true },
+    finalExamTypeName: { type: String , required: true },
 });
 
 const FinalExamQuestionCurriculum = mongoose.model("finalExamQuestion", FinalExamQuestionCurriculumSchema);

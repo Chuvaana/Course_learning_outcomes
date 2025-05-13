@@ -1,5 +1,5 @@
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
-import { NgModule } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { AccordionModule } from 'primeng/accordion';
@@ -329,6 +329,7 @@ import { BrowserModule } from '@angular/platform-browser';
     DropdownModule,
     RouterModule,
   ],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   providers: [
     TeacherService,
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
