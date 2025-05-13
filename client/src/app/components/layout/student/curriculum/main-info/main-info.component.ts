@@ -135,9 +135,9 @@ export class MainInfoComponent {
           selfStudyPractice: response.selfStudyHours.practice,
 
           createdTeacherBy: response.createdTeacherBy,
-          createdTeacherDatetime: response.createdTeacherDatetime,
+          createdTeacherDatetime: new Date(response.createdTeacherDatetime),
           checkManagerBy: response.checkManagerBy,
-          checkManagerDatetime: response.checkManagerDatetime,
+          checkManagerDatetime: new Date(response.checkManagerDatetime),
         };
       }
     });

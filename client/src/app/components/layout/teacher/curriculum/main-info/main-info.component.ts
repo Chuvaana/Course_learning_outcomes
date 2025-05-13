@@ -211,6 +211,11 @@ export class MainInfoComponent {
             selfStudyLab: response.selfStudyHours.lab,
             selfStudyAssignment: response.selfStudyHours.assignment,
             selfStudyPractice: response.selfStudyHours.practice,
+
+            createdTeacherBy: response.createdTeacherBy,
+            createdTeacherDatetime: new Date(response.createdTeacherDatetime),
+            checkManagerBy: response.checkManagerBy,
+            checkManagerDatetime: new Date(response.checkManagerDatetime),
           });
           let branchName = '';
           if (response.school) {
