@@ -328,14 +328,10 @@ export class MainInfoComponent {
       selfStudyLab: Number(formData.selfStudyLab) || 0,
       selfStudyAssignment: Number(formData.selfStudyAssignment) || 0,
       selfStudyPractice: Number(formData.selfStudyPractice) || 0,
-    };
-
-    const lessoncurriculumsData = {
-      lessonId: this.lessonId,
       createdTeacherBy: String(formData.createdTeacherBy),
       createdTeacherDatetime: new Date(formData.createdTeacherDatetime), // Array хэлбэртэй
       checkManagerBy: String(formData.checkManagerBy), // Array хэлбэртэй
-      checkManagerDatetime: new Date(formData.checkManagerDatetime), // Array хэлбэртэй
+      checkManagerDatetime: new Date(formData.checkManagerDatetime),
     };
     if (this.isNew) {
       this.service.saveLesson(cleanedData).subscribe({
@@ -344,21 +340,28 @@ export class MainInfoComponent {
             lessonId: response.lesson.id,
             teacherId: this.teacherId,
           };
-          this.service
-            .addLessonToTeacher(this.teacherId, data)
-            .subscribe((res) => {
+          this.service.addLessonToTeacher(this.teacherId, data).subscribe(
+            (res) => {
               this.msgService.add({
                 severity: 'success',
                 summary: 'Амжилттай',
                 detail: 'Амжилттай хадгалагдлаа!',
               });
-            });
-          this.tabRefreshService.triggerRefresh();
-          this.router.navigate([
-            '/main/teacher/lesson',
-            response.lesson.id,
-            'curriculum',
-          ]);
+              this.tabRefreshService.triggerRefresh();
+              this.router.navigate([
+                '/main/teacher/lesson',
+                response.lesson.id,
+                'curriculum',
+              ]);
+            },
+            (err) => {
+              this.msgService.add({
+                severity: 'error',
+                summary: 'Алдаа',
+                detail: 'Алдаа гарлаа: ' + err.message,
+              });
+            }
+          );
         },
         error: (error) => {
           this.msgService.add({

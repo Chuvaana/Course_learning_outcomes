@@ -1,6 +1,14 @@
 <div class="card">
   <p-toast />
   <form [formGroup]="mainInfoForm" class="space-y-6">
+    <div>
+      <p-button
+        [disabled]="mainInfoForm.invalid"
+        label="Хадгалах"
+        class="p-button-lg p-button-primary"
+        (click)="submitButton()"
+      />
+    </div>
     <div class="container">
       <div class="col">
         <h3 class="text-lg font-semibold text-gray-800 border-b pb-2">
@@ -350,58 +358,49 @@
         </div>
 
         <h3 class="text-lg font-semibold text-gray-800 border-b pb-2 mt-6">
-          Бие даан суралцах цаг
+          Баталгаажуулалт
         </h3>
         <div class="col2">
-          <p-floatlabel variant="on" class="w-full">
-            <input
-              pInputText
-              formControlName="createdTeacherBy"
-              id="createdTeacherBy"
-              autocomplete="off"
-              class="w-full"
-            />
-            <label for="createdTeacherBy">Боловсруулсан багш:</label>
-          </p-floatlabel>
-          <p-floatlabel variant="on" class="w-full">
-            <p-calendar
-              formControlName="createdTeacherDatetime"
-              id="createdTeacherDatetime"
-              class="w-full"
-              [showIcon]="true"
-              dateFormat="yy-mm-dd"
-            />
-            <label for="createdTeacherDatetime">Огноо:</label>
-          </p-floatlabel>
-          <p-floatlabel variant="on" class="w-full">
-            <input
-              pInputText
-              formControlName="checkManagerBy"
-              id="checkManagerBy"
-              autocomplete="off"
-              class="w-full"
-            />
-            <label for="checkManagerBy">Хянасан салбарын эрхлэгч:</label>
-          </p-floatlabel>
-          <p-floatlabel variant="on" class="w-full">
-            <p-calendar
-              formControlName="checkManagerDatetime"
-              id="checkManagerDatetime"
-              class="w-full"
-              [showIcon]="true"
-              dateFormat="yy-mm-dd"
-            />
-            <label for="checkManagerDatetime">Огноо:</label>
-          </p-floatlabel>
+          <div class="col3">
+            <p-floatlabel variant="on">
+              <input
+                pInputText
+                formControlName="createdTeacherBy"
+                id="createdTeacherBy"
+                autocomplete="off"
+              />
+              <label for="createdTeacherBy">Боловсруулсан багш:</label>
+            </p-floatlabel>
+            <p-floatlabel variant="on">
+              <p-calendar
+                formControlName="createdTeacherDatetime"
+                id="createdTeacherDatetime"
+                [showIcon]="true"
+                dateFormat="yy-mm-dd"
+              />
+              <label for="createdTeacherDatetime">Огноо:</label>
+            </p-floatlabel>
+            <p-floatlabel variant="on">
+              <input
+                pInputText
+                formControlName="checkManagerBy"
+                id="checkManagerBy"
+                autocomplete="off"
+              />
+              <label for="checkManagerBy">Хянасан салбарын эрхлэгч:</label>
+            </p-floatlabel>
+            <p-floatlabel variant="on">
+              <p-calendar
+                formControlName="checkManagerDatetime"
+                id="checkManagerDatetime"
+                [showIcon]="true"
+                dateFormat="yy-mm-dd"
+              />
+              <label for="checkManagerDatetime">Огноо:</label>
+            </p-floatlabel>
+          </div>
         </div>
       </div>
-    </div>
-    <div class="flex justify-end mt-6">
-      <p-button
-        label="Хадгалах"
-        class="p-button-lg p-button-primary"
-        (click)="submitButton()"
-      />
     </div>
   </form>
 </div>

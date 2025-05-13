@@ -32,6 +32,7 @@ import { AssessmentService } from '../../../../services/assessmentService';
 import { CloPointPlanService } from '../../../../services/cloPointPlanService';
 import { MenubarModule } from 'primeng/menubar';
 import { TooltipModule } from 'primeng/tooltip';
+import { AssessmentPlanService } from '../../../../services/assessmentPlanService';
 
 interface Lesson {
   id: string;
@@ -129,6 +130,8 @@ export class LessonListComponent implements OnInit {
   season!: string;
   teacherId!: string;
 
+  cloList: any;
+
   constructor(
     private service: TeacherService,
     private router: Router,
@@ -141,7 +144,8 @@ export class LessonListComponent implements OnInit {
     private scheService: ScheduleService,
     private msgService: MessageService,
     private assessService: AssessmentService,
-    private cloPointPlanService: CloPointPlanService
+    private cloPointPlanService: CloPointPlanService,
+    private assessPlan: AssessmentPlanService
   ) {}
 
   ngOnInit(): void {
@@ -326,6 +330,7 @@ export class LessonListComponent implements OnInit {
             });
 
           const oldNewCloMap = new Map<string, string>();
+          const oldNewSubMethodMap = new Map<string, string>();
 
           this.cloService
             .getCloList(lesson.id)
@@ -447,7 +452,6 @@ export class LessonListComponent implements OnInit {
                             newSubMethodIds.push(...plan.subMethods);
                           });
 
-                          const oldNewSubMethodMap = new Map<string, string>();
                           oldSubMethodIds.forEach((oldId, index) => {
                             oldNewSubMethodMap.set(
                               oldId,
@@ -460,7 +464,7 @@ export class LessonListComponent implements OnInit {
                   })
                 )
               ),
-              switchMap((oldNewSubMethodMap) =>
+              switchMap(() =>
                 this.cloPointPlanService.getPointPlan(lesson.id).pipe(
                   map((res: any[]) => {
                     return res.map((item) => {
@@ -489,6 +493,25 @@ export class LessonListComponent implements OnInit {
                   }),
                   switchMap((updated) =>
                     this.cloPointPlanService.saveCloPlan(updated)
+                  )
+                )
+              ),
+              switchMap(() =>
+                this.assessPlan.getAssessmentPlan(lesson.id).pipe(
+                  map((res: any) => {
+                    return res.map((item: any) => {
+                      item.lessonId = newLessonId;
+                      if (item._id) delete item._id;
+                      if (item.__v) delete item.__v;
+
+                      item.cloId = oldNewCloMap.get(item.cloId) || item.cloId;
+                      item.method =
+                        oldNewSubMethodMap.get(item.method) || item.cloId;
+                      return item;
+                    });
+                  }),
+                  switchMap((updated) =>
+                    this.assessPlan.addAssessmentPlan(updated)
                   )
                 )
               )
@@ -525,7 +548,6 @@ export class LessonListComponent implements OnInit {
       );
     });
   }
-
   logout() {
     localStorage.clear();
     this.router.navigate(['/teacher-login']);
