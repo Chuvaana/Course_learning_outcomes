@@ -37,9 +37,6 @@ export class MainInfoComponent {
   isNew: boolean = true;
   branches: any[] = [];
   departments: any[] = [];
-  lessonLevel: any[] = [];
-  lessonType: any[] = [];
-  recommendedSemester: any[] = [];
   teacherId!: string;
   schoolYear!: string;
   lesson: any;
@@ -52,25 +49,6 @@ export class MainInfoComponent {
 
   ngOnInit(): void {
     this.loadBranches();
-
-    this.lessonLevel = [
-      { label: 'Бакалавр', value: 'BACHELOR' },
-      { label: 'Магистр', value: 'MAGISTER' },
-      { label: 'Доктор', value: 'DOCTOR' },
-    ];
-
-    this.lessonType = [
-      { label: 'Заавал', value: 'REQ' },
-      { label: 'Сонгон', value: 'CHO' },
-    ];
-
-    this.recommendedSemester = [
-      { label: 'Намар', value: 'autumn' },
-      { label: 'Хавар', value: 'spring' },
-      { label: 'Дурын', value: 'any' },
-      { label: 'Өвлийн улирал', value: 'winter' },
-      { label: 'Зуны улирал', value: 'summer' },
-    ];
 
     this.sharedService.getConfig('School_year').subscribe((res) => {
       if (res) {
@@ -139,6 +117,29 @@ export class MainInfoComponent {
           checkManagerBy: response.checkManagerBy,
           checkManagerDatetime: new Date(response.checkManagerDatetime),
         };
+        if (response.school) {
+          this.service
+            .getDepartments(response.school)
+            .subscribe((departments: any[]) => {
+              this.departments = departments.map((dept) => ({
+                name: dept.name,
+                id: dept.id || dept.name,
+              }));
+
+              const selectedBranch = this.branches.find(
+                (b) => b.id === response.school
+              );
+              if (selectedBranch) {
+                this.lesson.school = selectedBranch.name;
+                const selectedDept = this.departments.find(
+                  (d) => d.id === response.department
+                );
+                if (selectedDept) {
+                  this.lesson.department = selectedDept.name;
+                }
+              }
+            });
+        }
       }
     });
   }
@@ -149,34 +150,6 @@ export class MainInfoComponent {
         name: branch.name,
         id: branch.id || branch.name,
       }));
-    });
-  }
-
-  onBranchChange(branch: any): void {
-    this.service.getDepartments(branch.id).subscribe((data: any[]) => {
-      if (data) {
-        this.departments = data.map((dept) => ({
-          name: dept.name,
-          id: dept.id || dept.name,
-        }));
-      }
-    });
-  }
-
-  getDepartment(branchId: string, departmentId: string): void {
-    this.service.getDepartments(branchId).subscribe((data: any[]) => {
-      if (data) {
-        this.departments = data
-          .filter((dept) => dept.id)
-          .map((dept) => ({ name: dept.name, id: dept.id }));
-
-        const selectedDept = this.departments.find(
-          (dept) => dept.id === departmentId
-        );
-        if (selectedDept) {
-          // this.mainInfoForm.patchValue({ department: selectedDept });
-        }
-      }
     });
   }
 }
