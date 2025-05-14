@@ -2,18 +2,18 @@
   <div class="column-style">
     <div class="action-btn">
       <p-button
+        icon="pi pi-save"
         label="Хадгалах"
         (onClick)="saveDataFull(finalExamQuestions)"
       ></p-button>
     </div>
-    <div class="action-btn">
+
+    <div class="action-btn" *ngIf="finalExams.finalExamName.value === 'EXAM'">
       <p-button
-        label="Шинэ асуулт оруулах"
-        (onClick)="addColumn(finalExams.finalExamName)"
+        icon="pi pi-file-pdf"
+        label="Хэвлэх"
+        (onClick)="pdfExport()"
       ></p-button>
-    </div>
-    <div class="action-btn">
-      <p-button label="Тайлан гаргах" (onClick)="pdfExport()"></p-button>
     </div>
   </div>
   <div class="column-input">
@@ -51,24 +51,15 @@
         <label for="finalExams.finalExamName">Шалгалтын төрөл</label>
       </p-floatlabel>
     </div>
+    <div class="action-btn">
+      <p-button
+        icon="pi pi-plus"
+        label="Асуулт нэмэх"
+        (onClick)="addColumn(finalExams.finalExamName)"
+      ></p-button>
+    </div>
   </div>
   <p-toast />
-  <div class="flex">
-    <p-iconfield iconPosition="left" class="ml-auto" *ngIf="false">
-      <p-inputicon>
-        <i class="pi pi-search"></i>
-      </p-inputicon>
-      <input
-        pInputText
-        type="text"
-        disabled="true"
-        readonly="true"
-        [(ngModel)]="searchQuery"
-        (input)="onSearchInput()"
-        placeholder="Search keyword"
-      />
-    </p-iconfield>
-  </div>
   <p-table
     #dt
     [value]="finalExamQuestions"
@@ -232,18 +223,6 @@
               pRipple
               type="button"
               pInitEditableRow
-              icon="pi pi-delete-left"
-              (click)="onRowDelete(finalExamQuestions, ri)"
-              text
-              rounded
-              severity="secondary"
-            ></button>
-            <button
-              *ngIf="!editing"
-              pButton
-              pRipple
-              type="button"
-              pInitEditableRow
               icon="pi pi-pencil"
               (click)="onRowEditInit(finalExamQuestions)"
               text
@@ -272,6 +251,18 @@
               (click)="onRowEditCancel(finalExamQuestions, ri)"
               text
               rounded
+              severity="secondary"
+            ></button>
+            <button
+              *ngIf="!editing"
+              pButton
+              pRipple
+              type="button"
+              icon="pi pi-trash"
+              (click)="onRowDelete(finalExamQuestions, ri)"
+              text
+              rounded
+              style="color: red"
               severity="secondary"
             ></button>
           </div>

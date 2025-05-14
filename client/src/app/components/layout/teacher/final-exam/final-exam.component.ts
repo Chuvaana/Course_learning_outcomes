@@ -30,6 +30,7 @@ import { IconFieldModule } from 'primeng/iconfield';
 import { AssessmentService } from '../../../../services/assessmentService';
 import { CloPointPlanService } from '../../../../services/cloPointPlanService';
 import { StudentService } from '../../../../services/studentService';
+import { CurriculumService } from '../../../../services/curriculum.service';
 
 interface finalExamModel {
   finalExamName: any;
@@ -53,11 +54,6 @@ interface finalExamQuestionModel {
   subMethodName: string;
   finalExamType: string;
   finalExamTypeName: string;
-}
-
-interface verbs {
-  verbCode: string;
-  verbName: string;
 }
 
 @Component({
@@ -108,6 +104,10 @@ export class FinalExamQuestionsComponent implements OnInit {
   subMethodsClone: any;
   cloTypes: any[] = [];
 
+  finalExamId!: string;
+  departments: any[] = [];
+  branches: any[] = [];
+
   tableFilters: { [s: string]: any } = {
     finalExamTypeName: { value: 'Тест', matchMode: 'contains' }, // Change 'Тест' to your desired default
   };
@@ -130,7 +130,8 @@ export class FinalExamQuestionsComponent implements OnInit {
     private route: ActivatedRoute,
     private service: FinalExamService,
     private messageService: MessageService,
-    private lesService: StudentService
+    private lesService: StudentService,
+    private cirService: CurriculumService
   ) {}
   ngOnInit() {
     this.finalExams = {
@@ -176,16 +177,32 @@ export class FinalExamQuestionsComponent implements OnInit {
       });
       this.clos = cloData;
       this.cloTypes = cloData;
-      this.onRefresh();
+      this.finalExams.finalExamName = {
+        value: 'EXAM',
+        label: 'Улирлын шалгалт',
+      };
+      this.loadBranches();
+      this.onBranchChange(this.finalExams.finalExamName);
     });
     // this.dt.filter('EXAM', 'text', 'text');
   }
 
-  onRefresh() {
+  loadBranches(): void {
+    this.cirService.getBranches().subscribe((data: any[]) => {
+      this.branches = data.map((branch) => ({
+        name: branch.name,
+        id: branch.id || branch.name,
+      }));
+    });
+  }
+
+  onRefresh(type: string) {
     this.service
-      .getLessonDataFinalExams(this.lessonId)
+      .getLessonDataFinalExams(this.lessonId, type)
       .subscribe((res: any) => {
         if (res.length != 0) {
+          this.finalExamId = res[0]._id;
+          console.log(this.finalExamId);
           this.finalExams.examType = res[0].examType;
           this.finalExams.examTakeStudentCount = res[0].examTakeStudentCount;
           this.finalExamsId = res[0]._id;
@@ -196,20 +213,15 @@ export class FinalExamQuestionsComponent implements OnInit {
         }
       });
     this.service
-      .getAllFinalExamQuestions(this.lessonId)
+      .getAllFinalExamQuestions(this.lessonId, type)
       .subscribe((res: any) => {
         if (res.length != 0) {
           this.examTypes.map((e) => {
             if (e.value === res[0].finalExamType) {
               this.finalExams.finalExamName = e;
-              this.onBranchChange(e);
+              // this.onBranchChange(e);
             }
           });
-        } else {
-          this.finalExams.finalExamName = {
-            value: 'EXAM',
-            label: 'Улирлын шалгалт',
-          };
         }
 
         this.countOrder = res.length;
@@ -301,14 +313,14 @@ export class FinalExamQuestionsComponent implements OnInit {
     }
     if (this.isNew) {
       this.service.addFinalExam(data).subscribe(
-        (res) => {
+        (res: any) => {
           console.log(res);
+          this.onBranchChange({ value: res.finalExamType });
           this.messageService.add({
             severity: 'success',
             summary: 'Success',
-            detail: 'finalExam is updated',
+            detail: 'Амжилттай хадгалагдлаа',
           });
-          this.onRefresh();
         },
         (err) => {
           this.messageService.add({
@@ -325,9 +337,8 @@ export class FinalExamQuestionsComponent implements OnInit {
           this.messageService.add({
             severity: 'success',
             summary: 'Success',
-            detail: 'finalExam is updated',
+            detail: 'Амжилттай шинэчлэгдлээ',
           });
-          this.onRefresh();
         },
         (err) => {
           this.messageService.add({
@@ -345,11 +356,9 @@ export class FinalExamQuestionsComponent implements OnInit {
   onRowDelete(data: any, index: any) {
     if (data._id !== '' && data._id !== null && data._id !== undefined) {
       this.finalExamQuestions.splice(index, 1);
-    } else {
-      this.service.deleteFinalExam(data._id).subscribe(
+      this.service.deleteFinalExam(data._id, this.finalExamId).subscribe(
         (res: any) => {
           this.finalExamQuestions.splice(index, 1);
-          console.log(res);
           this.messageService.add({
             severity: 'success',
             summary: 'Ажилттай',
@@ -371,19 +380,15 @@ export class FinalExamQuestionsComponent implements OnInit {
     this.finalExams.finalExamQuestion = data;
     this.finalExams.lessonId = this.lessonId;
     this.finalExams.finalExamName = this.finalExams.finalExamName.value;
-    // this.finalExams.examType = this.examType;
-    // this.finalExams.examTakeStudentCount = this.examTakeStudentCount;
-
     if (this.isNewEdit) {
       this.service.editDataFinal(this.finalExamsId, this.finalExams).subscribe(
         (res) => {
-          console.log(res);
           this.messageService.add({
             severity: 'success',
             summary: 'Амжилттай',
             detail: 'Мэдээлэл амжилттай хадгалагдлаа',
           });
-          this.onRefresh();
+          this.onBranchChange({ value: this.finalExams.finalExamName });
         },
         (err) => {
           this.messageService.add({
@@ -396,13 +401,12 @@ export class FinalExamQuestionsComponent implements OnInit {
     } else {
       this.service.addDataFinal(this.finalExams).subscribe(
         (res) => {
-          console.log(res);
           this.messageService.add({
             severity: 'success',
             summary: 'Амжилттай',
             detail: 'Мэдээлэл амжилттай хадгалагдлаа',
           });
-          this.onRefresh();
+          this.onBranchChange({ value: this.finalExams.finalExamName });
         },
         (err) => {
           this.messageService.add({
@@ -433,9 +437,8 @@ export class FinalExamQuestionsComponent implements OnInit {
       finalExamTypeName: finalExamType.label,
     };
 
-    this.finalExamQuestions.unshift(addData); // 👈 Add to the beginning
-    // this.finalExamQuestions.push(addData);
-    this.onBranchChange(finalExamType);
+    this.finalExamQuestions.unshift(addData);
+    // this.onBranchChange(finalExamType);
     this.onRowEditInit(addData);
   }
 
@@ -468,36 +471,60 @@ export class FinalExamQuestionsComponent implements OnInit {
         results.cloList = cloData;
 
         this.mainInfoData = results.mainInfo;
-        const finalExamQuestion: any[] = [];
-        const cloList: any[] = [];
-        if (this.finalExamQuestions.length > 0) {
-          this.finalExamQuestions.map((e: any) => {
-            if (e.finalExamTypeName === this.searchQuery) {
-              finalExamQuestion.push(e);
-              results.cloList.map((i: any) => {
-                let active = true;
-                if (i.id === e.cloCode) {
-                  cloList.map((j: any) => {
-                    if (j.id === i.id) {
-                      active = false;
-                    }
-                  });
-                  if (active) {
-                    cloList.push(i);
-                  }
+        if (results.mainInfo.school) {
+          this.cirService
+            .getDepartments(results.mainInfo.school)
+            .subscribe((departments: any[]) => {
+              this.departments = departments.map((dept) => ({
+                name: dept.name,
+                id: dept.id || dept.name,
+              }));
+
+              const selectedBranch = this.branches.find(
+                (b) => b.id === results.mainInfo.school
+              );
+              if (selectedBranch) {
+                results.mainInfo.school = selectedBranch.name;
+                const selectedDept = this.departments.find(
+                  (d) => d.id === results.mainInfo.department
+                );
+                if (selectedDept) {
+                  results.mainInfo.department = selectedDept.name;
                 }
-              });
-            }
-          });
+              }
+
+              const finalExamQuestion: any[] = [];
+              const cloList: any[] = [];
+              if (this.finalExamQuestions.length > 0) {
+                this.finalExamQuestions.map((e: any) => {
+                  if (e.finalExamType === 'EXAM') {
+                    finalExamQuestion.push(e);
+                    results.cloList.map((i: any) => {
+                      let active = true;
+                      if (i.id === e.cloCode) {
+                        cloList.map((j: any) => {
+                          if (j.id === i.id) {
+                            active = false;
+                          }
+                        });
+                        if (active) {
+                          cloList.push(i);
+                        }
+                      }
+                    });
+                  }
+                });
+              }
+              if (cloList.length > 0) {
+                results.cloList = cloList;
+              }
+              results.finalExamQuestions = finalExamQuestion;
+              results.finalExams = this.finalExams;
+              console.log('Бүх өгөгдөл:', results);
+              this.resultData = results;
+              this.pdfService.generatePdf(this.resultData);
+            });
         }
-        if (cloList.length > 0) {
-          results.cloList = cloList;
-        }
-        results.finalExamQuestions = finalExamQuestion;
-        results.finalExams = this.finalExams;
-        console.log('Бүх өгөгдөл:', results);
-        this.resultData = results;
-        this.pdfService.generatePdf(this.resultData);
       },
       (err) => {
         this.messageService.add({
@@ -520,16 +547,11 @@ export class FinalExamQuestionsComponent implements OnInit {
   }
 
   onBranchChange(e: any) {
-    console.log(e);
-    this.searchQuery = e.label;
-    this.onSearchInput();
-
+    this.onRefresh(e.value);
     this.loadClo(e);
   }
+
   loadClo(e: any): void {
-    let subMethods: any[] = [];
-    let subMethodOrder: any[] = [];
-    let cloList: any[] = [];
     let subMethod: any[] = [];
     this.subMethods = [];
     this.assessService
@@ -548,13 +570,8 @@ export class FinalExamQuestionsComponent implements OnInit {
           subMethod.push(dataSub);
         });
         this.subMethods = subMethod;
-        console.log(data);
+        this.onCloChange();
       });
-    this.onCloChange();
-  }
-
-  onSearchInput() {
-    this.dt.filterGlobal(this.searchQuery, 'contains');
   }
 
   onCloChange() {
@@ -603,7 +620,6 @@ export class FinalExamQuestionsComponent implements OnInit {
             });
           });
         });
-        console.log(cloData);
         this.cloTypes = cloData;
       });
   }

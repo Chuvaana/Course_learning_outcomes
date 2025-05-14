@@ -255,34 +255,6 @@ exports.getStudentsByClassTypeAndDayTime = async (req, res) => {
   }
 };
 
-exports.getStudentsByClassTypeAndDayTime = async (req, res) => {
-  const { classType } = req.params;
-  let { day, time } = req.query; // Getting the selected day and time from query params
-
-  try {
-    // Validate classType
-    if (!['alec', 'bsem', 'clab'].includes(classType)) {
-      return res.status(400).json({ message: 'Invalid class type' });
-    }
-
-    // Validate time (optional: adjust according to your requirements)
-    if (!time) {
-      return res.status(400).json({ message: 'Time is required' });
-    }
-    time = parseInt(time, 10);
-
-    const students = await Student.find({
-      [`${classType}.day`]: day,
-      [`${classType}.time`]: time,
-    });
-
-    res.json(students);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Error fetching students' });
-  }
-};
-
 exports.getLessonByStudent = async (req, res) => {
   try {
     const students = await Student.find({ studentCode: req.params.id }).populate('lessonId');
