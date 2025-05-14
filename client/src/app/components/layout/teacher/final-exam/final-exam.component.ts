@@ -1,5 +1,11 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { DropdownModule } from 'primeng/dropdown';
@@ -23,6 +29,7 @@ import { InputIconModule } from 'primeng/inputicon';
 import { IconFieldModule } from 'primeng/iconfield';
 import { AssessmentService } from '../../../../services/assessmentService';
 import { CloPointPlanService } from '../../../../services/cloPointPlanService';
+import { StudentService } from '../../../../services/studentService';
 
 interface finalExamModel {
   finalExamName: any;
@@ -72,10 +79,11 @@ interface verbs {
     IftaLabelModule,
     InputIconModule,
     IconFieldModule,
-    ToastModule],
+    ToastModule,
+  ],
   providers: [MessageService],
   templateUrl: './final-exam.component.html',
-  styleUrl: './final-exam.component.scss'
+  styleUrl: './final-exam.component.scss',
 })
 export class FinalExamQuestionsComponent implements OnInit {
   finalExams!: finalExamModel;
@@ -101,7 +109,7 @@ export class FinalExamQuestionsComponent implements OnInit {
   cloTypes: any[] = [];
 
   tableFilters: { [s: string]: any } = {
-    'finalExamTypeName': { value: 'Тест', matchMode: 'contains' }  // Change 'Тест' to your desired default
+    finalExamTypeName: { value: 'Тест', matchMode: 'contains' }, // Change 'Тест' to your desired default
   };
 
   examTypes = [
@@ -113,11 +121,17 @@ export class FinalExamQuestionsComponent implements OnInit {
   clonedFinalExam: { [s: string]: finalExamQuestionModel } = {};
   @ViewChild('dt') dt!: Table;
 
-  constructor(private pdfService: PdfExamQuestionService,
+  constructor(
+    private pdfService: PdfExamQuestionService,
     private dialog: MatDialog,
     private cloPointPlanService: CloPointPlanService,
     private assessService: AssessmentService,
-    private cloService: CLOService, private route: ActivatedRoute, private service: FinalExamService, private messageService: MessageService) { }
+    private cloService: CLOService,
+    private route: ActivatedRoute,
+    private service: FinalExamService,
+    private messageService: MessageService,
+    private lesService: StudentService
+  ) {}
   ngOnInit() {
     this.finalExams = {
       finalExamName: null,
@@ -127,8 +141,10 @@ export class FinalExamQuestionsComponent implements OnInit {
       finalExamQuestion: null,
     };
     this.route.parent?.paramMap.subscribe((params) => {
-      this.lessonId = params.get('id')!; // Get "id" from the parent route
-      console.log('Lesson ID:', this.lessonId);
+      this.lessonId = params.get('id')!;
+      this.lesService.getStudents(this.lessonId).subscribe((res) => {
+        this.finalExams.examTakeStudentCount = res.length;
+      });
     });
 
     this.finalExamQuestions = [];
@@ -166,48 +182,70 @@ export class FinalExamQuestionsComponent implements OnInit {
   }
 
   onRefresh() {
-    this.service.getLessonDataFinalExams(this.lessonId).subscribe((res: any) => {
-      if (res.length > -1) {
-        // this.finalExams.finalExamName = res[0].finalExamName;
-        this.examTypes.map((e) => {
-          if (e.value === res[0].finalExamName) {
-            this.finalExams.finalExamName = e;
-            this.onBranchChange(e);
-          }
-        });
-        this.finalExams.examType = res[0].examType;
-        this.finalExams.examTakeStudentCount = res[0].examTakeStudentCount;
-        this.finalExamsId = res[0]._id;
-        this.examType = res[0].examType;
-        this.isNewEdit = true;
-      } else {
-        this.isNewEdit = false;
-      }
-    });
-    this.service.getAllFinalExamQuestions(this.lessonId).subscribe((res: any) => {
-      this.countOrder = res.length;
-      this.finalExamQuestions = res;
-    });
+    this.service
+      .getLessonDataFinalExams(this.lessonId)
+      .subscribe((res: any) => {
+        if (res.length != 0) {
+          this.finalExams.examType = res[0].examType;
+          this.finalExams.examTakeStudentCount = res[0].examTakeStudentCount;
+          this.finalExamsId = res[0]._id;
+          this.examType = res[0].examType;
+          this.isNewEdit = true;
+        } else {
+          this.isNewEdit = false;
+        }
+      });
+    this.service
+      .getAllFinalExamQuestions(this.lessonId)
+      .subscribe((res: any) => {
+        if (res.length != 0) {
+          this.examTypes.map((e) => {
+            if (e.value === res[0].finalExamType) {
+              this.finalExams.finalExamName = e;
+              this.onBranchChange(e);
+            }
+          });
+        } else {
+          this.finalExams.finalExamName = {
+            value: 'EXAM',
+            label: 'Улирлын шалгалт',
+          };
+        }
 
-
+        this.countOrder = res.length;
+        this.finalExamQuestions = res;
+      });
   }
 
   onRowEditInit(finalExam: finalExamQuestionModel) {
-    this.onCloChange()
-    if (finalExam._id !== "" && finalExam._id !== null && finalExam._id !== undefined) {
+    this.onCloChange();
+    if (
+      finalExam._id !== '' &&
+      finalExam._id !== null &&
+      finalExam._id !== undefined
+    ) {
       this.isNew = false;
-      const cloId = typeof finalExam.cloCode === 'string' ? finalExam.cloCode : finalExam.cloCode?.id;
+      const cloId =
+        typeof finalExam.cloCode === 'string'
+          ? finalExam.cloCode
+          : finalExam.cloCode?.id;
       this.onMethodChange(cloId);
-      const verbId = typeof finalExam.verb === 'string' ? finalExam.verb : finalExam.verb?.verbCode;
+      const verbId =
+        typeof finalExam.verb === 'string'
+          ? finalExam.verb
+          : finalExam.verb?.verbCode;
 
       this.service.getDetailVerb(verbId).subscribe((res: any) => {
         finalExam.verb = {
           verbCode: res._id,
-          verbName: res.verbName
+          verbName: res.verbName,
         };
       });
 
-      const subMethodId = typeof finalExam.subMethod === 'string' ? finalExam.subMethod : finalExam.subMethod?.id;
+      const subMethodId =
+        typeof finalExam.subMethod === 'string'
+          ? finalExam.subMethod
+          : finalExam.subMethod?.id;
       this.subMethods.map((e: any) => {
         if (e.id === subMethodId) {
           const dataSub = {
@@ -229,8 +267,8 @@ export class FinalExamQuestionsComponent implements OnInit {
             dataType.name = e.cloName;
             finalExam.cloCode = dataType;
           }
-        })
-      })
+        });
+      });
     } else {
       this.isNew = true;
     }
@@ -251,7 +289,8 @@ export class FinalExamQuestionsComponent implements OnInit {
   }
 
   onRowEditCancel(finalExam: finalExamQuestionModel, index: number) {
-    this.finalExamQuestions[index] = this.clonedFinalExam[finalExam._id as string];
+    this.finalExamQuestions[index] =
+      this.clonedFinalExam[finalExam._id as string];
     delete this.clonedFinalExam[finalExam._id as string];
   }
 
@@ -261,53 +300,70 @@ export class FinalExamQuestionsComponent implements OnInit {
       data.examType = this.examType;
     }
     if (this.isNew) {
-      this.service.addFinalExam(data).subscribe((res) => {
-        console.log(res);
-        this.messageService.add({ severity: 'success', summary: 'Success', detail: 'finalExam is updated' });
-        this.onRefresh();
-      },
+      this.service.addFinalExam(data).subscribe(
+        (res) => {
+          console.log(res);
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'finalExam is updated',
+          });
+          this.onRefresh();
+        },
         (err) => {
           this.messageService.add({
             severity: 'error',
             summary: 'Алдаа',
             detail: 'Алдаа гарлаа: ' + err.message,
           });
-        })
+        }
+      );
     } else if (!this.isNew) {
-      this.service.updateFinalExam(data._id, data).subscribe((res) => {
-        console.log(res);
-        this.messageService.add({ severity: 'success', summary: 'Success', detail: 'finalExam is updated' });
-        this.onRefresh();
-      },
+      this.service.updateFinalExam(data._id, data).subscribe(
+        (res) => {
+          console.log(res);
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'finalExam is updated',
+          });
+          this.onRefresh();
+        },
         (err) => {
           this.messageService.add({
             severity: 'error',
             summary: 'Алдаа',
             detail: 'Алдаа гарлаа: ' + err.message,
           });
-        })
+        }
+      );
     } else {
       // .. sonar aldaa
     }
   }
 
   onRowDelete(data: any, index: any) {
-    if (data._id !== "" && data._id !== null && data._id !== undefined) {
+    if (data._id !== '' && data._id !== null && data._id !== undefined) {
       this.finalExamQuestions.splice(index, 1);
-
     } else {
-      this.service.deleteFinalExam(data._id).subscribe((res: any) => {
-        this.finalExamQuestions.splice(index, 1);
-        console.log(res);
-        this.messageService.add({ severity: 'success', summary: 'Ажилттай', detail: 'Ажилттай устгалаа' });
-      },
+      this.service.deleteFinalExam(data._id).subscribe(
+        (res: any) => {
+          this.finalExamQuestions.splice(index, 1);
+          console.log(res);
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Ажилттай',
+            detail: 'Ажилттай устгалаа',
+          });
+        },
         (err) => {
           this.messageService.add({
             severity: 'error',
             summary: 'Алдаа',
             detail: 'Устгахад алдаа гарлаа: ' + err.message,
           });
-        })
+        }
+      );
     }
   }
 
@@ -384,70 +440,72 @@ export class FinalExamQuestionsComponent implements OnInit {
   }
 
   pdfExport() {
-
     forkJoin({
       cloList: this.service.getCloList(this.lessonId),
       mainInfo: this.service.getMainInfo(this.lessonId),
-    }).subscribe((results: any) => {
-      let cloData: any[] = [];
-      this.finalExamQuestions.map((i: any) => {
-        results.cloList.map((e: any) => {
-          if (i.cloCode === e.id) {
-            if (cloData.length > 0) {
-              let checkBeforeUse = false;
-              cloData.map((check: any) => {
-                if (check.id === e.id) {
-                  checkBeforeUse = true;
-                }
-              });
-              if (!checkBeforeUse) {
-                cloData.push(e);
-              }
-            } else {
-              cloData.push(e);
-            }
-          }
-        })
-      });
-      results.cloList = cloData;
-
-      this.mainInfoData = results.mainInfo;
-      const finalExamQuestion: any[] = [];
-      const cloList: any[] = [];
-      if (this.finalExamQuestions.length > 0) {
-        this.finalExamQuestions.map((e: any) => {
-          if (e.finalExamTypeName === this.searchQuery) {
-            finalExamQuestion.push(e);
-            results.cloList.map((i: any) => {
-              let active = true;
-              if (i.id === e.cloCode) {
-                cloList.map((j: any) => {
-                  if (j.id === i.id) {
-                    active = false;
+    }).subscribe(
+      (results: any) => {
+        let cloData: any[] = [];
+        this.finalExamQuestions.map((i: any) => {
+          results.cloList.map((e: any) => {
+            if (i.cloCode === e.id) {
+              if (cloData.length > 0) {
+                let checkBeforeUse = false;
+                cloData.map((check: any) => {
+                  if (check.id === e.id) {
+                    checkBeforeUse = true;
                   }
                 });
-                if (active) {
-                  cloList.push(i);
+                if (!checkBeforeUse) {
+                  cloData.push(e);
                 }
+              } else {
+                cloData.push(e);
               }
-            });
-          }
+            }
+          });
         });
-      }
-      if (cloList.length > 0) {
-        results.cloList = cloList;
-      }
-      results.finalExamQuestions = finalExamQuestion;
-      results.finalExams = this.finalExams;
-      console.log('Бүх өгөгдөл:', results);
-      this.resultData = results;
-      this.pdfService.generatePdf(this.resultData);
-    },
+        results.cloList = cloData;
+
+        this.mainInfoData = results.mainInfo;
+        const finalExamQuestion: any[] = [];
+        const cloList: any[] = [];
+        if (this.finalExamQuestions.length > 0) {
+          this.finalExamQuestions.map((e: any) => {
+            if (e.finalExamTypeName === this.searchQuery) {
+              finalExamQuestion.push(e);
+              results.cloList.map((i: any) => {
+                let active = true;
+                if (i.id === e.cloCode) {
+                  cloList.map((j: any) => {
+                    if (j.id === i.id) {
+                      active = false;
+                    }
+                  });
+                  if (active) {
+                    cloList.push(i);
+                  }
+                }
+              });
+            }
+          });
+        }
+        if (cloList.length > 0) {
+          results.cloList = cloList;
+        }
+        results.finalExamQuestions = finalExamQuestion;
+        results.finalExams = this.finalExams;
+        console.log('Бүх өгөгдөл:', results);
+        this.resultData = results;
+        this.pdfService.generatePdf(this.resultData);
+      },
       (err) => {
         this.messageService.add({
           severity: 'error',
           summary: 'Алдаа',
-          detail: 'Тайлан хэвлэхэд алдаа гарлаа бүтэн мэдээлэл оруулна уу!: ' + err.message,
+          detail:
+            'Тайлан хэвлэхэд алдаа гарлаа бүтэн мэдээлэл оруулна уу!: ' +
+            err.message,
         });
       }
     );
@@ -457,7 +515,7 @@ export class FinalExamQuestionsComponent implements OnInit {
       width: '60vw',
       height: '50vh',
       maxWidth: 'none',
-      data: { lessonId: this.lessonId }
+      data: { lessonId: this.lessonId },
     });
   }
 
@@ -474,7 +532,8 @@ export class FinalExamQuestionsComponent implements OnInit {
     let cloList: any[] = [];
     let subMethod: any[] = [];
     this.subMethods = [];
-    this.assessService.getAssessmentByLesson(this.lessonId)
+    this.assessService
+      .getAssessmentByLesson(this.lessonId)
       .subscribe((res: any) => {
         const data = res?.plans.filter((item: any) => {
           return item.methodType === e.value;
@@ -493,70 +552,25 @@ export class FinalExamQuestionsComponent implements OnInit {
       });
     this.onCloChange();
   }
-  clear(table: Table) {
-    table.clear();
-    this.searchValue = ''
-  }
+
   onSearchInput() {
-    // Trigger the global filter
     this.dt.filterGlobal(this.searchQuery, 'contains');
   }
 
   onCloChange() {
     let cloData: any[] = [];
 
-    this.cloPointPlanService.getPointPlan(this.lessonId).subscribe((data: any) => {
-      this.subMethods.map((i: any) => {
-        data.map((e: any) => {
-          e.examPoints.map((method: any) => {
-            let alreadyIn = false;
-            if (i.id === method.subMethodId && method.point > 0) {
-              const daty = this.clos?.find((item: any) => item.id === e.cloId);
-              if (cloData.length > 0) {
-                cloData.map((inData: any) => {
-                  if (inData.id === daty.id) {
-                    alreadyIn = true;
-                  }
-                });
-              }
-              if (daty && !alreadyIn) {
-                cloData.push(daty);
-              }
-            }
-          });
-          e.procPoints.map((method: any) => {
-            let alreadyIn = false;
-            if (i.id === method.subMethodId && method.point > 0) {
-              const daty = this.clos?.find((item: any) => item.id === e.cloId);
-              if (cloData.length > 0) {
-                cloData.map((inData: any) => {
-                  if (inData.id === daty.id) {
-                    alreadyIn = true;
-                  }
-                });
-              }
-              if (daty && !alreadyIn) {
-                cloData.push(daty);
-              }
-            }
-          });
-        });
-      });
-      console.log(cloData);
-      this.cloTypes = cloData;
-    });
-  }
-  onMethodChange(cloId: any) {
-    let cloData: any[] = [];
-
-    this.cloPointPlanService.getPointPlan(this.lessonId).subscribe((data: any) => {
-      this.subMethods.map((i: any) => {
-        data.map((e: any) => {
-          if (cloId === e.cloId) {
+    this.cloPointPlanService
+      .getPointPlan(this.lessonId)
+      .subscribe((data: any) => {
+        this.subMethods.map((i: any) => {
+          data.map((e: any) => {
             e.examPoints.map((method: any) => {
               let alreadyIn = false;
               if (i.id === method.subMethodId && method.point > 0) {
-                const daty = this.subMethods?.find((item: any) => item.id === method.subMethodId);
+                const daty = this.clos?.find(
+                  (item: any) => item.id === e.cloId
+                );
                 if (cloData.length > 0) {
                   cloData.map((inData: any) => {
                     if (inData.id === daty.id) {
@@ -572,7 +586,9 @@ export class FinalExamQuestionsComponent implements OnInit {
             e.procPoints.map((method: any) => {
               let alreadyIn = false;
               if (i.id === method.subMethodId && method.point > 0) {
-                const daty = this.subMethods?.find((item: any) => item.id === method.subMethodId);
+                const daty = this.clos?.find(
+                  (item: any) => item.id === e.cloId
+                );
                 if (cloData.length > 0) {
                   cloData.map((inData: any) => {
                     if (inData.id === daty.id) {
@@ -585,11 +601,62 @@ export class FinalExamQuestionsComponent implements OnInit {
                 }
               }
             });
-          }
+          });
         });
+        console.log(cloData);
+        this.cloTypes = cloData;
       });
-      console.log(cloData);
-      this.subMethodsClone = cloData;
-    });
+  }
+  onMethodChange(cloId: any) {
+    let cloData: any[] = [];
+
+    this.cloPointPlanService
+      .getPointPlan(this.lessonId)
+      .subscribe((data: any) => {
+        this.subMethods.map((i: any) => {
+          data.map((e: any) => {
+            if (cloId === e.cloId) {
+              e.examPoints.map((method: any) => {
+                let alreadyIn = false;
+                if (i.id === method.subMethodId && method.point > 0) {
+                  const daty = this.subMethods?.find(
+                    (item: any) => item.id === method.subMethodId
+                  );
+                  if (cloData.length > 0) {
+                    cloData.map((inData: any) => {
+                      if (inData.id === daty.id) {
+                        alreadyIn = true;
+                      }
+                    });
+                  }
+                  if (daty && !alreadyIn) {
+                    cloData.push(daty);
+                  }
+                }
+              });
+              e.procPoints.map((method: any) => {
+                let alreadyIn = false;
+                if (i.id === method.subMethodId && method.point > 0) {
+                  const daty = this.subMethods?.find(
+                    (item: any) => item.id === method.subMethodId
+                  );
+                  if (cloData.length > 0) {
+                    cloData.map((inData: any) => {
+                      if (inData.id === daty.id) {
+                        alreadyIn = true;
+                      }
+                    });
+                  }
+                  if (daty && !alreadyIn) {
+                    cloData.push(daty);
+                  }
+                }
+              });
+            }
+          });
+        });
+        console.log(cloData);
+        this.subMethodsClone = cloData;
+      });
   }
 }

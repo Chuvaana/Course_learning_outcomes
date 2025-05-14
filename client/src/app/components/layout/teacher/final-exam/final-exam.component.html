@@ -1,10 +1,16 @@
 <div class="card">
   <div class="column-style">
     <div class="action-btn">
-      <p-button label="Хадгалах" (onClick)="saveDataFull(finalExamQuestions)"></p-button>
+      <p-button
+        label="Хадгалах"
+        (onClick)="saveDataFull(finalExamQuestions)"
+      ></p-button>
     </div>
     <div class="action-btn">
-      <p-button label="Шинэ асуулт оруулах" (onClick)="addColumn(finalExams.finalExamName)"></p-button>
+      <p-button
+        label="Шинэ асуулт оруулах"
+        (onClick)="addColumn(finalExams.finalExamName)"
+      ></p-button>
     </div>
     <div class="action-btn">
       <p-button label="Тайлан гаргах" (onClick)="pdfExport()"></p-button>
@@ -13,68 +19,116 @@
   <div class="column-input">
     <div class="action-btn">
       <p-floatlabel variant="in">
-        <input pInputText id="in_label" class="exam-type ng-invalid ng-dirty" [(ngModel)]="finalExams.examType"
-          autocomplete="off" />
+        <input
+          pInputText
+          id="in_label"
+          [(ngModel)]="finalExams.examType"
+          autocomplete="off"
+        />
         <label for="in_label">Шалгалтын хэлбэр</label>
       </p-floatlabel>
     </div>
     <div class="action-btn">
       <p-floatlabel variant="in">
-        <p-inputnumber class="ng-invalid ng-dirty" [(ngModel)]="finalExams.examTakeStudentCount" inputId="in_label" />
-        <label for="in_label">Шалгалт өгөх сурагчдын тоо</label>
+        <p-inputnumber
+          [(ngModel)]="finalExams.examTakeStudentCount"
+          inputId="in_label"
+        />
+        <label for="in_label">Шалгалт өгөх оюутны тоо</label>
       </p-floatlabel>
     </div>
     <div class="action-btn">
       <p-floatlabel variant="in" class="w-full">
-        <p-select id="value" [options]="examTypes" appendTo="body" [(ngModel)]="finalExams.finalExamName"
-          optionLabel="label" [style]="{'width':'100%'}" (onChange)="onBranchChange($event.value)" />
+        <p-select
+          id="value"
+          [options]="examTypes"
+          appendTo="body"
+          [(ngModel)]="finalExams.finalExamName"
+          optionLabel="label"
+          [style]="{ width: '100%' }"
+          (onChange)="onBranchChange($event.value)"
+        />
         <label for="finalExams.finalExamName">Шалгалтын төрөл</label>
       </p-floatlabel>
     </div>
   </div>
   <p-toast />
   <div class="flex">
-  <p-button label="Clear" [outlined]="true" icon="pi pi-filter-slash" (click)="clear(dt)" />
-
-  <p-iconfield iconPosition="left" class="ml-auto">
-    <p-inputicon>
-      <i class="pi pi-search"></i>
-    </p-inputicon>
-    <input pInputText type="text" disabled="true" readonly="true" [(ngModel)]="searchQuery" (input)="onSearchInput()" placeholder="Search keyword" />
-  </p-iconfield>
-</div>
-  <p-table #dt [value]="finalExamQuestions" dataKey="_id" editMode="row" [tableStyle]="{'min-heigth': '50rem'}"
+    <p-iconfield iconPosition="left" class="ml-auto" *ngIf="false">
+      <p-inputicon>
+        <i class="pi pi-search"></i>
+      </p-inputicon>
+      <input
+        pInputText
+        type="text"
+        disabled="true"
+        readonly="true"
+        [(ngModel)]="searchQuery"
+        (input)="onSearchInput()"
+        placeholder="Search keyword"
+      />
+    </p-iconfield>
+  </div>
+  <p-table
+    #dt
+    [value]="finalExamQuestions"
+    dataKey="_id"
+    editMode="row"
+    [tableStyle]="{ 'min-heigth': '50rem' }"
     [customSort]="true"
-    [globalFilterFields]="['finalExamTypeName', 'orderId', 'verbName', 'cloName']">
+    [globalFilterFields]="[
+      'finalExamTypeName',
+      'orderId',
+      'verbName',
+      'cloName'
+    ]"
+  >
     <ng-template #header>
       <tr>
-        <th style="width:10%">Асуулт</th>
-        <th style="width:20%">Үйл үг</th>
-        <th style="width:15%">Блумын түвшин <p-sortIcon field="finalExamQuestions.blmLvl" /></th>
-        <th style="width:10%">Аль CLO-г үнэлэх</th>
-        <th style="width:10%">Дэд бүлэг</th>
-        <th style="width:10%">Тестийн хэсэг</th>
-        <th style="width:10%">Шалгалтын төрөл</th>
-        <th style="width:15%"></th>
+        <th style="width: 10%">Асуулт</th>
+        <th style="width: 20%">Үйл үг</th>
+        <th style="width: 15%">
+          Блумын түвшин <p-sortIcon field="finalExamQuestions.blmLvl" />
+        </th>
+        <th style="width: 10%">Аль CLO-г үнэлэх</th>
+        <th style="width: 10%">Дэд бүлэг</th>
+        <th style="width: 10%">Тестийн хэсэг</th>
+        <th style="width: 10%">Шалгалтын төрөл</th>
+        <th style="width: 15%"></th>
       </tr>
     </ng-template>
-    <ng-template #body let-finalExamQuestions let-editing="editing" let-ri="rowIndex">
+    <ng-template
+      #body
+      let-finalExamQuestions
+      let-editing="editing"
+      let-ri="rowIndex"
+    >
       <tr [pEditableRow]="finalExamQuestions">
         <td>
           <p-cellEditor>
             <ng-template #input>
-              <input pInputText type="text" [(ngModel)]="finalExamQuestions.orderId" />
+              <input
+                pInputText
+                type="text"
+                [(ngModel)]="finalExamQuestions.orderId"
+              />
             </ng-template>
             <ng-template #output>
-              {{finalExamQuestions.orderId}}
+              {{ finalExamQuestions.orderId }}
             </ng-template>
           </p-cellEditor>
         </td>
         <td>
           <p-cellEditor>
             <ng-template #input>
-              <p-select id="verbCode" [options]="verbs" appendTo="body" [(ngModel)]="finalExamQuestions.verb"
-                optionLabel="verbName" [style]="{'width':'100%'}" />
+              <p-select
+                id="verbCode"
+                [options]="verbs"
+                appendTo="body"
+                [(ngModel)]="finalExamQuestions.verb"
+                optionLabel="verbName"
+                [style]="{ width: '100%' }"
+              />
             </ng-template>
             <ng-template #output>
               <p-tag [value]="finalExamQuestions.verbName" />
@@ -84,20 +138,43 @@
         <td>
           <p-cellEditor>
             <ng-template #input>
-              <input pInputText type="number" [(ngModel)]="finalExamQuestions.blmLvl" min="0" max="6" />
-              <p-button class="info" icon="pi pi-exclamation-circle" aria-label="Save" (onClick)="infoTo()" />
+              <input
+                pInputText
+                type="number"
+                [(ngModel)]="finalExamQuestions.blmLvl"
+                min="0"
+                max="6"
+              />
+              <p-button
+                class="info"
+                icon="pi pi-exclamation-circle"
+                aria-label="Save"
+                (onClick)="infoTo()"
+              />
             </ng-template>
             <ng-template #output>
-              {{finalExamQuestions.blmLvl}}
-              <p-button class="info" icon="pi pi-exclamation-circle" aria-label="Save" (onClick)="infoTo()" />
+              {{ finalExamQuestions.blmLvl }}
+              <p-button
+                class="info"
+                icon="pi pi-exclamation-circle"
+                aria-label="Save"
+                (onClick)="infoTo()"
+              />
             </ng-template>
           </p-cellEditor>
         </td>
         <td>
           <p-cellEditor>
             <ng-template #input>
-              <p-select id="id" [options]="cloTypes" appendTo="body" [(ngModel)]="finalExamQuestions.cloCode"
-                optionLabel="name" [style]="{'width':'100%'}" (onChange)="onMethodChange($event.value.id)" />
+              <p-select
+                id="id"
+                [options]="cloTypes"
+                appendTo="body"
+                [(ngModel)]="finalExamQuestions.cloCode"
+                optionLabel="name"
+                [style]="{ width: '100%' }"
+                (onChange)="onMethodChange($event.value.id)"
+              />
             </ng-template>
             <ng-template #output>
               <p-tag [value]="finalExamQuestions.cloName" />
@@ -107,8 +184,14 @@
         <td>
           <p-cellEditor>
             <ng-template #input>
-              <p-select id="id" [options]="subMethodsClone" appendTo="body" [(ngModel)]="finalExamQuestions.subMethod"
-                optionLabel="label" [style]="{'width':'100%'}" />
+              <p-select
+                id="id"
+                [options]="subMethodsClone"
+                appendTo="body"
+                [(ngModel)]="finalExamQuestions.subMethod"
+                optionLabel="label"
+                [style]="{ width: '100%' }"
+              />
             </ng-template>
             <ng-template #output>
               <p-tag [value]="finalExamQuestions.subMethodName" />
@@ -118,33 +201,79 @@
         <td>
           <p-cellEditor>
             <ng-template #input>
-              <input pInputText type="number" [(ngModel)]="finalExamQuestions.version" min="0" max="10" />
+              <input
+                pInputText
+                type="number"
+                [(ngModel)]="finalExamQuestions.version"
+                min="0"
+                max="10"
+              />
             </ng-template>
             <ng-template #output>
-              {{finalExamQuestions.version}}
+              {{ finalExamQuestions.version }}
             </ng-template>
           </p-cellEditor>
         </td>
         <td>
           <p-cellEditor>
             <ng-template #input>
-              {{finalExamQuestions.finalExamTypeName}}
+              {{ finalExamQuestions.finalExamTypeName }}
             </ng-template>
             <ng-template #output>
-              {{finalExamQuestions.finalExamTypeName}}
+              {{ finalExamQuestions.finalExamTypeName }}
             </ng-template>
           </p-cellEditor>
         </td>
         <td>
           <div class="flex items-center justify-center gap-2">
-            <button *ngIf="!editing" pButton pRipple type="button" pInitEditableRow icon="pi pi-delete-left"
-              (click)="onRowDelete(finalExamQuestions, ri)" text rounded severity="secondary"></button>
-            <button *ngIf="!editing" pButton pRipple type="button" pInitEditableRow icon="pi pi-pencil"
-              (click)="onRowEditInit(finalExamQuestions)" text rounded severity="secondary"></button>
-            <button *ngIf="editing" pButton pRipple type="button" pSaveEditableRow icon="pi pi-check"
-              (click)="onRowEditSave(finalExamQuestions)" text rounded severity="secondary"></button>
-            <button *ngIf="editing" pButton pRipple type="button" pCancelEditableRow icon="pi pi-times"
-              (click)="onRowEditCancel(finalExamQuestions, ri)" text rounded severity="secondary"></button>
+            <button
+              *ngIf="!editing"
+              pButton
+              pRipple
+              type="button"
+              pInitEditableRow
+              icon="pi pi-delete-left"
+              (click)="onRowDelete(finalExamQuestions, ri)"
+              text
+              rounded
+              severity="secondary"
+            ></button>
+            <button
+              *ngIf="!editing"
+              pButton
+              pRipple
+              type="button"
+              pInitEditableRow
+              icon="pi pi-pencil"
+              (click)="onRowEditInit(finalExamQuestions)"
+              text
+              rounded
+              severity="secondary"
+            ></button>
+            <button
+              *ngIf="editing"
+              pButton
+              pRipple
+              type="button"
+              pSaveEditableRow
+              icon="pi pi-check"
+              (click)="onRowEditSave(finalExamQuestions)"
+              text
+              rounded
+              severity="secondary"
+            ></button>
+            <button
+              *ngIf="editing"
+              pButton
+              pRipple
+              type="button"
+              pCancelEditableRow
+              icon="pi pi-times"
+              (click)="onRowEditCancel(finalExamQuestions, ri)"
+              text
+              rounded
+              severity="secondary"
+            ></button>
           </div>
         </td>
       </tr>
