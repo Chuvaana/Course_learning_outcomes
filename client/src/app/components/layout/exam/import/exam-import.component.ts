@@ -304,8 +304,6 @@ export class ExamImportComponent {
               min: beforeMax,
               max: beforeMax + countLength - 1
             };
-            // this.checkValue(checkNumber, beforeMax, 'min');
-            // this.checkValue(checkNumber, (beforeMax + countLength - 1), 'max');
             beforeMax += countLength;
 
             checkNumber = subs.cloCode;
@@ -317,8 +315,6 @@ export class ExamImportComponent {
               min: beforeMax,
               max: checkFirstLength
             };
-            // this.checkValue(checkNumber, beforeMax, 'min');
-            // this.checkValue(checkNumber, checkFirstLength, 'max');
           }
           if (subs.finalExamType === this.examType.value) {
             this.subMethods.map((subsData: any) => {
@@ -334,20 +330,8 @@ export class ExamImportComponent {
             });
           }
         });
-        //   const defaultValue = {
-        //     _id: this.subMethods[0]._id,
-        //     label: this.subMethods[0].subMethod,
-        //     point: this.subMethods[0].point,
-        //   }
-        //   const guitseelt = defaultData.length - emptyRow.length;
-        //   let count = 0;
-        //   while (guitseelt > count) {
-        //     count++;
-        //     emptyRow.push(defaultValue);
-        //   }
-        // }
 
-        countLogic = this.checkCount(emptyRow, defaultData);
+        countLogic = this.checkCount(res, checkFirstLength);
         this.tableData.splice(1, 0, emptyRow);
         if (!countLogic) {
           this.tableData = [];
@@ -383,14 +367,23 @@ export class ExamImportComponent {
     this.questionAmount = count;
   }
 
-  checkCount(emptyRow: any, defaultData: any): boolean {
-    if (emptyRow.length !== defaultData.length) {
-      const count = defaultData.length - emptyRow.length;
-      this.msgService.add({
-        severity: 'error',
-        summary: 'Алдаа',
-        detail: `Алдаа гарлаа: Дүнгийн файл оруулсан файлын шалгалтын асуулт нь төлвөлсөн асуултын тооноос зөрч байна. ${count}')`,
-      });
+  checkCount(res: any, defaultData: any): boolean {
+    if (res.length !== defaultData) {
+      let count = defaultData - res.length;
+      if (count > 0) {
+        this.msgService.add({
+          severity: 'error',
+          summary: 'Алдаа',
+          detail: `Алдаа гарлаа: Шалгалтын асуултууд ба суралцхуйн үр дүнгийн хамааралын асуултын тоо дутуу бүртгэгдсэн байна! : ${count}')`,
+        });
+      } else {
+        count = count * -1;
+        this.msgService.add({
+          severity: 'error',
+          summary: 'Алдаа',
+          detail: `Алдаа гарлаа: Шалгалтын асуултууд ба суралцхуйн үр дүнгийн хамааралын асуултын тоо хэтэрсэн байна! : ${count}')`,
+        });
+      }
       return false;
     } else {
       return true;
@@ -674,19 +667,19 @@ export class ExamImportComponent {
                     //     data.min <= countQuetion &&
                     //     data.max >= countQuetion
                     //   ) {
-                        const question = {
-                          questionId: countQuetion,
-                          cloId: col?.cloId,
-                          allPoint:
-                            countQuetion > 9
-                              ? Number(this.tableData[0][j].substring(8, 12))
-                              : Number(this.tableData[0][j].substring(6, 12)),
-                          takePoint: e[j],
-                          subMethodId: col?._id,
-                          subMethodName: col?.label,
-                        };
+                    const question = {
+                      questionId: countQuetion,
+                      cloId: col?.cloId,
+                      allPoint:
+                        countQuetion > 9
+                          ? Number(this.tableData[0][j].substring(8, 12))
+                          : Number(this.tableData[0][j].substring(6, 12)),
+                      takePoint: e[j],
+                      subMethodId: col?._id,
+                      subMethodName: col?.label,
+                    };
 
-                        questions.push(question);
+                    questions.push(question);
                     //   }
                     // });
                     countQuetion++;
@@ -767,15 +760,41 @@ export class ExamImportComponent {
   }
 
   examTypesData(e: any) {
-    if (e.value !== null && e.examType !== undefined) {
-      this.examTypeAction = false;
+    let dataIn = false;
+    if (e.value !== null) {
+      this.service.getLessonDataFinalExams(this.lessonId).subscribe((res: any) => {
+        res.map((subs: any, index: any) => {
+          if (subs.finalExamType === this.examType.value) {
+            dataIn = true;
+          }
+        });
+        this.examTypesDatas(e, dataIn);
+      });
     } else {
       this.examTypeData = e;
       this.examTypeAction = true;
     }
+  }
+  examTypesDatas(e: any, dataIn: boolean) {
     console.log(e);
+    if (dataIn) {
+      this.tableData = [];
+      this.examTypeAction = false;
+      // this.msgService.add({
+      //   severity: 'success',
+      //   summary: 'Амжилттай',
+      //   detail: `Нийт : сурагчдын дүнг засаж орууллаа.`,
+      // });
+      this.loadClo(e.value);
+    } else {
+      this.msgService.add({
+        severity: 'error',
+        summary: 'Алдаа',
+        detail: `Шалгалтын асуултууд ба суралцхуйн үр дүнгийн хамаарал бүртгээгүй байна!`,
+      });
+    }
 
-    this.loadClo(e.value);
+
   }
 
   subMethodTypesData(e: any) {
