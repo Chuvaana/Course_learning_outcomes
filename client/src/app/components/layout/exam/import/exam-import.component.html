@@ -28,7 +28,7 @@
   </div>
 </div>
 
-<div class="flex justify-content-between px-6 mt-5">
+<!-- <div class="flex justify-content-between px-6 mt-5">
   <div *ngIf="clos.length > 0">
     <div *ngFor="let clo of clos; let i = index" class="flex align-items-center justify-content-end gap-2 mb-2">
       <span class="font-medium">{{ clo.cloName }}</span>
@@ -48,7 +48,7 @@
       </div>
     </div>
   </div>
-</div>
+</div> -->
 
 <div class="flex justify-content-between px-6 mt-5 align-items-center">
   <div class="action-btn">
@@ -60,8 +60,8 @@
 </div>
 
 <div class="flex px-6 mt-3 font-bold">
-  <div>Нийт сурагчдын тоо:</div>
-  <div class="ml-2">{{ studentCount }}</div>
+  <div>Шалгалт өгсөн нийт сурагчдын тоо:</div>
+  <div class="ml-2">{{ studentCount - 1 }}</div>
 </div>
 
 <div class="mt-3 overflow-auto px-6">
@@ -78,36 +78,10 @@
     </ng-template>
 
     <ng-template pTemplate="body" let-row let-i="rowIndex">
-      <tr>
+      <tr *ngIf="i > 0">
         <td>{{ i + 1 }}</td>
-        <td *ngFor="let cell of row; let j = index">
 
-          <!-- Зөвхөн эхний мөр (index === 0 буюу tableData[1]) edit болох -->
-          <ng-container *ngIf="i === 0; else readOnlyCell">
-        <td [pEditableColumn]="row[j]" [pEditableColumnField]="'col' + j">
-          <p-cellEditor>
-            <ng-template pTemplate="input">
-              <!-- <p-select id="_id" [options]="subMethods" appendTo="body" [(ngModel)]="tableData[i + 1][j]"
-                optionLabel="label" [style]="{'width':'100%'}" (onChange)="subMethodTypesData($event.value.id)" /> -->
-              <p-dropdown [(ngModel)]="tableData[i + 1][j]" [options]="subMethods" optionLabel="subMethod" optionValue="_id"
-                placeholder="Дэд арга" (onChange)="subMethodTypesData($event.value)"
-                class="dropdown-filter"></p-dropdown>
-            </ng-template>
-            <ng-template pTemplate="output">
-              {{ tableData[i + 1][j]  === 'string' ? tableData[i + 1][j] : tableData[i + 1][j]?.label }}
-            </ng-template>
-          </p-cellEditor>
-        </td>
-        </ng-container>
-
-        <!-- Readonly хувилбар -->
-        <ng-template #readOnlyCell>
-          <td>
-            {{ tableData[i + 1][j] }}
-          </td>
-        </ng-template>
-
-        </td>
+        <td *ngFor="let cell of row">{{ cell }}</td>
       </tr>
     </ng-template>
   </p-table>
