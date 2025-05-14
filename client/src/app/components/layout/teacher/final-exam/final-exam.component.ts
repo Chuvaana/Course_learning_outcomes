@@ -131,7 +131,7 @@ export class FinalExamQuestionsComponent implements OnInit {
     private service: FinalExamService,
     private messageService: MessageService,
     private lesService: StudentService
-  ) { }
+  ) {}
   ngOnInit() {
     this.finalExams = {
       finalExamName: null,
@@ -344,6 +344,8 @@ export class FinalExamQuestionsComponent implements OnInit {
 
   onRowDelete(data: any, index: any) {
     if (data._id !== '' && data._id !== null && data._id !== undefined) {
+      this.finalExamQuestions.splice(index, 1);
+    } else {
       this.service.deleteFinalExam(data._id).subscribe(
         (res: any) => {
           this.finalExamQuestions.splice(index, 1);
@@ -362,8 +364,6 @@ export class FinalExamQuestionsComponent implements OnInit {
           });
         }
       );
-    } else {
-      this.finalExamQuestions.splice(index, 1);
     }
   }
 
