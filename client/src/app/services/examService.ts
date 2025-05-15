@@ -3,12 +3,12 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ExamService {
   private apiUrl = 'http://localhost:3000/api'; // Update with your actual API URL
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
   // Fetch all branches
   getBranches(): Observable<any> {
@@ -29,9 +29,5 @@ export class ExamService {
   // Fetch departments by branch ID
   registerExam(branchId: string): Observable<any> {
     return this.http.get(`${this.apiUrl}/branches/${branchId}/departments`);
-  }
-
-  getLessonDataFinalExams(id : any) {
-    return this.http.get(`${this.apiUrl}/finalExamQuestion/${id}`);
   }
 }
