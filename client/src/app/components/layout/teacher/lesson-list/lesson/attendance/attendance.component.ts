@@ -69,7 +69,7 @@ export class AttendanceComponent {
     private attendanceService: AttendanceService,
     private msgService: MessageService,
     private shared: SharedDictService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
   ) { }
 
   ngOnInit() {
@@ -326,11 +326,15 @@ export class AttendanceComponent {
   }
 
   importScreen(): void {
-    this.dialog.open(AttendanceImportComponent, {
+    const dialogRef = this.dialog.open(AttendanceImportComponent, {
       width: '60vw',
       height: '50vh',
       maxWidth: 'none',
       data: { lessonId: this.lessonId }
     });
+    dialogRef.afterClosed().subscribe(() => {
+      this.onSelectionChange();
+    });
   }
+
 }
