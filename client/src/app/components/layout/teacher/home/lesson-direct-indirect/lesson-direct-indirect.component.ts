@@ -258,7 +258,7 @@ export class LessonDirectIndirectComponent {
         }
       );
 
-      console.log(this.averagePercentages);
+      // console.log(this.averagePercentages);
     });
   }
 

@@ -73,10 +73,14 @@
               <th>{{ ri + 1 }}</th>
               <th>{{ row.studentName }}</th>
               <th *ngFor="let point of row.points">
-                {{ point.point }}
+                {{ point.point != null ? point.point.toFixed(2) : "-" }}
               </th>
-              <th>{{ row.totalPoint }}</th>
-              <th>{{ row.percentage }}%</th>
+              <th>
+                {{ row.totalPoint != null ? row.totalPoint.toFixed(2) : "-" }}
+              </th>
+              <th>
+                {{ row.percentage != null ? row.percentage.toFixed(2) : "-" }}%
+              </th>
               <th>{{ row.letterGrade }}</th>
             </tr>
           </ng-template>

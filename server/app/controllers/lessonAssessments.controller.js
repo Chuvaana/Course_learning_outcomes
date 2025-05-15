@@ -43,6 +43,21 @@ exports.getAllLessonAssments = async (req, res) => {
   }
 };
 
+exports.getAllLessonAssmentsByType = async (req, res) => {
+  const { lessonId } = req.params;
+  const { type } = req.query;
+
+  try {
+    const assessments = await LessonAssessments.find({ lessonId, examType: type });
+    res.json(assessments);
+  } catch (err) {
+    res.status(500).json({
+      message: 'Үнэлгээнүүдийг авахад алдаа гарлаа',
+      error: err.message,
+    });
+  }
+};
+
 // Get assessment by ID
 exports.getAssessmentById = async (req, res) => {
   try {

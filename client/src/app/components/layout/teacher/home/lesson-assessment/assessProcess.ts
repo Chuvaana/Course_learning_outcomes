@@ -26,7 +26,7 @@ export class AssessProcessService {
         map((res: any[]) =>
           res.map((item) => ({
             ...item,
-            cloRelevance: item.cloRelevance?.id ?? null, // 👈 safe access
+            cloRelevance: item.cloRelevance?.id ?? null,
           }))
         )
       ),
@@ -90,53 +90,76 @@ export class AssessProcessService {
   }
 
   studentExamPoint(lessonId: string, type: string): Observable<any[]> {
-    return this.lessonAssessmentService.getLesAssessment(lessonId).pipe(
-      map((res) => {
-        return res.filter((exam: any) => exam.examType === type);
-      })
-    );
+    return this.lessonAssessmentService
+      .getLesAssessmentByType(lessonId, type)
+      .pipe(
+        map((res) => {
+          console.log(res);
+          return res;
+        })
+      );
   }
 
   studentExamPointProcess(lessonId: string, cloList: any[]): Observable<any[]> {
-    const studentPoints: {
-      students: any;
-      cloId: string;
-      type: string;
-    }[] = [];
+    // const studentPoints: {
+    //   students: any;
+    //   cloId: string;
+    //   type: string;
+    // }[] = [];
 
     const types = ['QUIZ1', 'QUIZ2', 'EXAM'];
     const allObservables: Observable<any>[] = [];
 
+    const studentPoints: any[] = [];
+
     types.forEach((type) => {
-      cloList.forEach((clo: any) => {
-        const obs$ = this.studentExamPoint(lessonId, type).pipe(
-          map((data: any[]) => {
-            const students = data.map((item: any) => {
-              let allPointSum = 0;
-              let takePointSum = 0;
-              item.question.forEach((que: any) => {
-                if (que.cloId === clo.id) {
-                  allPointSum += Number(que.allPoint) || 0;
-                  takePointSum += Number(que.takePoint) || 0;
-                }
-              });
-              return {
-                studentCode: item.studentId,
-                allPoint: allPointSum,
-                takePoint: takePointSum,
-              };
-            });
+      const obs$ = this.studentExamPoint(lessonId, type).pipe(
+        map((data: any[]) => {
+          const groupedMap = new Map<string, any>();
 
+          data.forEach((item: any) => {
+            item.question.forEach((que: any) => {
+              const cloId = que.cloId;
+              const subMethodId = que.subMethodId;
+              const studentId = item.studentId;
+
+              const mapKey = cloId;
+
+              if (!groupedMap.has(mapKey)) {
+                groupedMap.set(mapKey, []);
+              }
+
+              const sumPointArray = groupedMap.get(mapKey);
+
+              let pointEntry = sumPointArray.find(
+                (sp: any) =>
+                  sp.studentId === studentId && sp.subMethodId === subMethodId
+              );
+
+              if (pointEntry) {
+                pointEntry.totalPoint += Number(que.takePoint) || 0;
+                pointEntry.allPoint += Number(que.allPoint) || 0;
+              } else {
+                sumPointArray.push({
+                  studentId,
+                  subMethodId,
+                  totalPoint: Number(que.takePoint) || 0,
+                  allPoint: Number(que.allPoint) || 0,
+                });
+              }
+            });
+          });
+
+          for (const [cloId, sumPoint] of groupedMap.entries()) {
             studentPoints.push({
-              students,
-              cloId: clo.id,
-              type,
+              cloId,
+              sumPoint,
             });
-          })
-        );
+          }
+        })
+      );
 
-        allObservables.push(obs$);
-      });
+      allObservables.push(obs$);
     });
 
     return forkJoin(allObservables).pipe(map(() => studentPoints));
@@ -337,9 +360,8 @@ export class AssessProcessService {
   gradePoint(lessonId: string) {
     return forkJoin({
       grade: this.gradeService.getGradeByLesson(lessonId),
-      assess: this.assessPlan.getAssessmentPlan(lessonId),
     }).pipe(
-      map(({ grade, assess }) => {
+      map(({ grade }) => {
         const cloMap = new Map<string, { cloId: string; sumPoints: any[] }>();
 
         for (const g of grade) {

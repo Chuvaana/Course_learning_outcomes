@@ -113,11 +113,11 @@ export class LessonAssessmentComponent {
                 }
               });
 
-              studentRow.totalPoint = total;
-              studentRow.percentage = +(
-                (total / item.totalPoint) *
-                100
-              ).toFixed(2);
+              studentRow.totalPoint += total;
+
+              studentRow.percentage =
+                (studentRow.totalPoint / item.totalPoint) * 100;
+
               studentRow.letterGrade = this.getLetterGrade(
                 studentRow.percentage
               );
@@ -144,7 +144,7 @@ export class LessonAssessmentComponent {
           }
 
           attendance.sumPoints.forEach((sp: any) => {
-            const floatPoint = Number(parseFloat(sp.statusPoint).toFixed(2));
+            const floatPoint = Number(parseFloat(sp.statusPoint));
             pointMap.get(key)!.set(sp.studentId, floatPoint);
           });
         });
@@ -162,10 +162,8 @@ export class LessonAssessmentComponent {
               }
             });
             studentRow.totalPoint += total;
-            studentRow.percentage = +(
-              (studentRow.totalPoint / tab.totalPoint) *
-              100
-            ).toFixed(2);
+            studentRow.percentage =
+              (studentRow.totalPoint / tab.totalPoint) * 100;
             studentRow.letterGrade = this.getLetterGrade(studentRow.percentage);
           });
         });
@@ -183,7 +181,7 @@ export class LessonAssessmentComponent {
           }
 
           activity.sumPoints.forEach((sp: any) => {
-            const floatPoint = Number(parseFloat(sp.statusPoint).toFixed(2));
+            const floatPoint = Number(parseFloat(sp.statusPoint));
             pointMap.get(key)!.set(sp.studentId, floatPoint);
           });
         });
@@ -200,11 +198,55 @@ export class LessonAssessmentComponent {
               }
             });
             studentRow.totalPoint += total;
-            studentRow.percentage = +(
-              (studentRow.totalPoint / tab.totalPoint) *
-              100
-            ).toFixed(2);
+            studentRow.percentage =
+              (studentRow.totalPoint / tab.totalPoint) * 100;
             studentRow.letterGrade = this.getLetterGrade(studentRow.percentage);
+          });
+        });
+      });
+
+    this.assessProcess
+      .studentExamPointProcess(this.lessonId, this.cloList)
+      .subscribe((data) => {
+        console.log(data);
+
+        this.tabs.forEach((item: any) => {
+          data.forEach((grades: any) => {
+            if (item.id === grades.cloId) {
+              item.content.forEach((studentRow: any) => {
+                let total = 0;
+                let takeTotal = 0;
+                let alltotal = 0;
+
+                studentRow.points.forEach((pointItem: any) => {
+                  const grade = grades.sumPoint.find(
+                    (g: any) =>
+                      g.studentId === studentRow.studentCode &&
+                      g.subMethodId === pointItem.subMethodId
+                  );
+
+                  if (grade) {
+                    const plan = item.assessPlan.find(
+                      (pla: any) => pla.subMethodId === grade.subMethodId
+                    );
+
+                    const point = plan ? plan.point : 0;
+
+                    alltotal += grade.allPoint;
+                    takeTotal += grade.totalPoint; // zero хуваалт үүсэхээс сэргийлж байна
+                    pointItem.point = (takeTotal * point) / (alltotal || 1);
+                    total += pointItem.point;
+                  }
+                });
+
+                studentRow.totalPoint += total;
+                studentRow.percentage =
+                  (item.totalPoint / item.totalPoint) * 100;
+                studentRow.letterGrade = this.getLetterGrade(
+                  studentRow.percentage
+                );
+              });
+            }
           });
         });
       });
