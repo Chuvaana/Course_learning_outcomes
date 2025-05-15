@@ -208,8 +208,6 @@ export class LessonAssessmentComponent {
     this.assessProcess
       .studentExamPointProcess(this.lessonId, this.cloList)
       .subscribe((data) => {
-        console.log(data);
-
         this.tabs.forEach((item: any) => {
           data.forEach((grades: any) => {
             if (item.id === grades.cloId) {
@@ -233,7 +231,7 @@ export class LessonAssessmentComponent {
                     const point = plan ? plan.point : 0;
 
                     alltotal += grade.allPoint;
-                    takeTotal += grade.totalPoint; // zero хуваалт үүсэхээс сэргийлж байна
+                    takeTotal += grade.totalPoint;
                     pointItem.point = (takeTotal * point) / (alltotal || 1);
                     total += pointItem.point;
                   }

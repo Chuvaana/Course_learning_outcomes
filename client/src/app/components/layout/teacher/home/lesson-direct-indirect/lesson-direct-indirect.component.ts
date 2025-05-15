@@ -19,8 +19,9 @@ export class LessonDirectIndirectComponent {
   @Input() pointPlan: any;
   @Input() cloPlan: any;
   @Input() students: any;
+  @Input() cloList: any;
   cloListObj: any[] = [];
-  cloList: any[] = [];
+  cloList1: any[] = [];
   data: any[] = [];
   cloData: any[] = [];
   summaryData: any[] = [];
@@ -44,7 +45,7 @@ export class LessonDirectIndirectComponent {
     this.cloService.getCloList(this.lessonId).subscribe((res) => {
       this.cloListObj = res;
       res.map((clo: any) => {
-        this.cloList.push(clo.id);
+        this.cloList1.push(clo.id);
       });
     });
     this.cloPointPlanService.getPointPlan(this.lessonId).subscribe((res) => {
@@ -101,7 +102,6 @@ export class LessonDirectIndirectComponent {
         gradeValues[item.clo] = item.letter;
       });
 
-      // Final summaryData array
       this.summaryData = [
         {
           label: 'Шууд бус үнэлгээний дундаж хувь',
@@ -120,7 +120,6 @@ export class LessonDirectIndirectComponent {
   calculateCloStats(data: any[]) {
     const grouped: { [cloId: string]: any[] } = {};
 
-    // Group by cloId
     data.forEach((entry) => {
       if (!grouped[entry.cloId]) grouped[entry.cloId] = [];
       grouped[entry.cloId].push(entry);
@@ -164,7 +163,8 @@ export class LessonDirectIndirectComponent {
         this.pointPlan,
         this.cloPlan
       ),
-    ]).subscribe(([gradeData, attData, actData]) => {
+      this.assessProcess.studentExamPointProcess(this.lessonId, this.cloList),
+    ]).subscribe(([gradeData, attData, actData, examData]) => {
       this.tabs.forEach((item: any) => {
         gradeData.forEach((grades: any) => {
           if (item.id === grades.cloId) {
@@ -236,6 +236,46 @@ export class LessonDirectIndirectComponent {
           }
         });
       });
+      const assessPlanMap = new Map();
+      this.cloPlan.forEach((plan: any) => {
+        const assessPlan = [...plan.examPoints, ...plan.procPoints].filter(
+          (ePoint) => ePoint.point !== 0
+        );
+        assessPlanMap.set(plan.cloId, assessPlan);
+      });
+      this.tabs.forEach((item: any) => {
+        examData.forEach((examPo: any) => {
+          if (item.id === examPo.cloId) {
+            const list = assessPlanMap.get(examPo.cloId);
+            item.content.forEach((studentRow: any) => {
+              let total = 0;
+              let allTotal = 0;
+              examPo.sumPoint.map((poi: any) => {
+                if (poi.studentId == studentRow.studentCode) {
+                  const listPoint = list.find(
+                    (li: any) => li.subMethodId === poi.subMethodId
+                  );
+                  const point = listPoint ? listPoint.point : 0;
+                  total += poi.totalPoint;
+                  allTotal += poi.allPoint;
+                  const takePoint = (total * point) / (allTotal || 1);
+                  studentRow.totalPoint += takePoint;
+                }
+              });
+              studentRow.percentage = +(
+                (studentRow.totalPoint / item.totalPoint) *
+                100
+              ).toFixed(2);
+              studentRow.letterGrade = this.getLetterGrade(
+                studentRow.percentage
+              );
+            });
+          }
+        });
+      });
+    });
+
+    setTimeout(() => {
       this.averagePercentages = this.getCloAveragePercentages();
 
       const percentValues: { [key: string]: number } = {};
@@ -257,9 +297,7 @@ export class LessonDirectIndirectComponent {
           type: 'grade',
         }
       );
-
-      // console.log(this.averagePercentages);
-    });
+    }, 800);
   }
 
   getCloAveragePercentages(): {
@@ -296,13 +334,6 @@ export class LessonDirectIndirectComponent {
   }
 
   getCellStyle(value: number | string, type: string) {
-    // if (type === 'percent') {
-    //   return {
-    //     'background-color':
-    //       typeof value === 'number' && value >= 85 ? '#a5d6a7' : '#fff59d',
-    //     'text-align': 'center',
-    //   };
-    // } else
     if (type === 'grade') {
       return {
         'background-color':

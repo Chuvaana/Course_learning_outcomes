@@ -2,7 +2,7 @@
   <ng-template pTemplate="header">
     <tr>
       <th>Үнэлгээ / CLOs</th>
-      <th *ngFor="let clo of cloList">{{ getCloName(clo) }}</th>
+      <th *ngFor="let clo of cloList1">{{ getCloName(clo) }}</th>
     </tr>
   </ng-template>
 
@@ -11,7 +11,7 @@
       <td>{{ row.label }}</td>
       <td
         style="text-align: center"
-        *ngFor="let clo of cloList"
+        *ngFor="let clo of cloList1"
         [ngStyle]="getCellStyle(row.values[clo], row.type)"
       >
         {{ row.values[clo] }}<span *ngIf="row.type === 'percent'">%</span>

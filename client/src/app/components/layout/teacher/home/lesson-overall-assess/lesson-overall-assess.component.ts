@@ -174,7 +174,6 @@ export class LessonOverallAssessComponent {
           }
         });
       });
-      console.log(this.cloPlan);
       const assessPlanMap = new Map();
       this.cloPlan.forEach((plan: any) => {
         const assessPlan = [...plan.examPoints, ...plan.procPoints].filter(
@@ -240,7 +239,7 @@ export class LessonOverallAssessComponent {
         });
       }
       this.prepareChartData();
-    }, 500);
+    }, 800);
   }
 
   prepareChartData() {
