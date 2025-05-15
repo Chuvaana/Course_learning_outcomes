@@ -88,28 +88,28 @@ export class MenuComponent implements OnInit {
         items: [
           {
             label: 'Жагсаалт',
-            icon: 'pi pi-graduation-cap',
+            icon: 'pi pi-list',
             routerLink: ['/main/teacher/lesson', this.lessonId, 'studentList'],
           },
           {
             label: 'Бүртгэх',
-            icon: 'pi pi-graduation-cap',
+            icon: 'pi pi-plus',
             routerLink: ['/main/teacher/lesson', this.lessonId, 'student'],
           },
         ],
       },
       {
         label: 'Ирц, идэвх',
-        icon: 'pi pi-plus',
+        icon: 'pi pi-user-edit',
         items: [
           {
             label: 'Ирц',
-            icon: 'pi pi-graduation-cap',
+            icon: 'pi pi-calendar',
             routerLink: ['/main/teacher/lesson', this.lessonId, 'attendance'],
           },
           {
             label: 'Идэвх',
-            icon: 'pi pi-graduation-cap',
+            icon: 'pi pi-bolt',
             routerLink: ['/main/teacher/lesson', this.lessonId, 'activity'],
           },
           {
@@ -129,30 +129,31 @@ export class MenuComponent implements OnInit {
         icon: 'pi pi-plus',
         items: [
           {
+            label: 'Шалгалтын бүтэц бэлтгэх',
+            icon: 'pi pi-plus',
+            routerLink: ['/main/teacher/lesson', this.lessonId, 'final-exam'],
+          },
+          {
             label: 'Шалгалт импорт файл оруулах',
-            icon: 'pi pi-graduation-cap',
+            icon: 'pi pi-file-import',
             routerLink: ['/main/teacher/lesson', this.lessonId, 'exam-import'],
           },
           {
             label: 'Шалгалт дүнгийн жагсаалт',
-            icon: 'pi pi-graduation-cap',
+            icon: 'pi pi-list-check',
             routerLink: ['/main/teacher/lesson', this.lessonId, 'exam-list'],
           },
         ],
       },
-      {
-        label: 'Шалгалтын бүтэц бэлтгэх',
-        icon: 'pi pi-plus',
-        routerLink: ['/main/teacher/lesson', this.lessonId, 'final-exam'],
-      },
+
       {
         label: 'Санал асуулга',
-        icon: 'pi pi-plus',
+        icon: 'pi pi-calendar-clock',
         routerLink: ['/main/teacher/lesson', this.lessonId, 'progress-poll'],
       },
       {
         label: 'Тайлан',
-        icon: 'pi pi-home',
+        icon: 'pi pi-clipboard',
         routerLink: ['/main/teacher/lesson', this.lessonId, 'report'],
       },
     ];
