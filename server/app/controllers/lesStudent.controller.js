@@ -255,6 +255,20 @@ exports.getStudentsByClassTypeAndDayTime = async (req, res) => {
   }
 };
 
+exports.getLessonByStudentOnly = async (req, res) => {
+  try {
+    const students = await Student.find({ lessonId: req.params.id }).populate('lessonId');
+
+    if (students.length === 0) {
+      return res.status(404).json({ message: 'No students found' });
+    }
+
+    res.json({ students });
+  } catch (error) {
+    console.error('Error fetching lessons:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
 exports.getLessonByStudent = async (req, res) => {
   try {
     const students = await Student.find({ studentCode: req.params.id }).populate('lessonId');

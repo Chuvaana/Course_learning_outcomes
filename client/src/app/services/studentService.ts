@@ -20,6 +20,9 @@ export class StudentService {
   getStudentByLessons(lessonCode: string): Observable<any> {
     return this.http.get(`${this.apiUrl}/lesStudents/lesson/${lessonCode}`);
   }
+  getStudentByLessonsStudent(lessonCode: string): Observable<any> {
+    return this.http.get(`${this.apiUrl}/lesStudents/lesson/student/${lessonCode}`);
+  }
 
   getStudentByCode(studentCode: string): Observable<any> {
     return this.http.get(`${this.apiUrl}/lesStudents/student/${studentCode}`);

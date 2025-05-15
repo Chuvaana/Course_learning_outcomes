@@ -25,6 +25,7 @@ import { CloPointPlanService } from '../../../../services/cloPointPlanService';
 import { ExamService } from '../../../../services/examService';
 import { FinalExamService } from '../../../../services/finalExamService';
 import { lessonAssessmentService } from '../../../../services/lessonAssessment';
+import { StudentService } from '../../../../services/studentService';
 
 @Component({
   selector: 'app-exam-import',
@@ -69,6 +70,7 @@ export class ExamImportComponent {
   examType: any = null;
   examTypeData: any = null;
   cloRanges: { [cloId: string]: { min: number; max: number } } = {};
+  lesStudent: any;
 
   @ViewChild('minV') minV!: ElementRef;
   @ViewChild('maxV') maxV!: ElementRef;
@@ -95,7 +97,8 @@ export class ExamImportComponent {
     private msgService: MessageService,
     private lessonAssessmentService: lessonAssessmentService,
     private assessService: AssessmentService,
-    private cloPointPlanService: CloPointPlanService
+    private cloPointPlanService: CloPointPlanService,
+    private studentService: StudentService
   ) {
     this.assesstmentForm = this.fb.group({
       lessonId: ['', Validators.required],
@@ -120,6 +123,11 @@ export class ExamImportComponent {
     this.route.parent?.paramMap.subscribe((params) => {
       this.lessonId = params.get('id')!;
     });
+
+    this.studentService.getStudentByLessonsStudent(this.lessonId).subscribe((res: any) => {
+      this.lesStudent = res;
+      console.log(this.lesStudent);
+    })
   }
 
   loadClo(e: string): void {
@@ -381,9 +389,8 @@ export class ExamImportComponent {
       this.msgService.add({
         severity: 'error',
         summary: 'Алдаа',
-        detail: `Алдаа гарлаа: Дүнгийн файл зөрсөн байна! Алдаа -> '${
-          data[mismatchedIndex]
-        }' (${mismatchedIndex + 1}-р багана)`,
+        detail: `Алдаа гарлаа: Дүнгийн файл зөрсөн байна! Алдаа -> '${data[mismatchedIndex]
+          }' (${mismatchedIndex + 1}-р багана)`,
       });
       return false;
     }
@@ -416,7 +423,7 @@ export class ExamImportComponent {
       }[];
     }[] = [];
 
-    this.cloQuestionData.map((data) => {});
+    this.cloQuestionData.map((data) => { });
 
     if (!this.activeFileLogic) {
       this.msgService.add({
@@ -440,126 +447,144 @@ export class ExamImportComponent {
           });
         } else {
           const subMethodClolumn = this.tableData[1];
+          let notInStudents: string | any[] = [];
           this.service.getAllLessonAssments(this.lessonId).subscribe((res) => {
             this.lessonAllStudents = res;
             // tableData-д ажиллана
             this.tableData.forEach((e, index) => {
               if (index > 1) {
-                // Хоёрдугаар мөрөөс эхэлнэ
-                const assessmentFormData = {
-                  lessonId: '',
-                  studentId: '',
-                  allPoint: 0,
-                  takePoint: '',
-                  startDate: '',
-                  endDate: '',
-                  durationDate: '',
-                  examType: '',
-                  examTypeName: '',
-                  lastName: '',
-                  firstName: '',
-                  gmail: '',
-                  status: '',
-                  question: [] as {
+                let thisStudentIn = false;
+                this.lesStudent.students.map((students: any) => {
+                  if (students.studentCode === e[2].toUpperCase()) {
+                    thisStudentIn = true;
+                  }
+                });
+                if (thisStudentIn) {
+                  // Хоёрдугаар мөрөөс эхэлнэ
+                  const assessmentFormData = {
+                    lessonId: '',
+                    studentId: '',
+                    allPoint: 0,
+                    takePoint: '',
+                    startDate: '',
+                    endDate: '',
+                    durationDate: '',
+                    examType: '',
+                    examTypeName: '',
+                    lastName: '',
+                    firstName: '',
+                    gmail: '',
+                    status: '',
+                    question: [] as {
+                      questionId: number;
+                      cloId: string;
+                      allPoint: number;
+                      takePoint: number;
+                      subMethodId: string;
+                      subMethodName: string;
+                    }[],
+                  };
+                  assessmentFormData.lessonId = this.lessonId;
+
+                  assessmentFormData.allPoint = Number(
+                    this.tableData[0][8].substring(6, 8)
+                  );
+                  assessmentFormData.lastName = e[0];
+                  assessmentFormData.firstName = e[1];
+                  assessmentFormData.studentId = e[2];
+                  assessmentFormData.gmail = e[3];
+                  assessmentFormData.takePoint = e[8];
+                  assessmentFormData.status = e[4];
+                  assessmentFormData.startDate = e[5];
+                  assessmentFormData.endDate = e[6];
+                  assessmentFormData.durationDate = e[7];
+                  assessmentFormData.examType = this.examTypeData.value;
+                  assessmentFormData.examTypeName = this.examTypeData.label;
+                  let questions: {
                     questionId: number;
-                    cloId: string;
+                    cloId: any;
                     allPoint: number;
-                    takePoint: number;
+                    takePoint: any;
                     subMethodId: string;
                     subMethodName: string;
-                  }[],
-                };
-                assessmentFormData.lessonId = this.lessonId;
+                  }[] = [];
 
-                assessmentFormData.allPoint = Number(
-                  this.tableData[0][8].substring(6, 8)
-                );
-                assessmentFormData.lastName = e[0];
-                assessmentFormData.firstName = e[1];
-                assessmentFormData.studentId = e[2];
-                assessmentFormData.gmail = e[3];
-                assessmentFormData.takePoint = e[8];
-                assessmentFormData.status = e[4];
-                assessmentFormData.startDate = e[5];
-                assessmentFormData.endDate = e[6];
-                assessmentFormData.durationDate = e[7];
-                assessmentFormData.examType = this.examTypeData.value;
-                assessmentFormData.examTypeName = this.examTypeData.label;
-                let questions: {
-                  questionId: number;
-                  cloId: any;
-                  allPoint: number;
-                  takePoint: any;
-                  subMethodId: string;
-                  subMethodName: string;
-                }[] = [];
+                  let countQuetion = 1;
+                  for (let j = 9; j < e.length; j++) {
+                    const col = subMethodClolumn[j + 1] ?? subMethodClolumn[j];
+                    const question = {
+                      questionId: countQuetion,
+                      cloId: col?.cloId,
+                      allPoint:
+                        countQuetion > 9
+                          ? Number(this.tableData[0][j].substring(8, 12))
+                          : Number(this.tableData[0][j].substring(6, 12)),
+                      takePoint: e[j],
+                      subMethodId: col?._id,
+                      subMethodName: col?.label,
+                    };
 
-                let countQuetion = 1;
-                for (let j = 9; j < e.length; j++) {
-                  const col = subMethodClolumn[j + 1] ?? subMethodClolumn[j];
-                  const question = {
-                    questionId: countQuetion,
-                    cloId: col?.cloId,
-                    allPoint:
-                      countQuetion > 9
-                        ? Number(this.tableData[0][j].substring(8, 12))
-                        : Number(this.tableData[0][j].substring(6, 12)),
-                    takePoint: e[j],
-                    subMethodId: col?._id,
-                    subMethodName: col?.label,
-                  };
-
-                  questions.push(question);
-                  countQuetion++;
-                }
-
-                assessmentFormData.question = questions;
-                assessmentFormDataParam.push(assessmentFormData);
-                let checkData = true;
-                if (this.lessonAllStudents.length > 0) {
-                  this.lessonAllStudents.map((beforeData: any) => {
-                    if (
-                      assessmentFormData.studentId === beforeData.studentId &&
-                      beforeData.examType === assessmentFormData.examType
-                    ) {
-                      id = beforeData._id;
-                      checkData = false;
-                    }
-                  });
-                }
-                if (
-                  assessmentFormData.studentId == null &&
-                  assessmentFormData.studentId == undefined
-                ) {
-                  checkData = false;
-                }
-                if (
-                  assessmentFormData.gmail == null &&
-                  assessmentFormData.gmail == undefined
-                ) {
-                  checkData = false;
-                }
-                if (checkData) {
-                  this.lessonAssessmentService
-                    .createLesAssessment(assessmentFormData)
-                    .subscribe((res) => {
-                      console.log(res);
-                    });
-                  newStudent++;
-                } else {
-                  if (this.checked) {
-                    if (id !== null && id !== undefined) {
-                      this.lessonAssessmentService
-                        .updateLesAssessment(id, assessmentFormData)
-                        .subscribe((res) => {
-                          console.log(res);
-                        });
-                    }
+                    questions.push(question);
+                    countQuetion++;
                   }
-                  allreadyInStudent++;
+
+                  assessmentFormData.question = questions;
+                  assessmentFormDataParam.push(assessmentFormData);
+                  let checkData = true;
+                  if (this.lessonAllStudents.length > 0) {
+                    this.lessonAllStudents.map((beforeData: any) => {
+                      if (
+                        assessmentFormData.studentId === beforeData.studentId &&
+                        beforeData.examType === assessmentFormData.examType
+                      ) {
+                        id = beforeData._id;
+                        checkData = false;
+                      }
+                    });
+                  }
+                  if (
+                    assessmentFormData.studentId == null &&
+                    assessmentFormData.studentId == undefined
+                  ) {
+                    checkData = false;
+                  }
+                  if (
+                    assessmentFormData.gmail == null &&
+                    assessmentFormData.gmail == undefined
+                  ) {
+                    checkData = false;
+                  }
+                  if (checkData) {
+                    this.lessonAssessmentService
+                      .createLesAssessment(assessmentFormData)
+                      .subscribe((res) => {
+                        console.log(res);
+                      });
+                    newStudent++;
+                  } else {
+                    if (this.checked) {
+                      if (id !== null && id !== undefined) {
+                        this.lessonAssessmentService
+                          .updateLesAssessment(id, assessmentFormData)
+                          .subscribe((res) => {
+                            console.log(res);
+                          });
+                      }
+                    }
+                    allreadyInStudent++;
+                  }
+                }else{
+                  notInStudents.push(e[2]);
                 }
               }
             });
+            if(notInStudents.length > 0){
+              this.msgService.add({
+                severity: 'warn',
+                summary: 'Анхааруулга',
+                detail: `Сурагчдын нэрс алга!`+ notInStudents,
+              });
+            }
             this.serviceAfterMsg(newStudent, allreadyInStudent);
           });
         }
@@ -606,9 +631,11 @@ export class ExamImportComponent {
     console.log(e);
     if (dataIn) {
       this.tableData = [];
-      this.examTypeAction = false;
+      this.examTypeData = e;
+      this.examTypeAction = true;
       this.loadClo(e.value);
     } else {
+      this.examTypeAction = false;
       this.msgService.add({
         severity: 'error',
         summary: 'Алдаа',

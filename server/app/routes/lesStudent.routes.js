@@ -28,5 +28,7 @@ module.exports = (app) => {
 
   router.get('/lesson/:id', studentController.getLessonByStudent);
 
+  router.get('/lesson/student/:id', studentController.getLessonByStudentOnly);
+
   app.use('/api/lesStudents', router);
 };

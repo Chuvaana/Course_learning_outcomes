@@ -1738,72 +1738,72 @@ export class PdfGeneratorService {
         {},
         {},
       ],
-      ...data.assessmentByLesson.plans
-        .filter((row: { clo: { type: any } }) => row.clo.type === 'LEC_SEM')
-        .map(
-          (
-            row: {
-              clo: { cloName: any };
-              attendance: boolean;
-              assignment: boolean;
-              quiz: boolean;
-              project: boolean;
-              lab: boolean;
-              exam: boolean;
-            },
-            index: number
-          ) => [
-            {
-              text: index + 1,
-              alignment: 'center',
-              style: 'tableData',
-            },
-            {
-              text: row.clo.cloName,
-              colSpan: 3,
-              alignment: 'center',
-              style: 'tableData',
-            },
-            {},
-            {},
-            {
-              image: row.attendance == true ? checked : unChecked,
-              alignment: 'center',
-              width: 12,
-              style: 'tableData',
-            },
-            {
-              image: row.assignment == true ? checked : unChecked,
-              alignment: 'center',
-              width: 12,
-              style: 'tableData',
-            },
-            {
-              image: row.quiz == true ? checked : unChecked,
-              alignment: 'center',
-              width: 12,
-              style: 'tableData',
-            },
-            {
-              image: row.project == true ? checked : unChecked,
-              alignment: 'center',
-              width: 12,
-              style: 'tableData',
-            },
-            {
-              image: row.lab == true ? checked : unChecked,
-              alignment: 'center',
-              width: 12,
-              style: 'tableData',
-            },
-            {
-              image: row.exam == true ? checked : unChecked,
-              alignment: 'center',
-              width: 12,
-              style: 'tableData',
-            },
-          ]
-        ),
+      // ...data.pointPlan
+      //   .filter((row: { clo: { type: any } }) => row.clo.type === 'PARTI')
+      //   .map(
+      //     (
+      //       row: {
+      //         clo: { cloName: any };
+      //         attendance: boolean;
+      //         assignment: boolean;
+      //         quiz: boolean;
+      //         project: boolean;
+      //         lab: boolean;
+      //         exam: boolean;
+      //       },
+      //       index: number
+      //     ) => [
+      //       {
+      //         text: index + 1,
+      //         alignment: 'center',
+      //         style: 'tableData',
+      //       },
+      //       {
+      //         text: row.clo.cloName,
+      //         colSpan: 3,
+      //         alignment: 'center',
+      //         style: 'tableData',
+      //       },
+      //       {},
+      //       {},
+      //       {
+      //         image: row.attendance == true ? checked : unChecked,
+      //         alignment: 'center',
+      //         width: 12,
+      //         style: 'tableData',
+      //       },
+      //       {
+      //         image: row.assignment == true ? checked : unChecked,
+      //         alignment: 'center',
+      //         width: 12,
+      //         style: 'tableData',
+      //       },
+      //       {
+      //         image: row.quiz == true ? checked : unChecked,
+      //         alignment: 'center',
+      //         width: 12,
+      //         style: 'tableData',
+      //       },
+      //       {
+      //         image: row.project == true ? checked : unChecked,
+      //         alignment: 'center',
+      //         width: 12,
+      //         style: 'tableData',
+      //       },
+      //       {
+      //         image: row.lab == true ? checked : unChecked,
+      //         alignment: 'center',
+      //         width: 12,
+      //         style: 'tableData',
+      //       },
+      //       {
+      //         image: row.exam == true ? checked : unChecked,
+      //         alignment: 'center',
+      //         width: 12,
+      //         style: 'tableData',
+      //       },
+      //     ]
+      //   ),
       [
         {
           text: 'Лаборатори/практикийн хичээлийн суралцахуйн үр дүнгүүд:',
