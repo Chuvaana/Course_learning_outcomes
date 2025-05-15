@@ -26,6 +26,7 @@ import { ExamService } from '../../../../services/examService';
 import { FinalExamService } from '../../../../services/finalExamService';
 import { lessonAssessmentService } from '../../../../services/lessonAssessment';
 import { StudentService } from '../../../../services/studentService';
+import { empty } from 'rxjs';
 
 @Component({
   selector: 'app-exam-import',
@@ -455,8 +456,10 @@ export class ExamImportComponent {
               if (index > 1) {
                 let thisStudentIn = false;
                 this.lesStudent.students.map((students: any) => {
-                  if (students.studentCode === e[2].toUpperCase()) {
-                    thisStudentIn = true;
+                  if (e[2] !== undefined && e[2] !== null) {
+                    if (students.studentCode === e[2].toUpperCase()) {
+                      thisStudentIn = true;
+                    }
                   }
                 });
                 if (thisStudentIn) {
@@ -573,16 +576,17 @@ export class ExamImportComponent {
                     }
                     allreadyInStudent++;
                   }
-                }else{
+                } else {
                   notInStudents.push(e[2]);
                 }
               }
             });
-            if(notInStudents.length > 0){
+            if (notInStudents.length > 0) {
+              const detailMessage = `Сурагчдын нэрс алга!\n` + notInStudents.join('\n');
               this.msgService.add({
                 severity: 'warn',
                 summary: 'Анхааруулга',
-                detail: `Сурагчдын нэрс алга!`+ notInStudents,
+                detail: `Сурагчдын нэрс алга!` + detailMessage,
               });
             }
             this.serviceAfterMsg(newStudent, allreadyInStudent);
