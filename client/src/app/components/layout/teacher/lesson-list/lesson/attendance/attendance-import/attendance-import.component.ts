@@ -236,35 +236,29 @@ export class AttendanceImportComponent {
   openPopup() {}
 
   submit() {
-    console.log;
-
     if (this.onlyEmail.length > 0) {
       const currentWeek = this.branch.value;
       const lessonId = this.lessonId;
+
       this.attendanceRecords.forEach((record) => {
         const studentCode = record.student.code;
-
-        // Зөвхөн onlyEmail дээр байгаа оюутнууд
-        if (this.onlyEmail.includes(studentCode)) {
-          // Хэрвээ currentWeek байхгүй бол шинээр нэмнэ
-          if (!(currentWeek in record.attendance)) {
-            record.attendance[currentWeek] = false;
-          }
+        if (!(currentWeek in record.attendance)) {
+          record.attendance[currentWeek] = this.onlyEmail.includes(studentCode); // true эсвэл false
         }
       });
+
       const attendanceData = {
         lessonId: lessonId,
         weekDay: this.selectedWeekday,
         type: this.selectedClassType,
         time: this.selectedTimes,
         weekNumber: currentWeek,
-        attendance: this.attendanceRecords
-          .filter((record) => this.onlyEmail.includes(record.student.code)) // зөвхөн ирсэн оюутнууд
-          .map((record) => ({
-            studentId: record.student.studentId,
-            status: true, // тухайн 7 хоногт ирсэн
-          })),
+        attendance: this.attendanceRecords.map((record) => ({
+          studentId: record.student.studentId,
+          status: this.onlyEmail.includes(record.student.code), // бүх оюутныг явуулна
+        })),
       };
+
       this.attendanceService.createAttendance(attendanceData).subscribe(
         (response) => {
           this.onSelectionChange();
