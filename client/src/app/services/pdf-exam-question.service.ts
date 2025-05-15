@@ -265,7 +265,7 @@ export class PdfExamQuestionService {
         },
       ],
       footer: {
-        text: `Боловсруулсан багш ........ ................... ${data.teacherName}`,
+        text: `Боловсруулсан багш ........ ................... ${data.mainInfo.teacher.name}`,
         style: 'footerCenter',
       },
       styles: {
