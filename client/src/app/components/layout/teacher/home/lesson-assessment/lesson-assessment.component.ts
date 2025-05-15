@@ -239,7 +239,7 @@ export class LessonAssessmentComponent {
 
                 studentRow.totalPoint += total;
                 studentRow.percentage =
-                  (item.totalPoint / item.totalPoint) * 100;
+                  (studentRow.totalPoint / item.totalPoint) * 100;
                 studentRow.letterGrade = this.getLetterGrade(
                   studentRow.percentage
                 );
