@@ -21,7 +21,6 @@ import { StudentService } from '../../../../../../../services/studentService';
 import { CheckboxModule } from 'primeng/checkbox';
 import { TableModule } from 'primeng/table';
 
-
 interface AttendanceRecord {
   student: {
     name: string;
@@ -30,7 +29,6 @@ interface AttendanceRecord {
   };
   attendance: { [weekNumber: string]: boolean }; // Week number as key, attendance status as value
 }
-
 
 @Component({
   selector: 'app-attendance-import',
@@ -208,13 +206,13 @@ export class AttendanceImportComponent {
         const checkEmail = email.slice(10);
         if (checkEmail !== '@MUST.EDU.MN') {
           failedEmails.push(e[1]);
-        } else if (checkEmail === '@MUST.EDU.MN'){
+        } else if (checkEmail === '@MUST.EDU.MN') {
           this.onlyEmail.push(email.slice(0, 10));
           wrongInData = false;
         }
       }
     });
-    if(wrongInData){
+    if (wrongInData) {
       this.msgService.add({
         severity: 'error',
         summary: 'Алдаа',
@@ -227,38 +225,45 @@ export class AttendanceImportComponent {
       this.msgService.add({
         severity: 'warn',
         summary: 'Анхааруулга',
-        detail: 'Ирцийн оруулсан файлаас дараах оюутны мэйл хаяг алдаатай бичигдсэн байна.' + failedEmails,
+        detail:
+          'Ирцийн оруулсан файлаас дараах оюутны мэйл хаяг алдаатай бичигдсэн байна.' +
+          failedEmails,
       });
     }
   }
 
-  openPopup() {
-  }
+  openPopup() {}
 
   submit() {
-    console.log
+    console.log;
+
     if (this.onlyEmail.length > 0) {
       const currentWeek = this.branch.value;
       const lessonId = this.lessonId;
+      this.attendanceRecords.forEach((record) => {
+        const studentCode = record.student.code;
+
+        // Зөвхөн onlyEmail дээр байгаа оюутнууд
+        if (this.onlyEmail.includes(studentCode)) {
+          // Хэрвээ currentWeek байхгүй бол шинээр нэмнэ
+          if (!(currentWeek in record.attendance)) {
+            record.attendance[currentWeek] = false;
+          }
+        }
+      });
       const attendanceData = {
         lessonId: lessonId,
         weekDay: this.selectedWeekday,
         type: this.selectedClassType,
         time: this.selectedTimes,
         weekNumber: currentWeek,
-        attendance: this.attendanceRecords.flatMap((record) =>
-          Object.keys(record.attendance)
-            .flatMap((date) => {
-              return this.onlyEmail
-                .filter((i: any) => record.student.code === i && date === currentWeek)
-                .map(() => ({
-                  studentId: record.student.studentId,
-                  status: true,
-                }));
-            })
-        ),
+        attendance: this.attendanceRecords
+          .filter((record) => this.onlyEmail.includes(record.student.code)) // зөвхөн ирсэн оюутнууд
+          .map((record) => ({
+            studentId: record.student.studentId,
+            status: true, // тухайн 7 хоногт ирсэн
+          })),
       };
-
       this.attendanceService.createAttendance(attendanceData).subscribe(
         (response) => {
           this.onSelectionChange();
@@ -285,15 +290,13 @@ export class AttendanceImportComponent {
     }
   }
 
-  registerData(e: any) {
-  }
+  registerData(e: any) {}
 
   onChangeBranch(e: any) {
     this.branchId = e.value;
   }
 
   onSelectionChange(): void {
-
     this.attendanceService
       .getAttendance(
         this.lessonId,
@@ -317,8 +320,6 @@ export class AttendanceImportComponent {
         }
       });
   }
-
-
 
   generateAttendance(data: any): AttendanceRecord[] {
     const studentAttendanceMap: { [studentId: string]: AttendanceRecord } = {};
@@ -355,7 +356,6 @@ export class AttendanceImportComponent {
       attendance: dates.reduce((acc, date) => ({ ...acc, [date]: false }), {}),
     }));
   }
-
 
   getAllWeeks() {
     let today = new Date();
