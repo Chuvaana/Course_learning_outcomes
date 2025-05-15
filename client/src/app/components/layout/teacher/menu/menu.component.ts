@@ -141,7 +141,7 @@ export class MenuComponent implements OnInit {
         ],
       },
       {
-        label: 'Улирлын шалгалт бэлдэх',
+        label: 'Шалгалтын бүтэц бэлтгэх',
         icon: 'pi pi-plus',
         routerLink: ['/main/teacher/lesson', this.lessonId, 'final-exam'],
       },

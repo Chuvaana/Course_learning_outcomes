@@ -59,12 +59,10 @@ exports.updateFinalExam = async (req, res) => {
     });
 
     if (!existingExam) {
-      // Шинээр үүсгэх
       const newFinalExam = new FinalExamCurriculum(req.body);
       const savedFinalExam = await newFinalExam.save();
       return res.status(201).json(savedFinalExam);
     } else {
-      // Шууд объект дээр утгуудыг шинэчилж хадгалах
       Object.assign(existingExam, req.body);
       const updatedFinalExam = await existingExam.save();
       return res.status(200).json(updatedFinalExam);

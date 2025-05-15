@@ -1,21 +1,18 @@
 const FinalExamQuestion = require('../models/finalExamQuestion.model');
 const FinalExamCurriculum = require('../models/finalExam.model'); // Update path as needed
 
-// Create a new final exam question
 exports.createFinalExamQuestion = async (req, res) => {
   try {
-    delete req.body._id; // remove manually
+    delete req.body._id;
     const newQuestion = new FinalExamQuestion(req.body);
     const savedQuestion = await newQuestion.save();
 
-    console.log(savedQuestion);
     res.status(201).json(savedQuestion);
   } catch (error) {
     res.status(400).json({ message: 'Error creating question', error: error.message });
   }
 };
 
-// Get all final exam questions
 exports.getFinalExamQuestions = async (req, res) => {
   try {
     const questions = await FinalExamQuestion.find().populate('verb').populate('cloCode');
@@ -28,7 +25,6 @@ exports.getFinalExamQuestions = async (req, res) => {
 exports.getAllFinalExamQuestions = async (req, res) => {
   const { lessonId } = req.params;
   let { type } = req.query;
-  console.log(type);
 
   try {
     const assessments = await FinalExamQuestion.find({ lessonId, finalExamType: type });
@@ -41,7 +37,6 @@ exports.getAllFinalExamQuestions = async (req, res) => {
   }
 };
 
-// Get a final exam question by ID
 exports.getFinalExamQuestionByItemCode = async (req, res) => {
   try {
     const question = await FinalExamQuestion.findById(req.params.id).populate('verb').populate('cloCode');
@@ -54,7 +49,6 @@ exports.getFinalExamQuestionByItemCode = async (req, res) => {
   }
 };
 
-// Update a final exam question
 exports.updateFinalExamQuestion = async (req, res) => {
   try {
     const updatedQuestion = await FinalExamQuestion.findByIdAndUpdate(req.params.id, req.body, {
@@ -76,10 +70,8 @@ exports.deleteFinalExamQuestion = async (req, res) => {
     const questionIdToRemove = req.params.item_code;
     const finalExamId = req.params.id;
 
-    // Convert to ObjectId
     const objectIdToRemove = new mongoose.Types.ObjectId(questionIdToRemove);
 
-    // Pull from finalExamQuestion array
     const updatedFinalExam = await FinalExamCurriculum.findByIdAndUpdate(
       finalExamId,
       { $pull: { finalExamQuestion: objectIdToRemove } },
@@ -90,7 +82,6 @@ exports.deleteFinalExamQuestion = async (req, res) => {
       return res.status(404).json({ message: 'FinalExam not found' });
     }
 
-    // Delete the actual question document
     const deletedQuestion = await FinalExamQuestion.findByIdAndDelete(objectIdToRemove);
     if (!deletedQuestion) {
       return res.status(404).json({ message: 'Question not found' });
