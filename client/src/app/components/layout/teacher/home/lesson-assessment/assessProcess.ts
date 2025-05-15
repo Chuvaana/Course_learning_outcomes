@@ -94,19 +94,12 @@ export class AssessProcessService {
       .getLesAssessmentByType(lessonId, type)
       .pipe(
         map((res) => {
-          console.log(res);
           return res;
         })
       );
   }
 
   studentExamPointProcess(lessonId: string, cloList: any[]): Observable<any[]> {
-    // const studentPoints: {
-    //   students: any;
-    //   cloId: string;
-    //   type: string;
-    // }[] = [];
-
     const types = ['QUIZ1', 'QUIZ2', 'EXAM'];
     const allObservables: Observable<any>[] = [];
 

@@ -101,7 +101,8 @@ export class LessonOverallAssessComponent {
         this.pointPlan,
         this.cloPlan
       ),
-    ]).subscribe(([gradeData, attData, actData]) => {
+      this.assessProcess.studentExamPointProcess(this.lessonId, this.cloList),
+    ]).subscribe(([gradeData, attData, actData, examData]) => {
       this.tabs.forEach((item: any) => {
         gradeData.forEach((grades: any) => {
           if (item.id === grades.cloId) {
@@ -173,6 +174,44 @@ export class LessonOverallAssessComponent {
           }
         });
       });
+      console.log(this.cloPlan);
+      const assessPlanMap = new Map();
+      this.cloPlan.forEach((plan: any) => {
+        const assessPlan = [...plan.examPoints, ...plan.procPoints].filter(
+          (ePoint) => ePoint.point !== 0
+        );
+        assessPlanMap.set(plan.cloId, assessPlan);
+      });
+      this.tabs.forEach((item: any) => {
+        examData.forEach((examPo: any) => {
+          if (item.id === examPo.cloId) {
+            const list = assessPlanMap.get(examPo.cloId);
+            item.content.forEach((studentRow: any) => {
+              let total = 0;
+              let allTotal = 0;
+              examPo.sumPoint.map((poi: any) => {
+                if (poi.studentId == studentRow.studentCode) {
+                  const listPoint = list.find(
+                    (li: any) => li.subMethodId === poi.subMethodId
+                  );
+                  const point = listPoint ? listPoint.point : 0;
+                  total += poi.totalPoint;
+                  allTotal += poi.allPoint;
+                  const takePoint = (total * point) / (allTotal || 1);
+                  studentRow.totalPoint += takePoint;
+                }
+              });
+              studentRow.percentage = +(
+                (studentRow.totalPoint / item.totalPoint) *
+                100
+              ).toFixed(2);
+              studentRow.letterGrade = this.getLetterGrade(
+                studentRow.percentage
+              );
+            });
+          }
+        });
+      });
     });
 
     setTimeout(() => {
@@ -201,7 +240,7 @@ export class LessonOverallAssessComponent {
         });
       }
       this.prepareChartData();
-    }, 300);
+    }, 500);
   }
 
   prepareChartData() {
