@@ -1,201 +1,157 @@
-<p-panel header="Ерөнхий мэдээлэл" toggleable>
-  <div class="p-grid p-formgrid gap-container">
-    <div class="p-field p-col-12 p-md-6">
-      <label>Хичээлийн нэр</label>
-      <div class="p-inputtext">{{ lesson.lessonName }}</div>
-    </div>
+<div style="display: flex; width: 100%; gap: 20px">
+  <div style="display: flex; flex-direction: column; width: 50%; gap: 20px">
+    <p-panel header="Ерөнхий мэдээлэл" toggleable>
+      <div class="p-grid p-formgrid gap-container">
+        <div class="p-field p-col-12 p-md-6">
+          <p>Хичээлийн нэр: {{ lesson.lessonName }}</p>
+        </div>
 
-    <div class="p-field p-col-12 p-md-6">
-      <label>Хичээлийн код</label>
-      <div class="p-inputtext">{{ lesson.lessonCode }}</div>
-    </div>
+        <div class="p-field p-col-12 p-md-6">
+          <p>Хичээлийн код: {{ lesson.lessonCode }}</p>
+        </div>
 
-    <div class="p-field p-col-12 p-md-6">
-      <label>Кредит</label>
-      <div class="p-inputtext">{{ lesson.lessonCredit }}</div>
-    </div>
+        <div class="p-field p-col-12 p-md-6">
+          <p>Кредит: {{ lesson.lessonCredit }}</p>
+        </div>
 
-    <div class="p-field p-col-12 p-md-6">
-      <label>Сургууль</label>
-      <div class="p-inputtext">{{ lesson.school }}</div>
-    </div>
+        <div class="p-field p-col-12 p-md-6">
+          <p>Сургууль: {{ lesson.school }}</p>
+        </div>
 
-    <div class="p-field p-col-12">
-      <label>Салбар/Тэнхим</label>
-      <div class="p-inputtext">{{ lesson.department }}</div>
-    </div>
-  </div>
-</p-panel>
-
-<p-divider></p-divider>
-
-<p-panel header="Үндсэн багш" toggleable>
-  <div class="p-grid p-formgrid gap-container">
-    <div class="p-field p-col-12 p-md-6">
-      <label>Нэр</label>
-      <div class="p-inputtext">{{ lesson.teacherName }}</div>
-    </div>
-    <div class="p-field p-col-12 p-md-6">
-      <label>Өрөөний дугаар</label>
-      <div class="p-inputtext">{{ lesson.teacherRoom }}</div>
-    </div>
-    <div class="p-field p-col-12 p-md-6">
-      <label>И-мэйл</label>
-      <div class="p-inputtext">{{ lesson.teacherEmail }}</div>
-    </div>
-    <div class="p-field p-col-12 p-md-6">
-      <label>Утас</label>
-      <div class="p-inputtext">{{ lesson.teacherPhone }}</div>
-    </div>
-  </div>
-</p-panel>
-
-<p-divider></p-divider>
-
-<p-panel header="Туслах багш" toggleable>
-  <div class="p-grid p-formgrid gap-container">
-    <div class="p-field p-col-12 p-md-6">
-      <label>Нэр</label>
-      <div class="p-inputtext">{{ lesson.assistantTeacherName }}</div>
-    </div>
-    <div class="p-field p-col-12 p-md-6">
-      <label>Өрөөний дугаар</label>
-      <div class="p-inputtext">{{ lesson.assistantTeacherRoom }}</div>
-    </div>
-    <div class="p-field p-col-12 p-md-6">
-      <label>И-мэйл</label>
-      <div class="p-inputtext">{{ lesson.assistantTeacherEmail }}</div>
-    </div>
-    <div class="p-field p-col-12 p-md-6">
-      <label>Утас</label>
-      <div class="p-inputtext">{{ lesson.assistantTeacherPhone }}</div>
-    </div>
-  </div>
-</p-panel>
-
-<p-divider></p-divider>
-
-<p-panel header="Нэмэлт мэдээлэл" toggleable>
-  <div class="p-grid p-formgrid gap-container">
-    <div class="p-field p-col-12 p-md-6">
-      <label>Түвшин</label>
-      <div class="p-inputtext">{{ lesson.lessonLevel }}</div>
-    </div>
-    <div class="p-field p-col-12 p-md-6">
-      <label>Төрөл</label>
-      <div class="p-inputtext">{{ lesson.lessonType }}</div>
-    </div>
-    <div class="p-field p-col-12 p-md-6">
-      <label>Санал болгох улирал</label>
-      <div class="p-inputtext">{{ lesson.recommendedSemester }}</div>
-    </div>
-  </div>
-</p-panel>
-
-<p-divider></p-divider>
-
-<p-panel header="7 хоногт ногдох сургалтын цаг" toggleable>
-  <div class="p-grid p-formgrid gap-container">
-    <div class="p-field p-col-12 p-md-6">
-      <label>Лекц (7 хоногт)</label>
-      <div class="p-inputtext">{{ lesson.weeklyLecture }}</div>
-    </div>
-    <div class="p-field p-col-12 p-md-6">
-      <label>Семинар</label>
-      <div class="p-inputtext">{{ lesson.weeklySeminar }}</div>
-    </div>
-    <div class="p-field p-col-12 p-md-6">
-      <label>Лаборатори</label>
-      <div class="p-inputtext">{{ lesson.weeklyLab }}</div>
-    </div>
-    <div class="p-field p-col-12 p-md-6">
-      <label>Бие даалт</label>
-      <div class="p-inputtext">{{ lesson.weeklyAssignment }}</div>
-    </div>
-    <div class="p-field p-col-12 p-md-6">
-      <label>Практик</label>
-      <div class="p-inputtext">{{ lesson.weeklyPractice }}</div>
-    </div>
-  </div>
-</p-panel>
-
-<p-divider></p-divider>
-
-<p-panel header="Нийт танхимын цаг" toggleable>
-  <div class="p-grid p-formgrid gap-container">
-    <div class="p-field p-col-12 p-md-6">
-      <label>Лекц</label>
-      <div class="p-inputtext">{{ lesson.totalLecture }}</div>
-    </div>
-    <div class="p-field p-col-12 p-md-6">
-      <label>Семинар</label>
-      <div class="p-inputtext">{{ lesson.totalSeminar }}</div>
-    </div>
-    <div class="p-field p-col-12 p-md-6">
-      <label>Лаборатори</label>
-      <div class="p-inputtext">{{ lesson.totalLab }}</div>
-    </div>
-    <div class="p-field p-col-12 p-md-6">
-      <label>Бие даалт</label>
-      <div class="p-inputtext">{{ lesson.totalAssignment }}</div>
-    </div>
-    <div class="p-field p-col-12 p-md-6">
-      <label>Практик</label>
-      <div class="p-inputtext">{{ lesson.totalPractice }}</div>
-    </div>
-  </div>
-</p-panel>
-
-<p-divider></p-divider>
-
-<p-panel header="Бие даан суралцах цаг" toggleable>
-  <div class="p-grid p-formgrid gap-container">
-    <div class="p-field p-col-12 p-md-6">
-      <label>Лекц</label>
-      <div class="p-inputtext">{{ lesson.selfStudyLecture }}</div>
-    </div>
-    <div class="p-field p-col-12 p-md-6">
-      <label>Семинар</label>
-      <div class="p-inputtext">{{ lesson.selfStudySeminar }}</div>
-    </div>
-    <div class="p-field p-col-12 p-md-6">
-      <label>Лаборатори</label>
-      <div class="p-inputtext">{{ lesson.selfStudyLab }}</div>
-    </div>
-    <div class="p-field p-col-12 p-md-6">
-      <label>Бие даалт</label>
-      <div class="p-inputtext">{{ lesson.selfStudyAssignment }}</div>
-    </div>
-    <div class="p-field p-col-12 p-md-6">
-      <label>Практик</label>
-      <div class="p-inputtext">{{ lesson.selfStudyPractice }}</div>
-    </div>
-  </div>
-</p-panel>
-
-<p-divider></p-divider>
-
-<p-panel header="Баталгаажуулалт" toggleable>
-  <div class="p-grid p-formgrid gap-container">
-    <div class="p-field p-col-12 p-md-6">
-      <label>Боловсруулсан багш:</label>
-      <div class="p-inputtext">{{ lesson.createdTeacherBy }}</div>
-    </div>
-    <div class="p-field p-col-12 p-md-6">
-      <label>Огноо:</label>
-      <div class="p-inputtext">
-        {{ lesson.createdTeacherDatetime | date : "yyyy-MM-dd" }}
+        <div class="p-field p-col-12">
+          <p>Салбар/Тэнхим: {{ lesson.department }}</p>
+        </div>
       </div>
-    </div>
-    <div class="p-field p-col-12 p-md-6">
-      <label>Хянасан салбарын эрхлэгч:</label>
-      <div class="p-inputtext">{{ lesson.checkManagerBy }}</div>
-    </div>
-    <div class="p-field p-col-12 p-md-6">
-      <label>Огноо:</label>
-      <div class="p-inputtext">
-        {{ lesson.checkManagerDatetime | date : "yyyy-MM-dd" }}
+    </p-panel>
+
+    <p-panel header="Үндсэн багш" toggleable>
+      <div class="p-grid p-formgrid gap-container">
+        <div class="p-field p-col-12 p-md-6">
+          <p>Нэр: {{ lesson.teacherName }}</p>
+        </div>
+        <div class="p-field p-col-12 p-md-6">
+          <p>Өрөөний дугаар: {{ lesson.teacherRoom }}</p>
+        </div>
+        <div class="p-field p-col-12 p-md-6">
+          <p>И-мэйл: {{ lesson.teacherEmail }}</p>
+        </div>
+        <div class="p-field p-col-12 p-md-6">
+          <p>Утас: {{ lesson.teacherPhone }}</p>
+        </div>
       </div>
-    </div>
+    </p-panel>
+
+    <p-panel header="Туслах багш" toggleable>
+      <div class="p-grid p-formgrid gap-container">
+        <div class="p-field p-col-12 p-md-6">
+          <p>Нэр: {{ lesson.assistantTeacherName }}</p>
+        </div>
+        <div class="p-field p-col-12 p-md-6">
+          <p>Өрөөний дугаар: {{ lesson.assistantTeacherRoom }}</p>
+        </div>
+        <div class="p-field p-col-12 p-md-6">
+          <p>И-мэйл: {{ lesson.assistantTeacherEmail }}</p>
+        </div>
+        <div class="p-field p-col-12 p-md-6">
+          <p>Утас: {{ lesson.assistantTeacherPhone }}</p>
+        </div>
+      </div>
+    </p-panel>
+
+    <p-panel header="Нэмэлт мэдээлэл" toggleable>
+      <div class="p-grid p-formgrid gap-container">
+        <div class="p-field p-col-12 p-md-6">
+          <p>Түвшин: {{ getLessonLevelName(lesson.lessonLevel) }}</p>
+        </div>
+        <div class="p-field p-col-12 p-md-6">
+          <p>Төрөл: {{ getLessonTypeName(lesson.lessonType) }}</p>
+        </div>
+        <div class="p-field p-col-12 p-md-6">
+          <p>
+            Санал болгох улирал:
+            {{ getSemesterName(lesson.recommendedSemester) }}
+          </p>
+        </div>
+      </div>
+    </p-panel>
   </div>
-</p-panel>
+  <div style="display: flex; flex-direction: column; width: 50%; gap: 20px">
+    <p-panel header="7 хоногт ногдох сургалтын цаг" toggleable>
+      <div class="p-grid p-formgrid gap-container">
+        <div class="p-field p-col-12 p-md-6">
+          <p>Лекц (7 хоногт): {{ lesson.weeklyLecture }}</p>
+        </div>
+        <div class="p-field p-col-12 p-md-6">
+          <p>Семинар: {{ lesson.weeklySeminar }}</p>
+        </div>
+        <div class="p-field p-col-12 p-md-6">
+          <p>Лаборатори: {{ lesson.weeklyLab }}</p>
+        </div>
+        <div class="p-field p-col-12 p-md-6">
+          <p>Бие даалт: {{ lesson.weeklyAssignment }}</p>
+        </div>
+        <div class="p-field p-col-12 p-md-6">
+          <p>Практик: {{ lesson.weeklyPractice }}</p>
+        </div>
+      </div>
+    </p-panel>
+
+    <p-panel header="Нийт танхимын цаг" toggleable>
+      <div class="p-grid p-formgrid gap-container">
+        <div class="p-field p-col-12 p-md-6">
+          <p>Лекц: {{ lesson.totalLecture }}</p>
+        </div>
+        <div class="p-field p-col-12 p-md-6">
+          <p>Семинар: {{ lesson.totalSeminar }}</p>
+        </div>
+        <div class="p-field p-col-12 p-md-6">
+          <p>Лаборатори: {{ lesson.totalLab }}</p>
+        </div>
+        <div class="p-field p-col-12 p-md-6">
+          <p>Бие даалт: {{ lesson.totalAssignment }}</p>
+        </div>
+        <div class="p-field p-col-12 p-md-6">
+          <p>Практик: {{ lesson.totalPractice }}</p>
+        </div>
+      </div>
+    </p-panel>
+
+    <p-panel header="Бие даан суралцах цаг" toggleable>
+      <div class="p-grid p-formgrid gap-container">
+        <div class="p-field p-col-12 p-md-6">
+          <p>Лекц: {{ lesson.selfStudyLecture }}</p>
+        </div>
+        <div class="p-field p-col-12 p-md-6">
+          <p>Семинар: {{ lesson.selfStudySeminar }}</p>
+        </div>
+        <div class="p-field p-col-12 p-md-6">
+          <p>Лаборатори: {{ lesson.selfStudyLab }}</p>
+        </div>
+        <div class="p-field p-col-12 p-md-6">
+          <p>Бие даалт: {{ lesson.selfStudyAssignment }}</p>
+        </div>
+        <div class="p-field p-col-12 p-md-6">
+          <p>Практик: {{ lesson.selfStudyPractice }}</p>
+        </div>
+      </div>
+    </p-panel>
+    <p-panel header="Баталгаажуулалт" toggleable>
+      <div class="p-grid p-formgrid gap-container">
+        <div class="p-field p-col-12 p-md-6">
+          <p>Боловсруулсан багш: {{ lesson.createdTeacherBy }}</p>
+        </div>
+        <div class="p-field p-col-12 p-md-6">
+          <p>
+            Огноо: {{ lesson.createdTeacherDatetime | date : "yyyy-MM-dd" }}
+          </p>
+        </div>
+        <div class="p-field p-col-12 p-md-6">
+          <p>Хянасан салбарын эрхлэгч: {{ lesson.checkManagerBy }}</p>
+        </div>
+        <div class="p-field p-col-12 p-md-6">
+          <p>Огноо: {{ lesson.checkManagerDatetime | date : "yyyy-MM-dd" }}</p>
+        </div>
+      </div>
+    </p-panel>
+  </div>
+</div>

@@ -39,7 +39,52 @@ export class MainInfoComponent {
   departments: any[] = [];
   teacherId!: string;
   schoolYear!: string;
-  lesson: any;
+  lesson = {
+    lessonId: '',
+    lessonName: '',
+    lessonCode: '',
+    lessonCredit: 0,
+    school: '',
+    department: '',
+    prerequisite: '',
+
+    assistantTeacherName: '',
+    assistantTeacherRoom: '',
+    assistantTeacherEmail: '',
+    assistantTeacherPhone: '',
+
+    teacherName: '',
+    teacherRoom: '',
+    teacherEmail: '',
+    teacherPhone: 0,
+
+    lessonLevel: '',
+    lessonType: '',
+    recommendedSemester: '',
+
+    weeklyLecture: 0,
+    weeklySeminar: 0,
+    weeklyLab: 0,
+    weeklyAssignment: 0,
+    weeklyPractice: 0,
+
+    totalLecture: 0,
+    totalSeminar: 0,
+    totalLab: 0,
+    totalAssignment: 0,
+    totalPractice: 0,
+
+    selfStudyLecture: 0,
+    selfStudySeminar: 0,
+    selfStudyLab: 0,
+    selfStudyAssignment: 0,
+    selfStudyPractice: 0,
+
+    createdTeacherBy: 0,
+    createdTeacherDatetime: new Date(),
+    checkManagerBy: 0,
+    checkManagerDatetime: new Date(),
+  };
 
   guaranteeData = {};
   constructor(
@@ -60,14 +105,55 @@ export class MainInfoComponent {
     }
   }
 
+  getSemesterName(e: string): string {
+    switch (e) {
+      case 'autumn':
+        return 'Намар';
+      case 'spring':
+        return 'Хавар';
+      case 'any':
+        return 'Дурын';
+      case 'Өвлийн улирал':
+        return 'winter';
+      case 'Зуны улирал':
+        return 'summer';
+      default:
+        return '';
+    }
+  }
+
+  getLessonLevelName(e: string): string {
+    switch (e) {
+      case 'BACHELOR':
+        return 'Бакалавр';
+      case 'MAGISTER':
+        return 'Магистр';
+      case 'DOCTOR':
+        return 'Доктор';
+      default:
+        return '';
+    }
+  }
+
+  getLessonTypeName(e: string): string {
+    switch (e) {
+      case 'REQ':
+        return 'Заавал';
+      case 'CHO':
+        return 'Сонгон';
+      default:
+        return '';
+    }
+  }
+
   readData() {
     this.service.getMainInfo(this.lessonId).subscribe((response: any) => {
       if (response) {
         this.lesson = {
           lessonId: this.lessonId,
-          lessonName: response.lessonName,
-          lessonCode: response.lessonCode,
-          lessonCredit: response.lessonCredit,
+          lessonName: response.lessonName || '',
+          lessonCode: response.lessonCode || '',
+          lessonCredit: response.lessonCredit || 0,
           school: response.school,
           department: response.department,
           prerequisite: response.prerequisite,

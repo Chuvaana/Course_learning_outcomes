@@ -2,8 +2,7 @@
   <div class="p-grid p-formgrid gap-container">
     <div *ngFor="let book of mainBooks.controls; let i = index" class="line">
       <div class="w-full">
-        <label>{{ "Сурах бичиг " + (i + 1) }}</label>
-        <input class="w-full p-3" [value]="book.value" readonly />
+        <label>{{ "Сурах бичиг " + (i + 1) }}: {{ book.value }}</label>
       </div>
     </div>
   </div>
@@ -18,8 +17,7 @@
       class="line"
     >
       <div class="w-full">
-        <input class="w-full p-3" [value]="material.value" readonly />
-        <label>{{ "Нэмэлт материал " + (i + 1) }}</label>
+        <label>{{ "Нэмэлт материал " + (i + 1) }}: {{ material.value }}</label>
       </div>
     </div>
   </div>
@@ -27,13 +25,14 @@
 
 <p-divider></p-divider>
 
-<p-panel header="Нэмэлт ном, материалууд" toggleable>
+<p-panel header="Цахим сургалтын веб холбоос" toggleable>
   <div class="p-grid p-formgrid gap-container">
-    <label>Цахим сургалтын веб холбоос:</label>
     <div *ngFor="let webLink of webLinks.controls; let i = index" class="line">
       <div class="w-full">
-        <input class="w-full p-3" [value]="webLink.value" readonly />
-        <label>{{ "Цахим сургалтын веб холбоос " + (i + 1) }}</label>
+        <label
+          >{{ "Цахим сургалтын веб холбоос " + (i + 1) }}:
+          {{ webLink.value }}</label
+        >
       </div>
     </div>
   </div>
@@ -41,16 +40,17 @@
 
 <p-divider></p-divider>
 
-<p-panel header="Нэмэлт ном, материалууд" toggleable>
+<p-panel header="Цахим номын сангийн холбоос" toggleable>
   <div class="p-grid p-formgrid gap-container">
-    <label>Цахим номын сангийн холбоос:</label>
     <div
       *ngFor="let libraryLink of libraryLinks.controls; let i = index"
       class="line"
     >
       <div class="w-full">
-        <input class="w-full p-3" [value]="libraryLink.value" readonly />
-        <label>{{ "Цахим номын сангийн холбоос " + (i + 1) }}</label>
+        <label
+          >{{ "Цахим номын сангийн холбоос " + (i + 1) }}:
+          {{ libraryLink.value }}</label
+        >
       </div>
     </div>
   </div>
@@ -58,16 +58,14 @@
 
 <p-divider></p-divider>
 
-<p-panel header="Нэмэлт ном, материалууд" toggleable>
+<p-panel header="Хичээлд ашиглах програм хангамж, хэрэгслүүд" toggleable>
   <div class="p-grid p-formgrid gap-container">
-    <label>Хичээлд ашиглах програм хангамж, хэрэгслүүд:</label>
     <div
       *ngFor="let software of softwareTools.controls; let i = index"
       class="line"
     >
       <div class="w-full">
-        <input class="w-full p-3" [value]="software.value" readonly />
-        <label>{{ "Програм хангамж " + (i + 1) }}</label>
+        <label>{{ "Програм хангамж " + (i + 1) }}: {{ software.value }}</label>
       </div>
     </div>
   </div>
