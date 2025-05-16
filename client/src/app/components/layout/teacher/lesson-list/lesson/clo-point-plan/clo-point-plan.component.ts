@@ -59,7 +59,7 @@ interface Plan {
 })
 export class CloPointPlanComponent {
   cloForm!: FormGroup;
-  cloPoint: any[] = [];
+  cloPoint: any[]=[];
 
   assessPlan: any;
 
@@ -146,7 +146,7 @@ export class CloPointPlanComponent {
     private route: ActivatedRoute,
     private pdfMainService: PdfMainService,
     private pdfGeneretorService: PdfCloGeneratorService
-  ) {}
+  ) { }
 
   async ngOnInit() {
     this.route.parent?.paramMap.subscribe((params) => {
@@ -165,7 +165,6 @@ export class CloPointPlanComponent {
     ]).subscribe(([cloList, cloPlan, assessPlan]) => {
       this.cloList = cloList;
       this.assessPlan = assessPlan;
-      this.pdfSendData.push(this.assessPlan);
       this.cloPlan = cloPlan;
       this.subMethodOrder = (assessPlan as any).plans.flatMap((p: any) =>
         p.subMethods.map((s: any) => s._id)
@@ -550,7 +549,15 @@ export class CloPointPlanComponent {
     if (this.cloPoint !== undefined && this.cloPoint !== null) {
       console.log(this.cloPoint);
       console.log(this.pdfSendData);
+      const assessPlans = this.assessPlan;
+      this.pdfSendData.push(assessPlans);
       this.pdfSendData.push(this.cloPoint);
+      const cloLength = assessPlans.plans.length - 1;
+      if (assessPlans.plans[cloLength].methodType !== 'EXAM') {
+        const [row] = assessPlans.plans.splice(cloLength - 1 , 1); // Олдсон мөрийг салгаж авна
+        assessPlans.plans.push(row);
+      }
+      console.log(assessPlans);
       this.pdfSendData.push(this.cloPlan);
       this.pdfGeneretorService.generatePdf(this.pdfSendData);
       // this.pdfMainService.generatePdfAll(this.pdfSendData);

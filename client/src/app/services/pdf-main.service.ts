@@ -61,6 +61,18 @@ export class PdfMainService {
     } else {
       // sonar aldaa..
     }
+    let recommendedSemesterIng = '';
+    if (mainInfo.recommendedSemester === 'autumn') {
+      recommendedSemesterIng = 'Намрын';
+    } else if (mainInfo.recommendedSemester === 'spring') {
+      recommendedSemesterIng = 'Хаврын';
+    } else if (mainInfo.recommendedSemester === 'any') {
+      recommendedSemesterIng = 'Дурын';
+    } else if (mainInfo.recommendedSemester === 'winter') {
+      recommendedSemesterIng = 'Өвлийн';
+    } else {
+      // sonar aldaa..
+    }
     daty.forEach((data: any, dataIndex: number) => {
       if (!data || !data.assessPlan || !data.content) return;
 
@@ -1285,8 +1297,8 @@ export class PdfMainService {
           image: base64Image, width: 100, style: 'image'
         },
         { text: 'ХИЧЭЭЛИЙН СУРАЛЦАХУЙН ҮР ДҮНГИЙН ҮНЭЛГЭЭНИЙ ТАЙЛАН', style: 'mainTitleStyle' },
-        { text: 'Хичээлийн нэр: Зургын боловсруулалт', style: 'leftMargin' },
-        { text: 'Хичээлийн жил: 2023-2024 оны хаврын улирал', style: 'leftMargin' },
+        { text: 'Хичээлийн нэр: ' + mainInfo.lessonName, style: 'leftMargin' },
+        { text: `Хичээлийн жил: ${mainInfo.schoolYear} оны ${recommendedSemesterIng} улирал`, style: 'leftMargin' },
         {
           table: {
             headerRows: 1,
@@ -1525,6 +1537,12 @@ export class PdfMainService {
           },
         },
       ],
+      footer: (currentPage: number, pageCount: number): Content => ({
+        text: `Хуудас ${currentPage} / ${pageCount}`,
+        alignment: 'center',
+        fontSize: 9,
+        margin: [0, 10, 0, 0],
+      }),
       styles: {
 
         tableYellow: {
