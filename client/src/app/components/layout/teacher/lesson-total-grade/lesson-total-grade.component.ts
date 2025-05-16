@@ -1,8 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, ElementRef, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import html2canvas from 'html2canvas';
-import jsPDF from 'jspdf';
 import { ButtonModule } from 'primeng/button';
 import { ChartModule } from 'primeng/chart';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
@@ -10,12 +8,13 @@ import { TableModule } from 'primeng/table';
 import { forkJoin } from 'rxjs';
 import { AssessmentService } from '../../../../services/assessmentService';
 import { CloPointPlanService } from '../../../../services/cloPointPlanService';
-import { CLOService } from '../../../../services/cloService';
-import { CurriculumService } from '../../../../services/curriculum.service';
-import { PdfMainService } from '../../../../services/pdf-main.service';
 import { StudentService } from '../../../../services/studentService';
 import { TeacherService } from '../../../../services/teacherService';
 import { AssessProcessService } from '../home/lesson-assessment/assessProcess';
+import * as XLSX from 'xlsx';
+import * as FileSaver from 'file-saver';
+
+
 @Component({
   selector: 'app-lesson-total-grade',
   imports: [
@@ -54,10 +53,7 @@ export class LessonTotalGradeComponent {
     private route: ActivatedRoute,
     private teacherService: TeacherService,
     private studentService: StudentService,
-    private service: CurriculumService,
-    private cloService: CLOService,
     private assessService: AssessmentService,
-    private pdfMainService: PdfMainService,
     private cloPointPlanService: CloPointPlanService
   ) {}
 
@@ -74,51 +70,41 @@ export class LessonTotalGradeComponent {
         this.cloPlan = cloPlan;
         this.pointPlan = assessPlan;
         this.students = students;
-        this.cloPointPlanService
-          .getPointPlan(this.lessonId)
-          .subscribe((res) => {
-            if (res.length != 0) {
-              res.map((item: any) => {
-                let totalPoint = 0;
-                item.examPoints.map((exam: any) => {
-                  totalPoint += exam.point;
-                });
-                item.procPoints.map((exam: any) => {
-                  totalPoint += exam.point;
-                });
-                this.tabs.push({
-                  id: item.cloId,
-                  title: this.getCloName(item.cloId),
-                  totalPoint: totalPoint,
-                  content: '',
-                });
-              });
-              if (this.tabs.length) {
-                if (this.students) {
-                  this.tabs.forEach((item: any) => {
-                    item.content = this.students.map((stu: any) => {
-                      return {
-                        studentId: stu.id,
-                        studentCode: stu.studentCode,
-                        studentName: stu.studentName,
-                        totalPoint: 0,
-                        percentage: 0,
-                        letterGrade: '',
-                      };
-                    });
-                  });
-                }
-              }
-              this.readData();
-            }
+        console.log(this.pointPlan);
+        this.pointPlan.plans.map((item: any) => {
+          item.subMethods.map((sub: any) => {
+            this.tabs.push({
+              id: sub._id,
+              title: sub.subMethod,
+              totalPoint: sub.point,
+              content: '',
+            });
           });
+        });
+        if (this.tabs.length) {
+          if (this.students) {
+            this.tabs.forEach((item: any) => {
+              item.content = this.students.map((stu: any) => {
+                return {
+                  studentId: stu.id,
+                  studentCode: stu.studentCode,
+                  studentName: stu.studentName,
+                  totalPoint: 0,
+                  percentage: 0,
+                  letterGrade: '',
+                };
+              });
+            });
+          }
+          this.readData();
+        }
       });
     });
   }
 
   readData() {
     forkJoin([
-      this.assessProcess.gradePoint(this.lessonId),
+      this.assessProcess.gradePointMethod(this.lessonId),
       this.assessProcess.studentAttPoint(
         this.lessonId,
         this.cloList,
@@ -130,11 +116,15 @@ export class LessonTotalGradeComponent {
         this.pointPlan,
         this.cloPlan
       ),
-      this.assessProcess.studentExamPointProcess(this.lessonId, this.cloList),
+      this.assessProcess.studentExamPointProcessMethod(
+        this.lessonId,
+        this.cloList
+      ),
     ]).subscribe(([gradeData, attData, actData, examData]) => {
+      console.log(examData);
       this.tabs.forEach((item: any) => {
         gradeData.forEach((grades: any) => {
-          if (item.id === grades.cloId) {
+          if (item.id === grades.subMethodId) {
             type StudentPoint = {
               studentId: string;
               point: number;
@@ -156,16 +146,13 @@ export class LessonTotalGradeComponent {
                 (total / item.totalPoint) *
                 100
               ).toFixed(2);
-              studentRow.letterGrade = this.getLetterGrade(
-                studentRow.percentage
-              );
             });
           }
         });
       });
       this.tabs.forEach((item: any) => {
         attData.forEach((attendance: any) => {
-          if (item.id === attendance.cloId) {
+          if (item.id === attendance.subMethodId) {
             item.content.forEach((studentRow: any) => {
               attendance.sumPoints.map((poi: any) => {
                 if (poi.studentId == studentRow.studentId) {
@@ -176,16 +163,13 @@ export class LessonTotalGradeComponent {
                 (studentRow.totalPoint / item.totalPoint) *
                 100
               ).toFixed(2);
-              studentRow.letterGrade = this.getLetterGrade(
-                studentRow.percentage
-              );
             });
           }
         });
       });
       this.tabs.forEach((item: any) => {
         actData.forEach((activity: any) => {
-          if (item.id === activity.cloId) {
+          if (item.id === activity.subMethodId) {
             item.content.forEach((studentRow: any) => {
               activity.sumPoints.map((poi: any) => {
                 if (poi.studentId == studentRow.studentId) {
@@ -196,36 +180,21 @@ export class LessonTotalGradeComponent {
                 (studentRow.totalPoint / item.totalPoint) *
                 100
               ).toFixed(2);
-              studentRow.letterGrade = this.getLetterGrade(
-                studentRow.percentage
-              );
             });
           }
         });
       });
-      const assessPlanMap = new Map();
-      this.cloPlan.forEach((plan: any) => {
-        const assessPlan = [...plan.examPoints, ...plan.procPoints].filter(
-          (ePoint) => ePoint.point !== 0
-        );
-        assessPlanMap.set(plan.cloId, assessPlan);
-      });
       this.tabs.forEach((item: any) => {
         examData.forEach((examPo: any) => {
-          if (item.id === examPo.cloId) {
-            const list = assessPlanMap.get(examPo.cloId);
+          if (item.id === examPo.subMethodId) {
             item.content.forEach((studentRow: any) => {
               let total = 0;
               let allTotal = 0;
               examPo.sumPoint.map((poi: any) => {
                 if (poi.studentId == studentRow.studentCode) {
-                  const listPoint = list.find(
-                    (li: any) => li.subMethodId === poi.subMethodId
-                  );
-                  const point = listPoint ? listPoint.point : 0;
                   total += poi.totalPoint;
                   allTotal += poi.allPoint;
-                  const takePoint = (total * point) / (allTotal || 1);
+                  const takePoint = (total * item.totalPoint) / (allTotal || 1);
                   studentRow.totalPoint += takePoint;
                 }
               });
@@ -233,15 +202,11 @@ export class LessonTotalGradeComponent {
                 (studentRow.totalPoint / item.totalPoint) *
                 100
               ).toFixed(2);
-              studentRow.letterGrade = this.getLetterGrade(
-                studentRow.percentage
-              );
             });
           }
         });
       });
     });
-
     setTimeout(() => {
       this.tabsReady = true;
       if (this.students && this.tabs.length) {
@@ -267,146 +232,43 @@ export class LessonTotalGradeComponent {
             : 0;
         });
       }
-      this.prepareChartData();
     }, 800);
   }
 
-  prepareChartData() {
-    const labels = this.tabs.map((tab) => tab.title);
-    const totalStudents = this.tabs.map((tab) => this.getTotalStudents(tab));
-    const aboveCCount = this.tabs.map((tab) => this.getAboveCCount(tab));
-    const aboveCPercentage = this.tabs.map(
-      (tab) => +this.getAboveCPercentage(tab)
-    );
-
-    this.chartData = {
-      labels: labels,
-      datasets: [
-        {
-          label: 'Нийт үнэлэгдсэн оюутны тоо',
-          backgroundColor: '#42A5F5',
-          data: totalStudents,
-        },
-        {
-          label: 'C ба түүнээс дээш үнэлгээтэй оюутны тоо',
-          backgroundColor: '#66BB6A',
-          data: aboveCCount,
-        },
-      ],
-    };
-
-    this.percentageChartData = {
-      labels: labels,
-      datasets: [
-        {
-          label: 'C ба түүнээс дээш үнэлгээтэй оюутны эзлэх хувь (%)',
-          fill: false,
-          borderColor: '#FFA726',
-          tension: 0.4,
-          data: aboveCPercentage,
-        },
-      ],
-    };
-
-    this.chartOptions = {
-      responsive: true,
-      plugins: {
-        legend: {
-          position: 'top',
-        },
-        title: {
-          display: true,
-          text: 'Оюутны үнэлгээний харьцуулалт',
-        },
-      },
-    };
-
-    this.percentageChartOptions = {
-      responsive: true,
-      plugins: {
-        legend: {
-          position: 'top',
-        },
-        title: {
-          display: true,
-          text: 'C ба түүнээс дээш үнэлгээтэй оюутны эзлэх хувь',
-        },
-      },
-      scales: {
-        y: {
-          min: 0,
-          max: 100,
-          ticks: {
-            callback: function (value: number) {
-              return value + '%';
-            },
-          },
-        },
-      },
-    };
-  }
-
-  getStudentLetterGrade(studentId: string, cloId: string): string {
+  getStudentGrade(studentId: string, cloId: string): string {
     const clo = this.tabs.find((t) => t.id === cloId);
     if (!clo) return '-';
     const student = clo.content.find((s: any) => s.studentId === studentId);
-    return student?.totalPoint || '0';
+    return student?.totalPoint.toFixed(2) || '0';
   }
 
-  getCloName(cloId: string): string {
-    const clo = this.cloList.find((c: { id: string }) => c.id === cloId);
-    return clo ? clo.cloName : 'Unknown';
-  }
-
-  getLetterGrade(percent: number): string {
-    if (percent >= 96) return 'A';
-    if (percent >= 91) return 'A-';
-    if (percent >= 88) return 'B+';
-    if (percent >= 84) return 'B';
-    if (percent >= 81) return 'B-';
-    if (percent >= 78) return 'C+';
-    if (percent >= 74) return 'C';
-    if (percent >= 71) return 'C-';
-    if (percent >= 68) return 'D+';
-    if (percent >= 64) return 'D';
-    if (percent >= 60) return 'D-';
-    return 'F';
-  }
-  letterGrades: string[] = ['A', 'A-', 'B+', 'B', 'B-', 'C+', 'C'];
-
-  getTotalStudents(tab: any): number {
-    return tab.content.filter(
-      (s: any) => s.letterGrade && s.letterGrade !== '-'
-    ).length;
-  }
-
-  getAboveCCount(tab: any): number {
-    return tab.content.filter((s: any) =>
-      ['A', 'A-', 'B+', 'B', 'B-', 'C+', 'C'].includes(s.letterGrade)
-    ).length;
-  }
-
-  getGradeCount(tab: any, grades: string[]): number {
-    return tab.content.filter((s: any) => grades.includes(s.letterGrade))
-      .length;
-  }
-
-  getAboveCPercentage(tab: any): string {
-    const total = this.getTotalStudents(tab);
-    if (total === 0) return '0.00';
-    const aboveC = this.getAboveCCount(tab);
-    return ((aboveC / total) * 100).toFixed(2);
-  }
-
-  exportPDF() {
-    html2canvas(this.chartWrapper.nativeElement).then((canvas) => {
-      const imgData = canvas.toDataURL('image/png');
-      const pdf = new jsPDF('p', 'mm', 'a4');
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-
-      pdf.addImage(imgData, 'PNG', 0, 10, pdfWidth, pdfHeight);
-      pdf.save('charts-summary.pdf');
+  exportExcel() {
+    const worksheetData = this.students.map((student: any, index: number) => {
+      const row: any = {
+        'д/д': index + 1,
+        'Оюутны нэр': student.studentName,
+      };
+      this.tabs.forEach((tab: any) => {
+        const tabGrade = this.getStudentGrade(student.id, tab.id);
+        row[tab.title] = tabGrade;
+      });
+      row['Нийт оноо'] = student.totalPoint;
+      return row;
     });
+
+    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(worksheetData);
+    const workbook: XLSX.WorkBook = {
+      Sheets: { 'Үнэлгээ': worksheet },
+      SheetNames: ['Үнэлгээ'],
+    };
+    const excelBuffer: any = XLSX.write(workbook, {
+      bookType: 'xlsx',
+      type: 'array',
+    });
+    const data: Blob = new Blob([excelBuffer], {
+      type: 'application/octet-stream',
+    });
+    FileSaver.saveAs(data, `Students_Grade_Report_${new Date().toISOString()}.xlsx`);
   }
+
 }

@@ -399,4 +399,112 @@ export class AssessProcessService {
       })
     );
   }
+
+  gradePointMethod(lessonId: string) {
+    return forkJoin({
+      grade: this.gradeService.getGradeByLesson(lessonId),
+    }).pipe(
+      map(({ grade }) => {
+        const methodMap = new Map<
+          string,
+          { subMethodId: string; sumPoints: any[] }
+        >();
+
+        for (const g of grade) {
+          for (const student of g.studentGrades) {
+            const studentId = student.studentId.id;
+
+            for (const gr of student.grades) {
+              const subMethodId = gr.id;
+              const point = gr.point;
+
+              if (!methodMap.has(subMethodId)) {
+                methodMap.set(subMethodId, {
+                  subMethodId,
+                  sumPoints: [],
+                });
+              }
+
+              const methodData = methodMap.get(subMethodId)!;
+              const existing = methodData.sumPoints.find(
+                (sp) => sp.studentId === studentId
+              );
+
+              if (existing) {
+                existing.point += point;
+              } else {
+                methodData.sumPoints.push({
+                  studentId,
+                  point,
+                });
+              }
+            }
+          }
+        }
+
+        const adata = Array.from(methodMap.values());
+        console.log(adata);
+        return adata;
+      })
+    );
+  }
+  studentExamPointProcessMethod(
+    lessonId: string,
+    cloList: any[]
+  ): Observable<any[]> {
+    const types = ['QUIZ1', 'QUIZ2', 'EXAM'];
+    const allObservables: Observable<any>[] = [];
+
+    const studentPoints: any[] = [];
+
+    types.forEach((type) => {
+      const obs$ = this.studentExamPoint(lessonId, type).pipe(
+        map((data: any[]) => {
+          const groupedMap = new Map<string, any>();
+
+          data.forEach((item: any) => {
+            item.question.forEach((que: any) => {
+              const cloId = que.cloId;
+              const subMethodId = que.subMethodId;
+              const studentId = item.studentId;
+
+              const mapKey = subMethodId;
+
+              if (!groupedMap.has(mapKey)) {
+                groupedMap.set(mapKey, []);
+              }
+
+              const sumPointArray = groupedMap.get(mapKey);
+
+              let pointEntry = sumPointArray.find(
+                (sp: any) => sp.studentId === studentId
+              );
+
+              if (pointEntry) {
+                pointEntry.totalPoint += Number(que.takePoint) || 0;
+                pointEntry.allPoint += Number(que.allPoint) || 0;
+              } else {
+                sumPointArray.push({
+                  studentId,
+                  totalPoint: Number(que.takePoint) || 0,
+                  allPoint: Number(que.allPoint) || 0,
+                });
+              }
+            });
+          });
+
+          for (const [subMethodId, sumPoint] of groupedMap.entries()) {
+            studentPoints.push({
+              subMethodId,
+              sumPoint,
+            });
+          }
+        })
+      );
+
+      allObservables.push(obs$);
+    });
+
+    return forkJoin(allObservables).pipe(map(() => studentPoints));
+  }
 }
