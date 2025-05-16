@@ -26,6 +26,8 @@ import { PdfCloGeneratorService } from '../../../../../../services/pdf-clo-gener
 import * as XLSX from 'xlsx';
 import * as FileSaver from 'file-saver';
 import { PdfMainService } from '../../../../../../services/pdf-main.service';
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
 
 interface SubMethod {
   _id: string;
@@ -507,53 +509,69 @@ export class CloPointPlanComponent {
   }
 
   excelConvert(): void {
-    let convertData: any[] = [];
-    this.cloPoint.map((e: any, index: any) => {
-      let excelData: any = {
-        order: index,
-        cloName: e.cloName,
-      };
-      if (e.procPoints.length > 0) {
-        let i = 0;
-        for (i; i < e.procPoints.length; i++) {
-          excelData[`point${i + 1}`] = e.procPoints[i].point;
-        }
-        for (let j = 1; j <= e.examPoints.length; j++) {
-          excelData[`point${j + i}`] = e.examPoints[j - 1].point;
-        }
-      }
-      convertData.push(excelData);
-    });
+    const table = document.getElementById('pdf-content') as HTMLTableElement;
 
-    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(convertData);
-    const workbook: XLSX.WorkBook = {
-      Sheets: { data: worksheet },
-      SheetNames: ['data'],
-    };
-    const excelBuffer: any = XLSX.write(workbook, {
-      bookType: 'xlsx',
-      type: 'array',
-    });
-
-    this.saveAsExcelFile(excelBuffer, 'exported-data');
-  }
-
-  private saveAsExcelFile(buffer: any, fileName: string): void {
-    const data: Blob = new Blob([buffer], { type: 'application/octet-stream' });
-    FileSaver.saveAs(
-      data,
-      fileName + '_export_' + new Date().getTime() + '.xlsx'
-    );
-  }
-
-  pdfConvert() {
-    if (this.cloPoint !== undefined && this.cloPoint !== null) {
-      console.log(this.cloPoint);
-      console.log(this.pdfSendData);
-      this.pdfSendData.push(this.cloPoint);
-      this.pdfSendData.push(this.cloPlan);
-      this.pdfGeneretorService.generatePdf(this.pdfSendData);
-      // this.pdfMainService.generatePdfAll(this.pdfSendData);
+    if (!table) {
+      console.error('Table not found for Excel export.');
+      return;
     }
+
+    const worksheet: XLSX.WorkSheet = XLSX.utils.table_to_sheet(table, {
+      raw: true,
+    });
+
+    if (worksheet['!ref']) {
+      const range = worksheet['!ref'];
+      const endColLetter = range.split(':')[1].replace(/[0-9]/g, '');
+      const colCount = endColLetter.charCodeAt(0) - 64;
+      worksheet['!cols'] = Array(colCount).fill({ wpx: 120 });
+    }
+
+    const workbook: XLSX.WorkBook = {
+      Sheets: { 'CLO Point Plan': worksheet },
+      SheetNames: ['CLO Point Plan'],
+    };
+    XLSX.writeFile(workbook, 'clo-point-plan.xlsx');
+  }
+
+  // pdfConvert() {
+  //   if (this.cloPoint !== undefined && this.cloPoint !== null) {
+  //     console.log(this.cloPoint);
+  //     console.log(this.pdfSendData);
+  //     this.pdfSendData.push(this.cloPoint);
+  //     this.pdfSendData.push(this.cloPlan);
+  //     this.pdfGeneretorService.generatePdf(this.pdfSendData);
+  //     // this.pdfMainService.generatePdfAll(this.pdfSendData);
+  //   }
+  // }
+
+  pdfConvert(): void {
+    const element = document.getElementById('pdf-content');
+
+    if (!element) {
+      console.error('Element not found for PDF export.');
+      return;
+    }
+
+    html2canvas(element, {
+      scale: 2, // илүү өндөр чанартай
+      useCORS: true,
+      scrollY: -window.scrollY, // viewport-с гадагш харагдахаар бол зөв авна
+    })
+      .then((canvas) => {
+        const imgData = canvas.toDataURL('image/png');
+
+        const pdf = new jsPDF({
+          orientation: 'landscape',
+          unit: 'px',
+          format: [canvas.width, canvas.height], // зурагны хэмжээтэй тааруулна
+        });
+
+        pdf.addImage(imgData, 'PNG', 0, 0, canvas.width, canvas.height);
+        pdf.save('clo-point-plan.pdf');
+      })
+      .catch((error) => {
+        console.error('PDF convert failed:', error);
+      });
   }
 }
