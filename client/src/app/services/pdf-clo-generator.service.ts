@@ -426,42 +426,6 @@ export class PdfCloGeneratorService {
             body: cloAssesment,
           },
         },
-        {
-          text: '5.	ХИЧЭЭЛИЙН ШУУД БА ШУУД БУС ҮНЭЛГЭЭНИЙ ҮР ДҮН ',
-          fontSize: 12,
-          bold: true,
-          margin: [0, 0, 0, 5] as [number, number, number, number],
-          pageBreak: 'before' as any,
-          pageOrientation: 'portrait' as const
-        },
-        {
-          text: '5.1.	ХИЧЭЭЛИЙН СУРАЛЦАХУЙН ҮР ДҮНГИЙН ШУУД ҮНЭЛГЭЭНИЙ ГҮЙЦЭТГЭЛ  ',
-          fontSize: 12,
-          bold: true,
-          margin: [0, 0, 0, 5] as [number, number, number, number]
-        },
-        {
-          text: '<Хүснэгт 4-д үзүүлсэн төлөвлөлтөд үндэслэн хичээлийн тухайн суралцахуйн үр дүн (CLOs)-нд харгалзах үнэлгээний аргыг (1-15 хүртэлх) түүвэрлэн, харгалзах гүйцэтгэлийн оноог оюутан бүрээр гаргана. Жишээ загварыг хүснэгт 5-аас 6-д үзүүлэв.>',
-          margin: [0, 0, 0, 5] as [number, number, number, number],
-          style: 'bodyRed'
-        },
-        {
-          text: '5.1.1.	ТУХАЙН CLO-Д ХАРГАЛЗАХ ОЮУТНЫ ГҮЙЦЭТГЭЛИЙН ҮНЭЛГЭЭ',
-          fontSize: 12,
-          bold: true,
-          margin: [0, 0, 0, 5] as [number, number, number, number]
-        },
-        { text: 'Хүснэгт 5. CLO-1 суралцахуйн үр дүнгийн оюутны гүйцэтгэлийн үнэлгээ', style: 'bodyCenter' },
-        {
-          table: {
-            headerRows: 1,
-            widths: ['4%', '12%',
-              '6%', '6%', '6%', '6%',
-              '6%', '6%', '6%', '6%', '6%',
-              '6%', '6%', '6%', '6%', '6%'],
-            body: tableBody,
-          },
-        },
       ],
       styles: {
         header: {

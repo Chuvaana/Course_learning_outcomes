@@ -533,7 +533,7 @@ export class CloPointPlanComponent {
     XLSX.writeFile(workbook, 'clo-point-plan.xlsx');
   }
 
-  pdfConverts() {
+  pdfConvert() {
     if (this.cloPoint !== undefined && this.cloPoint !== null) {
       console.log(this.cloPoint);
       console.log(this.pdfSendData);
@@ -553,33 +553,33 @@ export class CloPointPlanComponent {
     }
   }
 
-  pdfConvert(): void {
-    const element = document.getElementById('pdf-content');
+  // pdfConvert(): void {
+  //   const element = document.getElementById('pdf-content');
 
-    if (!element) {
-      console.error('Element not found for PDF export.');
-      return;
-    }
+  //   if (!element) {
+  //     console.error('Element not found for PDF export.');
+  //     return;
+  //   }
 
-    html2canvas(element, {
-      scale: 2, // илүү өндөр чанартай
-      useCORS: true,
-      scrollY: -window.scrollY, // viewport-с гадагш харагдахаар бол зөв авна
-    })
-      .then((canvas) => {
-        const imgData = canvas.toDataURL('image/png');
+  //   html2canvas(element, {
+  //     scale: 2, // илүү өндөр чанартай
+  //     useCORS: true,
+  //     scrollY: -window.scrollY, // viewport-с гадагш харагдахаар бол зөв авна
+  //   })
+  //     .then((canvas) => {
+  //       const imgData = canvas.toDataURL('image/png');
 
-        const pdf = new jsPDF({
-          orientation: 'landscape',
-          unit: 'px',
-          format: [canvas.width, canvas.height], // зурагны хэмжээтэй тааруулна
-        });
+  //       const pdf = new jsPDF({
+  //         orientation: 'landscape',
+  //         unit: 'px',
+  //         format: [canvas.width, canvas.height], // зурагны хэмжээтэй тааруулна
+  //       });
 
-        pdf.addImage(imgData, 'PNG', 0, 0, canvas.width, canvas.height);
-        pdf.save('clo-point-plan.pdf');
-      })
-      .catch((error) => {
-        console.error('PDF convert failed:', error);
-      });
-  }
+  //       pdf.addImage(imgData, 'PNG', 0, 0, canvas.width, canvas.height);
+  //       pdf.save('clo-point-plan.pdf');
+  //     })
+  //     .catch((error) => {
+  //       console.error('PDF convert failed:', error);
+  //     });
+  // }
 }
