@@ -3,8 +3,7 @@
 </div>
 
 <h2 class="section-title">
-  Нийт суралцахуйн үр дүнд харгалзах оюутны гүйцэтгэлийн үнэлгээ
-  <span class="subtitle">/үсгэн үнэлгээгээр/</span>
+  Нийт үнэлгээний аргуудад харгалзах оюутны гүйцэтгэлийн үнэлгээ
 </h2>
 
 <!-- Үнэлгээний хүснэгт -->
@@ -12,13 +11,11 @@
   <ng-template pTemplate="header">
     <tr>
       <th class="table-header">д/д</th>
-      <th class="table-header">Оюутны нэрс / CLOs</th>
+      <th class="table-header">Оюутны нэрс / Үнэлгээний аргууд</th>
       <ng-container *ngFor="let tab of tabs">
         <th class="table-header">{{ tab.title }}</th>
       </ng-container>
       <th class="table-header">Нийт оноо</th>
-      <!-- <th class="table-header">Дундаж оноо</th>
-      <th class="table-header">Дундаж хувь</th> -->
     </tr>
     <tr>
       <th colspan="2">Авбал зохих нийт оноо</th>
@@ -26,8 +23,6 @@
         <th>{{ tab.totalPoint }}</th>
       </ng-container>
       <th>100</th>
-      <!-- <th>10</th>
-      <th>100</th> -->
     </tr>
   </ng-template>
 
@@ -36,11 +31,11 @@
       <td>{{ index + 1 }}</td>
       <td>{{ student.studentName }}</td>
       <ng-container *ngFor="let tab of tabs">
-        <td>{{ getStudentLetterGrade(student.id, tab.id) }}</td>
+        <td>{{ getStudentGrade(student.id, tab.id) }}</td>
       </ng-container>
-      <td>{{ student.totalPoint }}</td>
-      <!-- <td>{{ student.averagePoint }}</td>
-      <td>{{ student.averagePercent }}%</td> -->
+      <td>
+        <b>{{ student.totalPoint }}</b>
+      </td>
     </tr>
   </ng-template>
 </p-table>
