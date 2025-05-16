@@ -17,6 +17,7 @@
             {{ col.week }}
           </th>
         </ng-container>
+        <th rowspan="3">Нийт оноо</th>
       </tr>
       <tr>
         <ng-container *ngFor="let col of formData">
@@ -42,6 +43,9 @@
             </ng-container>
           </ng-container>
         </ng-container>
+        <td>
+          {{ getMaxTotalScore() }}
+        </td>
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-record let-ri="rowIndex">
@@ -57,6 +61,9 @@
             </ng-container>
           </ng-container>
         </ng-container>
+        <td>
+          {{ getTotalScore(record) }}
+        </td>
       </tr>
     </ng-template>
   </p-table>

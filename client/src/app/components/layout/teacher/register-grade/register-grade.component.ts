@@ -26,33 +26,13 @@ interface GradeRecord {
   };
 }
 
-// export interface CloRelevance {
-//   cloName: string;
-//   id: string;
-// }
-
-// export interface Lesson {
-//   _id?: string;
-//   lessonId: string;
-//   week: string;
-//   title: string;
-//   time: number;
-//   cloRelevance: CloRelevance[];
-//   point: {
-//     id: string;
-//     name: string;
-//     point: number;
-//   }[];
-//   __v: number;
-// }
-
 export interface Lesson {
   _id?: string;
   lessonId: string;
   week: string;
   title: string;
   time: number;
-  cloGroups: CloGroup[]; // Хуучин cloRelevance болон point-ийг нэгтгэсэн бүтэц
+  cloGroups: CloGroup[];
   __v: number;
 }
 
@@ -185,7 +165,9 @@ export class RegisterGradeComponent {
         });
       });
 
-      this.formData = Object.values(groupedByWeek);
+      this.formData = Object.values(groupedByWeek).sort(
+        (a, b) => this.romanToNumber(a.week) - this.romanToNumber(b.week)
+      );
       this.onSelectionChange();
     });
   }
@@ -347,6 +329,28 @@ export class RegisterGradeComponent {
       '16': 'XVI',
     };
     return weekMap[week] || week;
+  }
+
+  romanToNumber(roman: string): number {
+    const romanMap: { [key: string]: number } = {
+      I: 1,
+      II: 2,
+      III: 3,
+      IV: 4,
+      V: 5,
+      VI: 6,
+      VII: 7,
+      VIII: 8,
+      IX: 9,
+      X: 10,
+      XI: 11,
+      XII: 12,
+      XIII: 13,
+      XIV: 14,
+      XV: 15,
+      XVI: 16,
+    };
+    return romanMap[roman] || 0;
   }
 
   save(): void {

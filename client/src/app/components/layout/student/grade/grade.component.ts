@@ -154,9 +154,53 @@ export class GradeComponent {
         });
       });
 
-      this.formData = Object.values(groupedByWeek);
+      this.formData = Object.values(groupedByWeek).sort(
+        (a, b) => this.romanToNumber(a.week) - this.romanToNumber(b.week)
+      );
       this.onSelectionChange();
     });
+  }
+  romanToNumber(roman: string): number {
+    const romanMap: { [key: string]: number } = {
+      I: 1,
+      II: 2,
+      III: 3,
+      IV: 4,
+      V: 5,
+      VI: 6,
+      VII: 7,
+      VIII: 8,
+      IX: 9,
+      X: 10,
+      XI: 11,
+      XII: 12,
+      XIII: 13,
+      XIV: 14,
+      XV: 15,
+      XVI: 16,
+    };
+    return romanMap[roman] || 0;
+  }
+
+  getMaxTotalScore(): number {
+    let total = 0;
+
+    for (const col of this.formData) {
+      for (const clo of col.cloGroups) {
+        for (const po of clo.points) {
+          total += Number(po.point) || 0; // point нь number биш string байвал хөрвүүлнэ
+        }
+      }
+    }
+
+    return total;
+  }
+
+  getTotalScore(record: GradeRecord): number {
+    return Object.values(record.grades).reduce(
+      (sum, val) => sum + (typeof val === 'number' ? val : 0),
+      0
+    );
   }
 
   async onSelectionChange(): Promise<void> {

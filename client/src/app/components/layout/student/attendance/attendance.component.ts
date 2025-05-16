@@ -166,4 +166,23 @@ export class AttendanceComponent {
 
     return this.toRoman(currentWeek);
   }
+
+  getStatusCount(type: string): {
+    present: number;
+    absent: number;
+    unknown: number;
+  } {
+    let present = 0;
+    let absent = 0;
+    let unknown = 0;
+
+    for (const row of this.transposedWeeks) {
+      const status = row[type];
+      if (status === true) present++;
+      else if (status === false) absent++;
+      else unknown++;
+    }
+
+    return { present, absent, unknown };
+  }
 }

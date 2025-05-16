@@ -1,0 +1,49 @@
+.loader-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 300px;
+}
+
+:host ::ng-deep .p-datatable th,
+:host ::ng-deep .p-datatable td {
+  padding: 10px;
+  text-align: center;
+  border: 1px solid #ddd;
+  font-size: 14px;
+}
+
+.section-title {
+  margin-top: 1rem;
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-align: center;
+  color: #333;
+}
+
+.subtitle {
+  font-size: 1rem;
+  font-weight: normal;
+  color: #666;
+}
+
+.table-header {
+  background-color: #48b6ff;
+  color: white;
+  text-align: center;
+  font-weight: bold;
+}
+
+.table-footer {
+  background-color: #48b6ff;
+  text-align: left;
+  padding: 0.5rem;
+  color: white;
+}
+
+.chart-title {
+  margin-top: 2rem;
+  font-size: 1.2rem;
+  text-align: center;
+  color: #444;
+}

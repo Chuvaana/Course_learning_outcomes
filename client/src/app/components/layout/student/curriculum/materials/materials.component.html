@@ -2,7 +2,7 @@
   <div class="p-grid p-formgrid gap-container">
     <div *ngFor="let book of mainBooks.controls; let i = index" class="line">
       <div class="w-full">
-        <label>{{ "Сурах бичиг " + (i + 1) }}: {{ book.value }}</label>
+        <p>{{ "Сурах бичиг " + (i + 1) }}: {{ book.value }}</p>
       </div>
     </div>
   </div>
@@ -17,7 +17,7 @@
       class="line"
     >
       <div class="w-full">
-        <label>{{ "Нэмэлт материал " + (i + 1) }}: {{ material.value }}</label>
+        <p>{{ "Нэмэлт материал " + (i + 1) }}: {{ material.value }}</p>
       </div>
     </div>
   </div>
@@ -29,10 +29,9 @@
   <div class="p-grid p-formgrid gap-container">
     <div *ngFor="let webLink of webLinks.controls; let i = index" class="line">
       <div class="w-full">
-        <label
-          >{{ "Цахим сургалтын веб холбоос " + (i + 1) }}:
-          {{ webLink.value }}</label
-        >
+        <p>
+          {{ "Цахим сургалтын веб холбоос " + (i + 1) }}: {{ webLink.value }}
+        </p>
       </div>
     </div>
   </div>
@@ -47,10 +46,10 @@
       class="line"
     >
       <div class="w-full">
-        <label
-          >{{ "Цахим номын сангийн холбоос " + (i + 1) }}:
-          {{ libraryLink.value }}</label
-        >
+        <p>
+          {{ "Цахим номын сангийн холбоос " + (i + 1) }}:
+          {{ libraryLink.value }}
+        </p>
       </div>
     </div>
   </div>
@@ -65,7 +64,7 @@
       class="line"
     >
       <div class="w-full">
-        <label>{{ "Програм хангамж " + (i + 1) }}: {{ software.value }}</label>
+        <p>{{ "Програм хангамж " + (i + 1) }}: {{ software.value }}</p>
       </div>
     </div>
   </div>

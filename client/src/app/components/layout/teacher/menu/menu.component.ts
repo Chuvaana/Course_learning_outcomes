@@ -112,17 +112,17 @@ export class MenuComponent implements OnInit {
             icon: 'pi pi-bolt',
             routerLink: ['/main/teacher/lesson', this.lessonId, 'activity'],
           },
-          {
-            label: 'QR үүсгэх',
-            icon: 'pi pi-home',
-            routerLink: ['/main/teacher/lesson', this.lessonId, 'qr-code'],
-          },
         ],
       },
       {
         label: 'Дүнгийн бүртгэл',
         icon: 'pi pi-book',
         routerLink: ['/main/teacher/lesson', this.lessonId, 'register-grade'],
+      },
+      {
+        label: 'Дүн',
+        icon: 'pi pi-book',
+        routerLink: ['/main/teacher/lesson', this.lessonId, 'total-grade'],
       },
       {
         label: 'Шалгалт',

@@ -58,7 +58,6 @@ export class ExamGradeComponent {
     this.lessonAssessmentService
       .getLesAssessmentByStudent(this.lessonId, studentCode)
       .subscribe((res) => {
-        console.log(res);
         this.examList = res;
       });
   }
