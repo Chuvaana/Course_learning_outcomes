@@ -93,20 +93,20 @@ export class PdfLessonAssessmentService {
         });
 
         const subPoints = plan.points.map((point) => ({
-          text: point.point,
+          text: isFinite(point.point) ? Number(point.point).toFixed(2) : point.point,
           alignment: 'center',
           style: 'body',
         }));
         row.push(...subPoints);
 
         row.push({
-          text: plan.totalPoint,
+          text: isFinite(plan.totalPoint) ? Number(plan.totalPoint).toFixed(2) : plan.totalPoint,
           alignment: 'center',
           style: 'body',
         });
 
         row.push({
-          text: plan.percentage,
+          text: isFinite(plan.percentage) ? Number(plan.percentage).toFixed(2) : plan.percentage,
           alignment: 'center',
           style: 'body',
         });
@@ -318,12 +318,12 @@ export class PdfLessonAssessmentService {
           { text: index + 1, alignment: 'center', style: 'bodyCenter' },
           { text: student.studentName, alignment: 'center', style: 'bodyCenter' },
           ...student.points.map((p: { point: any; }) => ({
-            text: p.point,
+            text: isFinite(p.point) ? Number(p.point).toFixed(2) : p.point,
             alignment: 'center',
             style: 'body',
           })),
-          { text: student.totalPoint, alignment: 'center', style: 'body' },
-          { text: student.percentage, alignment: 'center', style: 'body' },
+          { text: isFinite(student.totalPoint) ? Number(student.totalPoint).toFixed(2) : student.totalPoint, alignment: 'center', style: 'body' },
+          { text: isFinite(student.percentage) ? Number(student.percentage).toFixed(2) : student.percentage, alignment: 'center', style: 'body' },
           { text: student.letterGrade, alignment: 'center', style: 'body' },
         ];
         return row;

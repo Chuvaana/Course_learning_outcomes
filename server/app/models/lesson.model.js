@@ -7,6 +7,8 @@ const LessonSchema = new mongoose.Schema(
     lessonCredit: { type: Number, required: true },
     school: { type: mongoose.Schema.Types.ObjectId, ref: 'Branch', required: true },
     department: { type: String, required: true },
+    schoolName: { type: String},
+    departmentName: { type: String},
     schoolYear: { type: String },
     prerequisite: { type: String },
     assistantTeacher: {

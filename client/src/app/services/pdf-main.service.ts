@@ -27,6 +27,40 @@ export class PdfMainService {
   async generatePdfAll(daty: any) {
     const contentArray: any[] = [];
 
+    let lessonLevel = '';
+    let mainInfo = daty[4];
+    let lessStudent = daty[5];
+    let originalCloList = daty[6];
+
+    if (mainInfo.lessonLevel === 'MAGISTER') {
+      lessonLevel = 'Магистр';
+    } else if (mainInfo.lessonLevel === 'BACHELOR') {
+      lessonLevel = 'Бакалавр';
+    } else if (mainInfo.lessonLevel === 'DOCTOR') {
+      lessonLevel = 'Доктор';
+    } else {
+      // sonar aldaa..
+    }
+    let lessonType = '';
+    if (mainInfo.lessonType === 'REQ') {
+      lessonType = 'Заавал';
+    } else if (mainInfo.lessonType === 'CHO') {
+      lessonType = 'Сонгон';
+    } else {
+      // sonar aldaa..
+    }
+    let recommendedSemester = '';
+    if (mainInfo.recommendedSemester === 'autumn') {
+      recommendedSemester = 'Намар';
+    } else if (mainInfo.recommendedSemester === 'spring') {
+      recommendedSemester = 'Хавар';
+    } else if (mainInfo.recommendedSemester === 'any') {
+      recommendedSemester = 'Дурын';
+    } else if (mainInfo.recommendedSemester === 'winter') {
+      recommendedSemester = 'Өвлийн';
+    } else {
+      // sonar aldaa..
+    }
     daty.forEach((data: any, dataIndex: number) => {
       if (!data || !data.assessPlan || !data.content) return;
 
@@ -436,111 +470,6 @@ export class PdfMainService {
     const liveDate = new Date();
     const formattedDate = liveDate.toISOString().split('T')[0];
 
-    const cloTable = [
-
-      [
-        {
-          text: 'Оюутан лекц, семинарын хичээлийг судалснаар дараах чадваруудыг эзэмшинэ:',
-          colSpan: 2,
-          alignment: 'left',
-          style: 'body',
-        },
-        {},
-      ],
-      [
-        {
-          text: '1',
-          alignment: 'left',
-          style: 'body',
-        },
-        {
-          text: 'Математикийн ойлголтыг дүрс боловсруулалтад хэрэглэх;',
-          alignment: 'left',
-          style: 'body',
-        },
-      ],
-      [
-        {
-          text: '2',
-          alignment: 'left',
-          style: 'body',
-        },
-        {
-          text: 'Зургийн боловсруулалтын хэрэгсэлүүдийг онцлог домайнд хэрхэн хэрэгжүүлэх ойлголт авах, тайлбарлах',
-          alignment: 'left',
-          style: 'body',
-        },
-      ],
-      [
-        {
-          text: '3',
-          alignment: 'left',
-          style: 'body',
-        },
-        {
-          text: 'Практик асуудлыг шийдвэрлэхийн тулд алгоритмыг төлөвлөх, хэрэгжүүлэх замаар дүрс боловсруулалтын мэдлэгийг харуулах',
-          alignment: 'left',
-          style: 'body',
-        },
-      ],
-      [
-        {
-          text: '4',
-          alignment: 'left',
-          style: 'body',
-        },
-        {
-          text: 'Дүрс боловсруулалтын чиглэлээр хийгдэж байгаа шинэ судалгааны ажлуудтай танилцах, мэдэх',
-          alignment: 'left',
-          style: 'body',
-        },
-      ],
-      [
-        {
-          text: 'Оюутан лабораторийн хичээлийг судалснаар дараах чадваруудыг эзэмшинэ:',
-          colSpan: 2,
-          alignment: 'left',
-          style: 'body',
-        },
-        {},
-      ],
-      [
-        {
-          text: '5',
-          alignment: 'left',
-          style: 'body',
-        },
-        {
-          text: 'Зураг боловсруулах сантай ажиллан зураг боловсруулах аргуудыг хэрэглэх',
-          alignment: 'left',
-          style: 'body',
-        },
-      ],
-      [
-        {
-          text: '6',
-          alignment: 'left',
-          style: 'body',
-        },
-        {
-          text: 'Онолын мэдлэг дээр тулгуурлан практик асуудлуудыг шийдвэрлэх.',
-          alignment: 'left',
-          style: 'body',
-        },
-      ],
-      [
-        {
-          text: '7',
-          alignment: 'left',
-          style: 'body',
-        },
-        {
-          text: 'Бие даан туршилт судалгаан дээр суурилсан өгүүлэл бичих ба үр дүн харьцуулах.',
-          alignment: 'left',
-          style: 'body',
-        },
-      ],
-    ];
     const lessonDetailTable = [
       [
         {
@@ -549,7 +478,7 @@ export class PdfMainService {
           style: 'body',
         },
         {
-          text: 'Зургын боловсруулалт',
+          text: daty[4].lessonName,
           alignment: 'left',
           style: 'body',
         },
@@ -561,7 +490,7 @@ export class PdfMainService {
           style: 'body',
         },
         {
-          text: 'CS328',
+          text: daty[4].lessonCode,
           alignment: 'left',
           style: 'body',
         },
@@ -573,7 +502,7 @@ export class PdfMainService {
           style: 'body',
         },
         {
-          text: '3',
+          text: daty[4].lessonCredit,
           alignment: 'left',
           style: 'body',
         },
@@ -585,7 +514,7 @@ export class PdfMainService {
           style: 'body',
         },
         {
-          text: 'Мэргэшүүлэх, сонгон',
+          text: lessonType,
           alignment: 'left',
           style: 'body',
         },
@@ -597,7 +526,7 @@ export class PdfMainService {
           style: 'body',
         },
         {
-          text: 'Компьютерийн ухааны салбар',
+          text: mainInfo.departmentName,
           alignment: 'left',
           style: 'body',
         },
@@ -609,7 +538,7 @@ export class PdfMainService {
           style: 'body',
         },
         {
-          text: 'Ж.Оргил ',
+          text: daty[4].teacher.name,
           alignment: 'left',
           style: 'body',
         },
@@ -621,7 +550,7 @@ export class PdfMainService {
           style: 'body',
         },
         {
-          text: '3Б',
+          text: recommendedSemester,
           alignment: 'left',
           style: 'body',
         },
@@ -633,7 +562,7 @@ export class PdfMainService {
           style: 'body',
         },
         {
-          text: '18',
+          text: lessStudent.length,
           alignment: 'left',
           style: 'body',
         },
@@ -884,12 +813,12 @@ export class PdfMainService {
           { text: index + 1, alignment: 'center', style: 'bodyCenterAssessment' },
           { text: student.studentName, alignment: 'center', style: 'bodyCenterAssessment' },
           ...student.points.map((p: { point: any; }) => ({
-            text: p.point,
+            text: isFinite(p.point) ? Number(p.point).toFixed(2) : p.point,
             alignment: 'center',
             style: 'bodyAssessment',
           })),
-          { text: student.totalPoint, alignment: 'center', style: 'bodyAssessment' },
-          { text: student.percentage, alignment: 'center', style: 'bodyAssessment' },
+          { text: isFinite(student.totalPoint) ? Number(student.totalPoint).toFixed(2) : student.totalPoint, alignment: 'center', style: 'bodyAssessment' },
+          { text: isFinite(student.percentage) ? Number(student.percentage).toFixed(2) : student.percentage, alignment: 'center', style: 'bodyAssessment' },
           { text: student.letterGrade, alignment: 'center', style: 'bodyAssessment' },
         ];
         return row;
@@ -921,7 +850,7 @@ export class PdfMainService {
         { text: `Хүснэгт ${dataIndex + 5}. ${data.title}`, style: 'bodyRightInBold', margin: [20, 20, 20, 5] as [number, number, number, number] },
         {
           table: {
-            headerRows: 0, // Don't repeat headers on new pages
+            headerRows: 2, // Don't repeat headers on new pages
             widths: widthsAssessment,
             body: tableBodyAssessment,
             dontBreakRows: true,
@@ -1191,83 +1120,8 @@ export class PdfMainService {
       ],
     ];
 
-
-    // const cloAssessmentLevel = indirectAssesment.map((clo: any) => {
-    //   const total = clo.questionList.length;
-
-    //     let excellent = 0;
-    //     let good = 0;
-    //     let average = 0;
-    //     let poor = 0;
-    //     let veryPoor = 0;
-
-    //     clo.questionList.map((e : any) =>{
-    //       if( e.questionType === 'RATE' ){
-    //         switch (e.letterGrade) {
-    //           case '5':  excellent++; break;
-    //           case '4':  good++; break;
-    //           case '3':  average++; break;
-    //           case '2':  poor++; break;
-    //           case '1':  veryPoor++; break;
-    //           default:
-    //             //badLetterGrade++;
-    //         }
-    //       }
-    //     });
-
-    //   const total45 = excellent + good;
-    //   const percent45 = total > 0 ? ((total45 / total) * 100).toFixed(0) : '0';
-
-    //   return [
-    //     { text: clo.cloName, rowSpan: 2, alignment: 'center' },
-    //     { text: 'Хариултын тоо', alignment: 'center' },
-    //     { text: excellent , alignment: 'center' },
-    //     { text: good , alignment: 'center' },
-    //     { text: average , alignment: 'center' },
-    //     { text: poor , alignment: 'center' },
-    //     { text: veryPoor, alignment: 'center' },
-    //     { text: total, alignment: 'center' },
-    //     { text: total45, alignment: 'center' },
-    //   ];
-    // }).flatMap((row: any, index: string | number) => {
-    //   const clo = cloListParameter[index];
-    //   const total =
-    //     clo.excellent + clo.good + clo.average + clo.poor + clo.veryPoor;
-
-    //   return [
-    //     row,
-    //     [
-    //       {}, // empty for rowSpan
-    //       { text: 'Эзлэх хувь(%)', alignment: 'center' },
-    //       {
-    //         text: total > 0 ? ((clo.excellent / total) * 100).toFixed(0) : '0',
-    //         alignment: 'center',
-    //       },
-    //       {
-    //         text: total > 0 ? ((clo.good / total) * 100).toFixed(0) : '0',
-    //         alignment: 'center',
-    //       },
-    //       {
-    //         text: total > 0 ? ((clo.average / total) * 100).toFixed(0) : '0',
-    //         alignment: 'center',
-    //       },
-    //       {
-    //         text: total > 0 ? ((clo.poor / total) * 100).toFixed(0) : '0',
-    //         alignment: 'center',
-    //       },
-    //       {
-    //         text: total > 0 ? ((clo.veryPoor / total) * 100).toFixed(0) : '0',
-    //         alignment: 'center',
-    //       },
-    //       { text: '100', alignment: 'center' },
-    //       { text: '', alignment: 'center' },
-    //     ]
-    //   ];
-    // });
-
-
     const cloAssessmentLevel = indirectAssesment.flatMap((cla: any) => {
-      return cla.groupList.flatMap((clo: any, index : any) => {
+      return cla.groupList.flatMap((clo: any, index: any) => {
         const total = clo.questionList.length;
 
         let excellent = 0;
@@ -1293,7 +1147,7 @@ export class PdfMainService {
 
         // First row: Хариултын тоо
         const countRow = [
-          { text: 'CLO '+ (index+1), rowSpan: 2, alignment: 'center' },
+          { text: 'CLO ' + (index + 1), rowSpan: 2, alignment: 'center' },
           { text: 'Хариултын тоо', alignment: 'center' },
           { text: excellent, alignment: 'center' },
           { text: good, alignment: 'center' },
@@ -1354,6 +1208,76 @@ export class PdfMainService {
     ];
 
 
+    const normalCloMain: any[] = [];
+    let count = 1;
+
+    const cloLabData: any[] = [];
+    const cloLecData: any[] = [];
+    const cloSemData: any[] = [];
+    const cloOtherData: any[] = [];
+
+    for (const item of originalCloList) {
+      switch (item.type) {
+        case 'CLAB':
+          cloLabData.push(item);
+          break;
+        case 'ALEC':
+          cloLecData.push(item);
+          break;
+        case 'BSEM':
+          cloSemData.push(item);
+          break;
+        default:
+          cloOtherData.push(item); // optionally collect others
+      }
+    }
+
+    console.log('LAB:', cloLabData);
+    console.log('LEC:', cloLecData);
+    console.log('SEM:', cloSemData);
+    console.log('OTHERS:', cloOtherData); // optional
+
+    const processCloGroup = (cloList: any[], title: string) => {
+      // Header
+      normalCloMain.push([
+        {
+          text: title,
+          colSpan: 2,
+          alignment: 'left',
+          style: 'headerRow',
+          bold: true,
+        },
+        {}
+      ]);
+
+      // Мөрүүд
+      cloList.forEach((data: any) => {
+        if (data.cloName) {
+          normalCloMain.push([
+            { text: count, alignment: 'center', style: 'bodyAssessment' },
+            { text: data.cloName, alignment: 'left', style: 'bodyAssessment' }
+          ]);
+          count++;
+        }
+      });
+    };
+
+    // 3. Хэсгүүдийг дарааллаар нь оруулна
+    if (cloLecData.length > 0) {
+      processCloGroup(cloLecData, 'Оюутан лекцийн хичээлийг судалснаар дараах чадваруудыг эзэмшинэ:');
+    }
+    if (cloLabData.length > 0) {
+      processCloGroup(cloLabData, 'Оюутан лабораторийн хичээлийг судалснаар дараах чадваруудыг эзэмшинэ:');
+    }
+    if (cloSemData.length > 0) {
+      processCloGroup(cloSemData, 'Оюутан семинарын хичээлийг судалснаар дараах чадваруудыг эзэмшинэ:');
+    }
+
+
+    const cloTable = [
+      ...normalCloMain,
+    ];
+
     const documentDefinition = {
       content: [
         { text: 'ШИНЖЛЭХ УХААН ТЕХНОЛОГИЙН ИХ СУРГУУЛЬ', style: 'mainTitleStyle' },
@@ -1365,7 +1289,7 @@ export class PdfMainService {
         { text: 'Хичээлийн жил: 2023-2024 оны хаврын улирал', style: 'leftMargin' },
         {
           table: {
-            // headerRows: 1,
+            headerRows: 1,
             widths: [
               '33%',
               '34%',
@@ -1375,6 +1299,7 @@ export class PdfMainService {
             dontBreakRows: true,
             // keepWithHeaderRows: true
           },
+          layout: 'noBorders',
           margin: [0, 100, 0, 0] as [number, number, number, number],
         },
         { text: '', pageBreak: 'before' as const },
@@ -1462,7 +1387,7 @@ export class PdfMainService {
           ],
           style: 'body',
           type: 'lower-alpha' as const, // Automatically renders a), b), c)...
-          margin: [30, 0, 30, 0] as [number, number, number, number]
+          margin: [30, 0, 0, 0] as [number, number, number, number]
         },
         { text: '', pageBreak: 'before' as const },
         {
@@ -1496,6 +1421,7 @@ export class PdfMainService {
           },
           margin: [0, 0, 0, 0] as [number, number, number, number],
         },
+        { text: '', pageBreak: 'before' as const },
         { text: '3.	ХИЧЭЭЛЭЭР ЭЗЭМШИХ СУРАЛЦАХУЙН ҮР ДҮНГҮҮД', style: 'titleLeft', margin: [0, 20, 0, 10] as [number, number, number, number], },
         { text: 'Хүснэгт 3. Хичээлийн суралцахуйн үр дүн', style: 'bodyRight' },
         {
@@ -1510,10 +1436,6 @@ export class PdfMainService {
             // keepWithHeaderRows: true
           },
           margin: [0, 0, 0, 0] as [number, number, number, number],
-        },
-        {
-          text: '1',
-          style: 'bodyCenter',
         },
         {
           text: '', pageBreak: 'before' as const,

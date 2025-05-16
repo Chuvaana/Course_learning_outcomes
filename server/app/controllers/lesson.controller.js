@@ -98,6 +98,8 @@ exports.updateLesson = async (req, res) => {
       lessonCode: data.lessonCode ?? lesson.lessonCode,
       lessonCredit: data.lessonCredit !== undefined ? Number(data.lessonCredit) : lesson.lessonCredit,
       school: data.school ?? lesson.school,
+      schoolName: data.schoolName ?? lesson.schoolName,
+      departmentName: data.departmentName ?? lesson.departmentName,
       department: data.department ?? lesson.department,
       lessonLevel: data.lessonLevel ?? lesson.lessonLevel,
       lessonType: data.lessonType ?? lesson.lessonType,

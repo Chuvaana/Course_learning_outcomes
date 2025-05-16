@@ -312,7 +312,9 @@ export class MainInfoComponent {
     const cleanedData = {
       ...formData,
       department: formData.department.id,
+      departmentName: formData.department.name,
       school: formData.school.id,
+      schoolName: formData.school.name,
       schoolYear: this.schoolYear,
       lessonLevel: formData.lessonLevel.value,
       lessonType: formData.lessonType.value,

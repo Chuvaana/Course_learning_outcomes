@@ -118,4 +118,8 @@ export class CurriculumService {
   getPollQuesLesson(lessonId: string) {
     return this.http.get(`${this.apiUrl}/studentsSendPollQues/lesson/${lessonId}`);
   }
+
+  getLessonByStudent(lessonId: string) {
+    return this.http.get(`${this.apiUrl}/lesStudents/${lessonId}`);
+  }
 }
