@@ -128,10 +128,12 @@ export class ExamImportComponent {
       this.lessonId = params.get('id')!;
     });
 
-    this.studentService.getStudentByLessonsStudent(this.lessonId).subscribe((res: any) => {
-      this.lesStudent = res;
-      console.log(this.lesStudent);
-    })
+    this.studentService
+      .getStudentByLessonsStudent(this.lessonId)
+      .subscribe((res: any) => {
+        this.lesStudent = res;
+        console.log(this.lesStudent);
+      });
   }
 
   loadClo(e: string): void {
@@ -381,7 +383,7 @@ export class ExamImportComponent {
       this.msgService.add({
         severity: 'success',
         summary: 'Амжилттай',
-        detail: 'Зөв сурагчдын дүнгийн файл оруулсан байна.',
+        detail: 'Зөв дүнгийн файл оруулсан байна.',
       });
       return true;
     } else {
@@ -393,8 +395,9 @@ export class ExamImportComponent {
       this.msgService.add({
         severity: 'error',
         summary: 'Алдаа',
-        detail: `Алдаа гарлаа: Дүнгийн файл зөрсөн байна! Алдаа -> '${data[mismatchedIndex]
-          }' (${mismatchedIndex + 1}-р багана)`,
+        detail: `Алдаа гарлаа: Дүнгийн файл зөрсөн байна! Алдаа -> '${
+          data[mismatchedIndex]
+        }' (${mismatchedIndex + 1}-р багана)`,
       });
       return false;
     }
@@ -427,7 +430,7 @@ export class ExamImportComponent {
       }[];
     }[] = [];
 
-    this.cloQuestionData.map((data) => { });
+    this.cloQuestionData.map((data) => {});
 
     if (!this.activeFileLogic) {
       this.msgService.add({
@@ -585,11 +588,12 @@ export class ExamImportComponent {
               }
             });
             if (notInStudents.length > 0) {
-              const detailMessage = `Сурагчдын нэрс алга!\n` + notInStudents.join('\n');
+              const detailMessage =
+                `Оюутны нэрс алга!\n` + notInStudents.join('\n');
               this.msgService.add({
                 severity: 'warn',
                 summary: 'Анхааруулга',
-                detail: `Сурагчдын нэрс алга!` + detailMessage,
+                detail: `Оюутны нэрс алга!` + detailMessage,
               });
             }
             this.serviceAfterMsg(newStudent, allreadyInStudent);
@@ -604,14 +608,14 @@ export class ExamImportComponent {
       this.msgService.add({
         severity: 'success',
         summary: 'Амжилттай',
-        detail: `Шинээр '${newStudent}' сурагчийн дүн амжилттай бүртгэгдлээ.`,
+        detail: `Шинээр '${newStudent}' оюутны дүн амжилттай бүртгэгдлээ.`,
       });
     }
     if (allreadyInStudent != 0) {
       this.msgService.add({
         severity: 'success',
         summary: 'Амжилттай',
-        detail: `Нийт :'${allreadyInStudent}' сурагчдын дүнг засаж орууллаа.`,
+        detail: `Нийт :'${allreadyInStudent}' оюутны дүнг засаж орууллаа.`,
       });
     }
   }

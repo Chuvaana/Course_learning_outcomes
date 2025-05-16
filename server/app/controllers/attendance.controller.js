@@ -73,17 +73,14 @@ exports.createAttendanceAll = async (req, res) => {
           })),
         });
       } else {
-        // Байгаа бол attendance update хийх
         attendance.forEach((newAtt) => {
           const index = attendanceRecord.attendance.findIndex(
             (a) => a.studentId.toString() === mongoose.Types.ObjectId(newAtt.studentId).toString()
           );
 
           if (index !== -1) {
-            // Хэрвээ сурагч байгаа бол status шинэчилнэ
             attendanceRecord.attendance[index].status = newAtt.status;
           } else {
-            // Байхгүй бол push хийнэ
             attendanceRecord.attendance.push({
               ...newAtt,
               studentId: mongoose.Types.ObjectId(newAtt.studentId),
@@ -91,8 +88,6 @@ exports.createAttendanceAll = async (req, res) => {
           }
         });
       }
-
-      // Save after each record update
       await attendanceRecord.save();
     }
 
@@ -102,7 +97,6 @@ exports.createAttendanceAll = async (req, res) => {
   }
 };
 
-// ✅ Get attendance records by `lessonId`, `weekNumber`, and `type`
 exports.getAttendanceByFilter = async (req, res) => {
   try {
     const { lessonId, weekDay, type, time } = req.query;

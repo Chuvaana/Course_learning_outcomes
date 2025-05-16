@@ -70,17 +70,14 @@ exports.createActivityAll = async (req, res) => {
           })),
         });
       } else {
-        // Байгаа бол activity update хийх
         activity.forEach((newAtt) => {
           const index = activityRecord.activity.findIndex(
             (a) => a.studentId.toString() === mongoose.Types.ObjectId(newAtt.studentId).toString()
           );
 
           if (index !== -1) {
-            // Хэрвээ сурагч байгаа бол point шинэчилнэ
             activityRecord.activity[index].point = newAtt.point;
           } else {
-            // Байхгүй бол push хийнэ
             activityRecord.activity.push({
               ...newAtt,
               studentId: mongoose.Types.ObjectId(newAtt.studentId),

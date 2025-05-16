@@ -47,7 +47,7 @@ export class NavbarComponent {
         routerLink: ['/main/admin/verb'],
       },
       // {
-      //   label: 'Сурагч бүртгэлийн тохиргоо',
+      //   label: 'Оюутны бүртгэлийн тохиргоо',
       //   icon: 'pi pi-check',
       //   routerLink: ['/main/admin/student-import'],
       // },
