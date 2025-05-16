@@ -11,6 +11,10 @@ import { CloPointPlanService } from '../../../../services/cloPointPlanService';
 import { StudentService } from '../../../../services/studentService';
 import { TeacherService } from '../../../../services/teacherService';
 import { AssessProcessService } from '../home/lesson-assessment/assessProcess';
+import * as XLSX from 'xlsx';
+import * as FileSaver from 'file-saver';
+
+
 @Component({
   selector: 'app-lesson-total-grade',
   imports: [
@@ -237,4 +241,34 @@ export class LessonTotalGradeComponent {
     const student = clo.content.find((s: any) => s.studentId === studentId);
     return student?.totalPoint.toFixed(2) || '0';
   }
+
+  exportExcel() {
+    const worksheetData = this.students.map((student: any, index: number) => {
+      const row: any = {
+        'д/д': index + 1,
+        'Оюутны нэр': student.studentName,
+      };
+      this.tabs.forEach((tab: any) => {
+        const tabGrade = this.getStudentGrade(student.id, tab.id);
+        row[tab.title] = tabGrade;
+      });
+      row['Нийт оноо'] = student.totalPoint;
+      return row;
+    });
+
+    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(worksheetData);
+    const workbook: XLSX.WorkBook = {
+      Sheets: { 'Үнэлгээ': worksheet },
+      SheetNames: ['Үнэлгээ'],
+    };
+    const excelBuffer: any = XLSX.write(workbook, {
+      bookType: 'xlsx',
+      type: 'array',
+    });
+    const data: Blob = new Blob([excelBuffer], {
+      type: 'application/octet-stream',
+    });
+    FileSaver.saveAs(data, `Students_Grade_Report_${new Date().toISOString()}.xlsx`);
+  }
+
 }

@@ -120,11 +120,6 @@ export class MenuComponent implements OnInit {
         routerLink: ['/main/teacher/lesson', this.lessonId, 'register-grade'],
       },
       {
-        label: 'Дүн',
-        icon: 'pi pi-book',
-        routerLink: ['/main/teacher/lesson', this.lessonId, 'total-grade'],
-      },
-      {
         label: 'Шалгалт',
         icon: 'pi pi-plus',
         items: [
@@ -145,7 +140,11 @@ export class MenuComponent implements OnInit {
           },
         ],
       },
-
+      {
+        label: 'Дүн',
+        icon: 'pi pi-chart-line',
+        routerLink: ['/main/teacher/lesson', this.lessonId, 'total-grade'],
+      },
       {
         label: 'Санал асуулга',
         icon: 'pi pi-calendar-clock',

@@ -5,8 +5,15 @@
 <h2 class="section-title">
   Нийт үнэлгээний аргуудад харгалзах оюутны гүйцэтгэлийн үнэлгээ
 </h2>
+<button
+  pButton
+  type="button"
+  icon="pi pi-file-excel"
+  label="Excel экспорт"
+  class="p-button-success mb-3"
+  (click)="exportExcel()"
+></button>
 
-<!-- Үнэлгээний хүснэгт -->
 <p-table *ngIf="tabsReady" [value]="students" class="custom-table">
   <ng-template pTemplate="header">
     <tr>
