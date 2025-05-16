@@ -1,24 +1,39 @@
 <div>
-  <div style="font-size: 50px;margin-left: 5%;margin-top: 20px;">
-    <span>Хичээлд сурагчдыг бүртгэх</span>
+  <div style="font-size: 50px; margin-left: 5%; margin-top: 20px">
+    <span>Хичээлд оюутан бүртгэх</span>
   </div>
-  <div style="
-  DISPLAY: flex;
-  justify-content: space-between;
-  padding: 0px 10%;
-  margin-top: 50px;">
+  <div
+    style="
+      display: flex;
+      justify-content: space-between;
+      padding: 0px 10%;
+      margin-top: 50px;
+    "
+  >
     <div class="action-btn">
       <input type="file" (change)="onFileChange($event)" accept=".xls,.xlsx" />
     </div>
     <div class="drop-btn">
       <form [formGroup]="studentForm" class="auth-form">
-        <div style="
-        DISPLAY: flex;
-        justify-content: space-between;">
-          <p-dropdown formControlName="branch" [options]="branches" optionLabel="name" optionValue="id" variant="filled"
-            placeholder="Салбар сургууль" (onChange)="onBranchChange($event.value)" class="form-dropdown" />
-          <p-dropdown formControlName="department" [options]="departments" optionLabel="name" optionValue="id"
-            placeholder="Тэнхим" class="form-dropdown" />
+        <div style="display: flex; justify-content: space-between">
+          <p-dropdown
+            formControlName="branch"
+            [options]="branches"
+            optionLabel="name"
+            optionValue="id"
+            variant="filled"
+            placeholder="Салбар сургууль"
+            (onChange)="onBranchChange($event.value)"
+            class="form-dropdown"
+          />
+          <p-dropdown
+            formControlName="department"
+            [options]="departments"
+            optionLabel="name"
+            optionValue="id"
+            placeholder="Тэнхим"
+            class="form-dropdown"
+          />
         </div>
       </form>
     </div>
@@ -29,31 +44,29 @@
       <button mat-raised-button (click)="submit()">Create New Student</button>
     </div>
   </div>
-  <div style="
-  DISPLAY: flex;
-  padding: 0px 10%;
-  margin-top: 20px;
-  font-weight: bold;">
+  <div
+    style="display: flex; padding: 0px 10%; margin-top: 20px; font-weight: bold"
+  >
     <div>
-      <span>Нийт сурагчдын тоо</span>
+      <span>Нийт оюутны тоо</span>
     </div>
-    <div style="
-    padding-left: 20px;">
-      <span>{{this.studentCount}}</span>
+    <div style="padding-left: 20px">
+      <span>{{ this.studentCount }}</span>
     </div>
   </div>
-  <div style="display: flex;justify-content: center;margin-top: 2%;">
-
+  <div style="display: flex; justify-content: center; margin-top: 2%">
     <table *ngIf="tableData.length > 0" class="custom-table">
       <thead>
         <tr>
-          <th>#</th> <!-- Row count header -->
+          <th>#</th>
+          <!-- Row count header -->
           <th *ngFor="let header of tableData[0]">{{ header }}</th>
         </tr>
       </thead>
       <tbody>
         <tr *ngFor="let row of tableData.slice(1); let i = index">
-          <td>{{ i + 1 }}</td> <!-- Row count -->
+          <td>{{ i + 1 }}</td>
+          <!-- Row count -->
           <td *ngFor="let cell of row">{{ cell }}</td>
         </tr>
       </tbody>
