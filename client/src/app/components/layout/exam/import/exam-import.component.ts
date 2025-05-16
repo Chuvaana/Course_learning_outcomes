@@ -27,6 +27,8 @@ import { FinalExamService } from '../../../../services/finalExamService';
 import { lessonAssessmentService } from '../../../../services/lessonAssessment';
 import { StudentService } from '../../../../services/studentService';
 import { empty } from 'rxjs';
+import { MatDialog } from '@angular/material/dialog';
+import { ExamInfoComponent } from './info/exam-info.component';
 
 @Component({
   selector: 'app-exam-import',
@@ -57,7 +59,7 @@ export class ExamImportComponent {
   cloCount: any;
   activeAction = true;
   activeFileLogic = false;
-  studentCount: any;
+  studentCount = 1;
   onlyName: string[] = [];
   onlyId: string[] = [];
   onlyBranch: string[] = [];
@@ -99,6 +101,7 @@ export class ExamImportComponent {
     private lessonAssessmentService: lessonAssessmentService,
     private assessService: AssessmentService,
     private cloPointPlanService: CloPointPlanService,
+    private dialog: MatDialog,
     private studentService: StudentService
   ) {
     this.assesstmentForm = this.fb.group({
@@ -616,6 +619,7 @@ export class ExamImportComponent {
   examTypesData(e: any) {
     let dataIn = false;
     if (e.value !== null) {
+      this.studentCount = 1;
       this.finalExamService
         .getAllFinalExamQuestions(this.lessonId, e.value)
         .subscribe((res: any) => {
@@ -646,5 +650,14 @@ export class ExamImportComponent {
         detail: `Шалгалтын асуултууд ба суралцхуйн үр дүнгийн хамаарал бүртгээгүй байна!`,
       });
     }
+  }
+
+  infoTo() {
+    this.dialog.open(ExamInfoComponent, {
+      width: '75vw',
+      height: '65vh',
+      maxWidth: 'none',
+      data: { lessonId: this.lessonId },
+    });
   }
 }

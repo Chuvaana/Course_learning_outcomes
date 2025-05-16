@@ -915,40 +915,7 @@ export class PdfGeneratorService {
           text: data.definition[0].description,
           colSpan: 10,
           alignment: 'left',
-          style: 'tableTitle',
-        },
-        {},
-        {},
-        {},
-        {},
-        {},
-        {},
-        {},
-        {},
-        {},
-      ],
-      [
-        {
-          text: 'Уг хичээлээр програмчлалын Си хэлэн дээр тулгуурлан бүтэцлэгдсэн программ хөгжүүлэх арга техникүүдийг үзнэ. Сэдвүүд: Си хэл дээрх бүтэцлэгдсэн программчлал, функц, массив, заагч, тэмдэгт мөр, хэлбэржүүлсэн оролт/гаралт, бүтэц, нэгдэл, тоочих төрөл, файл боловсруулалт, үндсэн өгөгдлийн бүтцүүд, хөрвүүлэгчийн директив судлах болно.',
-          colSpan: 10,
           style: 'tableData',
-        },
-        {},
-        {},
-        {},
-        {},
-        {},
-        {},
-        {},
-        {},
-        {},
-      ],
-      [
-        {
-          text: data.definition[0].goal,
-          colSpan: 10,
-          alignment: 'left',
-          style: 'tableTitle',
         },
         {},
         {},
@@ -979,8 +946,9 @@ export class PdfGeneratorService {
       ],
       [
         {
-          text: 'Энэхүү хичээл нь программчлалын үндсэн суурь ойлголтууд өгөх, тэдгээрийг хэрэгжүүлэх, асуудлыг шийдвэрлэх үндсэн алхамууд болон логик бүтцийг, бодит асуудлуудыг шийдвэрлэх алгоритмуудыг боловсруулж, хэрэгжүүлэхэд сургах зорилготой. ',
+          text: data.definition[0].goal,
           colSpan: 10,
+          alignment: 'left',
           style: 'tableData',
         },
         {},
@@ -1977,7 +1945,7 @@ export class PdfGeneratorService {
       ],
       [
         {
-          text: 'Боловсруулсан багш:\n/Ж.Алимаа/',
+          text: 'Боловсруулсан багш:\n'+ mainInfo.createdTeacherBy,
           colSpan: 3,
           alignment: 'left',
           style: 'tableData',
@@ -1993,7 +1961,7 @@ export class PdfGeneratorService {
         {},
         {},
         {
-          text: 'Огноо: 2023.06.07',
+          text: mainInfo.createdTeacherDatetime.slice(0, 10),
           colSpan: 4,
           alignment: 'left',
           style: 'tableData',
@@ -2004,7 +1972,7 @@ export class PdfGeneratorService {
       ],
       [
         {
-          text: 'Боловсруулсан багш:\n/А.Хүдэр/',
+          text: 'Боловсруулсан багш:\n' + mainInfo.checkManagerBy,
           colSpan: 3,
           alignment: 'left',
           style: 'tableData',
@@ -2020,7 +1988,7 @@ export class PdfGeneratorService {
         {},
         {},
         {
-          text: 'Огноо: 2023.06.07',
+          text: mainInfo.checkManagerDatetime.slice(0, 10),
           colSpan: 4,
           alignment: 'left',
           style: 'tableData',
