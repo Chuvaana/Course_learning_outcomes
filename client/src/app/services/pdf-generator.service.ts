@@ -210,7 +210,7 @@ export class PdfGeneratorService {
         },
         {},
         {
-          text: mainInfo.department,
+          text: mainInfo.departmentName,
           colSpan: 2,
           alignment: 'left',
           style: 'tableData',
@@ -224,7 +224,7 @@ export class PdfGeneratorService {
         },
         {},
         {
-          text: mainInfo.school,
+          text: mainInfo.schoolName,
           colSpan: 4,
           alignment: 'left',
           style: 'tableData',
