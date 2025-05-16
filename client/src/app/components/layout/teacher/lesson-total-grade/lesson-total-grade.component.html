@@ -13,16 +13,32 @@
   class="p-button-success mb-3"
   (click)="exportExcel()"
 ></button>
-
 <p-table *ngIf="tabsReady" [value]="students" class="custom-table">
   <ng-template pTemplate="header">
     <tr>
-      <th class="table-header">д/д</th>
-      <th class="table-header">Оюутны нэрс / Үнэлгээний аргууд</th>
+      <th class="table-header" rowspan="2">д/д</th>
+      <th class="table-header" rowspan="2">Оюутны нэрс / Үнэлгээний аргууд</th>
       <ng-container *ngFor="let tab of tabs">
-        <th class="table-header">{{ tab.title }}</th>
+        <th class="table-header">
+          {{ tab.title }}
+        </th>
       </ng-container>
-      <th class="table-header">Нийт оноо</th>
+      <th class="table-header" rowspan="2">Нийт оноо</th>
+    </tr>
+    <tr>
+      <ng-container *ngFor="let tab of tabs">
+        <th class="table-header">
+          <button
+            style="color: black"
+            pButton
+            icon="pi pi-file-excel"
+            class="p-button-text p-button-sm ml-2"
+            (click)="exportTabExcel(tab)"
+            pTooltip="Экспортлох"
+            tooltipPosition="top"
+          ></button>
+        </th>
+      </ng-container>
     </tr>
     <tr>
       <th colspan="2">Авбал зохих нийт оноо</th>

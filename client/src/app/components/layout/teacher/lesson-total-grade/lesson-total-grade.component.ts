@@ -13,7 +13,7 @@ import { TeacherService } from '../../../../services/teacherService';
 import { AssessProcessService } from '../home/lesson-assessment/assessProcess';
 import * as XLSX from 'xlsx';
 import * as FileSaver from 'file-saver';
-
+import { TooltipModule } from 'primeng/tooltip';
 
 @Component({
   selector: 'app-lesson-total-grade',
@@ -23,6 +23,7 @@ import * as FileSaver from 'file-saver';
     CommonModule,
     ProgressSpinnerModule,
     ChartModule,
+    TooltipModule,
   ],
   templateUrl: './lesson-total-grade.component.html',
   styleUrl: './lesson-total-grade.component.scss',
@@ -242,11 +243,42 @@ export class LessonTotalGradeComponent {
     return student?.totalPoint.toFixed(2) || '0';
   }
 
+  exportTabExcel(tab: any) {
+    const tabData = tab.content.map((studentRow: any) => {
+      return {
+        'Оюутны код': studentRow.studentCode,
+        Оноо: +studentRow.totalPoint.toFixed(2),
+      };
+    });
+
+    const safeSheetName = tab.title
+      .replace(/[^а-яА-Яa-zA-Z0-9]/g, '_') // тусгай тэмдэгтүүдийг арилгах
+      .substring(0, 31); // 31 тэмдэгтээс хэтрэхгүйгээр тасдах
+
+    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(tabData);
+    const workbook: XLSX.WorkBook = {
+      Sheets: { [safeSheetName]: worksheet },
+      SheetNames: [safeSheetName],
+    };
+
+    const excelBuffer: any = XLSX.write(workbook, {
+      bookType: 'xlsx',
+      type: 'array',
+    });
+
+    const data: Blob = new Blob([excelBuffer], {
+      type: 'application/octet-stream',
+    });
+
+    const filename = `${safeSheetName}_Sheet.xlsx`;
+    FileSaver.saveAs(data, filename);
+  }
+
   exportExcel() {
     const worksheetData = this.students.map((student: any, index: number) => {
       const row: any = {
         'д/д': index + 1,
-        'Оюутны нэр': student.studentName,
+        'Оюутны нэр': student.studentCode,
       };
       this.tabs.forEach((tab: any) => {
         const tabGrade = this.getStudentGrade(student.id, tab.id);
@@ -258,7 +290,7 @@ export class LessonTotalGradeComponent {
 
     const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(worksheetData);
     const workbook: XLSX.WorkBook = {
-      Sheets: { 'Үнэлгээ': worksheet },
+      Sheets: { Үнэлгээ: worksheet },
       SheetNames: ['Үнэлгээ'],
     };
     const excelBuffer: any = XLSX.write(workbook, {
@@ -268,7 +300,9 @@ export class LessonTotalGradeComponent {
     const data: Blob = new Blob([excelBuffer], {
       type: 'application/octet-stream',
     });
-    FileSaver.saveAs(data, `Students_Grade_Report_${new Date().toISOString()}.xlsx`);
+    FileSaver.saveAs(
+      data,
+      `Students_Grade_Report_${new Date().toISOString()}.xlsx`
+    );
   }
-
 }
