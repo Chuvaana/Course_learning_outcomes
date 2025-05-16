@@ -22,6 +22,12 @@ export class lessonAssessmentService {
     return this.http.get(`${this.apiUrl}/lessonAssessments/${id}`);
   }
 
+  getLesAssessmentByStudent(id: string, code: string): Observable<any> {
+    return this.http.get(
+      `${this.apiUrl}/lessonAssessments/student/${id}?student=${code}`
+    );
+  }
+
   getLesAssessmentByType(id: string, type: string): Observable<any> {
     return this.http.get(
       `${this.apiUrl}/lessonAssessments/type/${id}?type=${type}`

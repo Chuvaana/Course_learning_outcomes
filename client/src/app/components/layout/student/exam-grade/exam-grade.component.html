@@ -1,0 +1,90 @@
+<div class="student-list-container">
+  <p-table [value]="examList" responsiveLayout="scroll">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>#</th>
+        <th>Төрөл</th>
+        <th>Төлөв</th>
+        <th>Авсан оноо</th>
+        <th></th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-examList let-index="rowIndex">
+      <tr>
+        <td>{{ index + 1 }}</td>
+        <td>{{ examList.examTypeName }}</td>
+        <td>{{ examList.status }}</td>
+        <td>{{ examList.takePoint }}</td>
+        <td><p-button (click)="showDialog(examList)" label="Дэлгэрэнгүй" /></td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
+<p-dialog
+  [header]="dialogHeader"
+  [(visible)]="visible"
+  [modal]="true"
+  [style]="{ width: '70vw' }"
+  [contentStyle]="{ 'max-height': '70vh', overflow: 'auto' }"
+>
+  <div
+    style="
+      display: flex;
+      justify-content: space-around;
+      border: 1px solid #ccc;
+      padding: 20px;
+      border-radius: 8px;
+      width: fit-content;
+      gap: 50px;
+      margin: 20px auto;
+    "
+  >
+    <div style="display: flex; flex-direction: column; gap: 10px">
+      <label><b>Нийт асуултын тоо:</b> {{ questionNumber }}</label>
+      <label><b>Нийт авах оноо: </b>{{ allPoint }}</label>
+      <label><b>Нийт авсан оноо: </b>{{ takePoint }}</label>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 10px">
+      <label><b>Эхэлсэн хугацаа: </b>{{ startDate }}</label>
+      <label><b>Үргэлжилсэн хугацаа: </b>{{ durationDate }}</label>
+    </div>
+  </div>
+
+  <p-table
+    [value]="question"
+    [paginator]="true"
+    [rows]="15"
+    responsiveLayout="scroll"
+    [styleClass]="'p-datatable-striped p-datatable-gridlines'"
+  >
+    <ng-template pTemplate="header">
+      <tr>
+        <th style="width: 50px">#</th>
+        <th>Суралцахуйн Үр Дүн (CLO)</th>
+        <th>Дэд Үнэлгээний Арга</th>
+        <th>Авах Оноо</th>
+        <th>Авсан Оноо</th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-examList let-index="rowIndex">
+      <tr>
+        <td>{{ index + 1 }}</td>
+        <td>{{ getCloName(examList.cloId) }}</td>
+        <td>{{ examList.subMethodName }}</td>
+        <td>{{ examList.allPoint }}</td>
+        <td>
+          <span
+            [ngClass]="{
+              'text-success': examList.takePoint >= examList.allPoint / 2,
+              'text-danger': examList.takePoint < examList.allPoint / 2
+            }"
+          >
+            {{ examList.takePoint }}
+          </span>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</p-dialog>

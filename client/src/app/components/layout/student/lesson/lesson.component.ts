@@ -54,7 +54,7 @@ export class LessonComponent {
       {
         label: 'Шалгалтын дүн харах',
         icon: 'pi pi-star',
-        routerLink: ['/main/student', this.lessonId, 'curriculum'],
+        routerLink: ['/main/student', this.lessonId, 'exam-grade'],
       },
       {
         label: 'Явцын дүн харах',
