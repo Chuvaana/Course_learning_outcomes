@@ -13,6 +13,8 @@ module.exports = (app) => {
 
   router.get('/type/:lessonId', controller.getAllLessonAssmentsByType);
 
+  router.get('/student/:lessonId', controller.getAllLessonAssmentsByStudent);
+
   // Create new AssessFooter
   router.get('/:id', controller.getAssessmentById);
 

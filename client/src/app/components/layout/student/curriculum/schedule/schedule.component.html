@@ -52,7 +52,6 @@
               <th>Семинарын сэдэв</th>
               <th>Семинарын цаг</th>
               <th>CLOs хамаарал</th>
-              <th>Оноо</th>
             </tr>
           </ng-template>
           <ng-template pTemplate="body" let-lesson>
@@ -70,21 +69,6 @@
                 <p-tag
                   [value]="getCloName(lesson.get('cloRelevance')?.value)"
                 ></p-tag>
-              </td>
-              <td>
-                <div
-                  *ngFor="
-                    let pCtrl of lesson.get('point')['controls'];
-                    let i = index
-                  "
-                  [formGroup]="pCtrl"
-                  class="point-row"
-                >
-                  <span
-                    >{{ getSemMethodNameById(pCtrl.get("id").value) }}:</span
-                  >
-                  {{ pCtrl.get("point")?.value }}
-                </div>
               </td>
             </tr>
           </ng-template>
@@ -108,7 +92,6 @@
               <th>Лаборатори/практикийн сэдэв</th>
               <th>Цаг</th>
               <th>CLOs хамаарал</th>
-              <th>Оноо</th>
             </tr>
           </ng-template>
 
@@ -127,20 +110,6 @@
                 <p-tag
                   [value]="getCloName(lesson.get('cloRelevance')?.value)"
                 ></p-tag>
-              </td>
-              <td>
-                <div
-                  *ngFor="
-                    let pCtrl of lesson.get('point')['controls'];
-                    let i = index
-                  "
-                  [formGroup]="pCtrl"
-                  class="point-row"
-                >
-                  <span>{{ getMethodNameById(pCtrl.get("id").value) }}:</span>
-
-                  {{ pCtrl.get("point")?.value }}
-                </div>
               </td>
             </tr>
           </ng-template>
@@ -163,7 +132,6 @@
               <th>Танхимд зөвлөгөө авах, үнэлүүлэх цаг</th>
               <th>Бие даан суралцах цаг</th>
               <th>CLOs хамаарал</th>
-              <th>Оноо</th>
             </tr>
           </ng-template>
 
@@ -185,19 +153,6 @@
                 <p-tag
                   [value]="getCloName(lesson.get('cloRelevance')?.value)"
                 ></p-tag>
-              </td>
-              <td>
-                <div
-                  *ngFor="
-                    let pCtrl of lesson.get('point')['controls'];
-                    let i = index
-                  "
-                  [formGroup]="pCtrl"
-                  class="point-row"
-                >
-                  <span>{{ getBdMethodNameById(pCtrl.get("id").value) }}:</span>
-                  {{ pCtrl.get("point")?.value }}
-                </div>
               </td>
             </tr>
           </ng-template>
