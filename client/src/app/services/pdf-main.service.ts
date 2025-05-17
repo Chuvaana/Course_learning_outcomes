@@ -31,6 +31,7 @@ export class PdfMainService {
     let mainInfo = daty[4];
     let lessStudent = daty[5];
     let originalCloList = daty[6];
+    let direcIndirecAssesmentList = daty[7];
 
     if (mainInfo.lessonLevel === 'MAGISTER') {
       lessonLevel = 'Магистр';
@@ -150,7 +151,7 @@ export class PdfMainService {
         { text: `Хүснэгт ${dataIndex + 1}. ${data.title}`, style: 'footerCenter' },
         {
           table: {
-            headerRows: 3,
+            headerRows: 0,
             widths,
             body: tableBody,
             dontBreakRows: true,
@@ -862,7 +863,7 @@ export class PdfMainService {
         { text: `Хүснэгт ${dataIndex + 5}. ${data.title}`, style: 'bodyRightInBold', margin: [20, 20, 20, 5] as [number, number, number, number] },
         {
           table: {
-            headerRows: 2, // Don't repeat headers on new pages
+            headerRows: 0, // Don't repeat headers on new pages
             widths: widthsAssessment,
             body: tableBodyAssessment,
             dontBreakRows: true,
@@ -1132,77 +1133,147 @@ export class PdfMainService {
       ],
     ];
 
-    const cloAssessmentLevel = indirectAssesment.flatMap((cla: any) => {
-      return cla.groupList.flatMap((clo: any, index: any) => {
-        const total = clo.questionList.length;
+    function aggregateCloAssessment(indirectAssesment: any[]) {
+      // CLO үнэлгээ хадгалах Map
+      const cloStatsMap = new Map<number, {
+        excellent: number, good: number, average: number,
+        poor: number, veryPoor: number, total: number
+      }>();
 
-        let excellent = 0;
-        let good = 0;
-        let average = 0;
-        let poor = 0;
-        let veryPoor = 0;
-
-        clo.questionList.forEach((e: any) => {
-          if (e.questionType === 'RATE') {
-            switch (e.answerValue) {
-              case '5': excellent++; break;
-              case '4': good++; break;
-              case '3': average++; break;
-              case '2': poor++; break;
-              case '1': veryPoor++; break;
-            }
+      indirectAssesment.forEach((cla: any) => {
+        cla.groupList.forEach((clo: any, index: number) => {
+          if (!cloStatsMap.has(index)) {
+            cloStatsMap.set(index, {
+              excellent: 0, good: 0, average: 0,
+              poor: 0, veryPoor: 0, total: 0
+            });
           }
+
+          const stats = cloStatsMap.get(index)!;
+
+          clo.questionList.forEach((q: any) => {
+            if (q.questionType === 'RATE') {
+              stats.total++;
+
+              switch (q.answerValue) {
+                case '5': stats.excellent++; break;
+                case '4': stats.good++; break;
+                case '3': stats.average++; break;
+                case '2': stats.poor++; break;
+                case '1': stats.veryPoor++; break;
+              }
+            }
+          });
         });
+      });
 
-        const total45 = excellent + good;
-        const percent45 = total > 0 ? ((total45 / total) * 100).toFixed(0) : '0';
+      // CLO aggregated rows үүсгэх
+      const rows: any[] = [];
 
-        // First row: Хариултын тоо
+      cloStatsMap.forEach((stats, index) => {
+        const total45 = stats.excellent + stats.good;
+        const percent45 = stats.total > 0 ? ((total45 / stats.total) * 100).toFixed(0) : '0';
+
         const countRow = [
           { text: 'CLO ' + (index + 1), rowSpan: 2, alignment: 'center' },
           { text: 'Хариултын тоо', alignment: 'center' },
-          { text: excellent, alignment: 'center' },
-          { text: good, alignment: 'center' },
-          { text: average, alignment: 'center' },
-          { text: poor, alignment: 'center' },
-          { text: veryPoor, alignment: 'center' },
-          { text: total, alignment: 'center' },
+          { text: stats.excellent, alignment: 'center' },
+          { text: stats.good, alignment: 'center' },
+          { text: stats.average, alignment: 'center' },
+          { text: stats.poor, alignment: 'center' },
+          { text: stats.veryPoor, alignment: 'center' },
+          { text: stats.total, alignment: 'center' },
           { text: total45, alignment: 'center' },
         ];
 
-        // Second row: Эзлэх хувь
         const percentRow = [
           {}, // for rowSpan
           { text: 'Эзлэх хувь(%)', alignment: 'center' },
-          {
-            text: total > 0 ? ((excellent / total) * 100).toFixed(0) : '0',
-            alignment: 'center',
-          },
-          {
-            text: total > 0 ? ((good / total) * 100).toFixed(0) : '0',
-            alignment: 'center',
-          },
-          {
-            text: total > 0 ? ((average / total) * 100).toFixed(0) : '0',
-            alignment: 'center',
-          },
-          {
-            text: total > 0 ? ((poor / total) * 100).toFixed(0) : '0',
-            alignment: 'center',
-          },
-          {
-            text: total > 0 ? ((veryPoor / total) * 100).toFixed(0) : '0',
-            alignment: 'center',
-          },
+          { text: stats.total ? ((stats.excellent / stats.total) * 100).toFixed(0) : '0', alignment: 'center' },
+          { text: stats.total ? ((stats.good / stats.total) * 100).toFixed(0) : '0', alignment: 'center' },
+          { text: stats.total ? ((stats.average / stats.total) * 100).toFixed(0) : '0', alignment: 'center' },
+          { text: stats.total ? ((stats.poor / stats.total) * 100).toFixed(0) : '0', alignment: 'center' },
+          { text: stats.total ? ((stats.veryPoor / stats.total) * 100).toFixed(0) : '0', alignment: 'center' },
           { text: '100', alignment: 'center' },
           { text: percent45, alignment: 'center' },
         ];
 
-        return [countRow, percentRow];
+        rows.push(countRow, percentRow);
       });
-    });
 
+      return rows;
+    }
+    const cloAssessmentLevel = aggregateCloAssessment(indirectAssesment);
 
+    // const cloAssessmentLevel = indirectAssesment.flatMap((cla: any) => {
+    //   return cla.groupList.flatMap((clo: any, index: any) => {
+    //     const total = clo.questionList.length;
+
+    //     let excellent = 0;
+    //     let good = 0;
+    //     let average = 0;
+    //     let poor = 0;
+    //     let veryPoor = 0;
+
+    //     clo.questionList.forEach((e: any) => {
+    //       if (e.questionType === 'RATE') {
+    //         switch (e.answerValue) {
+    //           case '5': excellent++; break;
+    //           case '4': good++; break;
+    //           case '3': average++; break;
+    //           case '2': poor++; break;
+    //           case '1': veryPoor++; break;
+    //         }
+    //       }
+    //     });
+
+    //     const total45 = excellent + good;
+    //     const percent45 = total > 0 ? ((total45 / total) * 100).toFixed(0) : '0';
+
+    //     // First row: Хариултын тоо
+    //     const countRow = [
+    //       { text: 'CLO ' + (index + 1), rowSpan: 2, alignment: 'center' },
+    //       { text: 'Хариултын тоо', alignment: 'center' },
+    //       { text: excellent, alignment: 'center' },
+    //       { text: good, alignment: 'center' },
+    //       { text: average, alignment: 'center' },
+    //       { text: poor, alignment: 'center' },
+    //       { text: veryPoor, alignment: 'center' },
+    //       { text: total, alignment: 'center' },
+    //       { text: total45, alignment: 'center' },
+    //     ];
+
+    //     // Second row: Эзлэх хувь
+    //     const percentRow = [
+    //       {}, // for rowSpan
+    //       { text: 'Эзлэх хувь(%)', alignment: 'center' },
+    //       {
+    //         text: total > 0 ? ((excellent / total) * 100).toFixed(0) : '0',
+    //         alignment: 'center',
+    //       },
+    //       {
+    //         text: total > 0 ? ((good / total) * 100).toFixed(0) : '0',
+    //         alignment: 'center',
+    //       },
+    //       {
+    //         text: total > 0 ? ((average / total) * 100).toFixed(0) : '0',
+    //         alignment: 'center',
+    //       },
+    //       {
+    //         text: total > 0 ? ((poor / total) * 100).toFixed(0) : '0',
+    //         alignment: 'center',
+    //       },
+    //       {
+    //         text: total > 0 ? ((veryPoor / total) * 100).toFixed(0) : '0',
+    //         alignment: 'center',
+    //       },
+    //       { text: '100', alignment: 'center' },
+    //       { text: percent45, alignment: 'center' },
+    //     ];
+
+    //     return [countRow, percentRow];
+    //   });
+    // });
 
     const indirectAssesmentTable = [
       [
@@ -1218,7 +1289,6 @@ export class PdfMainService {
       ],
       ...cloAssessmentLevel
     ];
-
 
     const normalCloMain: any[] = [];
     let count = 1;
@@ -1290,6 +1360,146 @@ export class PdfMainService {
       ...normalCloMain,
     ];
 
+
+    const dricetIndirCount = cloListData.length;
+    const dricetIndirAssess = 85 / dricetIndirCount; // багана болж хуваагдах хэмжээ
+
+    const widthsDricetIndir: string[] = ['15%'];
+    for (let i = 0; i < dricetIndirCount; i++) {
+      widthsDricetIndir.push(`${dricetIndirAssess.toFixed(2)}%`);
+    }
+    const values = direcIndirecAssesmentList[0]?.values;
+    const cells = Object.values(values);
+
+    const values1 = direcIndirecAssesmentList[1]?.values;
+    const cells1 = Object.values(values1);
+
+    const values2 = direcIndirecAssesmentList[2]?.values;
+    const cells2 = Object.values(values2);
+
+    const values13 = direcIndirecAssesmentList[3]?.values;
+    const cells13 = Object.values(values13);
+
+    // const cells1 = Array.isArray(values)
+    const direcIndirecAssesmentTable = [
+      [
+        { text: 'Үнэлгээ/CLOs', alignment: 'center', style: 'contents' },
+        ...cloListData.map((e: any) => ({
+          text: e.cloName,
+          alignment: 'center',
+          style: 'body',
+        }))
+      ],
+      [
+        { text: 'Шууд\nүнэлгээний\nдундаж хувь', alignment: 'center', style: 'body' },
+        ...cells.map((e: any) => ({
+          text: e,
+          alignment: 'center',
+          style: 'body',
+        }))
+      ],
+      [
+        { text: 'Шалгуур\nхангасан\nбайдал', alignment: 'center', style: 'contents' },
+        ...cells1.map((e: any) => ({
+          text: e,
+          alignment: 'center',
+          style: 'tableGreenAssessment',
+        }))
+      ],
+      [
+        { text: 'Шууд бус\nүнэлгээний\nдундаж хувь', alignment: 'center', style: 'body' },
+        ...cells2.map((e: any) => ({
+          text: e,
+          alignment: 'center',
+          style: 'body',
+        }))
+      ],
+      [
+        { text: 'Шалгуур\nхангасан\nбайдал', alignment: 'center', style: 'contents' },
+        ...cells13.map((e: any) => ({
+          text: e,
+          alignment: 'center',
+          style: 'tableGreenAssessment',
+        }))
+      ],
+    ];
+
+
+    let reportList: any[] = []
+    indirectAssesment.map((res: any) => {
+      let queistonList: any[] = []
+      const total = res.length;
+      let excellent = 0;
+      let good = 0;
+      let average = 0;
+      let thirdValue = 0;
+
+      res.groupList.flatMap((clo: any, index: any) => {
+        clo.questionList.forEach((e: any, indexX: number) => {
+          let count = 0;
+          let quistionData = {
+            point: 0,
+            name: '',
+            total: 0,
+            percent: 0,
+            id: '',
+          }
+          if (e.questionType === 'RATE') {
+            switch (e.answerValue) {
+              case '5': excellent++; count++; break;
+              case '4': good++; count++; break;
+              case '3': average++; count++; break;
+            }
+            if (reportList.length > 0) {
+
+              reportList[0].map((data: any, indexZ: number) => {
+                if (thirdValue === indexZ) {
+                  data.point = data.point + count;
+                  data.total = data.total + 1;
+                  data.percent = (data.point / data.total) * 100;
+                }
+              })
+            } else {
+              if (count > 0) {
+                quistionData.percent = 100;
+              }
+              quistionData.point = count;
+              quistionData.name = e.questionTitle;
+              quistionData.id = e._id;
+              quistionData.total = 1;
+              queistonList.push(quistionData);
+            }
+          }
+          thirdValue = thirdValue + 1;
+        });
+      });
+      reportList.push(queistonList);
+    });
+    console.log(reportList[0]);
+
+    const report = reportList[0].map((data: any, index: number) => {
+      const row = [
+        { text: data.name, alignment: 'left', style: 'bodyAssessment' },
+        { text: isFinite(data.point) ? Number(data.point).toFixed(2) : data.point, alignment: 'center', style: 'bodyAssessment' },
+        { text: isFinite(data.percent) ? Number(data.percent).toFixed(2) : data.percent, alignment: 'center', style: 'bodyAssessment' },
+      ];
+      return row;
+    });
+    console.log(report);
+
+    const reportQuestionTable = [
+      [
+        { text: 'Санал асуулгад оролцсон оюутны тоо: 25\nХичээлийн ерөнхий үнэлгээ: 5=маш сайн;  4=сайн; 3=дунд; 2=муу; 1=маш муу', colSpan: 3, alignment: 'left', style: 'tableGreenBoldAssessment' },
+        {},
+        {},
+      ],
+      [
+        { text: '\n\nАсуулгууд', alignment: 'center', style: 'tableGreenBoldAssessment' },
+        { text: '3-5 оноо\nбүхий\nхариултын тоо', alignment: 'center', style: 'tableGreenAssessment' },
+        { text: '3-5 оноо\nбүхий\nхариултын\nэзлэх хувь', alignment: 'center', style: 'tableGreenAssessment' },
+      ],
+      ...report
+    ];
     const documentDefinition = {
       content: [
         { text: 'ШИНЖЛЭХ УХААН ТЕХНОЛОГИЙН ИХ СУРГУУЛЬ', style: 'mainTitleStyle' },
@@ -1301,7 +1511,7 @@ export class PdfMainService {
         { text: `Хичээлийн жил: ${mainInfo.schoolYear} оны ${recommendedSemesterIng} улирал`, style: 'leftMargin' },
         {
           table: {
-            headerRows: 1,
+            headerRows: 0,
             widths: [
               '33%',
               '34%',
@@ -1404,7 +1614,7 @@ export class PdfMainService {
         { text: '', pageBreak: 'before' as const },
         {
           table: {
-            // headerRows: 1,
+            headerRows: 0,
             widths: [
               '25%',
               '25%',
@@ -1422,7 +1632,7 @@ export class PdfMainService {
         { text: 'Хүснэгт 2. Хичээлийн мэдээлэл', style: 'bodyRight' },
         {
           table: {
-            // headerRows: 1,
+            headerRows: 0,
             widths: [
               '50%',
               '50%',
@@ -1438,7 +1648,7 @@ export class PdfMainService {
         { text: 'Хүснэгт 3. Хичээлийн суралцахуйн үр дүн', style: 'bodyRight' },
         {
           table: {
-            // headerRows: 1,
+            headerRows: 0,
             widths: [
               '10%',
               '90%',
@@ -1466,7 +1676,8 @@ export class PdfMainService {
         { text: 'Хүснэгт 4. Хичээлийн суралцахуйн үр дүнгийн шууд үнэлгээний онооны хуваарилалт/төлөвлөлтөөр/', style: 'bodyCenter' },
         {
           table: {
-            headerRows: 1,
+            headerRows: 0,
+            dontBreakRows: true,
             widths: widths,
             body: cloAssesment,
           },
@@ -1506,7 +1717,8 @@ export class PdfMainService {
         { text: 'Хүснэгт 7. Зургын боловсруулалт хичээлийн нийт суралцахуйн үр дүнд харгалзах\nоюутны гүйцэтгэлийн үнэлгээ/үсгэн үнэлгээгээр/', style: 'bodyRightBol' },
         {
           table: {
-            headerRows: 1,
+            headerRows: 0,
+            dontBreakRows: true,
             widths: overallWidths,
             body: overallAssesmentInd,
           },
@@ -1531,11 +1743,50 @@ export class PdfMainService {
         { text: 'Хүснэгт 8. Cуралцахуйн үр дүнгийн шууд бус үнэлгээний үр дүн', style: 'bodyRightBol' },
         {
           table: {
-            headerRows: 1,
+            headerRows: 0,
+            dontBreakRows: true,
             widths: ['8%', '19%', '11%', '11%', '11%', '10%', '10%', '10%', '14%',],
             body: indirectAssesmentTable,
           },
         },
+        {
+          text: '', pageBreak: 'before' as const,
+          style: 'bodyCenter',
+        },
+        {
+          text: '5.3.	ШУУД БА ШУУД БУС ҮНЭЛГЭЭНИЙ НЭГДСЭН ҮЗҮҮЛЭЛТ',
+          fontSize: 12,
+          bold: true,
+          margin: [20, 0, 20, 5] as [number, number, number, number]
+        },
+        { text: 'Хүснэгт 9-д үзүүлснээр ногоон өнгөөр тэмдэглэсэн үр дүнгүүд шаардлага хангаж байгаа бөгөөд шаардлагатай гэж үзвэл сайжруулалт хийж болно. Харин шар өнгөөр тэмдэглэсэн үр дүнгүүдийн гүйцэтгэлийн дундаж хувийг дээшлүүлэхийн тулд заавал сайжруулалт хийх шаардлагатай.', style: 'bodyLeftNoBold' },
+        { text: 'Хүснэгт 9. СLOs-ийн шууд ба шууд бус үнэлгээний нэгдсэн дүн', style: 'bodyRightBol' },
+        {
+          table: {
+            headerRows: 0,
+            dontBreakRows: true,
+            widths: widthsDricetIndir,
+            body: direcIndirecAssesmentTable,
+          },
+        },
+        { text: 'Тайлбар: A: Маш сайн; B: Сайн; С: Дунд; D: Хангалтгүй', style: 'bodyLeft' },
+        {
+          text: '6.	САНАЛ АСУУЛГЫН БУСАД ҮР ДҮНГҮҮДЭД ХИЙСЭН ДҮН ШИНЖИЛГЭЭ',
+          fontSize: 12,
+          bold: true,
+          margin: [20, 15, 20, 5] as [number, number, number, number]
+        },
+        { text: 'Хичээлийн санал асуулгаар CLOs-ийн гүйцэтгэлийг тодорхойлохоос гадна хичээлийн ерөнхий үнэлгээний асуулгуудад хариулт авсан. Эдгээр асуулгуудын үр дүнг боловсруулан хүснэгт 10-д үзүүлэв. Тухайн асуулгын хувьд 3-5 оноо бүхий хариултын эзлэх хувь ямар байгаагаас хамаарч  түүнийг цаашид хэрхэн сайжруулах төлөвлөлт хийнэ.', style: 'bodyLeftNoBold' },
+        { text: 'Хүснэгт 10. Санал асуулгын нэмэлт үр дүнгийн гүйцэтгэл', style: 'bodyRightBol' },
+        {
+          table: {
+            headerRows: 0,
+            dontBreakRows: true,
+            widths: ['70%', '15%', '15%'],
+            body: reportQuestionTable,
+          },
+        },
+
       ],
       footer: (currentPage: number, pageCount: number): Content => ({
         text: `Хуудас ${currentPage} / ${pageCount}`,

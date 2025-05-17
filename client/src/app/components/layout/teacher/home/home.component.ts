@@ -48,6 +48,7 @@ export class HomeComponent {
   teacherId!: string;
   cloPoint: any;
   cloPoints: any;
+  averagePercentages: any;
 
   // үндсэн мэдээлэл
   pdfSendData: any[] = [];
@@ -69,6 +70,7 @@ export class HomeComponent {
   assessPlans: any;
   cloLists: any;
   lesStudent: any;
+  summaryData: any;
 
   // clo дүн
   tabDatas!: [{ title: string; content: any; value: any }];
@@ -287,7 +289,91 @@ export class HomeComponent {
     this.pdfSendData.push(this.mainInfo);
     this.pdfSendData.push(this.lesStudent);
     this.pdfSendData.push(this.cloList);
+
+    let cloData: any;
+    cloData = this.pollDatas.flatMap((item: any) =>
+      item.groupList
+        .filter((qe: any) => qe.groupType === 'CLO')
+        .flatMap((qe: any) => qe.questionList || [])
+    );
+
+    const stats = this.calculateCloStats(cloData);
+
+    const percentValues: { [key: string]: number } = {};
+    const gradeValues: { [key: string]: string } = {};
+
+    stats.forEach((item) => {
+      percentValues[item.clo] = item.highScorePercent;
+      gradeValues[item.clo] = item.letter;
+    });
+
+    this.summaryData = [
+      {
+        label: 'Шууд бус үнэлгээний дундаж хувь',
+        values: percentValues,
+        type: 'percent',
+      },
+      {
+        label: 'Шалгуур хангасан байдал',
+        values: gradeValues,
+        type: 'grade',
+      },
+    ];
+    this.averagePercentages = this.getCloAveragePercentages();
+
+    const percentValues1: { [key: string]: number } = {};
+    const gradeValues1: { [key: string]: string } = {};
+
+    this.averagePercentages.forEach((item: any) => {
+      percentValues1[item.clo] = item.percentage;
+      gradeValues1[item.clo] = item.letter;
+    });
+    this.summaryData.push(
+      {
+        label: 'Шууд үнэлгээний дундаж хувь',
+        values: percentValues1,
+        type: 'percent',
+      },
+      {
+        label: 'Шалгуур хангасан байдал',
+        values: gradeValues1,
+        type: 'grade',
+      }
+    );
+    this.pdfSendData.push(this.summaryData);
     this.pdfMainService.generatePdfAll(this.pdfSendData);
+  }
+
+  calculateCloStats(data: any[]) {
+    const grouped: { [cloId: string]: any[] } = {};
+
+    data.forEach((entry) => {
+      if (!grouped[entry.cloId]) grouped[entry.cloId] = [];
+      grouped[entry.cloId].push(entry);
+    });
+
+    const result = Object.entries(grouped).map(([cloId, responses]) => {
+      const scores = { score5: 0, score4: 0, score3: 0, score2: 0, score1: 0 };
+      let highScoreCount = 0;
+
+      responses.forEach((entry: any) => {
+        const value = Number(entry.answerValue);
+        if (value >= 1 && value <= 5) {
+          scores[`score${value}` as keyof typeof scores]++;
+          if (value >= 4) highScoreCount++;
+        }
+      });
+
+      const total = responses.length;
+
+      return {
+        clo: cloId,
+        highScorePercent: Math.round((highScoreCount / total) * 100),
+        letter: this.getLetterGrade(Math.round((highScoreCount / total) * 100)),
+      };
+    });
+
+    return result;
   }
 
   getSubMethodName(e: string): string {
@@ -468,5 +554,25 @@ export class HomeComponent {
     if (percent > 70) return 'C';
     if (percent > 60) return 'D';
     return 'F';
+  }
+
+  getCloAveragePercentages(): {
+    clo: string;
+    percentage: number;
+    letter: string;
+  }[] {
+    return this.tabs.map((tab: { content: never[]; id: any; }) => {
+      const students = tab.content || [];
+      const totalPercent = students.reduce((sum: number, student: any) => {
+        return sum + (student.percentage || 0);
+      }, 0);
+      const average = students.length ? totalPercent / students.length : 0;
+      const rounded = +average.toFixed(2);
+      return {
+        clo: tab.id,
+        percentage: rounded,
+        letter: this.getLetterGrade(rounded),
+      };
+    });
   }
 }
