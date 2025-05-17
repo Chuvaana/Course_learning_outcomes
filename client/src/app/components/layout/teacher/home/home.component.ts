@@ -49,6 +49,8 @@ export class HomeComponent {
   cloPoint: any;
   cloPoints: any;
   averagePercentages: any;
+  feedBack: any;
+  feedBackTast: any;
 
   // үндсэн мэдээлэл
   pdfSendData: any[] = [];
@@ -203,11 +205,15 @@ export class HomeComponent {
       this.cloPointPlanService.getPointPlan(this.lessonId),
       this.assessService.getAssessmentByLesson(this.lessonId),
       this.service.getLessonByStudent(this.lessonId),
-    ]).subscribe(([cloList, pollData, cloPlan, assessPlan, lesStudent]) => {
+      this.service.getFeedBackTask(this.lessonId),
+      this.service.getFeedBack(this.lessonId),
+    ]).subscribe(([cloList, pollData, cloPlan, assessPlan, lesStudent,feedBackTast, feedBack]) => {
       this.cloLists = cloList;
       this.assessPlans = assessPlan;
       this.pollDatas = pollData;
       this.lesStudent = lesStudent;
+      this.feedBackTast = feedBackTast;
+      this.feedBack = feedBack;
       // this.pdfSendData.push(this.assessPlans);
       this.cloPoints = this.cloPlan.map((clo: any) => ({
         ...clo,
@@ -341,6 +347,8 @@ export class HomeComponent {
       }
     );
     this.pdfSendData.push(this.summaryData);
+    this.pdfSendData.push(this.feedBackTast);
+    this.pdfSendData.push(this.feedBack);
     this.pdfMainService.generatePdfAll(this.pdfSendData);
   }
 

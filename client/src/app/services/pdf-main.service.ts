@@ -8,6 +8,10 @@ import { fontWeight } from 'html2canvas/dist/types/css/property-descriptors/font
 import pdfMake from 'pdfmake/build/pdfmake';
 import { vfs } from 'pdfmake/build/vfs_fonts';
 import { Content } from 'pdfmake/interfaces';
+export const checked =
+  'data:image/png;base64,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';
+export const unChecked =
+  'data:image/png;base64,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';
 
 @Injectable({
   providedIn: 'root'
@@ -32,6 +36,8 @@ export class PdfMainService {
     let lessStudent = daty[5];
     let originalCloList = daty[6];
     let direcIndirecAssesmentList = daty[7];
+    let feedBackTastList = daty[8];
+    let feedBackList = daty[9];
 
     if (mainInfo.lessonLevel === 'MAGISTER') {
       lessonLevel = 'Магистр';
@@ -1205,76 +1211,6 @@ export class PdfMainService {
     }
     const cloAssessmentLevel = aggregateCloAssessment(indirectAssesment);
 
-    // const cloAssessmentLevel = indirectAssesment.flatMap((cla: any) => {
-    //   return cla.groupList.flatMap((clo: any, index: any) => {
-    //     const total = clo.questionList.length;
-
-    //     let excellent = 0;
-    //     let good = 0;
-    //     let average = 0;
-    //     let poor = 0;
-    //     let veryPoor = 0;
-
-    //     clo.questionList.forEach((e: any) => {
-    //       if (e.questionType === 'RATE') {
-    //         switch (e.answerValue) {
-    //           case '5': excellent++; break;
-    //           case '4': good++; break;
-    //           case '3': average++; break;
-    //           case '2': poor++; break;
-    //           case '1': veryPoor++; break;
-    //         }
-    //       }
-    //     });
-
-    //     const total45 = excellent + good;
-    //     const percent45 = total > 0 ? ((total45 / total) * 100).toFixed(0) : '0';
-
-    //     // First row: Хариултын тоо
-    //     const countRow = [
-    //       { text: 'CLO ' + (index + 1), rowSpan: 2, alignment: 'center' },
-    //       { text: 'Хариултын тоо', alignment: 'center' },
-    //       { text: excellent, alignment: 'center' },
-    //       { text: good, alignment: 'center' },
-    //       { text: average, alignment: 'center' },
-    //       { text: poor, alignment: 'center' },
-    //       { text: veryPoor, alignment: 'center' },
-    //       { text: total, alignment: 'center' },
-    //       { text: total45, alignment: 'center' },
-    //     ];
-
-    //     // Second row: Эзлэх хувь
-    //     const percentRow = [
-    //       {}, // for rowSpan
-    //       { text: 'Эзлэх хувь(%)', alignment: 'center' },
-    //       {
-    //         text: total > 0 ? ((excellent / total) * 100).toFixed(0) : '0',
-    //         alignment: 'center',
-    //       },
-    //       {
-    //         text: total > 0 ? ((good / total) * 100).toFixed(0) : '0',
-    //         alignment: 'center',
-    //       },
-    //       {
-    //         text: total > 0 ? ((average / total) * 100).toFixed(0) : '0',
-    //         alignment: 'center',
-    //       },
-    //       {
-    //         text: total > 0 ? ((poor / total) * 100).toFixed(0) : '0',
-    //         alignment: 'center',
-    //       },
-    //       {
-    //         text: total > 0 ? ((veryPoor / total) * 100).toFixed(0) : '0',
-    //         alignment: 'center',
-    //       },
-    //       { text: '100', alignment: 'center' },
-    //       { text: percent45, alignment: 'center' },
-    //     ];
-
-    //     return [countRow, percentRow];
-    //   });
-    // });
-
     const indirectAssesmentTable = [
       [
         { text: '\nCLO/үнэлгээний\nтүвшин', colSpan: 2, alignment: 'center', style: 'tableHeader' },
@@ -1500,6 +1436,51 @@ export class PdfMainService {
       ],
       ...report
     ];
+
+    const grouped = feedBackTastList.reduce((acc: any, item: any) => {
+      if (!acc[item.category]) acc[item.category] = [];
+      acc[item.category].push(item);
+      return acc;
+    }, {});
+
+    // 2. feedBackList-д хөрвүүлэх
+    const feedBackLists = Object.entries(grouped).flatMap(([category, items]) => {
+      const castedItems = items as any[]; // 👈 тодорхой төрөл зааж өгнө
+
+      const groupHeader = [
+        { text: category, colSpan: 2, style: 'bodyBoldLeft' },
+        {}
+      ];
+
+      const rows = castedItems.map((item: any) => [
+        {
+          image: item.selected ? checked : unChecked,
+          width: 10,
+          height: 10,
+          alignment: 'center'
+        },
+        { text: `${item.index}. ${item.description}` }
+      ]);
+
+      return [groupHeader, ...rows];
+    });
+
+    const feedBackTable = [
+      [
+        { text: 'Цонхон дээр\n2 удаа дарж\nсонгох', alignment: 'center', style: 'tableGreenBoldAssessment' },
+        { text: '\nҮйл ажиллагааны чиглэлүүд', alignment: 'center', style: 'tableGreenBoldAssessment' },
+      ],
+      ...feedBackLists
+    ];
+
+
+
+
+
+
+
+
+
     const documentDefinition = {
       content: [
         { text: 'ШИНЖЛЭХ УХААН ТЕХНОЛОГИЙН ИХ СУРГУУЛЬ', style: 'mainTitleStyle' },
@@ -1784,6 +1765,46 @@ export class PdfMainService {
             dontBreakRows: true,
             widths: ['70%', '15%', '15%'],
             body: reportQuestionTable,
+          },
+        },
+        {
+          text: '', pageBreak: 'before' as const,
+          style: 'bodyCenter',
+        },
+        {
+          text: '7.	СУРАЛЦАХУЙН ҮР ДҮНГИЙН ГҮЙЦЭТГЭЛИЙГ САЙЖРУУЛАХ ТӨЛӨВЛӨЛТ',
+          fontSize: 12,
+          bold: true,
+          margin: [20, 0, 20, 5] as [number, number, number, number]
+        },
+        {
+          text: '7.1.	ХИЧЭЭЛИЙН ОНЦЛОГ, ДАВУУ ТАЛУУД',
+          fontSize: 12,
+          bold: true,
+          margin: [20, 0, 20, 5] as [number, number, number, number]
+        },
+        { text: feedBackList[0].strengths, style: 'bodyLeftNoBold',margin: [0, 15, 0, 15] as [number, number, number, number]  },
+        {
+          text: '7.2.	ХИЧЭЭЛИЙН СУЛ ТАЛУУД',
+          fontSize: 12,
+          bold: true,
+          margin: [20, 0, 20, 5] as [number, number, number, number]
+        },
+        { text: feedBackList[0].weaknesses, style: 'bodyLeftNoBold',margin: [0, 15, 0, 15] as [number, number, number, number] },
+        {
+          text: '7.3.	ХИЧЭЭЛИЙН СУРАЛЦАХУЙН ҮР ДҮНГИЙН ГҮЙЦЭТГЭЛИЙГ ДЭЭШЛҮҮЛЭХ ЧИГЛЭЛЭЭР ХИЙХ АЖЛЫН ТӨЛӨВЛӨЛТ',
+          fontSize: 12,
+          bold: true,
+          margin: [20, 0, 20, 5] as [number, number, number, number]
+        },
+        { text: 'Хичээлийн суралцахуйн үр дүнгийн гүйцэтгэлийг дээшлүүлэх зорилгоор дараагийн улиралд хэрэгжүүлэх үйл ажиллагааны чиглэлүүдийг хүснэгт 11-д үзүүлсэн байдлаар төлөвлөж байна. Сонгосон үйл ажиллагааг хэрэгжүүлэх тодорхой төлөвлөгөө гарган ажиллаж улирлын төгсгөлд үр дүнд шинжилгээ хийнэ', style: 'bodyLeftNoBold' },
+        { text: 'Хүснэгт 11. Хичээлийн суралцахуйн үр дүнгүүдийг сайжруулах чиглэлүүд', style: 'bodyRightBol' },
+        {
+          table: {
+            headerRows: 0,
+            dontBreakRows: true,
+            widths: ['15%', '85%'],
+            body: feedBackTable,
           },
         },
 

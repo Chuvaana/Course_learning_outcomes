@@ -52,6 +52,7 @@ interface MainInfoResponse {
 })
 export class CurriculumService {
   private apiUrl = 'http://localhost:3000/api'; // Update with your actual API URL
+  private apiUrl1 = 'http://localhost:3000/api/feedBackTask';
 
   constructor(private http: HttpClient) {}
 
@@ -121,5 +122,13 @@ export class CurriculumService {
 
   getLessonByStudent(lessonId: string) {
     return this.http.get(`${this.apiUrl}/lesStudents/${lessonId}`);
+  }
+
+  getFeedBackTask(lessonId: string): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl1}/${lessonId}`);
+  }
+
+  getFeedBack(lessonId: string): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/feedBack/${lessonId}`);
   }
 }
