@@ -9,6 +9,8 @@ import {
   ReactiveFormsModule,
 } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
 import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { InputNumberModule } from 'primeng/inputnumber';
@@ -19,15 +21,10 @@ import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { ToastModule } from 'primeng/toast';
 import { forkJoin } from 'rxjs';
+import * as XLSX from 'xlsx';
 import { AssessmentService } from '../../../../../../services/assessmentService';
 import { CloPointPlanService } from '../../../../../../services/cloPointPlanService';
 import { TeacherService } from '../../../../../../services/teacherService';
-import { PdfCloGeneratorService } from '../../../../../../services/pdf-clo-generator.service';
-import * as XLSX from 'xlsx';
-import * as FileSaver from 'file-saver';
-import { PdfMainService } from '../../../../../../services/pdf-main.service';
-import html2canvas from 'html2canvas';
-import jsPDF from 'jspdf';
 
 interface SubMethod {
   _id: string;
@@ -74,80 +71,14 @@ export class CloPointPlanComponent {
   subMethodOrder: string[] = [];
 
   pdfSendData: any[] = [];
-  dataTest = [
-    [
-      'qw',
-      'Age',
-      'Country',
-      'Country',
-      'qw',
-      'Age',
-      'Country',
-      'Country',
-      'qw',
-      'Age',
-      'Country',
-      'Country',
-      'qw',
-      'Age',
-      'Country',
-      'Country',
-      'qw',
-      'Age',
-      'Country',
-    ],
-    [
-      'qw',
-      'Age',
-      'Country',
-      'Country',
-      'qw',
-      'Age',
-      'Country',
-      'Country',
-      'qw',
-      'Age',
-      'Country',
-      'Country',
-      'qw',
-      'Age',
-      'Country',
-      'Country',
-      'qw',
-      'Age',
-      'Country',
-    ],
-    [
-      'qw',
-      'Age',
-      'Country',
-      'Country',
-      'qw',
-      'Age',
-      'Country',
-      'Country',
-      'qw',
-      'Age',
-      'Country',
-      'Country',
-      'qw',
-      'Age',
-      'Country',
-      'Country',
-      'qw',
-      'Age',
-      'Country',
-    ],
-  ];
+
   constructor(
     private fb: FormBuilder,
     private service: TeacherService,
     private cloPointPlanService: CloPointPlanService,
     private assessService: AssessmentService,
     private msgService: MessageService,
-    private route: ActivatedRoute,
-    private pdfMainService: PdfMainService,
-    private pdfGeneretorService: PdfCloGeneratorService
+    private route: ActivatedRoute
   ) {}
 
   async ngOnInit() {

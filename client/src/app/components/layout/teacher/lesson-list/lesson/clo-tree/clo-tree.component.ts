@@ -140,6 +140,14 @@ export class CloTreeComponent {
     });
   }
 
+  get plans(): FormArray {
+    return this.planForm.get('plans') as FormArray;
+  }
+
+  subMethods(planIndex: number): FormArray {
+    return this.plans.at(planIndex).get('subMethods') as FormArray;
+  }
+
   changedMethodType(event: DropdownChangeEvent, index: number) {
     this.hideArray[index] = event.value === 'PROC';
   }
