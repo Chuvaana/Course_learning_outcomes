@@ -1,19 +1,20 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { AbstractControl, FormsModule, ValidationErrors } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationService, MessageService, SelectItem } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { CheckboxModule } from 'primeng/checkbox';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { InputTextModule } from 'primeng/inputtext';
 import { SelectModule } from 'primeng/select';
 import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { ToastModule } from 'primeng/toast';
-import { AssessmentService } from '../../../../../services/assessmentService';
 import { CLOService } from '../../../../../services/cloService';
-import { TabRefreshService } from '../tabRefreshService';
-import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { SharedDictService } from '../../shared';
+import { TabRefreshService } from '../tabRefreshService';
+import { InfoComponent } from './info/info.component';
 
 interface Clo {
   id: string;
@@ -58,12 +59,54 @@ export class CloComponent {
   clonedClos: { [s: string]: Clo } = {};
   editingRowId: string | null = null;
 
+  bloomVerbsMn = [
+    'бүтээх',
+    'зохион бүтээх',
+    'загварчлах',
+    'шинэчлэх',
+    'боловсруулах',
+    'шинэчлэн бичих',
+    'шүүн хэлэлцэх',
+    'дахин загварчлах',
+    'шүүн тунгаах',
+    'зэрэглэл тогтоох',
+    'ялгах',
+    'холбох',
+    'хамаарлыг тогтоох',
+    'дүрслэх',
+    'дүгнэх',
+    'ангилах',
+    'шийдэх',
+    'загварчлах',
+    'даалгаврыг хэрэгжүүлэх',
+    'загвар гаргах',
+    'заах',
+    'олж илрүүлэх',
+    'дүгнэх',
+    'ангилах',
+    'харьцуулах',
+    'орлуулах',
+    'хамаарлыг тодорхойлох',
+    'тодорхойлох',
+    'тайлбарлах',
+    'дүрслэх',
+    'таних',
+    'мэдэх',
+    'ойлгох',
+    'хэрэглэх',
+    'задлан шинжлэх',
+    'үнэлэх',
+    'бүтээх',
+    'шийдвэрлэх',
+  ];
+
   constructor(
     private service: CLOService,
     private msgService: MessageService,
     private shared: SharedDictService,
     private tabRefreshService: TabRefreshService,
-    private confirmationService: ConfirmationService
+    private confirmationService: ConfirmationService,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit() {
@@ -125,6 +168,14 @@ export class CloComponent {
   }
 
   onRowEditSave(clo: Clo) {
+    if (!clo.cloName || !this.bloomVerbMnValidator(clo.cloName)) {
+      this.msgService.add({
+        severity: 'error',
+        summary: 'Алдаа',
+        detail: 'Суралцахуйн үр дүн баганад блумын үйл үг орсон байх ёстой.',
+      });
+      return;
+    }
     const cloData = { ...clo, lessonId: this.lessonId };
 
     if (clo.id === null || clo.id === undefined) {
@@ -155,14 +206,14 @@ export class CloComponent {
           this.msgService.add({
             severity: 'success',
             summary: 'Амжилттай',
-            detail: 'CLO updated successfully!',
+            detail: 'Амжилттай шинэчлэгдлээ!',
           });
         },
         (err) => {
           this.msgService.add({
             severity: 'error',
             summary: 'Алдаа',
-            detail: 'Failed to update CLO: ' + err.message,
+            detail: 'Шинэчлэхэд алдаа гарлаа: ' + err.message,
           });
         }
       );
@@ -220,5 +271,18 @@ export class CloComponent {
     setTimeout(() => {
       this.onRowEditInit(newClo as Clo, this.clos.length - 1);
     });
+  }
+
+  infoTo() {
+    this.dialog.open(InfoComponent, {
+      width: '60vw',
+      height: '90vh',
+      maxWidth: 'none',
+    });
+  }
+
+  bloomVerbMnValidator(value: string): boolean {
+    const val = value?.toLowerCase() || '';
+    return this.bloomVerbsMn.some((verb) => val.includes(verb));
   }
 }

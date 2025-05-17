@@ -70,6 +70,7 @@ export class MainInfoComponent {
       department: ['', Validators.required],
       prerequisite: [''],
       schoolYear: [''],
+      association: [''],
       assistantTeacherName: [''],
       assistantTeacherRoom: [''],
       assistantTeacherEmail: [
@@ -94,24 +95,24 @@ export class MainInfoComponent {
       lessonLevel: ['', Validators.required],
       lessonType: ['', Validators.required],
       recommendedSemester: ['', Validators.required],
-      weeklyLecture: ['', Validators.required],
-      weeklySeminar: ['', Validators.required],
-      weeklyLab: ['', Validators.required],
-      weeklyAssignment: ['', Validators.required],
-      weeklyPractice: ['', Validators.required],
-      totalLecture: ['', Validators.required],
-      totalSeminar: ['', Validators.required],
-      totalLab: ['', Validators.required],
-      totalAssignment: ['', Validators.required],
-      totalPractice: ['', Validators.required],
-      selfStudyLecture: ['', Validators.required],
-      selfStudySeminar: ['', Validators.required],
-      selfStudyLab: ['', Validators.required],
-      selfStudyAssignment: ['', Validators.required],
-      selfStudyPractice: ['', Validators.required],
-      createdTeacherBy: [''],
-      createdTeacherDatetime: [''],
-      checkManagerBy: [''],
+      weeklyLecture: [0, Validators.required],
+      weeklySeminar: [0, Validators.required],
+      weeklyLab: [0, Validators.required],
+      weeklyAssignment: [0, Validators.required],
+      weeklyPractice: [0, Validators.required],
+      totalLecture: [0, Validators.required],
+      totalSeminar: [0, Validators.required],
+      totalLab: [0, Validators.required],
+      totalAssignment: [0, Validators.required],
+      totalPractice: [0, Validators.required],
+      selfStudyLecture: [0, Validators.required],
+      selfStudySeminar: [0, Validators.required],
+      selfStudyLab: [0, Validators.required],
+      selfStudyAssignment: [0, Validators.required],
+      selfStudyPractice: [0, Validators.required],
+      createdTeacherBy: ['', Validators.required],
+      createdTeacherDatetime: ['', Validators.required],
+      checkManagerBy: ['', Validators.required],
       checkManagerDatetime: [''],
     });
 
@@ -124,6 +125,18 @@ export class MainInfoComponent {
         teacherPhone: res.phone,
       });
     });
+  }
+
+  public findInvalidControls() {
+    const invalid = [];
+    const controls = this.mainInfoForm.controls;
+    for (const name in controls) {
+      if (controls[name].invalid) {
+        invalid.push(name);
+      }
+    }
+    console.log(invalid);
+    return invalid;
   }
 
   ngOnInit(): void {
@@ -171,6 +184,7 @@ export class MainInfoComponent {
             school: response.school,
             department: response.department,
             prerequisite: response.prerequisite,
+            association: response.association,
 
             assistantTeacherName: response.assistantTeacher.name
               ? response.assistantTeacher.name
@@ -305,6 +319,30 @@ export class MainInfoComponent {
     });
   }
 
+  checkData(e: any): boolean {
+    const sumSelfStudy =
+      e.selfStudyLecture +
+      e.selfStudySeminar +
+      e.selfStudyLab +
+      e.selfStudyAssignment +
+      e.selfStudyPractice;
+
+    if (sumSelfStudy != e.lessonCredit * 48) {
+      this.msgService.add({
+        severity: 'warn',
+        summary: 'Анхааруулга',
+        detail:
+          'Бие даалтын нийлбэр оноо ' +
+          e.lessonCredit * 48 +
+          ' байх ёстой. Одоогийн нийлбэр ' +
+          sumSelfStudy,
+      });
+      return false;
+    }
+
+    return true;
+  }
+
   submitButton(): void {
     const formData = this.mainInfoForm.value;
 
@@ -318,6 +356,7 @@ export class MainInfoComponent {
       schoolYear: this.schoolYear,
       lessonLevel: formData.lessonLevel.value,
       lessonType: formData.lessonType.value,
+      association: formData.association ? formData.association.value : '',
       recommendedSemester: formData.recommendedSemester.value,
       lessonCredit: Number(formData.lessonCredit) || 0,
       weeklyLecture: Number(formData.weeklyLecture) || 0,
@@ -340,6 +379,9 @@ export class MainInfoComponent {
       checkManagerBy: String(formData.checkManagerBy), // Array хэлбэртэй
       checkManagerDatetime: new Date(formData.checkManagerDatetime),
     };
+    if (!this.checkData(cleanedData)) {
+      return;
+    }
     if (this.isNew) {
       this.service.saveLesson(cleanedData).subscribe({
         next: (response: any) => {
@@ -398,21 +440,29 @@ export class MainInfoComponent {
       });
     }
   }
-
   onValueChange(e: any) {
-    this.mainInfoForm.get('totalLecture')?.setValue(e.value * 16);
+    const lecture = e.value || 0;
+    this.mainInfoForm.get('totalLecture')?.setValue(lecture * 16);
+    this.calculateWeeklyAssignment();
+  }
+
+  calculateWeeklyAssignment() {
+    const lecture = Number(this.mainInfoForm.get('weeklyLecture')?.value || 0);
+    const seminar = Number(this.mainInfoForm.get('weeklySeminar')?.value || 0);
+    const lab = Number(this.mainInfoForm.get('weeklyLab')?.value || 0);
+    const assignment = lecture * 2 + seminar * 0.5 + lab * 0.5; // жишээ жишгээр
+
+    this.mainInfoForm.get('weeklyAssignment')?.setValue(assignment);
   }
 
   onValueChangeSem(e: any) {
     this.mainInfoForm.get('totalSeminar')?.setValue(e.value * 16);
+    this.calculateWeeklyAssignment();
   }
 
   onValueChangeLab(e: any) {
     this.mainInfoForm.get('totalLab')?.setValue(e.value * 16);
-  }
-
-  onValueChangeAssign(e: any) {
-    this.mainInfoForm.get('totalAssignment')?.setValue(e.value * 16);
+    this.calculateWeeklyAssignment();
   }
 
   onValueChangePrac(e: any) {

@@ -214,8 +214,8 @@ export class MethodologyComponent {
   addMethod() {
     const newMethod: Method1 = {
       lessonId: this.lessonId,
-      pedagogy: '',
-      deliveryMode: '',
+      pedagogy: 'CLASS',
+      deliveryMode: 'Lecture',
       cloRelevance: [],
       classroom: false,
       electronic: false,
