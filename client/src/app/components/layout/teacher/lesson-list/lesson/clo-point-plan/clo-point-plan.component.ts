@@ -79,7 +79,7 @@ export class CloPointPlanComponent {
     private assessService: AssessmentService,
     private msgService: MessageService,
     private route: ActivatedRoute
-  ) {}
+  ) { }
 
   async ngOnInit() {
     this.route.parent?.paramMap.subscribe((params) => {
@@ -98,7 +98,6 @@ export class CloPointPlanComponent {
     ]).subscribe(([cloList, cloPlan, assessPlan]) => {
       this.cloList = cloList;
       this.assessPlan = assessPlan;
-      this.pdfSendData.push(this.assessPlan);
       this.cloPlan = cloPlan;
       this.subMethodOrder = (assessPlan as any).plans.flatMap((p: any) =>
         p.subMethods.map((s: any) => s._id)
@@ -465,44 +464,53 @@ export class CloPointPlanComponent {
     XLSX.writeFile(workbook, 'clo-point-plan.xlsx');
   }
 
-  // pdfConvert() {
-  //   if (this.cloPoint !== undefined && this.cloPoint !== null) {
-  //     console.log(this.cloPoint);
-  //     console.log(this.pdfSendData);
-  //     this.pdfSendData.push(this.cloPoint);
-  //     this.pdfSendData.push(this.cloPlan);
-  //     this.pdfGeneretorService.generatePdf(this.pdfSendData);
-  //     // this.pdfMainService.generatePdfAll(this.pdfSendData);
-  //   }
-  // }
+  pdfConvert() {
+    if (this.cloPoint !== undefined && this.cloPoint !== null) {
+      console.log(this.cloPoint);
+      console.log(this.pdfSendData);
+      const assessPlans = this.assessPlan;
+      this.pdfSendData.push(assessPlans);
+      this.pdfSendData.push(this.cloPoint);
+      const cloLength = assessPlans.plans.length - 1;
+      if (assessPlans.plans[cloLength].methodType !== 'EXAM') {
+        const [row] = assessPlans.plans.splice(cloLength - 1, 1); // Олдсон мөрийг салгаж авна
+        assessPlans.plans.push(row);
+      }
+      console.log(assessPlans);
+      this.pdfSendData.push(this.cloPlan);
+      this.pdfGeneretorService.generatePdf(this.pdfSendData);
+      // this.pdfMainService.generatePdfAll(this.pdfSendData);
 
-  pdfConvert(): void {
-    const element = document.getElementById('pdf-content');
-
-    if (!element) {
-      console.error('Element not found for PDF export.');
-      return;
     }
-
-    html2canvas(element, {
-      scale: 2, // илүү өндөр чанартай
-      useCORS: true,
-      scrollY: -window.scrollY, // viewport-с гадагш харагдахаар бол зөв авна
-    })
-      .then((canvas) => {
-        const imgData = canvas.toDataURL('image/png');
-
-        const pdf = new jsPDF({
-          orientation: 'landscape',
-          unit: 'px',
-          format: [canvas.width, canvas.height], // зурагны хэмжээтэй тааруулна
-        });
-
-        pdf.addImage(imgData, 'PNG', 0, 0, canvas.width, canvas.height);
-        pdf.save('clo-point-plan.pdf');
-      })
-      .catch((error) => {
-        console.error('PDF convert failed:', error);
-      });
   }
+
+  // pdfConvert(): void {
+  //   const element = document.getElementById('pdf-content');
+
+  //   if (!element) {
+  //     console.error('Element not found for PDF export.');
+  //     return;
+  //   }
+
+  //   html2canvas(element, {
+  //     scale: 2, // илүү өндөр чанартай
+  //     useCORS: true,
+  //     scrollY: -window.scrollY, // viewport-с гадагш харагдахаар бол зөв авна
+  //   })
+  //     .then((canvas) => {
+  //       const imgData = canvas.toDataURL('image/png');
+
+  //       const pdf = new jsPDF({
+  //         orientation: 'landscape',
+  //         unit: 'px',
+  //         format: [canvas.width, canvas.height], // зурагны хэмжээтэй тааруулна
+  //       });
+
+  //       pdf.addImage(imgData, 'PNG', 0, 0, canvas.width, canvas.height);
+  //       pdf.save('clo-point-plan.pdf');
+  //     })
+  //     .catch((error) => {
+  //       console.error('PDF convert failed:', error);
+  //     });
+  // }
 }

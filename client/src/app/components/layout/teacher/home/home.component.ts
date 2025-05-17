@@ -274,7 +274,13 @@ export class HomeComponent {
   }
   pdfTo() {
     this.pdfSendData = [];
-    this.pdfSendData.push(this.assessPlans);
+    const assessPlans = this.assessPlan;
+    const cloLength = assessPlans.plans.length - 1;
+    if (assessPlans.plans[cloLength].methodType !== 'EXAM') {
+      const [row] = assessPlans.plans.splice(cloLength - 1, 1); // Олдсон мөрийг салгаж авна
+      assessPlans.plans.push(row);
+    }
+    this.pdfSendData.push(assessPlans);
     this.pdfSendData.push(this.cloPoints);
     this.pdfSendData.push(this.tabs);
     this.pdfSendData.push(this.pollDatas);
