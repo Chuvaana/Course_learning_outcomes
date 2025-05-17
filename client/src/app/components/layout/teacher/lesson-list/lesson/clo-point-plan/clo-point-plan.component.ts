@@ -79,7 +79,7 @@ export class CloPointPlanComponent {
     private assessService: AssessmentService,
     private msgService: MessageService,
     private route: ActivatedRoute
-  ) { }
+  ) {}
 
   async ngOnInit() {
     this.route.parent?.paramMap.subscribe((params) => {
@@ -478,9 +478,8 @@ export class CloPointPlanComponent {
       }
       console.log(assessPlans);
       this.pdfSendData.push(this.cloPlan);
-      this.pdfGeneretorService.generatePdf(this.pdfSendData);
+      // this.pdfGeneretorService.generatePdf(this.pdfSendData);
       // this.pdfMainService.generatePdfAll(this.pdfSendData);
-
     }
   }
 
