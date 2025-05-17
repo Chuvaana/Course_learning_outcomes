@@ -1,7 +1,22 @@
 <div class="card">
   <p-toast />
   <p-confirmDialog></p-confirmDialog>
-  <p-button label="Нэмэх" class="submit-button" (click)="addClo()" />
+  <div style="display: flex; justify-content: space-between">
+    <p-button
+      label="Нэмэх"
+      class="submit-button"
+      severity="info"
+      icon="pi pi-plus"
+      (click)="addClo()"
+    />
+
+    <p-button
+      severity="warn"
+      label="Тусламж"
+      icon="pi pi-exclamation-circle"
+      (onClick)="infoTo()"
+    />
+  </div>
 
   <p-table
     [value]="clos"

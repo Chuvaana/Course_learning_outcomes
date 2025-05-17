@@ -1,6 +1,6 @@
 <p-toast />
 <form [formGroup]="materialsForm" (ngSubmit)="onSubmit()">
-  <p-button label="Хадгалах" icon="pi pi-check" iconPos="right" type="submit" />
+  <p-button label="Хадгалах" iconPos="right" type="submit" />
   <div class="first">
     <div class="sub" formArrayName="mainBooks">
       <label>Үндсэн сурах бичиг:</label>
@@ -27,6 +27,7 @@
         label="Нэмэх"
         icon="pi pi-plus"
         iconPos="right"
+        severity="info"
         (click)="addMainBook()"
       />
     </div>
@@ -58,6 +59,7 @@
         label="Нэмэх"
         icon="pi pi-plus"
         iconPos="right"
+        severity="info"
         (click)="addExtraMaterial()"
       />
     </div>
@@ -93,6 +95,7 @@
         label="Нэмэх"
         icon="pi pi-plus"
         iconPos="right"
+        severity="info"
         (click)="addWebLinks()"
       />
     </div>
@@ -126,6 +129,7 @@
         label="Нэмэх"
         icon="pi pi-plus"
         iconPos="right"
+        severity="info"
         (click)="addLibraryLinks()"
       />
     </div>
@@ -159,6 +163,7 @@
       label="Нэмэх"
       icon="pi pi-plus"
       iconPos="right"
+      severity="info"
       (click)="addSoftwareTool()"
     />
   </div>

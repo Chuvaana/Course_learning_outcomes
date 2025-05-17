@@ -1,36 +1,30 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import {
-  FormBuilder,
-  FormGroup,
-  FormsModule,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
-import { ButtonModule } from 'primeng/button';
-import { InputTextModule } from 'primeng/inputtext';
-import { DropdownModule } from 'primeng/dropdown';
 import { CommonModule } from '@angular/common';
-import { Table, TableModule } from 'primeng/table';
-import { MessageService } from 'primeng/api';
-import { ToastModule } from 'primeng/toast';
-import { FinalExamService } from '../../../../services/finalExamService';
-import { TagModule } from 'primeng/tag';
-import { Select, SelectModule } from 'primeng/select';
-import { ActivatedRoute } from '@angular/router';
-import { CLOService } from '../../../../services/cloService';
-import { forkJoin } from 'rxjs';
-import { PdfExamQuestionService } from '../../../../services/pdf-exam-question.service';
-import { FloatLabel } from 'primeng/floatlabel';
-import { InputNumber } from 'primeng/inputnumber';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { BlmInfoComponent } from './blm-info/blm-info.component';
+import { ActivatedRoute } from '@angular/router';
+import { MessageService } from 'primeng/api';
+import { ButtonModule } from 'primeng/button';
+import { DropdownModule } from 'primeng/dropdown';
+import { FloatLabel } from 'primeng/floatlabel';
+import { IconFieldModule } from 'primeng/iconfield';
 import { IftaLabelModule } from 'primeng/iftalabel';
 import { InputIconModule } from 'primeng/inputicon';
-import { IconFieldModule } from 'primeng/iconfield';
+import { InputNumber } from 'primeng/inputnumber';
+import { InputTextModule } from 'primeng/inputtext';
+import { Select, SelectModule } from 'primeng/select';
+import { Table, TableModule } from 'primeng/table';
+import { TagModule } from 'primeng/tag';
+import { ToastModule } from 'primeng/toast';
+import { forkJoin } from 'rxjs';
 import { AssessmentService } from '../../../../services/assessmentService';
 import { CloPointPlanService } from '../../../../services/cloPointPlanService';
-import { StudentService } from '../../../../services/studentService';
+import { CLOService } from '../../../../services/cloService';
 import { CurriculumService } from '../../../../services/curriculum.service';
+import { FinalExamService } from '../../../../services/finalExamService';
+import { PdfExamQuestionService } from '../../../../services/pdf-exam-question.service';
+import { StudentService } from '../../../../services/studentService';
+import { BlmInfoComponent } from './blm-info/blm-info.component';
 
 interface finalExamModel {
   finalExamName: any;

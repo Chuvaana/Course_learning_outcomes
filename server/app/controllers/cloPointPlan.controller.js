@@ -24,17 +24,22 @@ exports.saveCloPlans = async (req, res) => {
   }
 };
 
+const mongoose = require('mongoose');
+
 // ✅ Get CLO plans by lessonId
 exports.getCloPlansByLessonId = async (req, res) => {
   try {
     const { lessonId } = req.params;
-    const plans = await CloPlan.find({ lessonId });
 
-    if (!plans.length) {
-      return res.json([]);
+    // ❗️1. Хоосон эсвэл хүчин төгөлдөр биш ObjectId эсэхийг шалгах
+    if (!lessonId || !mongoose.Types.ObjectId.isValid(lessonId)) {
+      return res.status(400).json({ message: 'Invalid lessonId' });
     }
 
-    res.json(plans);
+    // ✅2. ObjectId-руу хөрвүүлж ашиглах
+    const plans = await CloPlan.find({ lessonId: new mongoose.Types.ObjectId(lessonId) });
+
+    res.json(plans); // plans нь хоосон байж болно, гэхдээ алдаа үүсэхгүй
   } catch (err) {
     console.error('Error fetching CLO plans:', err);
     res.status(500).json({ message: 'Server error' });

@@ -1,0 +1,90 @@
+<div class="info">
+  <h3 style="margin-bottom: 1rem; color: #2c3e50">
+    Суралцахуйн үр дүнгийн үйл үгс (Блумын таксаноми)
+  </h3>
+  <p style="margin-bottom: 2rem; font-size: 1rem; color: #555">
+    Оюутан тухайн хичээлийн агуулгыг амжилттай судалж дууссаны дараа эзэмшсэн
+    байх мэдлэг, чадвар, хандлагын жагсаалт юм. Бичиглэлийн хувьд өгүүлбэрийн
+    өгүүлэгдэхүүн нь оюутан байх ба суралцахуйн үр дүн буюу мэдлэг, чадвар,
+    хандлагыг илэрхийлэхдээ заавал тохирох үйл үгийг хэрэглэсэн байна. Энэ үйл
+    үг нь Блумын таксаномын танин мэдэхүй, психомотор, хандлага төлөвшлийн
+    талбарын түвшинтэй уялдаатайгаар тодорхойлогдсон байна.
+  </p>
+
+  <p-table
+    [value]="levels"
+    [responsiveLayout]="'scroll'"
+    [style]="{ 'min-width': '700px' }"
+    [tableStyle]="{ 'border-collapse': 'separate', 'border-spacing': '0 10px' }"
+  >
+    <ng-template pTemplate="header">
+      <tr style="background-color: #f0f4f8">
+        <th
+          style="
+            width: 20%;
+            padding: 12px 10px;
+            text-align: left;
+            border-radius: 8px 0 0 8px;
+          "
+        >
+          Түвшин
+        </th>
+        <th style="width: 40%; padding: 12px 10px; text-align: left">
+          Үйл үгс (Англи)
+        </th>
+        <th
+          style="
+            width: 40%;
+            padding: 12px 10px;
+            text-align: left;
+            border-radius: 0 8px 8px 0;
+          "
+        >
+          Орчуулга (Монгол)
+        </th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-level>
+      <tr
+        style="background-color: #fff; box-shadow: 0 1px 4px rgb(0 0 0 / 0.1)"
+      >
+        <td style="vertical-align: top; padding: 12px 10px">
+          <strong style="font-size: 1.1rem; color: #34495e">
+            {{ level.level }}. {{ level.english }}
+          </strong>
+          <br />
+          <span style="font-style: italic; color: #7f8c8d; font-size: 0.9rem">
+            {{ level.mongolian }}
+          </span>
+        </td>
+        <td style="padding: 12px 10px; vertical-align: top">
+          <ul
+            style="
+              margin: 0;
+              padding-left: 18px;
+              list-style-type: disc;
+              color: #2c3e50;
+              font-size: 0.95rem;
+            "
+          >
+            <li *ngFor="let verb of level.verbs">{{ verb.en }}</li>
+          </ul>
+        </td>
+        <td style="padding: 12px 10px; vertical-align: top">
+          <ul
+            style="
+              margin: 0;
+              padding-left: 18px;
+              list-style-type: disc;
+              color: #2c3e50;
+              font-size: 0.95rem;
+            "
+          >
+            <li *ngFor="let verb of level.verbs">{{ verb.mn }}</li>
+          </ul>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>

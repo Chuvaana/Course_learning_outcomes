@@ -1,12 +1,17 @@
 const Lesson = require('../models/lesson.model');
 
-// Save new lesson
 exports.createLesson = async (req, res) => {
   try {
     const data = req.body;
 
     const existingLesson = await Lesson.findOne({
       recommendedSemester: data.recommendedSemester,
+      teacher: {
+        name: data.teacherName || 'N/A',
+        room: data.teacherRoom || 'N/A',
+        email: data.teacherEmail || 'N/A',
+        phone: data.teacherPhone || 'N/A',
+      },
       schoolYear: data.schoolYear,
       lessonCode: data.lessonCode,
     });
@@ -103,6 +108,7 @@ exports.updateLesson = async (req, res) => {
       department: data.department ?? lesson.department,
       lessonLevel: data.lessonLevel ?? lesson.lessonLevel,
       lessonType: data.lessonType ?? lesson.lessonType,
+      association: data.association ?? lesson.association,
       recommendedSemester: data.recommendedSemester ?? lesson.recommendedSemester,
       checkManagerBy: data.checkManagerBy ?? lesson.checkManagerBy,
       checkManagerDatetime: data.checkManagerDatetime ?? lesson.checkManagerDatetime,
