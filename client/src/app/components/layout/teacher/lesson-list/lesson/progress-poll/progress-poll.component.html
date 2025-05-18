@@ -27,7 +27,12 @@
     </div>
     <!-- Асуулт нэмэх товч -->
     <div class="action-btn" style="place-self: end">
-      <p-button label="Асуулт нэмэх" (onClick)="addQuestion()"></p-button>
+      <p-button
+        label="Асуулт нэмэх"
+        icon="pi pi-plus"
+        severity="info"
+        (onClick)="addQuestion()"
+      ></p-button>
     </div>
   </div>
   <p-toast />
@@ -91,6 +96,8 @@
     <div class="add-answer">
       <p-button
         label="Дэд Асуулт нэмэх"
+        severity="info"
+        icon="pi pi-plus"
         (onClick)="addAnswer(qIndex)"
       ></p-button>
     </div>

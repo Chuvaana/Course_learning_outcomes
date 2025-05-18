@@ -19,12 +19,14 @@
       pButton
       type="button"
       *ngIf="!showPreviousWeeks"
+      severity="info"
       label="Өмнөх долоо хоногуудыг харах"
       (click)="togglePreviousWeeks()"
     ></button>
     <button
       pButton
       type="button"
+      severity="info"
       *ngIf="showPreviousWeeks"
       label="Одоогийн долоо хоногийг харах"
       (click)="togglePreviousWeeks()"

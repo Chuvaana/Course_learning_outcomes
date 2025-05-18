@@ -25,10 +25,11 @@
       <span>Дүнгийн файл оруулах зааавар</span>
       <div style="margin-top: 10px">
         <p-button
-          class="info"
+          severity="warn"
           icon="pi pi-exclamation-circle"
           aria-label="Save"
           (onClick)="infoTo()"
+          label="Тусламж"
         />
       </div>
     </div>
@@ -42,7 +43,12 @@
     </div>
   </div>
   <div class="action-btn">
-    <p-button label="Цэвэрлэх" (onClick)="resetInputs()"></p-button>
+    <p-button
+      label="Цэвэрлэх"
+      severity="info"
+      icon="pi pi-refresh"
+      (onClick)="resetInputs()"
+    ></p-button>
   </div>
 </div>
 

@@ -35,6 +35,7 @@
     <p-button
       label="Шүүлт цэвэрлэх"
       icon="pi pi-refresh"
+      severity="info"
       (click)="clearFilter()"
       class="refresh-btn"
     ></p-button>
@@ -42,6 +43,8 @@
       pButton
       type="button"
       label="Дүн засах"
+      icon="pi pi-file-edit"
+      severity="help"
       (click)="toggleShowEdit()"
     ></button>
     <button pButton type="button" label="Хадгалах" (click)="save()"></button>

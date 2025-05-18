@@ -6,12 +6,14 @@
       label="Засах"
       icon="pi pi-file-edit"
       (click)="edit()"
+      severity="help"
       class="refresh-btn"
     ></p-button>
     <p-button
       *ngIf="editActive"
       label="Оюутан нэмэх"
-      icon="pi pi-file-save"
+      severity="info"
+      icon="pi pi-plus"
       (click)="add()"
       class="refresh-btn"
     >
@@ -26,6 +28,7 @@
     <p-button
       *ngIf="editActive"
       label="Болих "
+      severity="secondary"
       icon="pi pi-times"
       (click)="cancel()"
       class="refresh-btn"
@@ -70,6 +73,7 @@
     <p-button
       label="Шүүлт цэвэрлэх"
       icon="pi pi-refresh"
+      severity="info"
       (click)="loadStudents()"
       class="refresh-btn"
     ></p-button>

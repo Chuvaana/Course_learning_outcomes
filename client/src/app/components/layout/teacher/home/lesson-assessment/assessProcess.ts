@@ -253,7 +253,6 @@ export class AssessProcessService {
             });
           }
         });
-
         return adata;
       })
     );
