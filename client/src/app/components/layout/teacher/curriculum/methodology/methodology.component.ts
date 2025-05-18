@@ -13,6 +13,8 @@ import { CheckboxModule } from 'primeng/checkbox';
 import { TabRefreshService } from '../tabRefreshService';
 import { CLOService } from '../../../../../services/cloService';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { MatDialog } from '@angular/material/dialog';
+import { MethodInfoComponent } from './method-info/method-info.component';
 
 interface Method {
   id: string;
@@ -63,10 +65,12 @@ export class MethodologyComponent {
   isNew = true;
 
   deliveryModes = [
-    { label: 'Тонгоруу анги', value: 'CLASS' },
-    { label: 'Төсөлд суурилсан сургалт', value: 'PROJECT' },
-    { label: 'Туршилтад суурилсан сургалт', value: 'EXPERIMENT' },
+    // { label: 'Тонгоруу анги', value: 'CLASS' },
+    { label: 'Кейсд суурилсан сургалт', value: 'CASE' },
+    { label: 'Сорилтонд суурилсан сургалт', value: 'QUIZ' },
     { label: 'Асуудалд суурилсан сургалт', value: 'PROBLEM' },
+    { label: 'Төсөлд суурилсан сургалт', value: 'PROJECT' },
+    // { label: 'Туршилтад суурилсан сургалт', value: 'EXPERIMENT' },
   ];
 
   pedagogyOptions = [
@@ -81,7 +85,8 @@ export class MethodologyComponent {
     private service: MethodService,
     private tabRefreshService: TabRefreshService,
     private cloService: CLOService,
-    private confirmationService: ConfirmationService
+    private confirmationService: ConfirmationService,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit() {
@@ -226,6 +231,14 @@ export class MethodologyComponent {
 
     setTimeout(() => {
       this.onRowEditInit(newMethod as Method, this.methodologys.length - 1);
+    });
+  }
+
+  infoTo() {
+    this.dialog.open(MethodInfoComponent, {
+      width: '60vw',
+      height: '90vh',
+      maxWidth: 'none',
     });
   }
 }
