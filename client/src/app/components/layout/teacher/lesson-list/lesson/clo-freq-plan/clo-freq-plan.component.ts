@@ -19,7 +19,6 @@ import { forkJoin, Observable } from 'rxjs';
 import { AssessmentPlanService } from '../../../../../../services/assessmentPlanService';
 import { AssessmentService } from '../../../../../../services/assessmentService';
 import { CloPointPlanService } from '../../../../../../services/cloPointPlanService';
-import { AccordionModule } from 'primeng/accordion';
 
 interface DataRow {
   formGroup: FormGroup;
@@ -46,7 +45,6 @@ interface DataRow {
     InputTextModule,
     InputNumberModule,
     ToastModule,
-    AccordionModule,
   ],
   providers: [MessageService],
   templateUrl: './clo-freq-plan.component.html',
@@ -90,33 +88,16 @@ export class CloFreqPlanComponent implements OnInit {
       this.assessPlan.getAssessmentPlan(this.lessonId).subscribe((res: any) => {
         if (res.length != 0) {
           this.isNew = false;
-
-          const groupedData: { [key: string]: any } = {};
-
-          res.forEach((item: any) => {
-            const key = `${item.type}_${item.week}`;
-
-            if (!groupedData[key]) {
-              groupedData[key] = {
-                type: item.type,
-                week: item.week,
-                weekNum: this.romanToNumber(item.week),
-                scores: [], // Энд массиваар эхлэнэ
-              };
-            }
-
-            // scores массив руу элемент нэмэх
-            groupedData[key].scores.push({
-              method: item.method,
-              methodName: item.methodName,
-              clo: item.clo,
-              cloName: item.cloName,
-              score: item.score,
-            });
-          });
-
-          this.tableData = Object.values(groupedData);
-
+          this.tableData = res.map((item: any) => ({
+            type: item.type,
+            week: item.week,
+            method: item.method,
+            methodName: item.methodName,
+            clo: item.clo,
+            cloName: item.cloName,
+            score: item.score,
+            weekNum: this.romanToNumber(item.week),
+          }));
           this.form = this.fb.group({
             rows: this.fb.array(
               this.tableData.map((d) => this.createRowForm(d))
@@ -148,30 +129,34 @@ export class CloFreqPlanComponent implements OnInit {
       };
     });
 
-    // 3 түвшинд сортолно: type > weekNum > cloName
     allRows.sort((a, b) => {
-      if (a.type !== b.type) return a.type.localeCompare(b.type);
-      if (a.weekNum !== b.weekNum) return a.weekNum - b.weekNum;
-      return a.cloName.localeCompare(b.cloName);
+      if (a.type < b.type) return -1;
+      if (a.type > b.type) return 1;
+      if (a.weekNum < b.weekNum) return -1;
+      if (a.weekNum > b.weekNum) return 1;
+      if (a.cloName < b.cloName) return -1;
+      if (a.cloName > b.cloName) return 1;
+      return 0;
     });
 
     this.groupedDataSource = {};
-
-    const typeMap: { [type: string]: DataRow[] } = {};
     allRows.forEach((row) => {
-      if (!typeMap[row.type]) typeMap[row.type] = [];
-      typeMap[row.type].push(row);
+      if (!this.groupedDataSource[row.type]) {
+        this.groupedDataSource[row.type] = [];
+      }
+      this.groupedDataSource[row.type].push(row);
     });
 
-    Object.entries(typeMap).forEach(([type, typeRows]) => {
-      const weekMap: { [week: string]: DataRow[] } = {};
-      typeRows.forEach((row) => {
-        if (!weekMap[row.week]) weekMap[row.week] = [];
-        weekMap[row.week].push(row);
+    Object.keys(this.groupedDataSource).forEach((type) => {
+      const group = this.groupedDataSource[type];
+
+      const weeksMap: { [week: string]: DataRow[] } = {};
+      group.forEach((row) => {
+        if (!weeksMap[row.week]) weeksMap[row.week] = [];
+        weeksMap[row.week].push(row);
       });
 
-      Object.entries(weekMap).forEach(([week, weekRows]) => {
-        // Week групп доторх бүх мөрийг default болгоно
+      Object.values(weeksMap).forEach((weekRows) => {
         weekRows.forEach((r) => {
           r.weekRowSpan = 0;
           r.isFirstWeek = false;
@@ -179,11 +164,10 @@ export class CloFreqPlanComponent implements OnInit {
           r.isFirstClo = false;
         });
 
-        // ⬅ Week rowspan
+        if (weekRows.length === 0) return;
         weekRows[0].weekRowSpan = weekRows.length;
         weekRows[0].isFirstWeek = true;
 
-        // CLO групплэнэ
         const cloMap: { [cloName: string]: DataRow[] } = {};
         weekRows.forEach((row) => {
           if (!cloMap[row.cloName]) cloMap[row.cloName] = [];
@@ -191,13 +175,15 @@ export class CloFreqPlanComponent implements OnInit {
         });
 
         Object.values(cloMap).forEach((cloRows) => {
+          cloRows.forEach((r) => {
+            r.cloRowSpan = 0;
+            r.isFirstClo = false;
+          });
+          if (cloRows.length === 0) return;
           cloRows[0].cloRowSpan = cloRows.length;
           cloRows[0].isFirstClo = true;
         });
       });
-
-      // groupedDataSource-д type-аар түлхүүрлэж хадгална
-      this.groupedDataSource[type] = typeRows;
     });
   }
 
@@ -276,9 +262,7 @@ export class CloFreqPlanComponent implements OnInit {
         });
       });
 
-      const tempTableDataMap: { [key: string]: any } = {};
-
-      this.pointPlanA.forEach((po: any) => {
+      this.pointPlanA.map((po: any) => {
         cloList.forEach((clo: any) => {
           assessments.plans.forEach((item: any) => {
             if (item.methodType === 'PROC') {
@@ -296,18 +280,10 @@ export class CloFreqPlanComponent implements OnInit {
                   const freq = item.frequency ?? 1;
                   for (let i = 1; i <= freq && i <= 16; i++) {
                     const romanWeek = this.toRoman(i);
-                    // key-г type + week-ийн хосоор үүсгэнэ
-                    const key = `${item.secondMethodType}_${romanWeek}_${clo.cloName}`;
-                    if (!tempTableDataMap[key]) {
-                      tempTableDataMap[key] = {
-                        type: item.secondMethodType,
-                        week: romanWeek,
-                        weekNum: i,
-                        cloName: clo.cloName,
-                        scores: [],
-                      };
-                    }
-                    tempTableDataMap[key].scores.push({
+                    tempTableData.push({
+                      type: item.secondMethodType,
+                      week: romanWeek,
+                      weekNum: i,
                       method: me._id,
                       methodName: me.subMethod,
                       clo: clo.id,
@@ -322,7 +298,7 @@ export class CloFreqPlanComponent implements OnInit {
         });
       });
 
-      this.tableData = Object.values(tempTableDataMap);
+      this.tableData = tempTableData;
 
       this.form = this.fb.group({
         rows: this.fb.array(this.tableData.map((d) => this.createRowForm(d))),
@@ -412,18 +388,11 @@ export class CloFreqPlanComponent implements OnInit {
       type: [{ value: data.type, disabled: true }],
       week: [data.week],
       oldWeek: [data.week],
+      method: [{ value: data.method, disabled: true }],
+      methodName: [{ value: data.methodName, disabled: true }],
+      clo: [{ value: data.clo, disabled: true }],
       cloName: [{ value: data.cloName, disabled: true }],
-      scores: this.fb.array(
-        data.scores.map((score: any) =>
-          this.fb.group({
-            method: [{ value: score.method, disabled: true }],
-            methodName: [{ value: score.methodName, disabled: true }],
-            clo: [{ value: score.clo, disabled: true }],
-            cloName: [{ value: score.cloName, disabled: true }],
-            score: [score.score],
-          })
-        )
-      ),
+      score: [data.score],
     });
   }
 
@@ -458,17 +427,15 @@ export class CloFreqPlanComponent implements OnInit {
     } = {};
 
     data.forEach((row: any) => {
-      row.scores.forEach((score: any) => {
-        const key = `${score.clo}_${score.method}`;
-        if (!scoreSums[key]) {
-          scoreSums[key] = {
-            cloName: score.cloName,
-            methodName: score.methodName,
-            totalScore: 0,
-          };
-        }
-        scoreSums[key].totalScore += score.score;
-      });
+      const key = `${row.clo}_${row.method}`;
+      if (!scoreSums[key]) {
+        scoreSums[key] = {
+          cloName: row.cloName,
+          methodName: row.methodName,
+          totalScore: 0,
+        };
+      }
+      scoreSums[key].totalScore += row.score;
     });
 
     const result = Object.entries(scoreSums).map(([key, value]) => ({
@@ -499,25 +466,10 @@ export class CloFreqPlanComponent implements OnInit {
   }
 
   saveData() {
-    const rawData = this.rows.getRawValue();
-
-    // Шинэ бүтэцт хувилбар
-    const cleaned = rawData.map((row: any) => ({
-      type: row.type,
-      week: row.week,
-      scores: row.scores.map((score: any) => ({
-        method: score.method,
-        methodName: score.methodName,
-        clo: score.clo,
-        cloName: score.cloName,
-        score: score.score ?? 0,
-      })),
-      weekNum: this.romanToNumber(row.week),
-    }));
-
-    if (!this.checkData(rawData)) {
+    const data = this.rows.getRawValue();
+    if (!this.checkData(data)) {
       if (this.isNew) {
-        this.assessPlan.addAssessmentPlan(cleaned).subscribe((res) => {
+        this.assessPlan.addAssessmentPlan(data).subscribe((res) => {
           this.msgService.add({
             severity: 'success',
             summary: 'Амжилттай',
@@ -526,28 +478,15 @@ export class CloFreqPlanComponent implements OnInit {
         });
       } else {
         this.assessPlan
-          .updateAssessmentPlan(this.lessonId, cleaned)
+          .updateAssessmentPlan(this.lessonId, data)
           .subscribe((res) => {
             this.msgService.add({
               severity: 'success',
               summary: 'Амжилттай',
-              detail: 'Амжилттай шинэчлэгдлээ',
+              detail: 'Амжилттай хадгалагдлаа',
             });
           });
       }
-    }
-  }
-
-  getTypeName(e: string): string {
-    switch (e) {
-      case 'BD':
-        return 'Бие даалт';
-      case 'CLAB':
-        return 'Лаборатори';
-      case 'BSEM':
-        return 'Семинар';
-      default:
-        return '';
     }
   }
 }

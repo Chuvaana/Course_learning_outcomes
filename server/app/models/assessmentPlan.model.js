@@ -1,15 +1,4 @@
 const mongoose = require('mongoose');
-const ScoresSchema = new mongoose.Schema({
-  method: { type: String, required: true },
-  methodName: { type: String, required: true },
-  clo: {
-    type: mongoose.Schema.Types.ObjectId,
-    required: true,
-    ref: 'CLO',
-  },
-  cloName: { type: String, required: true },
-  score: { type: Number, required: true },
-});
 
 const AssessmentPlanSchema = new mongoose.Schema({
   lessonId: {
@@ -19,7 +8,15 @@ const AssessmentPlanSchema = new mongoose.Schema({
   },
   type: { type: String, required: true },
   week: { type: String, required: true },
-  score: [ScoresSchema],
+  method: { type: String, required: true },
+  methodName: { type: String, required: true },
+  clo: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
+    ref: 'CLO',
+  },
+  cloName: { type: String, required: true },
+  score: { type: Number, required: true },
 });
 
 module.exports = mongoose.model('AssessmentPlan', AssessmentPlanSchema);
