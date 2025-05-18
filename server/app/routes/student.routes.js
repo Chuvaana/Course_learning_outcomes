@@ -5,6 +5,10 @@ module.exports = app => {
   // Create a new student
   router.post("/", students.create);
   router.post("/login", students.login);
+  router.put("/changePassword/:id", students.changePassword);
+
+  // Retrieve a single student with gmail
+  router.get("/gmail/:id", students.findGmail);
 
   // Retrieve all students
   router.get("/", students.findAll);

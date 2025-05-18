@@ -1,0 +1,156 @@
+import { Component, Inject, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ButtonModule } from 'primeng/button';
+import { MessageService } from 'primeng/api';
+import { ToastModule } from 'primeng/toast';
+import { ActivatedRoute } from '@angular/router';
+import { MatDialog } from '@angular/material/dialog';
+import { PanelModule } from 'primeng/panel';
+import { MenuModule } from 'primeng/menu';
+import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { Image } from 'primeng/image';
+import { CardModule } from 'primeng/card';
+import { RegLogService } from '../../../../../services/regLogService';
+import { PasswordModule } from 'primeng/password';
+import { CommonModule } from '@angular/common';
+
+@Component({
+  selector: 'app-password-reset-student',
+  standalone: true,
+  imports: [
+    Image,
+    CommonModule,
+    ReactiveFormsModule,
+    PasswordModule,
+    CardModule,
+    ToastModule,
+    PanelModule,
+    FormsModule,
+    ButtonModule,
+    MenuModule],
+  providers: [MessageService],
+  templateUrl: './password-reset-student.component.html',
+  styleUrl: './password-reset-student.component.scss'
+})
+export class PasswordResetStudentComponent implements OnInit {
+
+  dataModul: FormGroup;
+  inData: any;
+  studentId: any;
+  saveData: any;
+  isActive = false;
+
+  constructor(
+    @Inject(MAT_DIALOG_DATA) public data: { email: string },
+    private fb: FormBuilder,
+    private dialog: MatDialog,
+    private route: ActivatedRoute,
+    private service: RegLogService,
+    private msgService: MessageService
+  ) {
+    this.dataModul = this.fb.group({
+      name: ['', Validators.required],
+      code: ['', Validators.required],
+      branch: ['', Validators.required],
+      department: ['', Validators.required],
+      email: [
+        '',
+        [
+          Validators.required,
+          Validators.email,
+          Validators.pattern(/^[a-zA-Z0-9._%+-]+@must\.edu\.mn$/),
+        ],
+      ],
+      password: ['', Validators.required],
+      confirmPassword: ['', Validators.required],
+    });
+    this.inData = data;
+  }
+  items: { label?: string; icon?: string; separator?: boolean }[] = [];
+
+  ngOnInit() {
+    this.dataModul.value.email = this.inData.email;
+    this.items = [
+      {
+        label: 'Refresh',
+        icon: 'pi pi-refresh'
+      },
+      {
+        label: 'Search',
+        icon: 'pi pi-search'
+      },
+      {
+        separator: true
+      },
+      {
+        label: 'Delete',
+        icon: 'pi pi-times'
+      }
+    ];
+  }
+
+  submitButton() {
+    this.service.findGmailStudent(this.dataModul.value.email).subscribe(
+      (data: { message: string; student: any }) => {
+        this.studentId = data.student.id;
+        this.saveData = data.student;
+        this.isActive = true;
+        this.msgService.add({
+          severity: 'success',
+          summary: 'Амжилттай',
+          detail: 'Амжилттай бүртгэгдлээ',
+        });
+      },
+      (error) => {
+        let errorMessage = 'Error registering student';
+        if (error && error.error && error.error.message) {
+          errorMessage = error.error.message;
+        }
+        this.msgService.add({
+          severity: 'error',
+          summary: 'Алдаа',
+          detail: `Алдаа гарлаа: ${errorMessage}`,
+        });
+      }
+    );
+  }
+  resetPassButton() {
+    if (this.dataModul.value.password === this.dataModul.value.confirmPassword) {
+        this.dataModul.value.name = this.saveData.name;
+        this.dataModul.value.code = this.saveData.code;
+        this.dataModul.value.branch = this.saveData.branch;
+        this.dataModul.value.department = this.saveData.department;
+        this.isActive = true;
+      this.service.changePasswordStudent(this.studentId, this.dataModul.value).subscribe(
+        (data: { message: string; student: any }) => {
+          this.isActive = true;
+          this.msgService.add({
+            severity: 'success',
+            summary: 'Амжилттай',
+            detail: 'Амжилттай бүртгэгдлээ',
+          });
+        },
+        (error) => {
+          let errorMessage = 'Error registering student';
+          if (error && error.error && error.error.message) {
+            errorMessage = error.error.message;
+          }
+          this.msgService.add({
+            severity: 'error',
+            summary: 'Алдаа',
+            detail: `Алдаа гарлаа: ${errorMessage}`,
+          });
+        }
+      );
+    } else {
+      this.msgService.add({
+        severity: 'error',
+        summary: 'Алдаа',
+        detail: `Давтаж оруулсан нууц үг зөрч байна!`,
+      });
+    }
+  }
+  returnScreen() {
+
+  }
+}

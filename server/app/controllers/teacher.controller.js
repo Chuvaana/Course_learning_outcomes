@@ -163,6 +163,45 @@ exports.login = async (req, res) => {
   }
 };
 
+exports.changePassword = async (req, res) => {
+  try {
+
+    const { email, password } = req.body;
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    
+    req.body.password = hashedPassword;
+    
+    const teacher = await Teacher.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    
+    if (!teacher) return res.status(404).send({ message: 'Багш олдсонгүй' });
+    
+    res.status(200).json(teacher);
+  } catch (error) {
+    console.error('Нэвтрэхэд алдаа гарлаа:', error);
+    res.status(500).json({ message: 'Internal server error', error: error.message });
+  }
+
+}
+
+
+exports.findGmail = async (req, res) => {
+  try {
+    const email = req.params.id;
+
+    const teacher = await Teacher.findOne({ email });
+
+    if (!teacher) {
+      return res.status(404).json({ message: 'Бүртгэлтэй имэйл олдсонгүй' });
+    }
+
+    res.status(200).json({ message: 'Амжилттай', teacher : teacher});
+  } catch (error) {
+    console.error('Нэвтрэхэд алдаа гарлаа:', error);
+    res.status(500).json({ message: 'Internal server error', error: error.message });
+  }
+};
+
 exports.assignLessonToTeacher = async (req, res) => {
   try {
     const { teacherId, lessonId } = req.body;

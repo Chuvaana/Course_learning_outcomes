@@ -42,18 +42,7 @@
   width: 100%;
 }
 
-// .custom-password {
-//   width: 1000px;
-//   border-radius: 8px;
-//   border: 1px solid #ccc;
-//   padding: 10px;
-// }
-
-// .custom-password input {
-//   font-size: 16px;
-//   padding: 8px;
-// }
-
-// .auth-type {
-//   margin-top: 20px; /* Space above the type selection */
-// }
+.bottom-btns{
+  display: flex;
+  justify-content:space-between;
+}

@@ -17,6 +17,8 @@ import { InputTextModule } from 'primeng/inputtext';
 import { Image } from 'primeng/image';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
+import { PasswordResetStudentComponent } from './password-reset-student/password-reset-student.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'login-student',
@@ -51,6 +53,7 @@ export class LoginStudentComponent {
 
   constructor(
     private fb: FormBuilder,
+    private dialog: MatDialog,
     private service: RegLogService,
     private router: Router,
     private msgService: MessageService
@@ -165,5 +168,19 @@ export class LoginStudentComponent {
 
   toggleForm() {
     this.isRegister = !this.isRegister;
+  }
+
+  resetPass() {
+    console.log(this.studentForm.value.email);
+    let transData = null;
+    if (this.studentForm.value.email) {
+      transData = this.studentForm.value.email
+    }
+    this.dialog.open(PasswordResetStudentComponent, {
+      width: '40vw',
+      height: '40vh',
+      maxWidth: 'none',
+      data: { email: transData },
+    });
   }
 }

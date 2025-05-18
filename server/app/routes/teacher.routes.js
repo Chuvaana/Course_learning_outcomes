@@ -6,10 +6,13 @@ module.exports = app => {
   // Create a new Teacher
   router.post("/", teacherController.create);
   router.post("/login", teacherController.login);
+  router.put("/changePassword/:id", teacherController.changePassword);
+
+  // Retrieve a single Teacher with gmail
+  router.get("/gmail/:id", teacherController.findGmail);
 
   // Retrieve all teacherController
   router.get("/", teacherController.findAll);
-
 
   // Retrieve a single Teacher with id
   router.get("/:id", teacherController.findOne);

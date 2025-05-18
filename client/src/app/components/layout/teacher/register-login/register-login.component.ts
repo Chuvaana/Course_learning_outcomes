@@ -16,6 +16,8 @@ import { RegLogService } from '../../../../services/regLogService';
 import { Image } from 'primeng/image';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
+import { MatDialog } from '@angular/material/dialog';
+import { PasswordResetComponent } from './password-reset/password-reset.component';
 
 @Component({
   selector: 'app-register-login',
@@ -50,6 +52,7 @@ export class RegisterLoginComponent {
   constructor(
     private fb: FormBuilder,
     private service: RegLogService,
+    private dialog: MatDialog,
     private router: Router,
     private msgService: MessageService
   ) {
@@ -161,5 +164,18 @@ export class RegisterLoginComponent {
 
   toggleForm() {
     this.isRegister = !this.isRegister;
+  }
+  resetPass() {
+    console.log(this.teacherForm.value.email);
+    let transData = null;
+    if(this.teacherForm.value.email){
+      transData = this.teacherForm.value.email
+    }
+    this.dialog.open(PasswordResetComponent, {
+      width: '40vw',
+      height: '40vh',
+      maxWidth: 'none',
+      data: { email: transData },
+    });
   }
 }

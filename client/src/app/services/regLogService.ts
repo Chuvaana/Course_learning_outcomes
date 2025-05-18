@@ -8,7 +8,7 @@ import { Observable } from 'rxjs';
 export class RegLogService {
   private apiUrl = 'http://localhost:3000/api'; // Update with your actual API URL
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   // Fetch all branches
   getBranches(): Observable<any> {
@@ -25,6 +25,15 @@ export class RegLogService {
     return this.http.post(`${this.apiUrl}/teachers`, teacherData);
   }
 
+  // Register a new teacher
+  findGmailTeacher(gmail: any): Observable<any> {
+    return this.http.get(`${this.apiUrl}/teachers/gmail/${gmail}`);
+  }
+
+  changePassword(teacherId: any, data: any): Observable<any> {
+    return this.http.put(`${this.apiUrl}/teachers/changePassword/${teacherId}`, data);
+  }
+
   loginTeacher(loginData: any): Observable<any> {
     return this.http.post(`${this.apiUrl}/teachers/login`, loginData);
   }
@@ -38,4 +47,11 @@ export class RegLogService {
     return this.http.post(`${this.apiUrl}/student`, loginData);
   }
 
+  findGmailStudent(gmail: any): Observable<any> {
+    return this.http.get(`${this.apiUrl}/student/gmail/${gmail}`);
+  }
+
+  changePasswordStudent(studentId: any, data: any): Observable<any> {
+    return this.http.put(`${this.apiUrl}/student/changePassword/${studentId}`, data);
+  }
 }
