@@ -86,9 +86,9 @@
         <th>#</th>
         <th>Оюутны код</th>
         <th>Нэр</th>
-        <th>Лекц</th>
-        <th>Семинар</th>
-        <th>Лаборатори</th>
+        <th *ngIf="showLecture">Лекц</th>
+        <th *ngIf="showSeminar">Семинар</th>
+        <th *ngIf="showLab">Лаборатори</th>
         <th></th>
       </tr>
     </ng-template>
@@ -112,7 +112,7 @@
             {{ student.studentName }}
           </div>
         </td>
-        <td>
+        <td *ngIf="showLecture">
           <div *ngIf="editActive">
             <span style="display: flex">
               <p-dropdown
@@ -139,7 +139,7 @@
             >
           </div>
         </td>
-        <td>
+        <td *ngIf="showSeminar">
           <div *ngIf="editActive">
             <span style="display: flex">
               <p-dropdown
@@ -166,7 +166,7 @@
             >
           </div>
         </td>
-        <td>
+        <td *ngIf="showLab">
           <div *ngIf="editActive">
             <span style="display: flex">
               <p-dropdown

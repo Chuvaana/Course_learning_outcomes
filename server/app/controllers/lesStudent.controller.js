@@ -207,6 +207,7 @@ exports.uploadStudents = async (req, res) => {
 
 exports.getStudentsByClassTypeAndDay = async (req, res) => {
   const { classType } = req.params;
+  const { id } = req.params;
   const { day } = req.query; // Getting the selected day from query params
 
   try {
@@ -217,7 +218,8 @@ exports.getStudentsByClassTypeAndDay = async (req, res) => {
 
     // Find students based on classType and day
     const students = await Student.find({
-      [`${classType}.day`]: day, // Dynamically access the classType field (lec, sem, lab)
+      [`${classType}.day`]: day,
+      lessonId: id,
     });
 
     res.json(students);
@@ -229,6 +231,7 @@ exports.getStudentsByClassTypeAndDay = async (req, res) => {
 
 exports.getStudentsByClassTypeAndDayTime = async (req, res) => {
   const { classType } = req.params;
+  const { id } = req.params;
   let { day, time } = req.query; // Getting the selected day and time from query params
 
   try {
@@ -246,6 +249,7 @@ exports.getStudentsByClassTypeAndDayTime = async (req, res) => {
     const students = await Student.find({
       [`${classType}.day`]: day,
       [`${classType}.time`]: time,
+      lessonId: id,
     });
 
     res.json(students);

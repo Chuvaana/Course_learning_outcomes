@@ -123,7 +123,8 @@ export class ActivityComponent {
               .getStudentByClasstypeAndDayTime(
                 this.selectedClassType,
                 this.selectedWeekday,
-                this.selectedTimes
+                this.selectedTimes,
+                this.lessonId
               )
               .subscribe((students: any[]) => {
                 this.students = students;
@@ -141,7 +142,8 @@ export class ActivityComponent {
               .getStudentByClasstypeAndDayTime(
                 this.selectedClassType,
                 this.selectedWeekday,
-                this.selectedTimes
+                this.selectedTimes,
+                this.lessonId
               )
               .subscribe((students: any[]) => {
                 this.students = students;

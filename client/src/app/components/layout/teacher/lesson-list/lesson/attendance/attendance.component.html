@@ -1,48 +1,58 @@
 <div class="p-fluid">
   <p-toast />
   <div class="filter-section">
-    <p-dropdown
-      [options]="weekdays"
-      [(ngModel)]="selectedWeekday"
-      (onChange)="onSelectionChange()"
-      placeholder="Гариг"
+    <div style="display: flex; gap: 20px">
+      <p-dropdown
+        [options]="weekdays"
+        [(ngModel)]="selectedWeekday"
+        (onChange)="onSelectionChange()"
+        placeholder="Гариг"
+      >
+      </p-dropdown>
+      <p-dropdown
+        [options]="classTypes"
+        [(ngModel)]="selectedClassType"
+        (onChange)="onSelectionChange()"
+        placeholder="Төрөл"
+      >
+      </p-dropdown>
+      <p-dropdown
+        [options]="times"
+        [(ngModel)]="selectedTimes"
+        (onChange)="onSelectionChange()"
+        placeholder="Цаг"
+      >
+      </p-dropdown>
+    </div>
+    <div
+      style="display: flex; gap: 20px; width: 100%; justify-content: flex-end"
     >
-    </p-dropdown>
-    <p-dropdown
-      [options]="classTypes"
-      [(ngModel)]="selectedClassType"
-      (onChange)="onSelectionChange()"
-      placeholder="Төрөл"
-    >
-    </p-dropdown>
-    <p-dropdown
-      [options]="times"
-      [(ngModel)]="selectedTimes"
-      (onChange)="onSelectionChange()"
-      placeholder="Цаг"
-    >
-    </p-dropdown>
-    <button
-      pButton
-      type="button"
-      *ngIf="!showPreviousWeeks"
-      label="Өмнөх долоо хоногуудыг харах"
-      (click)="togglePreviousWeeks()"
-    ></button>
-    <button
-      pButton
-      type="button"
-      *ngIf="showPreviousWeeks"
-      label="Одоогийн долоо хоногийг харах"
-      (click)="togglePreviousWeeks()"
-    ></button>
-    <button pButton type="button" label="Хадгалах" (click)="save()"></button>
-    <button
-      pButton
-      type="button"
-      label="Ирцийн оноо оруулах"
-      (click)="importScreen()"
-    ></button>
+      <button
+        pButton
+        type="button"
+        severity="info"
+        *ngIf="!showPreviousWeeks"
+        label="Өмнөх долоо хоногуудыг харах"
+        (click)="togglePreviousWeeks()"
+      ></button>
+      <button
+        pButton
+        type="button"
+        *ngIf="showPreviousWeeks"
+        severity="info"
+        label="Одоогийн долоо хоногийг харах"
+        (click)="togglePreviousWeeks()"
+      ></button>
+      <button
+        pButton
+        type="button"
+        icon="pi pi-file-import"
+        severity="help"
+        label="Ирцийн оноо файлаас оруулах"
+        (click)="importScreen()"
+      ></button>
+      <button pButton type="button" label="Хадгалах" (click)="save()"></button>
+    </div>
   </div>
 
   <p-table [value]="attendanceRecords">

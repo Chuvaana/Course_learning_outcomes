@@ -223,7 +223,8 @@ export class GradeComponent {
               .getStudentByClasstypeAndDayTime(
                 this.selectedType.toLowerCase(),
                 this.selectedWeekday,
-                this.selectedTimes
+                this.selectedTimes,
+                this.lessonId
               )
               .toPromise());
 

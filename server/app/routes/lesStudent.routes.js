@@ -22,9 +22,9 @@ module.exports = (app) => {
   // Delete student by ID
   router.delete('/:id', studentController.deleteStudent);
 
-  router.get('/classType/:classType', studentController.getStudentsByClassTypeAndDay);
+  router.get('/:id/classType/:classType', studentController.getStudentsByClassTypeAndDay);
 
-  router.get('/classTypeDateTime/:classType', studentController.getStudentsByClassTypeAndDayTime);
+  router.get('/:id/classTypeDateTime/:classType', studentController.getStudentsByClassTypeAndDayTime);
 
   router.get('/lesson/:id', studentController.getLessonByStudent);
 

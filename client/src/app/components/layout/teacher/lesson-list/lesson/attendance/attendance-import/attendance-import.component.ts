@@ -306,7 +306,8 @@ export class AttendanceImportComponent {
             .getStudentByClasstypeAndDayTime(
               this.selectedClassType,
               this.selectedWeekday,
-              this.selectedTimes
+              this.selectedTimes,
+              this.lessonId
             )
             .subscribe((students: any[]) => {
               this.students = students;

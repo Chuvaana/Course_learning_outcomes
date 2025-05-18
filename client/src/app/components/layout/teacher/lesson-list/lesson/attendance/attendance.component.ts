@@ -69,8 +69,8 @@ export class AttendanceComponent {
     private attendanceService: AttendanceService,
     private msgService: MessageService,
     private shared: SharedDictService,
-    private dialog: MatDialog,
-  ) { }
+    private dialog: MatDialog
+  ) {}
 
   ngOnInit() {
     this.weekdays = [
@@ -114,7 +114,8 @@ export class AttendanceComponent {
               .getStudentByClasstypeAndDayTime(
                 this.selectedClassType,
                 this.selectedWeekday,
-                this.selectedTimes
+                this.selectedTimes,
+                this.lessonId
               )
               .subscribe((students: any[]) => {
                 this.students = students;
@@ -132,7 +133,8 @@ export class AttendanceComponent {
               .getStudentByClasstypeAndDayTime(
                 this.selectedClassType,
                 this.selectedWeekday,
-                this.selectedTimes
+                this.selectedTimes,
+                this.lessonId
               )
               .subscribe((students: any[]) => {
                 this.students = students;
@@ -330,11 +332,10 @@ export class AttendanceComponent {
       width: '60vw',
       height: '50vh',
       maxWidth: 'none',
-      data: { lessonId: this.lessonId }
+      data: { lessonId: this.lessonId },
     });
     dialogRef.afterClosed().subscribe(() => {
       this.onSelectionChange();
     });
   }
-
 }

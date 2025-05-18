@@ -21,7 +21,9 @@ export class StudentService {
     return this.http.get(`${this.apiUrl}/lesStudents/lesson/${lessonCode}`);
   }
   getStudentByLessonsStudent(lessonCode: string): Observable<any> {
-    return this.http.get(`${this.apiUrl}/lesStudents/lesson/student/${lessonCode}`);
+    return this.http.get(
+      `${this.apiUrl}/lesStudents/lesson/student/${lessonCode}`
+    );
   }
 
   getStudentByCode(studentCode: string): Observable<any> {
@@ -54,19 +56,24 @@ export class StudentService {
     return this.http.post(`${this.apiUrl}/lesStudents/update`, studentData);
   }
 
-  getStudentByClasstypeAndDay(classType: string, day: string): Observable<any> {
+  getStudentByClasstypeAndDay(
+    lessonCode: string,
+    classType: string,
+    day: string
+  ): Observable<any> {
     return this.http.get(
-      `${this.apiUrl}/lesStudents/classType/${classType}?day=${day}`
+      `${this.apiUrl}/lesStudents/${lessonCode}/classType/${classType}?day=${day}`
     );
   }
 
   getStudentByClasstypeAndDayTime(
     classType: string,
     day: string,
-    time: number
+    time: number,
+    lessonCode: string
   ): Observable<any> {
     return this.http.get(
-      `${this.apiUrl}/lesStudents/classTypeDateTime/${classType}?day=${day}&time=${time}`
+      `${this.apiUrl}/lesStudents/${lessonCode}/classTypeDateTime/${classType}?day=${day}&time=${time}`
     );
   }
 

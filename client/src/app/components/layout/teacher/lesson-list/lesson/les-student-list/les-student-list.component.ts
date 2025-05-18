@@ -50,11 +50,11 @@ export class LesStudentListComponent {
   dataCheckPoint: any;
   studentSaveDatas: any[] = [];
 
-  lessonTypes = [
-    { id: 'ALEC', name: 'Лекц' },
-    { id: 'BSEM', name: 'Семинар' },
-    { id: 'CLAB', name: 'Лаборатори' },
-  ];
+  showLecture = false;
+  showSeminar = false;
+  showLab = false;
+
+  lessonTypes: any;
   weeks = [
     { name: 'Даваа', id: 'Monday' },
     { name: 'Мягмар', id: 'Tuesday' },
@@ -81,8 +81,17 @@ export class LesStudentListComponent {
     });
     this.shared.getDictionary(this.lessonId, true).subscribe((res) => {
       this.lessonTypes = res;
+      console.log(this.lessonTypes);
+      this.setLessonTypeVisibility();
       this.loadStudents();
     });
+  }
+
+  setLessonTypeVisibility(): void {
+    const values = this.lessonTypes.map((lt: any) => lt.value);
+    this.showLecture = values.includes('alec');
+    this.showSeminar = values.includes('bsem');
+    this.showLab = values.includes('clab');
   }
 
   loadStudents(): void {
