@@ -21,7 +21,12 @@
         label="Excel үүсгэх"
         (onClick)="excelConvert()"
       />
-      <p-button severity="success" icon="pi pi-file-pdf" label="PDF үүсгэх"  (onClick)="pdfConvert()"/>
+      <p-button
+        severity="success"
+        icon="pi pi-file-pdf"
+        label="PDF үүсгэх"
+        (onClick)="pdfConvert()"
+      />
     </div>
     <div id="pdf-content">
       <p-progressSpinner
@@ -35,7 +40,6 @@
         [rows]="10"
         rowGroupMode="subheader"
         groupRowsBy="cloType"
-        groupRowsByOrder=""
         class="custom-table"
       >
         <ng-template pTemplate="header">
@@ -133,13 +137,15 @@
               "
             >
               <td [formGroupName]="pi" pEditableColumn>
-                <p-cellEditor>
+                <p-cellEditor *ngIf="!isDisabled(row, ri, pi)">
                   <ng-template pTemplate="input">
                     <p-inputNumber
                       formControlName="point"
                       inputId="point"
                       [showButtons]="true"
-                      [step]="1"
+                      [step]="0.1"
+                      [minFractionDigits]="1"
+                      [maxFractionDigits]="1"
                     ></p-inputNumber>
                   </ng-template>
                   <ng-template pTemplate="output">

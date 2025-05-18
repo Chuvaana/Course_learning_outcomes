@@ -9,8 +9,6 @@ import {
   ReactiveFormsModule,
 } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import html2canvas from 'html2canvas';
-import jsPDF from 'jspdf';
 import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { InputNumberModule } from 'primeng/inputnumber';
@@ -24,6 +22,8 @@ import { forkJoin } from 'rxjs';
 import * as XLSX from 'xlsx';
 import { AssessmentService } from '../../../../../../services/assessmentService';
 import { CloPointPlanService } from '../../../../../../services/cloPointPlanService';
+import { PdfCloGeneratorService } from '../../../../../../services/pdf-clo-generator.service';
+import { PdfMainService } from '../../../../../../services/pdf-main.service';
 import { TeacherService } from '../../../../../../services/teacherService';
 
 interface SubMethod {
@@ -78,7 +78,9 @@ export class CloPointPlanComponent {
     private cloPointPlanService: CloPointPlanService,
     private assessService: AssessmentService,
     private msgService: MessageService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private pdfGeneretorService: PdfCloGeneratorService,
+    private pdfMainService: PdfMainService
   ) {}
 
   async ngOnInit() {
@@ -99,6 +101,16 @@ export class CloPointPlanComponent {
       this.cloList = cloList;
       this.assessPlan = assessPlan;
       this.cloPlan = cloPlan;
+
+      this.cloPlan = this.cloPlan.sort(
+        (a: { cloType: string }, b: { cloType: any }) =>
+          a.cloType.localeCompare(b.cloType)
+      );
+
+      this.cloList = this.cloList.sort(
+        (a: { type: string }, b: { type: any }) => a.type.localeCompare(b.type)
+      );
+
       this.subMethodOrder = (assessPlan as any).plans.flatMap((p: any) =>
         p.subMethods.map((s: any) => s._id)
       );
@@ -123,6 +135,7 @@ export class CloPointPlanComponent {
         plan.subMethods.forEach((sub: any) => {
           const pointGroup = this.fb.group({
             subMethodId: sub._id,
+            secondMethodType: plan.secondMethodType || 'ALEC',
             point: [0],
           });
 
@@ -198,6 +211,16 @@ export class CloPointPlanComponent {
     return pointsArray.controls as FormGroup[];
   }
 
+  isDisabled(row: any, ri: number, pi: number): boolean {
+    const secondType =
+      this.getPointsControl(ri)[pi].get('secondMethodType')?.value;
+    return (
+      row.cloType === 'ALEC' &&
+      (secondType == 'CLAB' || secondType == 'BSEM') &&
+      row.cloType !== secondType
+    );
+  }
+
   isMethodType(subMethodId: string, type: string): boolean {
     return this.assessPlan.plans.some((plan: any) => {
       return (
@@ -263,10 +286,15 @@ export class CloPointPlanComponent {
                 validSubMethodIds.indexOf(p.subMethodId)
             );
             if (insertIndex === -1) {
-              clo.procPoints.push({ subMethodId: sub._id, point: 0 });
+              clo.procPoints.push({
+                subMethodId: sub._id,
+                secondMethodType: pl.secondMethodType || 'ALEC',
+                point: 0,
+              });
             } else {
               clo.procPoints.splice(insertIndex, 0, {
                 subMethodId: sub._id,
+                secondMethodType: pl.secondMethodType || 'ALEC',
                 point: 0,
               });
             }
@@ -279,10 +307,15 @@ export class CloPointPlanComponent {
                 validSubMethodIds.indexOf(e.subMethodId)
             );
             if (insertIndex === -1) {
-              clo.examPoints.push({ subMethodId: sub._id, point: 0 });
+              clo.examPoints.push({
+                subMethodId: sub._id,
+                secondMethodType: pl.secondMethodType || 'ALEC',
+                point: 0,
+              });
             } else {
               clo.examPoints.splice(insertIndex, 0, {
                 subMethodId: sub._id,
+                secondMethodType: pl.secondMethodType || 'ALEC',
                 point: 0,
               });
             }
@@ -297,6 +330,7 @@ export class CloPointPlanComponent {
         clo.procPoints.map((p: any) =>
           this.fb.group({
             subMethodId: [p.subMethodId],
+            secondMethodType: [p.secondMethodType],
             point: [p.point],
             cloId: [clo.cloId],
           })
@@ -307,6 +341,7 @@ export class CloPointPlanComponent {
         clo.examPoints.map((e: any) =>
           this.fb.group({
             subMethodId: [e.subMethodId],
+            secondMethodType: [e.secondMethodType],
             point: [e.point],
             cloId: [clo.cloId],
           })
@@ -399,12 +434,14 @@ export class CloPointPlanComponent {
       ? this.cloPointPlanService.updateCloPlan(formData)
       : this.cloPointPlanService.saveCloPlan(formData);
     request.subscribe(
-      () =>
+      (res) => {
         this.msgService.add({
           severity: 'success',
           summary: 'Амжилттай',
           detail: 'Амжилттай хадгалагдлаа',
-        }),
+        });
+        this.readData();
+      },
       (err) =>
         this.msgService.add({
           severity: 'error',
@@ -412,7 +449,6 @@ export class CloPointPlanComponent {
           detail: `Алдаа гарлаа: ${err.message}`,
         })
     );
-    this.readData();
   }
 
   getCloName(cloId: string): string {
@@ -466,8 +502,6 @@ export class CloPointPlanComponent {
 
   pdfConvert() {
     if (this.cloPoint !== undefined && this.cloPoint !== null) {
-      console.log(this.cloPoint);
-      console.log(this.pdfSendData);
       const assessPlans = this.assessPlan;
       this.pdfSendData.push(assessPlans);
       this.pdfSendData.push(this.cloPoint);
@@ -478,38 +512,8 @@ export class CloPointPlanComponent {
       }
       console.log(assessPlans);
       this.pdfSendData.push(this.cloPlan);
-      // this.pdfGeneretorService.generatePdf(this.pdfSendData);
-      // this.pdfMainService.generatePdfAll(this.pdfSendData);
+      this.pdfGeneretorService.generatePdf(this.pdfSendData);
+      this.pdfMainService.generatePdfAll(this.pdfSendData);
     }
   }
-
-  // pdfConvert(): void {
-  //   const element = document.getElementById('pdf-content');
-
-  //   if (!element) {
-  //     console.error('Element not found for PDF export.');
-  //     return;
-  //   }
-
-  //   html2canvas(element, {
-  //     scale: 2, // илүү өндөр чанартай
-  //     useCORS: true,
-  //     scrollY: -window.scrollY, // viewport-с гадагш харагдахаар бол зөв авна
-  //   })
-  //     .then((canvas) => {
-  //       const imgData = canvas.toDataURL('image/png');
-
-  //       const pdf = new jsPDF({
-  //         orientation: 'landscape',
-  //         unit: 'px',
-  //         format: [canvas.width, canvas.height], // зурагны хэмжээтэй тааруулна
-  //       });
-
-  //       pdf.addImage(imgData, 'PNG', 0, 0, canvas.width, canvas.height);
-  //       pdf.save('clo-point-plan.pdf');
-  //     })
-  //     .catch((error) => {
-  //       console.error('PDF convert failed:', error);
-  //     });
-  // }
 }

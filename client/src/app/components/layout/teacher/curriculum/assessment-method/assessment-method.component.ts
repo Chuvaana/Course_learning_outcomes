@@ -16,29 +16,6 @@ import { forkJoin } from 'rxjs';
 import { AssessmentService } from '../../../../../services/assessmentService';
 import { CloPointPlanService } from '../../../../../services/cloPointPlanService';
 import { TeacherService } from '../../../../../services/teacherService';
-interface Assessment {
-  id: string;
-  lessonId: string;
-  clo: any;
-  attendance: boolean;
-  assignment: boolean;
-  quiz: boolean;
-  project: boolean;
-  lab: boolean;
-  exam: boolean;
-}
-
-interface AssessFooter {
-  id?: string;
-  lessonId: string;
-  name: string;
-  attendanceValue: number;
-  assignmentValue: number;
-  quizValue: number;
-  projectValue: number;
-  labValue: number;
-  examValue: number;
-}
 
 @Component({
   selector: 'app-assessment-method',
@@ -69,6 +46,8 @@ export class AssessmentMethodComponent {
   assessPlan: any;
   cloPlan: any;
 
+  hasPlan = true;
+
   @Input() lessonId: any;
 
   constructor(
@@ -92,6 +71,9 @@ export class AssessmentMethodComponent {
       this.cloPlan = cloPlan;
       this.cloPoint = []; // clear previous rows
       this.sampleData = [];
+      if (this.cloPlan.length == 0) {
+        this.hasPlan = false;
+      }
 
       if (Array.isArray(this.cloPlan) && this.cloPlan.length === 0) {
         this.createRows();
@@ -134,14 +116,10 @@ export class AssessmentMethodComponent {
   }
 
   populateCLOForm() {
-    // const cloRowsArray = [];
-
-    // 1. Gather all valid subMethodIds from assessPlan
     const validSubMethodIds = this.assessPlan.plans
       .flatMap((pl: any) => pl.subMethods)
       .map((sub: any) => sub._id);
 
-    // 2. Update cloPlan: remove subMethodId entries that are no longer valid
     this.cloPlan.forEach((clo: any) => {
       clo.procPoints = clo.procPoints.filter((p: any) =>
         validSubMethodIds.includes(p.subMethodId)
@@ -152,7 +130,6 @@ export class AssessmentMethodComponent {
       );
     });
 
-    // 3. Then proceed with syncing new subMethods like before
     this.assessPlan.plans.forEach((pl: any) => {
       pl.subMethods.forEach((sub: any) => {
         this.cloPlan.forEach((clo: any) => {
@@ -168,7 +145,6 @@ export class AssessmentMethodComponent {
           );
 
           if (!inProc && pl.methodType === 'PROC') {
-            // insert to original position (optional: keep order)
             const insertIndex = clo.procPoints.findIndex(
               (p: any) =>
                 validSubMethodIds.indexOf(sub._id) <

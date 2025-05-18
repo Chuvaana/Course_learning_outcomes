@@ -1,10 +1,14 @@
 <div class="card">
   <p-toast></p-toast>
-  <div>
-    <!-- <p-button label="Хадгалах" class="submit-button" (click)="save()" /> -->
+  <div *ngIf="!hasPlan">
+    <h2>
+      Хичээлийн дүнгийн онооны төлөвлөгөө бүртгээгүй байна. Төлөвлөгөөгөө
+      бүртгэнэ үү
+    </h2>
   </div>
 
   <p-table
+    *ngIf="hasPlan"
     [value]="cloPoint"
     [rows]="10"
     [sortMode]="'multiple'"
@@ -48,7 +52,6 @@
         <td>{{ ri + 1 }}</td>
         <td>{{ getCloName(row.cloId) }}</td>
 
-        <!-- Явцын үнэлгээ -->
         <ng-container *ngFor="let proc of row.procPoints">
           <td>
             <p-checkbox

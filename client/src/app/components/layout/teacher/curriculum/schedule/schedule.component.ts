@@ -161,47 +161,6 @@ export class ScheduleComponent {
           this.hasBd = response.weeklyHours.assignment == 0 ? false : true;
         }
       });
-
-      this.labSumPoint = 0;
-      this.semSumPoint = 0;
-      this.bdSumPoint = 0;
-      this.assessService
-        .getAssessmentByLesson(this.lessonId)
-        .subscribe((res: any) => {
-          if (res.plans.length === 0) {
-            this.msgService.add({
-              severity: 'warn',
-              summary: 'Анхааруулга',
-              detail:
-                'Хичээлийн төлөвлөгөө бүртгээгүй байна. Төлөвлөгөөгөө бүртгэнэ үү',
-            });
-            this.disableAll();
-          }
-          res.plans.forEach((element: any) => {
-            if (element.methodType === 'PROC') {
-              if (element.secondMethodType === 'CLAB') {
-                element.subMethods.forEach((item: any) => {
-                  this.labSumPoint += item.point;
-                });
-                this.labData = element;
-                this.labFreq = element.frequency;
-              } else if (element.secondMethodType === 'BSEM') {
-                element.subMethods.forEach((item: any) => {
-                  this.semSumPoint += item.point;
-                });
-                this.semData = element;
-                this.semFreq = element.frequency;
-              } else if (element.secondMethodType === 'BD') {
-                element.subMethods.forEach((item: any) => {
-                  this.bdSumPoint += item.point;
-                });
-                this.bdData = element;
-                this.bdFreq = element.frequency;
-              }
-            }
-          });
-        });
-
       const resLec = await this.service.getSchedules(this.lessonId).toPromise();
       const resSem = await this.service
         .getScheduleSems(this.lessonId)
@@ -299,16 +258,6 @@ export class ScheduleComponent {
       });
       scheduleArray.push(lessonGroup);
     });
-    // let cloRelevanceCounts: { [key: string]: number } = {};
-    // const data = scheduleArray.value;
-    // data.forEach((item: any) => {
-    //   const clo = item.cloRelevance;
-    //   if (clo) {
-    //     cloRelevanceCounts[clo] = (cloRelevanceCounts[clo] || 0) + 1;
-    //   }
-    // });
-    // this.cloRelevanceCounts = cloRelevanceCounts;
-    // console.log(this.cloRelevanceCounts);
   }
 
   setScheduleSems(res: any[]): void {

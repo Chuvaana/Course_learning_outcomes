@@ -152,7 +152,7 @@ export class ScheduleComponent {
       this.assessService
         .getAssessmentByLesson(this.lessonId)
         .subscribe((res: any) => {
-          if (res.plans.length === 0) {
+          if (res) {
             this.msgService.add({
               severity: 'warn',
               summary: 'Анхааруулга',
