@@ -1,0 +1,82 @@
+<div class="info">
+  <h3 style="margin-bottom: 1rem; color: #2c3e50">
+    Заах арга зүйн төрлүүдийг тодорхойлох
+  </h3>
+  <p style="margin-bottom: 2rem; font-size: 1rem; color: #555">
+    Хөтөлбөрийн суралцахуйн үр дунг оюутанд маш сайн эзэмшүүлэхийн тулд хөтөлбөр
+    хэрэгжүүлэх баг сургалтын үйл ажиллагааг илүү үр дүнтэй орчин үеийн
+    дэвшилтэт заах арга зүйгээр зохион байгуулах ёстой. Иймээс сургалтанд
+    ашиглах заах арга зүйн талын судалгаа хийж энэ талаарх заавар, зөвлөмжийг
+    сургалтын хөтөлбөрт заавал багтаасан байх ба хичээл заах багш нар эдгээрээс
+    сонгон хэрэгжүүлэх боломж бүрдсэн байх хэрэгтэй. Сургалтын арга зүйг оюутны
+    дээд түвшний сэтгэх чадварыг хөгжүүлэх зорилгоор урт хугацаанд гүйцэтгэх
+    томоохон даалгавар, үйл ажиллагаатай уялдаатайгаар тодорхойлдог.
+  </p>
+
+  <p>
+    Энэ хичээлд ямар заах арга зүйг хэрэглэхээ тодорхойлж бичнэ. Тухайн
+    хичээлийн хэд хэдэн сэдвийг дамнасан, оюутнуудын дээд түвшний
+    сэтгэлгээг(Блумын таксаномын хэрэглээний түвшингээс дээш) хөгжүүлэхэд
+    чиглэсэн сургалтын арга зүйг “Заах арга зүй” гэж үзэж тусгайлан тодорхойлсон
+    байна.
+  </p>
+
+  <h3 style="margin-bottom: 1rem; color: #2c3e50">
+    Сурган заах арга зүйн зарим төрлүүд
+  </h3>
+  <p-table
+    [value]="levels"
+    [responsiveLayout]="'scroll'"
+    [style]="{ 'min-width': '700px' }"
+    [tableStyle]="{ 'border-collapse': 'separate', 'border-spacing': '0 10px' }"
+  >
+    <ng-template pTemplate="header">
+      <tr style="background-color: #f0f4f8">
+        <th
+          style="
+            width: 20%;
+            padding: 12px 10px;
+            text-align: left;
+            border-radius: 8px 0 0 8px;
+          "
+        >
+          Төрлүүд
+        </th>
+        <th
+          style="
+            width: 20%;
+            padding: 12px 10px;
+            text-align: left;
+            border-radius: 8px 0 0 8px;
+          "
+        >
+          Үндсэн зарчим
+        </th>
+        <th style="width: 40%; padding: 12px 10px; text-align: left">
+          Ач холбогдол
+        </th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-level>
+      <tr
+        style="background-color: #fff; box-shadow: 0 1px 4px rgb(0 0 0 / 0.1)"
+      >
+        <td style="vertical-align: top; padding: 12px 10px">
+          <strong style="font-size: 1.1rem; color: #34495e">
+            {{ level.type }}
+          </strong>
+          <br />
+        </td>
+        <td style="padding: 12px 10px; vertical-align: top">
+          <span>
+            {{ level.principle }}
+          </span>
+        </td>
+        <td style="padding: 12px 10px; vertical-align: top">
+          {{ level.importance }}
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>

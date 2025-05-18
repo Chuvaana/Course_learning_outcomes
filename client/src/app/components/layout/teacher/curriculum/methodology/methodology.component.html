@@ -1,14 +1,21 @@
 <div class="card" style="display: flex; flex-direction: column; gap: 20px">
   <p-toast></p-toast>
   <p-confirmDialog></p-confirmDialog>
-  <p-button
-    label="Нэмэх"
-    class="submit-button"
-    severity="info"
-    icon="pi pi-plus"
-    (click)="addMethod()"
-  />
-
+  <div style="display: flex; justify-content: space-between">
+    <p-button
+      label="Нэмэх"
+      class="submit-button"
+      severity="info"
+      icon="pi pi-plus"
+      (click)="addMethod()"
+    />
+    <p-button
+      severity="warn"
+      label="Тусламж"
+      icon="pi pi-exclamation-circle"
+      (onClick)="infoTo()"
+    />
+  </div>
   <p-table
     [value]="methodologys"
     dataKey="id"
