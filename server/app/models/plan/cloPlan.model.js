@@ -6,7 +6,11 @@ const PointSchema = new mongoose.Schema(
     subMethodId: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
-      ref: 'SubMethod', // or whatever your sub method collection is
+      ref: 'SubMethod',
+    },
+    secondMethodType: {
+      type: String,
+      required: true,
     },
     point: {
       type: Number,
