@@ -15,7 +15,7 @@ import { Content } from 'pdfmake/interfaces';
 export class PdfLessonAssessmentService {
 
 
-  generatePdf(data: any) {
+  generatePdf(data: any, teacherName: any) {
     if (data.length === 0) return;
 
     const assessPlan = data.assessPlan;
@@ -184,17 +184,17 @@ export class PdfLessonAssessmentService {
             style: 'bodyCenter'
           },
         ],
-          ...mainPoint,
+        ...mainPoint,
       ];
 
     const documentDefinition = {
       content: [
         { text: 'Улирлын шалгалтын асуултууд ба хичээлийн\nсуралцахуйн үр дүнгийн хамаарал', style: 'bodyCenter' },
-        { text: '2024-12-18', style: 'bodyRight' },
-        { text: '1.	Үндсэн мэдээлэл', style: 'bodyLeft' },
+        { text: new Date().toISOString().split('T')[0], style: 'bodyRight' },
+        { text: `1.	${data.title}`, style: 'bodyRightName' },
         {
           table: {
-            headerRows: 1,
+            headerRows: 0,
             widths: widths,
             body: mainTableData,
             dontBreakRows: true,
@@ -202,7 +202,7 @@ export class PdfLessonAssessmentService {
         },
       ],
       footer: {
-        text: `Боловсруулсан багш ........ ................... ${data.teacherName}`,
+        text: `Боловсруулсан багш ........ ................... ${teacherName}`,
         style: 'footerCenter',
       },
       styles: {
@@ -256,6 +256,12 @@ export class PdfLessonAssessmentService {
           alignment: 'left' as const,
           margin: [20, 0, 0, 1] as [number, number, number, number] // ✅ Force it to be a tuple
         },
+        bodyRightName: {
+          fontSize: 10,
+          fontStyle: 'Times New Roman',
+          alignment: 'right' as const,
+          margin: [0, 10, 0, 10] as [number, number, number, number] // ✅ Force it to be a tuple
+        },
         bodyRight: {
           fontSize: 10,
           fontStyle: 'Times New Roman',
@@ -267,7 +273,8 @@ export class PdfLessonAssessmentService {
           fontStyle: 'Times New Roman',
           color: 'red',
           margin: [0, 0, 0, 0] as [number, number, number, number] // ✅ Force it to be a tuple
-        }
+        },
+        footerCenter: { fontSize: 9, alignment: 'center' as const },
       }
     };
 
@@ -275,7 +282,7 @@ export class PdfLessonAssessmentService {
   }
 
 
-  generatePdfAll(daty: any) {
+  generatePdfAll(daty: any, teacherName: any) {
     const contentArray: any[] = [];
 
     daty.forEach((data: any, dataIndex: number) => {
@@ -352,17 +359,25 @@ export class PdfLessonAssessmentService {
 
       // Append to content
       contentArray.push(
-        { text: `Хүснэгт ${dataIndex + 1}. ${data.title}`, style: 'footerCenter'},
+        { text: `Хүснэгт ${dataIndex + 1}. ${data.title}`, style: 'bodyRight' },
         {
           table: {
-            headerRows: 3,
+            headerRows: 0,
             widths,
             body: tableBody,
             dontBreakRows: true,
           },
         },
-        { text: `Боловсруулсан багш: ${data.teacherName}`, style: 'footerCenter'}
       );
+      if (dataIndex === (daty.length - 1)) {
+        // contentArray.push(
+        //   { text: `Боловсруулсан багш: Unubileg`, style: 'footerCenter' }
+        // );
+      } else {
+        contentArray.push(
+          { text: '', pageBreak: 'before' as const, style: 'bodyCenter' },
+        );
+      }
     });
 
     const documentDefinition = {
@@ -371,16 +386,22 @@ export class PdfLessonAssessmentService {
         { text: new Date().toISOString().split('T')[0], style: 'bodyRight' },
         ...contentArray,
       ],
+      footer: (currentPage: number, pageCount: number): Content => ({
+        text: pageCount === currentPage ? `Боловсруулсан багш: ........ ................... ${teacherName}\n\nХуудас ${currentPage} / ${pageCount}` : `Хуудас ${currentPage} / ${pageCount}`,
+        alignment: 'center',
+        fontSize: 9,
+        margin: [0, 0, 0, 0],
+      }),
       styles: {
-        header: { fontSize: 14, bold: true},
-        tableGreen: { fontSize: 10, fontStyle: 'Arial', color: 'black', fillColor: '#D9EADA'},
+        header: { fontSize: 14, bold: true },
+        tableGreen: { fontSize: 10, fontStyle: 'Arial', color: 'black', fillColor: '#D9EADA' },
         tableHeader: { fontSize: 10, fontStyle: 'Times New Roman', bold: true },
         body: { fontSize: 10, bold: false, fontStyle: 'Arial' },
         bodyCenter: { fontSize: 10, bold: false, fontStyle: 'Arial', alignment: 'center' as const },
-        title: { fontSize: 11, bold: true, fontStyle: 'Times New Roman', alignment: 'center' as const},
-        bodyLeft: { fontSize: 11, alignment: 'left' as const},
-        bodyRight: { fontSize: 11, alignment: 'right' as const},
-        footerCenter: { fontSize: 12, alignment: 'center' as const},
+        title: { fontSize: 11, bold: true, fontStyle: 'Times New Roman', alignment: 'center' as const },
+        bodyLeft: { fontSize: 11, alignment: 'left' as const },
+        bodyRight: { fontSize: 11, alignment: 'right' as const, margin: [0, 10, 0, 10] as [number, number, number, number] },
+        footerCenter: { fontSize: 12, alignment: 'center' as const },
       }
     };
 
