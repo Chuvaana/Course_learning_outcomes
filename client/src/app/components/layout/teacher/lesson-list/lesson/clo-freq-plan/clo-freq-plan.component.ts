@@ -19,6 +19,7 @@ import { forkJoin, Observable } from 'rxjs';
 import { AssessmentPlanService } from '../../../../../../services/assessmentPlanService';
 import { AssessmentService } from '../../../../../../services/assessmentService';
 import { CloPointPlanService } from '../../../../../../services/cloPointPlanService';
+import { AccordionModule } from 'primeng/accordion';
 
 interface DataRow {
   formGroup: FormGroup;
@@ -45,6 +46,7 @@ interface DataRow {
     InputTextModule,
     InputNumberModule,
     ToastModule,
+    AccordionModule,
   ],
   providers: [MessageService],
   templateUrl: './clo-freq-plan.component.html',
@@ -487,6 +489,19 @@ export class CloFreqPlanComponent implements OnInit {
             });
           });
       }
+    }
+  }
+
+  getTypeName(e: string): string {
+    switch (e) {
+      case 'BD':
+        return 'Бие даалт';
+      case 'CLAB':
+        return 'Лаборатори';
+      case 'BSEM':
+        return 'Семинар';
+      default:
+        return '';
     }
   }
 }
