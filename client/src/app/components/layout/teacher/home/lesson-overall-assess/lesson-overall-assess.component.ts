@@ -239,7 +239,7 @@ export class LessonOverallAssessComponent {
         });
       }
       this.prepareChartData();
-    }, 800);
+    }, 1500);
   }
 
   prepareChartData() {

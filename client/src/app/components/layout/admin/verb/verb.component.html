@@ -1,41 +1,105 @@
+<p-toast></p-toast>
+<div class="verb">
+  <div class="column-style">
+    <!-- <div class="action-btn">
+    <p-button label="Хадгалах" (onClick)="onSubmit()"></p-button>
+  </div> -->
+    <div class="action-btn">
+      <button
+        pButton
+        type="button"
+        icon="pi pi-plus"
+        severity="info"
+        label="Үйл үг нэмэх"
+        (click)="addColumn()"
+      ></button>
+    </div>
+  </div>
 
-<div class="column-style">
-  <div class="action-btn">
-    <p-button label="Хадгалах" (onClick)="save()"></p-button>
-  </div>
-  <div class="action-btn">
-    <p-button label="Шинэ асуулт оруулах" (onClick)="addColumn()"></p-button>
-  </div>
-</div>
-<p-toast />
-<p-table [value]="items" editMode="row">
+  <p-table [value]="items" editMode="row" dataKey="_id">
     <ng-template pTemplate="header">
-        <tr>
-            <th>Үйл үгний код</th>
-            <th>Үйл үг</th>
-        </tr>
+      <tr>
+        <th>Үйл үгний код</th>
+        <th>Үйл үг</th>
+        <th>Үйлдэл</th>
+      </tr>
     </ng-template>
 
-    <ng-template pTemplate="body" let-item let-editing="editing" let-ri="rowIndex">
-        <tr [pEditableRow]>
-            <td>
-                <input pInputText [(ngModel)]="item.verbCode" />
-            </td>
-            <td [pEditableRow]>
-                <input pInputText [(ngModel)]="item.verbName" />
-            </td>
-            <td>
-                <div class="flex items-center justify-center gap-2">
-                    <button *ngIf="!editing" pButton pRipple type="button" pInitEditableRow icon="pi pi-delete-left"
-                        (click)="onRowDelete(item, ri)" text rounded severity="secondary"></button>
-                    <button *ngIf="!editing" pButton pRipple type="button" pInitEditableRow icon="pi pi-pencil"
-                        (click)="onRowEditInit(item, ri)" text rounded severity="secondary"></button>
-                    <button *ngIf="editing" pButton pRipple type="button" pSaveEditableRow icon="pi pi-check"
-                        (click)="onRowEditSave(item)" text rounded severity="secondary"></button>
-                    <button *ngIf="editing" pButton pRipple type="button" pCancelEditableRow icon="pi pi-times"
-                        (click)="onRowEditCancel(item, ri)" text rounded severity="secondary"></button>
-                </div>
-            </td>
-        </tr>
+    <ng-template
+      pTemplate="body"
+      let-item
+      let-editing="editing"
+      let-ri="rowIndex"
+    >
+      <tr [pEditableRow]="item">
+        <td>
+          <p-cellEditor>
+            <ng-template pTemplate="input">
+              <input pInputText [(ngModel)]="item.verbCode" />
+            </ng-template>
+            <ng-template pTemplate="output">
+              {{ item.verbCode }}
+            </ng-template>
+          </p-cellEditor>
+        </td>
+        <td>
+          <p-cellEditor>
+            <ng-template pTemplate="input">
+              <input pInputText [(ngModel)]="item.verbName" />
+            </ng-template>
+            <ng-template pTemplate="output">
+              {{ item.verbName }}
+            </ng-template>
+          </p-cellEditor>
+        </td>
+        <td>
+          <div class="flex items-center justify-center gap-2">
+            <button
+              *ngIf="!editing"
+              pButton
+              type="button"
+              pInitEditableRow
+              icon="pi pi-pencil"
+              (click)="onRowEditInit(item)"
+              text
+              rounded
+              severity="secondary"
+            ></button>
+            <button
+              *ngIf="editing"
+              pButton
+              type="button"
+              pSaveEditableRow
+              icon="pi pi-check"
+              (click)="onRowEditSave(item)"
+              text
+              rounded
+              severity="success"
+            ></button>
+            <button
+              *ngIf="editing"
+              pButton
+              type="button"
+              pCancelEditableRow
+              icon="pi pi-times"
+              (click)="onRowEditCancel(item, ri)"
+              text
+              rounded
+              severity="danger"
+            ></button>
+            <button
+              *ngIf="!editing"
+              pButton
+              type="button"
+              icon="pi pi-trash"
+              (click)="onRowDelete(item, ri)"
+              text
+              rounded
+              severity="warn"
+            ></button>
+          </div>
+        </td>
+      </tr>
     </ng-template>
-</p-table>
+  </p-table>
+</div>

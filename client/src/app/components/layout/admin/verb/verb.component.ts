@@ -28,6 +28,7 @@ import { VerbService } from '../../../../services/verbService';
     DropdownModule,
     TableModule,
     ToastModule,
+    ButtonModule,
   ],
   providers: [MessageService],
   templateUrl: './verb.component.html',
@@ -38,9 +39,7 @@ export class VerbComponent {
   branches: any[] = [];
   departments: any[] = [];
   items: any[] = [];
-  editingRowId: number | null = null;
-  index!: number;
-  clonedConfig!: any;
+  clonedConfig: { [key: string]: any } = {};
 
   constructor(
     private fb: FormBuilder,
@@ -60,24 +59,16 @@ export class VerbComponent {
   }
 
   readData() {
-    this.service.getVerbs().subscribe((res : any) => {
-      // console.log(res);
-      this.items = res;
-    },
-      (err) => {
-        this.msgService.add({
-          severity: 'error',
-          summary: 'Алдаа',
-          detail: 'Алдаа гарлаа: ' + err.message,
-        });
-      });
+    this.service.getVerbs().subscribe(
+      (res: any) => (this.items = res),
+      (err) => this.showError('Алдаа гарлаа: ' + err.message)
+    );
   }
 
   loadBranches(): void {
     this.configService.getBranches().subscribe((data: any[]) => {
-      // Add "All" option at the beginning
       this.branches = [
-        { name: 'Бүгд', id: 'all' }, // This will be your "All" option
+        { name: 'Бүгд', id: 'all' },
         ...data.map((branch) => ({
           name: branch.name,
           id: branch.id || branch.name,
@@ -87,138 +78,88 @@ export class VerbComponent {
   }
 
   onBranchChange(branch: any): void {
-    if (branch.id == 'all') {
-      this.departments = [
-        { name: 'Бүгд', id: 'all' }, // This will be your "All" option
-      ];
+    if (branch.id === 'all') {
+      this.departments = [{ name: 'Бүгд', id: 'all' }];
     } else {
       this.configService.getDepartments(branch.id).subscribe((data: any[]) => {
-        if (data) {
-          this.departments = data.map((dept) => ({
-            name: dept.name,
-            id: dept.id || dept.name,
-          }));
-        }
+        this.departments = data.map((dept) => ({
+          name: dept.name,
+          id: dept.id || dept.name,
+        }));
       });
     }
   }
 
-  onRowEditInit(config: any, index: number) {
-    this.index = index + 1;
-    this.editingRowId = config.id;
-  }
-  onRowDelete(config: any, index: number) {
-    console.log(config + " - " + index);
-    if (index > -1) {
-      this.service.deleteVerbs(config._id).subscribe(() =>{
-        this.items.splice(index, 1);
-        this.msgService.add({
-          severity: 'success',
-          summary: 'Амжилттай',
-          detail: 'Амжилттай устгалаа!',
-        });
-      },
-      (err) => {
-        this.msgService.add({
-          severity: 'error',
-          summary: 'Алдаа',
-          detail: 'Устгахад алдаа гарлаа: ' + err.message,
-        });
-      })
-    }
-    // this.index = index + 1;
-    // this.editingRowId = config.id;
+  onRowEditInit(config: any) {
+    this.clonedConfig[config._id] = { ...config };
   }
 
   onRowEditCancel(config: any, index: number) {
-    this.items[index] = { ...this.clonedConfig[config.id] };
-    delete this.clonedConfig[config.id];
-    this.editingRowId = null;
+    this.items[index] = this.clonedConfig[config._id];
+    delete this.clonedConfig[config._id];
   }
 
   onRowEditSave(data: any) {
-    if (data._id === null || data._id === undefined) {
+    if (!data._id) {
       this.service.addVerb(data).subscribe(
-        (res: any) => {
-          this.msgService.add({
-            severity: 'success',
-            summary: 'Амжилттай',
-            detail: 'Амжилттай хадгалагдлаа!',
-          });
-        },
-        (err) => {
-          this.msgService.add({
-            severity: 'error',
-            summary: 'Алдаа',
-            detail: 'Алдаа гарлаа: ' + err.message,
-          });
-        }
+        () => this.afterSaveSuccess('Амжилттай хадгалагдлаа!'),
+        (err) => this.showError('Алдаа гарлаа: ' + err.message)
       );
     } else {
       this.service.updateVerb(data._id, data).subscribe(
-        (res) => {
-          this.msgService.add({
-            severity: 'success',
-            summary: 'Амжилттай',
-            detail: 'data updated successfully!',
-          });
-        },
-        (err) => {
-          this.msgService.add({
-            severity: 'error',
-            summary: 'Алдаа',
-            detail: 'Failed to update config: ' + err.message,
-          });
-        }
+        () => this.afterSaveSuccess('Амжилттай шинэчлэгдлээ!'),
+        (err) => this.showError('Шинэчлэхэд алдаа гарлаа: ' + err.message)
       );
     }
-    this.editingRowId = null;
   }
 
-  // On form submit
+  onRowDelete(config: any, index: number) {
+    if (index > -1) {
+      this.service.deleteVerbs(config._id).subscribe(
+        () => {
+          this.items.splice(index, 1);
+          this.showSuccess('Амжилттай устгалаа!');
+        },
+        (err) => this.showError('Устгахад алдаа гарлаа: ' + err.message)
+      );
+    }
+  }
+
   onSubmit(): void {
     if (this.verbForm.valid) {
       const config = this.verbForm.value;
       const cleanedData = {
         ...config,
-        department: config.department.id,
-        branchId: config.branchId.id,
+        department: config.department?.id,
+        branchId: config.branchId?.id,
       };
       this.configService.submitConfig(cleanedData).subscribe(
-        (response: any) => {
-          console.log('Form submitted successfully', response);
-          alert('Configuration added successfully!');
+        () => {
+          this.showSuccess('Амжилттай хадгалагдлаа');
           this.readData();
         },
-        (error: any) => {
-          console.error('Error submitting form', error);
-          alert('An error occurred while submitting the form.');
-        }
+        () => alert('An error occurred while submitting the form.')
       );
-    } else {
-      console.log('Form is invalid');
     }
   }
 
-  saveItem(item: any) {
-    console.log('Saved item:', item);
-    // Save the item after editing
-  }
-
-  save() {
-    this.items.map((e) => {
-      this.service.addVerb(e).subscribe((i) => {
-        console.log(i);
-      })
-    })
-
-  }
-
   addColumn() {
-    const addData = {
-      verbCode: '2',
-      verbName: 'NAME',
-    };
-    this.items.push(addData);
+    this.items.push({
+      verbCode: 'TEMP_' + new Date().getTime(),
+      verbName: 'Шинэ үйл үг',
+    });
+  }
+
+  private showError(detail: string) {
+    this.msgService.add({ severity: 'error', summary: 'Алдаа', detail });
+  }
+
+  private showSuccess(detail: string) {
+    this.msgService.add({ severity: 'success', summary: 'Амжилттай', detail });
+  }
+
+  private afterSaveSuccess(detail: string) {
+    this.showSuccess(detail);
+    this.readData();
   }
 }
