@@ -139,7 +139,10 @@ export class LessonOverallAssessComponent {
           if (item.id === attendance.cloId) {
             item.content.forEach((studentRow: any) => {
               attendance.sumPoints.map((poi: any) => {
-                if (poi.studentId == studentRow.studentId) {
+                if (
+                  poi.studentId.toLowerCase() ==
+                  studentRow.studentId.toLowerCase()
+                ) {
                   studentRow.totalPoint += poi.statusPoint;
                 }
               });
@@ -159,7 +162,10 @@ export class LessonOverallAssessComponent {
           if (item.id === activity.cloId) {
             item.content.forEach((studentRow: any) => {
               activity.sumPoints.map((poi: any) => {
-                if (poi.studentId == studentRow.studentId) {
+                if (
+                  poi.studentId.toLowerCase() ==
+                  studentRow.studentId.toLowerCase()
+                ) {
                   studentRow.totalPoint += poi.statusPoint;
                 }
               });
@@ -189,7 +195,10 @@ export class LessonOverallAssessComponent {
               let total = 0;
               let allTotal = 0;
               examPo.sumPoint.map((poi: any) => {
-                if (poi.studentId == studentRow.studentCode) {
+                if (
+                  poi.studentId.toLowerCase() ==
+                  studentRow.studentCode.toLowerCase()
+                ) {
                   const listPoint = list.find(
                     (li: any) => li.subMethodId === poi.subMethodId
                   );
@@ -211,10 +220,7 @@ export class LessonOverallAssessComponent {
           }
         });
       });
-    });
 
-    setTimeout(() => {
-      this.tabsReady = true;
       if (this.students && this.tabs.length) {
         this.students.forEach((stu: any) => {
           let totalPoints = 0;
@@ -223,7 +229,7 @@ export class LessonOverallAssessComponent {
 
           this.tabs.forEach((tab: any) => {
             const studentRow = tab.content.find(
-              (s: any) => s.studentId === stu.id
+              (s: any) => s.studentId.toLowerCase() === stu.id.toLowerCase()
             );
             if (studentRow) {
               totalPoints += studentRow.totalPoint;
@@ -239,7 +245,9 @@ export class LessonOverallAssessComponent {
         });
       }
       this.prepareChartData();
-    }, 1500);
+    });
+
+    // setTimeout(() => {}, 500);
   }
 
   prepareChartData() {
@@ -315,12 +323,15 @@ export class LessonOverallAssessComponent {
         },
       },
     };
+    this.tabsReady = true;
   }
 
   getStudentLetterGrade(studentId: string, cloId: string): string {
     const clo = this.tabs.find((t) => t.id === cloId);
     if (!clo) return '-';
-    const student = clo.content.find((s: any) => s.studentId === studentId);
+    const student = clo.content.find(
+      (s: any) => s.studentId.toLowerCase() === studentId.toLowerCase()
+    );
     return student?.letterGrade || '0';
   }
 

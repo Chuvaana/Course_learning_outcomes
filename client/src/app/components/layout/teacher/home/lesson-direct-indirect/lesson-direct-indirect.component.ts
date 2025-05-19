@@ -251,7 +251,10 @@ export class LessonDirectIndirectComponent {
               let total = 0;
               let allTotal = 0;
               examPo.sumPoint.map((poi: any) => {
-                if (poi.studentId == studentRow.studentCode) {
+                if (
+                  poi.studentId.toLowerCase() ==
+                  studentRow.studentCode.toLowerCase()
+                ) {
                   const listPoint = list.find(
                     (li: any) => li.subMethodId === poi.subMethodId
                   );
@@ -273,14 +276,13 @@ export class LessonDirectIndirectComponent {
           }
         });
       });
-    });
 
-    setTimeout(() => {
       this.averagePercentages = this.getCloAveragePercentages();
 
       const percentValues: { [key: string]: number } = {};
       const gradeValues: { [key: string]: string } = {};
 
+      console.log(this.averagePercentages);
       this.averagePercentages.forEach((item: any) => {
         percentValues[item.clo] = item.percentage;
         gradeValues[item.clo] = item.letter;
@@ -297,7 +299,7 @@ export class LessonDirectIndirectComponent {
           type: 'grade',
         }
       );
-    }, 800);
+    });
   }
 
   getCloAveragePercentages(): {
