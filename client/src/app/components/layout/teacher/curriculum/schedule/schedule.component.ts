@@ -19,9 +19,6 @@ import { SelectModule } from 'primeng/select';
 import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { ToastModule } from 'primeng/toast';
-import { AssessmentService } from '../../../../../services/assessmentService';
-import { CloPointPlanService } from '../../../../../services/cloPointPlanService';
-import { CLOService } from '../../../../../services/cloService';
 import { CurriculumService } from '../../../../../services/curriculum.service';
 import { ScheduleService } from '../../../../../services/schedule.service';
 import { TabRefreshService } from '../tabRefreshService';
@@ -88,12 +85,9 @@ export class ScheduleComponent {
   constructor(
     private fb: FormBuilder,
     private service: ScheduleService,
-    private cloService: CLOService,
     private msgService: MessageService,
     private tabRefreshService: TabRefreshService,
-    private mainService: CurriculumService,
-    private assessService: AssessmentService,
-    private cloPointPlanService: CloPointPlanService
+    private mainService: CurriculumService
   ) {}
 
   async ngOnInit() {
@@ -104,35 +98,24 @@ export class ScheduleComponent {
           this.closLec = this.clos.filter((item: any) => item.type === 'ALEC');
           this.closSem = this.clos.filter((item: any) => item.type === 'BSEM');
           this.closLab = this.clos.filter((item: any) => item.type === 'CLAB');
-          this.cloPointPlanService
-            .getPointPlan(this.lessonId)
-            .subscribe((res) => {
-              res.forEach((plan: any) => {
-                console.log(plan);
-                // plan.subMethods.forEach((sub: any) => {
-
-                // });
-              });
-            });
         });
-        // this.readData(); // Датаг дахин ачаалах функц
       });
     }
 
     this.scheduleLecForm = this.fb.group({
-      schedules: this.fb.array([]), // This will hold the schedules data
+      schedules: this.fb.array([]),
     });
 
     this.scheduleSemForm = this.fb.group({
-      scheduleSems: this.fb.array([]), // This will hold the schedules data
+      scheduleSems: this.fb.array([]),
     });
 
     this.scheduleLabForm = this.fb.group({
-      scheduleLabs: this.fb.array([]), // This will hold the schedules data
+      scheduleLabs: this.fb.array([]),
     });
 
     this.scheduleBdForm = this.fb.group({
-      scheduleBds: this.fb.array([]), // This will hold the schedules data
+      scheduleBds: this.fb.array([]),
     });
 
     if (this.lessonId) {
@@ -171,9 +154,6 @@ export class ScheduleComponent {
       const resBd = await this.service
         .getScheduleBds(this.lessonId)
         .toPromise();
-      // const cloPlan = await this.cloService
-      //   .getCloPlan(this.lessonId)
-      //   .toPromise();
       const scheduleArray = this.scheduleLecForm.get('schedules') as FormArray;
       const scheduleSemArray = this.scheduleSemForm.get(
         'scheduleSems'

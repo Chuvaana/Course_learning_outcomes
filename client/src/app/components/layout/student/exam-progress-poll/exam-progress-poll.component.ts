@@ -9,14 +9,13 @@ import { DropdownModule } from 'primeng/dropdown';
 import { FieldsetModule } from 'primeng/fieldset';
 import { FloatLabelModule } from 'primeng/floatlabel';
 import { IftaLabelModule } from 'primeng/iftalabel';
+import { Image } from 'primeng/image';
 import { InputTextModule } from 'primeng/inputtext';
 import { Rating } from 'primeng/rating';
 import { TextareaModule } from 'primeng/textarea';
 import { TieredMenuModule } from 'primeng/tieredmenu';
 import { ToastModule } from 'primeng/toast';
-import { forkJoin } from 'rxjs';
 import { ProgressPollService } from '../../../../services/progressPollService';
-import { Image } from 'primeng/image';
 
 interface Question {
   name: string;
@@ -109,7 +108,7 @@ export class ExamProgressPollComponent {
     private route: ActivatedRoute,
     private messageService: MessageService,
     private service: ProgressPollService
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.route.parent?.paramMap.subscribe((params) => {
@@ -134,31 +133,25 @@ export class ExamProgressPollComponent {
     }, 2000);
   }
 
-  onAnswerClick() { }
+  onAnswerClick() {}
   onRemove(answerIndex: number, questionIndex: number) {
     const question = this.dataQuestions[questionIndex];
 
-    // If only one question exists
     if (this.dataQuestions.length === 1) {
       if (question.answers.length === 1) {
-        // Remove the only question
         this.dataQuestions.splice(questionIndex, 1);
       } else {
-        // Just remove the answer
         question.answers.splice(answerIndex, 1);
       }
     } else {
       if (question.answers.length === 1) {
-        // Remove the entire question if it has only one answer
         this.dataQuestions.splice(questionIndex, 1);
       } else {
-        // Just remove the answer
         question.answers.splice(answerIndex, 1);
       }
     }
   }
 
-  // Хариултын текст өөрчлөгдөхөд
   onTextInput(answerIndex: number, questionIndex: number) {
     const changedAnswer = this.questions[questionIndex].answers[answerIndex];
     console.log(
@@ -167,68 +160,68 @@ export class ExamProgressPollComponent {
     );
   }
 
-  onQuestionType(e: any) {
-    console.log('asdasd : ' + e.code);
-  }
-
   refreshDetail() {
-    this.service.getAllLessonAssments(this.lessonId).subscribe((e: any) => {
-      if (e.length > 0) {
-        const nowDate = new Date();
-        this.progressPollId = e[0]._id;
-        const startDate = new Date(e[0].startDate);
-        const endDate = new Date(e[0].endDate);
-        if (startDate > nowDate) {
-          this.messageService.add({
-            severity: 'warn',
-            summary: 'Анхааруулга',
-            detail: `Санал асуулга өгөх хугацаа болоогүй байна!`,
-          });
-          this.dateActive = true;
-        } else if (endDate < nowDate) {
-          this.messageService.add({
-            severity: 'warn',
-            summary: 'Анхааруулга',
-            detail: `Санал асуулга өгөх хугацаа өнгөрсөн байна!`,
-          });
-          this.dateActive = true;
-        } else {
-          this.dataQuestions = e[0].questions;
+    this.service.getAllLessonAssments(this.lessonId).subscribe(
+      (e: any) => {
+        if (e.length > 0) {
+          const nowDate = new Date();
+          this.progressPollId = e[0]._id;
+          const startDate = new Date(e[0].startDate);
+          const endDate = new Date(e[0].endDate);
+          if (startDate > nowDate) {
+            this.messageService.add({
+              severity: 'warn',
+              summary: 'Анхааруулга',
+              detail: `Санал асуулга өгөх хугацаа болоогүй байна!`,
+            });
+            this.dateActive = true;
+          } else if (endDate < nowDate) {
+            this.messageService.add({
+              severity: 'warn',
+              summary: 'Анхааруулга',
+              detail: `Санал асуулга өгөх хугацаа өнгөрсөн байна!`,
+            });
+            this.dateActive = true;
+          } else {
+            this.dataQuestions = e[0].questions;
+          }
+          this.refreshStudentId();
         }
-        this.refreshStudentId();
-      }
-    },
+      },
       (err) => {
         this.messageService.add({
           severity: 'error',
           summary: 'Алдаа',
           detail: 'Алдаа гарлаа!: ' + err.message,
         });
-      });
+      }
+    );
   }
 
   refreshStudentId() {
-    this.service.getAllStudentsSendPollQuess().subscribe((e: any) => {
-      let action = false;
-      let data = null;
-      e.map((i: any, index: any) => {
-        if (i.studentId === this.studentCode) {
-          action = true;
-          data = i.groupList;
+    this.service.getAllStudentsSendPollQuess().subscribe(
+      (e: any) => {
+        let action = false;
+        let data = null;
+        e.map((i: any) => {
+          if (i.studentId === this.studentCode) {
+            action = true;
+            data = i.groupList;
+          }
+        });
+        if (action) {
+          this.createActive = true;
+          this.dataQuestions = data;
         }
-      });
-      if (action) {
-        this.createActive = true;
-        this.dataQuestions = data;
-      }
-    },
+      },
       (err) => {
         this.messageService.add({
           severity: 'error',
           summary: 'Алдаа',
           detail: 'Алдаа гарлаа!: ' + err.message,
         });
-      });
+      }
+    );
   }
   save() {
     if (this.dataQuestions.length > 0) {
@@ -277,6 +270,11 @@ export class ExamProgressPollComponent {
         .createStudentsSendPollQues(this.questionPollList)
         .subscribe((e: any) => {
           this.progressPollId = e._id;
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Амжилттай',
+            detail: `Санал асуулгыг амжилттай илгээлээ!`,
+          });
           this.refreshStudentId();
         });
     } else {
@@ -284,11 +282,13 @@ export class ExamProgressPollComponent {
         .updatePollQuestions(this.progressPollId, this.questionPollList)
         .subscribe((e: any) => {
           this.progressPollId = e._id;
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Амжилттай',
+            detail: `Санал асуулгыг амжилттай илгээлээ!`,
+          });
           this.refreshDetail();
         });
     }
-  }
-  onBranchChange(e: any) {
-    console.log(e);
   }
 }

@@ -261,7 +261,7 @@ export class ProgressPollComponent {
     private cloService: CLOService,
     private messageService: MessageService,
     private service: ProgressPollService
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.route.parent?.paramMap.subscribe((params) => {
@@ -304,7 +304,7 @@ export class ProgressPollComponent {
     }, 2000);
   }
 
-  onAnswerClick() { }
+  onAnswerClick() {}
   onRemove(answerIndex: number, questionIndex: number) {
     const question = this.dataQuestions[questionIndex];
 
@@ -395,7 +395,10 @@ export class ProgressPollComponent {
           i.questions.map((data1: any) => {
             data1.questionList.map((ans: any) => {
               this.questionTypes?.map((val: any) => {
-                if (ans.questionType !== undefined && ans.questionType !== null) {
+                if (
+                  ans.questionType !== undefined &&
+                  ans.questionType !== null
+                ) {
                   if (val.code === ans.questionType) {
                     ans.questionType = val;
                   }
@@ -413,8 +416,11 @@ export class ProgressPollComponent {
     });
   }
   save() {
-    if (this.startDate !== undefined && this.startDate !== null
-      && this.endDate !== undefined && this.endDate !== null
+    if (
+      this.startDate !== undefined &&
+      this.startDate !== null &&
+      this.endDate !== undefined &&
+      this.endDate !== null
     ) {
       if (this.endDate < this.startDate) {
         this.messageService.add({
@@ -442,28 +448,42 @@ export class ProgressPollComponent {
           this.mainData.startDate = this.startDate;
           this.mainData.endDate = this.endDate;
           if (!this.createActive) {
-            this.service.createPollQuestions(this.mainData).subscribe((e: any) => {
-              this.progressPollId.push(e._id);
-              this.refreshDetail();
-            },
+            this.service.createPollQuestions(this.mainData).subscribe(
+              (e: any) => {
+                this.progressPollId.push(e._id);
+                this.messageService.add({
+                  severity: 'success',
+                  summary: 'Амжилттай',
+                  detail: `Санал асуулгыг амжилттай хадгаллаа!`,
+                });
+                this.refreshDetail();
+              },
               (err) => {
                 this.messageService.add({
                   severity: 'error',
                   summary: 'Алдаа',
                   detail: 'Хадгалхад алдаа гарлаа!: ' + err.message,
                 });
-              });
+              }
+            );
           } else {
-            this.service.updatePollQuestions(this.id, this.mainData).subscribe((e: any) => {
-              this.refreshDetail();
-            },
+            this.service.updatePollQuestions(this.id, this.mainData).subscribe(
+              (e: any) => {
+                this.refreshDetail();
+                this.messageService.add({
+                  severity: 'success',
+                  summary: 'Амжилттай',
+                  detail: `Санал асуулгыг амжилттай хадгаллаа!`,
+                });
+              },
               (err) => {
                 this.messageService.add({
                   severity: 'error',
                   summary: 'Алдаа',
                   detail: 'Засхад алдаа гарлаа!: ' + err.message,
                 });
-              });
+              }
+            );
           }
         }
       }

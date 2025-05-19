@@ -61,10 +61,12 @@ export class MethodologyComponent {
   isNew = true;
 
   deliveryModes = [
-    { label: 'Тонгоруу анги', value: 'CLASS' },
-    { label: 'Төсөлд суурилсан сургалт', value: 'PROJECT' },
-    { label: 'Туршилтад суурилсан сургалт', value: 'EXPERIMENT' },
+    // { label: 'Тонгоруу анги', value: 'CLASS' },
+    { label: 'Кейсд суурилсан сургалт', value: 'CASE' },
+    { label: 'Сорилтонд суурилсан сургалт', value: 'QUIZ' },
     { label: 'Асуудалд суурилсан сургалт', value: 'PROBLEM' },
+    { label: 'Төсөлд суурилсан сургалт', value: 'PROJECT' },
+    // { label: 'Туршилтад суурилсан сургалт', value: 'EXPERIMENT' },
   ];
 
   pedagogyOptions = [

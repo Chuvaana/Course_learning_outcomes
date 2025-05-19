@@ -19,7 +19,6 @@ import { SelectModule } from 'primeng/select';
 import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { ToastModule } from 'primeng/toast';
-import { AssessmentService } from '../../../../../services/assessmentService';
 import { CurriculumService } from '../../../../../services/curriculum.service';
 import { ScheduleService } from '../../../../../services/schedule.service';
 import { TabRefreshService } from '../tabRefreshService';
@@ -70,10 +69,6 @@ export class ScheduleComponent {
   closSem: any;
   closLab: any;
 
-  labSumPoint = 0;
-  semSumPoint = 0;
-  bdSumPoint = 0;
-
   labFreq = 0;
   semFreq = 0;
   bdFreq = 0;
@@ -85,10 +80,8 @@ export class ScheduleComponent {
   constructor(
     private fb: FormBuilder,
     private service: ScheduleService,
-    private msgService: MessageService,
     private tabRefreshService: TabRefreshService,
-    private mainService: CurriculumService,
-    private assessService: AssessmentService
+    private mainService: CurriculumService
   ) {}
 
   async ngOnInit() {
@@ -144,47 +137,12 @@ export class ScheduleComponent {
           this.hasLab = response.weeklyHours.lab == 0 ? false : true;
           this.hasBd = response.weeklyHours.assignment == 0 ? false : true;
         }
+        console.log(response);
+        console.log(this.hasLec);
+        console.log(this.hasSem);
+        console.log(this.hasLab);
+        console.log(this.hasBd);
       });
-
-      this.labSumPoint = 0;
-      this.semSumPoint = 0;
-      this.bdSumPoint = 0;
-      this.assessService
-        .getAssessmentByLesson(this.lessonId)
-        .subscribe((res: any) => {
-          if (res) {
-            this.msgService.add({
-              severity: 'warn',
-              summary: 'Анхааруулга',
-              detail:
-                'Хичээлийн төлөвлөгөө бүртгээгүй байна. Төлөвлөгөөгөө бүртгэнэ үү',
-            });
-            this.disableAll();
-          }
-          res.plans.forEach((element: any) => {
-            if (element.methodType === 'PROC') {
-              if (element.secondMethodType === 'CLAB') {
-                element.subMethods.forEach((item: any) => {
-                  this.labSumPoint += item.point;
-                });
-                this.labData = element;
-                this.labFreq = element.frequency;
-              } else if (element.secondMethodType === 'BSEM') {
-                element.subMethods.forEach((item: any) => {
-                  this.semSumPoint += item.point;
-                });
-                this.semData = element;
-                this.semFreq = element.frequency;
-              } else if (element.secondMethodType === 'BD') {
-                element.subMethods.forEach((item: any) => {
-                  this.bdSumPoint += item.point;
-                });
-                this.bdData = element;
-                this.bdFreq = element.frequency;
-              }
-            }
-          });
-        });
 
       const resLec = await this.service.getSchedules(this.lessonId).toPromise();
       const resSem = await this.service

@@ -56,7 +56,7 @@ export class ExamGradeComponent {
   selectlessonAssessment() {
     const studentCode = localStorage.getItem('studentCode') || '';
     this.lessonAssessmentService
-      .getLesAssessmentByStudent(this.lessonId, studentCode)
+      .getLesAssessmentByStudent(this.lessonId, studentCode.toLowerCase())
       .subscribe((res) => {
         this.examList = res;
       });
@@ -69,15 +69,17 @@ export class ExamGradeComponent {
     this.questionNumber = e.question.length;
     this.question = e.question;
     this.dialogHeader = `${e.examTypeName} дэлгэрэнгүй`;
-    let allp = 0;
-    let takep = 0;
+    // let allp = 0;
+    // let takep = 0;
 
-    this.question.map((que: any) => {
-      allp += Number(que.allPoint);
-      takep += Number(que.takePoint);
-    });
-    this.allPoint = allp.toFixed(2);
-    this.takePoint = takep.toFixed(2);
+    // this.question.map((que: any) => {
+    //   allp += Number(que.allPoint);
+    //   takep += Number(que.takePoint || 0);
+    // });
+    // this.allPoint = allp.toFixed(2);
+    // this.takePoint = takep.toFixed(2);
+    this.allPoint = e.allPoint;
+    this.takePoint = e.takePoint;
     this.visible = true;
   }
 
