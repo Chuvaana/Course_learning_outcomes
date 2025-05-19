@@ -192,7 +192,10 @@ export class LessonTotalGradeComponent {
               let total = 0;
               let allTotal = 0;
               examPo.sumPoint.map((poi: any) => {
-                if (poi.studentId == studentRow.studentCode) {
+                if (
+                  poi.studentId.toLowerCase() ==
+                  studentRow.studentCode.toLowerCase()
+                ) {
                   total += poi.totalPoint;
                   allTotal += poi.allPoint;
                   const takePoint = (total * item.totalPoint) / (allTotal || 1);
@@ -241,6 +244,17 @@ export class LessonTotalGradeComponent {
     if (!clo) return '-';
     const student = clo.content.find((s: any) => s.studentId === studentId);
     return student?.totalPoint.toFixed(2) || '0';
+  }
+
+  getStudentTotal(studentId: string): string {
+    let total = 0;
+    this.tabs.forEach((tab) => {
+      const stu = tab.content.find((s: any) => s.studentId === studentId);
+      if (stu) {
+        total += stu.totalPoint || 0;
+      }
+    });
+    return total.toFixed(2);
   }
 
   exportTabExcel(tab: any) {
