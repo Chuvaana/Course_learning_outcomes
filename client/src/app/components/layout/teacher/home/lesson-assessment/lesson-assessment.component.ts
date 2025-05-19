@@ -29,6 +29,7 @@ export class LessonAssessmentComponent {
   @Input() pointPlan: any;
   @Input() cloPlan: any;
   @Input() lessonId!: string;
+  @Input() teacherName!: string;
 
   constructor(
     private assessProcess: AssessProcessService,
@@ -316,10 +317,10 @@ export class LessonAssessmentComponent {
 
   pdfConvert(e: any): void {
     console.log(e);
-    this.servicePdfLessAss.generatePdf(e);
+    this.servicePdfLessAss.generatePdf(e, this.teacherName);
   }
   pdfConvertAll(e: any): void {
     console.log(e);
-    this.servicePdfLessAss.generatePdfAll(e);
+    this.servicePdfLessAss.generatePdfAll(e, this.teacherName);
   }
 }

@@ -4,7 +4,7 @@ import { ButtonModule } from 'primeng/button';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { ActivatedRoute } from '@angular/router';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { PanelModule } from 'primeng/panel';
 import { MenuModule } from 'primeng/menu';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
@@ -43,7 +43,7 @@ export class PasswordResetComponent implements OnInit {
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: { email: string },
     private fb: FormBuilder,
-    private dialog: MatDialog,
+    private dialog: MatDialogRef<PasswordResetComponent>,
     private route: ActivatedRoute,
     private service: RegLogService,
     private msgService: MessageService
@@ -116,11 +116,11 @@ export class PasswordResetComponent implements OnInit {
   }
   resetPassButton() {
     if (this.dataModul.value.password === this.dataModul.value.confirmPassword) {
-        this.dataModul.value.name = this.saveData.name;
-        this.dataModul.value.code = this.saveData.code;
-        this.dataModul.value.branch = this.saveData.branch;
-        this.dataModul.value.department = this.saveData.department;
-        this.isActive = true;
+      this.dataModul.value.name = this.saveData.name;
+      this.dataModul.value.code = this.saveData.code;
+      this.dataModul.value.branch = this.saveData.branch;
+      this.dataModul.value.department = this.saveData.department;
+      this.isActive = true;
       this.service.changePassword(this.teacherId, this.dataModul.value).subscribe(
         (data: { message: string; teacher: any }) => {
           this.isActive = true;
@@ -129,6 +129,7 @@ export class PasswordResetComponent implements OnInit {
             summary: 'Амжилттай',
             detail: 'Амжилттай бүртгэгдлээ',
           });
+          this.dialog.close();
         },
         (error) => {
           let errorMessage = 'Error registering teacher';
@@ -150,7 +151,8 @@ export class PasswordResetComponent implements OnInit {
       });
     }
   }
-  returnScreen() {
 
+  returnScreen() {
+    this.dialog.close();
   }
 }

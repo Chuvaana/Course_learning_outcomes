@@ -33,10 +33,14 @@
     padding: 10px; /* Padding inside inputs */
     font-size: 16px; /* Larger font size */
   }
-  .submit-button{
-    margin-top: 20px;
+  .submit-btn{
     align-self: center;
+
   }
+  ::ng-deep .submit-button .p-button {
+    margin: 20px 0px;
+  width: 200px;
+}
 
   ::ng-deep .custom-password .p-password-input {
     width: 100%;

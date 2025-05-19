@@ -72,6 +72,7 @@ export class HomeComponent {
   assessPlans: any;
   cloLists: any;
   lesStudent: any;
+  teacherName: any;
   summaryData: any;
 
   // clo дүн
@@ -111,6 +112,7 @@ export class HomeComponent {
     this.service.getMainInfo(this.lessonId).subscribe((response: any) => {
       if (response) {
         this.mainInfo = response;
+        this.teacherName = response.teacher.name;
       }
     });
 

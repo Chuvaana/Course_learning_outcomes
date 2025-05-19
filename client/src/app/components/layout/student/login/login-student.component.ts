@@ -176,11 +176,17 @@ export class LoginStudentComponent {
     if (this.studentForm.value.email) {
       transData = this.studentForm.value.email
     }
-    this.dialog.open(PasswordResetStudentComponent, {
+    const dialogRef = this.dialog.open(PasswordResetStudentComponent, {
       width: '40vw',
       height: '40vh',
       maxWidth: 'none',
       data: { email: transData },
     });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        // Handle result here, e.g., show a success message
+      }
+    });
   }
+
 }
