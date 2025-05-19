@@ -22,6 +22,7 @@ import { LessonAdvDisadvComponent } from './lesson-adv-disadv/lesson-adv-disadv.
 import { PdfMainService } from '../../../../services/pdf-main.service';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { AssessProcessService } from './lesson-assessment/assessProcess';
+import { ConfigService } from '../../../../services/configService';
 
 @Component({
   selector: 'app-home',
@@ -74,6 +75,7 @@ export class HomeComponent {
   lesStudent: any;
   teacherName: any;
   summaryData: any;
+  season!: string;
 
   // clo дүн
   tabDatas!: [{ title: string; content: any; value: any }];
@@ -92,11 +94,12 @@ export class HomeComponent {
     private teacherService: TeacherService,
     private studentService: StudentService,
     private service: CurriculumService,
+    private confService: ConfigService,
     private cloService: CLOService,
     private assessService: AssessmentService,
     private pdfMainService: PdfMainService,
     private cloPointPlanService: CloPointPlanService
-  ) { }
+  ) {}
 
   ngOnInit() {
     this.route.parent?.paramMap.subscribe((params) => {
@@ -147,7 +150,9 @@ export class HomeComponent {
       this.cloPointPlanService.getPointPlan(this.lessonId),
       this.assessService.getAssessmentByLesson(this.lessonId),
       this.service.getPollQuesLesson(this.lessonId),
-    ]).subscribe(([cloList, cloPlan, assessPlan, pollData]) => {
+      this.confService.getConfig('season'),
+    ]).subscribe(([cloList, cloPlan, assessPlan, pollData, conf]) => {
+      this.season = conf;
       this.cloList = cloList;
       this.assessPlan = assessPlan;
       this.cloPlan = cloPlan;
@@ -209,78 +214,90 @@ export class HomeComponent {
       this.service.getLessonByStudent(this.lessonId),
       this.service.getFeedBackTask(this.lessonId),
       this.service.getFeedBack(this.lessonId),
-    ]).subscribe(([cloList, pollData, cloPlan, assessPlan, lesStudent,feedBackTast, feedBack]) => {
-      this.cloLists = cloList;
-      this.assessPlans = assessPlan;
-      this.pollDatas = pollData;
-      this.lesStudent = lesStudent;
-      this.feedBackTast = feedBackTast;
-      this.feedBack = feedBack;
-      // this.pdfSendData.push(this.assessPlans);
-      this.cloPoints = this.cloPlan.map((clo: any) => ({
-        ...clo,
-        cloName:
-          this.cloLists.find((c: any) => (c.id || c._id) === clo.cloId)?.cloName ??
-          '-',
-      }));
-      // this.pdfSendData.push(this.cloPoints);
-      this.cloPlans = cloPlan;
-      if (Array.isArray(this.cloPlans) && this.cloPlans.length === 0) {
-        this.createRows(this.cloLists, this.assessPlans.plans);
-      }
-      this.tabs = this.cloLists.map((item: any, index: number) => ({
-        id: item.id,
-        title: item.cloName,
-        content: [],
-        assessPlan: [],
-        totalPoint: 0,
-        value: index,
-      }));
-      this.read();
+    ]).subscribe(
+      ([
+        cloList,
+        pollData,
+        cloPlan,
+        assessPlan,
+        lesStudent,
+        feedBackTast,
+        feedBack,
+      ]) => {
+        this.cloLists = cloList;
+        this.assessPlans = assessPlan;
+        this.pollDatas = pollData;
+        this.lesStudent = lesStudent;
+        this.feedBackTast = feedBackTast;
+        this.feedBack = feedBack;
+        // this.pdfSendData.push(this.assessPlans);
+        this.cloPoints = this.cloPlan.map((clo: any) => ({
+          ...clo,
+          cloName:
+            this.cloLists.find((c: any) => (c.id || c._id) === clo.cloId)
+              ?.cloName ?? '-',
+        }));
+        // this.pdfSendData.push(this.cloPoints);
+        this.cloPlans = cloPlan;
+        if (Array.isArray(this.cloPlans) && this.cloPlans.length === 0) {
+          this.createRows(this.cloLists, this.assessPlans.plans);
+        }
+        this.tabs = this.cloLists.map((item: any, index: number) => ({
+          id: item.id,
+          title: item.cloName,
+          content: [],
+          assessPlan: [],
+          totalPoint: 0,
+          value: index,
+        }));
+        this.read();
 
-      if (this.assessPlans.plans && this.tabs.length) {
-        const assessPlanMap = new Map();
-        this.cloPlans.forEach((plan: any) => {
-          const assessPlan = [...plan.examPoints, ...plan.procPoints].filter(
-            (ePoint) => ePoint.point !== 0
-          );
-          assessPlanMap.set(plan.cloId, assessPlan);
-        });
-
-        this.tabs.forEach((item: any) => {
-          const assessPlan = assessPlanMap.get(item.id) || [];
-          item.assessPlan = assessPlan.map((col: { subMethodId: string }) => ({
-            ...col,
-            subMethodName: this.getSubMethodName(col.subMethodId), // Precompute the name
-          }));
-          item.totalPoint = assessPlan.reduce(
-            (acc: any, curr: { point: any }) => acc + (curr.point || 0),
-            0
-          );
-        });
-
-        if (this.students) {
-          this.tabs.forEach((item: any) => {
-            item.content = this.students.map((stu: any) => {
-              const points = item.assessPlan.map((plan: any) => ({
-                subMethodId: plan.subMethodId,
-                point: 0,
-              }));
-
-              return {
-                studentId: stu.id,
-                studentCode: stu.studentCode,
-                studentName: stu.studentName,
-                points,
-                totalPoint: 0,
-                percentage: 0,
-                letterGrade: '',
-              };
-            });
+        if (this.assessPlans.plans && this.tabs.length) {
+          const assessPlanMap = new Map();
+          this.cloPlans.forEach((plan: any) => {
+            const assessPlan = [...plan.examPoints, ...plan.procPoints].filter(
+              (ePoint) => ePoint.point !== 0
+            );
+            assessPlanMap.set(plan.cloId, assessPlan);
           });
+
+          this.tabs.forEach((item: any) => {
+            const assessPlan = assessPlanMap.get(item.id) || [];
+            item.assessPlan = assessPlan.map(
+              (col: { subMethodId: string }) => ({
+                ...col,
+                subMethodName: this.getSubMethodName(col.subMethodId), // Precompute the name
+              })
+            );
+            item.totalPoint = assessPlan.reduce(
+              (acc: any, curr: { point: any }) => acc + (curr.point || 0),
+              0
+            );
+          });
+
+          if (this.students) {
+            this.tabs.forEach((item: any) => {
+              item.content = this.students.map((stu: any) => {
+                const points = item.assessPlan.map((plan: any) => ({
+                  subMethodId: plan.subMethodId,
+                  point: 0,
+                }));
+
+                return {
+                  studentId: stu.id,
+                  studentCode: stu.studentCode,
+                  studentName: stu.studentName,
+                  points,
+                  totalPoint: 0,
+                  percentage: 0,
+                  letterGrade: '',
+                };
+              });
+            });
+          }
         }
       }
-    });
+    );
   }
   pdfTo() {
     this.pdfSendData = [];
@@ -351,6 +368,7 @@ export class HomeComponent {
     this.pdfSendData.push(this.summaryData);
     this.pdfSendData.push(this.feedBackTast);
     this.pdfSendData.push(this.feedBack);
+    this.pdfSendData.push(this.season);
     this.pdfMainService.generatePdfAll(this.pdfSendData);
   }
 
@@ -571,7 +589,7 @@ export class HomeComponent {
     percentage: number;
     letter: string;
   }[] {
-    return this.tabs.map((tab: { content: never[]; id: any; }) => {
+    return this.tabs.map((tab: { content: never[]; id: any }) => {
       const students = tab.content || [];
       const totalPercent = students.reduce((sum: number, student: any) => {
         return sum + (student.percentage || 0);

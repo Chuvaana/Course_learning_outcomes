@@ -510,7 +510,6 @@ export class CloPointPlanComponent {
         const [row] = assessPlans.plans.splice(cloLength - 1, 1); // Олдсон мөрийг салгаж авна
         assessPlans.plans.push(row);
       }
-      console.log(assessPlans);
       this.pdfSendData.push(this.cloPlan);
       this.pdfGeneretorService.generatePdf(this.pdfSendData);
       this.pdfMainService.generatePdfAll(this.pdfSendData);
