@@ -219,7 +219,8 @@ export class LessonAssessmentComponent {
                 studentRow.points.forEach((pointItem: any) => {
                   const grade = grades.sumPoint.find(
                     (g: any) =>
-                      g.studentId === studentRow.studentCode &&
+                      g.studentId.toLowerCase() ===
+                        studentRow.studentCode.toLowerCase() &&
                       g.subMethodId === pointItem.subMethodId
                   );
 

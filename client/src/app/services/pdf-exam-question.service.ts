@@ -6,7 +6,6 @@ import pdfMake from 'pdfmake/build/pdfmake';
 })
 export class PdfExamQuestionService {
   generatePdf(data: any) {
-    // if (data.length === 0) return;
     console.log(data.clos);
     let cloListData: any[] = [];
     data.cloList.map((row: { cloName: any }, index: any) => {
@@ -18,10 +17,9 @@ export class PdfExamQuestionService {
       };
       cloListData.push(data);
     });
-    // const testPart2Exists = data.testData.some((row: { testPart: number }) => row.testPart === 2);
     const versions = [
       ...new Set(data.finalExamQuestions.map((q: any) => q.version)),
-    ]; // ялгаатай хувилбарууд
+    ];
 
     const questionSectionRows = versions.flatMap((version) => {
       const filtered = data.finalExamQuestions.filter(
@@ -58,26 +56,7 @@ export class PdfExamQuestionService {
       return [headerRow, ...questionRows];
     });
 
-    const allPont = [
-      {
-        title: '1',
-        point: 5,
-      },
-      {
-        title: '2',
-        point: 5,
-      },
-      {
-        title: '3',
-        point: 5,
-      },
-      {
-        title: '4',
-        point: 5,
-      },
-    ];
     const mainTableData = [
-      // Header row
       [
         { text: 'Хичээлийн нэр', alignment: 'left', style: 'tableHeader' },
         { text: data.mainInfo.lessonName, alignment: 'left', style: 'body' },
@@ -158,7 +137,6 @@ export class PdfExamQuestionService {
       ]),
     ];
     const tableBody = [
-      // TITLE row
       [
         { text: 'Асуулт', alignment: 'center', style: 'tableHeader' },
         { text: 'Үйл үг', alignment: 'center', style: 'tableHeader' },
@@ -166,82 +144,16 @@ export class PdfExamQuestionService {
         { text: 'Аль CLO-г үнэлэх', alignment: 'center', style: 'tableHeader' },
       ],
       ...questionSectionRows,
-      // [
-      //   { text: 'Тестийн 1-р хэсэг', colSpan: 4, alignment: 'center', style: 'tableHeader' },
-      //   {},
-      //   {},
-      //   {},
-      // ],
-      // ...data.finalExamQuestions
-      //   .filter((row: { version: string; }) => row.version === '1').map((row: {
-      //     CloLevel: any; blmLvl: any; verbName: any; cloName: any;
-      //   }, index: number) => [
-      //       {
-      //         text: index + 1,
-      //         alignment: 'center',
-      //         style: 'body'
-
-      //       },
-      //       {
-      //         text: row.verbName,
-      //         alignment: 'left',
-      //         style: 'body'
-
-      //       },
-      //       {
-      //         text: row.blmLvl,
-      //         alignment: 'center',
-      //         style: 'body'
-      //       },
-      //       {
-      //         text: row.cloName,
-      //         alignment: 'center',
-      //         style: 'body'
-      //       },
-      //     ]),
-      //     ...(data.finalExamQuestions.some((row: { version: string }) => row.version === '2')
-      //     ? [[
-      //         { text: 'Тестийн 2-р хэсэг', colSpan: 4, alignment: 'center', style: 'tableHeader' },
-      //         {}, {}, {}
-      //       ]]
-      //     : []
-      //   ),
-      //     ...data.finalExamQuestions
-      //   .filter((row: { version: string; }) => row.version === '2').map((row: {
-      //     CloLevel: any; blmLvl: any; verbName: any; cloName: any;
-      //   }, index: number) => [
-      //       {
-      //         text: index + 1,
-      //         alignment: 'center',
-      //         style: 'body'
-
-      //       },
-      //       {
-      //         text: row.verbName,
-      //         alignment: 'left',
-      //         style: 'body'
-
-      //       },
-      //       {
-      //         text: row.blmLvl,
-      //         alignment: 'center',
-      //         style: 'body'
-      //       },
-      //       {
-      //         text: row.cloName,
-      //         alignment: 'center',
-      //         style: 'body'
-      //       },
-      //     ]),
     ];
-    // Dynamically generate widths based on number of columns
+    const today = new Date();
+    const formatted = today.toISOString().split('T')[0];
     const documentDefinition = {
       content: [
         {
           text: 'Улирлын шалгалтын асуултууд ба хичээлийн\nсуралцахуйн үр дүнгийн хамаарал',
           style: 'bodyCenter',
         },
-        { text: '2024-12-18', style: 'bodyRight' },
+        { text: formatted, style: 'bodyRight' },
         { text: '1.	Үндсэн мэдээлэл', style: 'bodyLeft' },
         {
           table: {
@@ -264,15 +176,20 @@ export class PdfExamQuestionService {
           },
         },
       ],
-      footer: {
-        text: `Боловсруулсан багш ........ ................... ${data.mainInfo.teacher.name}`,
-        style: 'footerCenter',
+      footer: (currentPage: number, pageCount: number): any => {
+        if (currentPage === pageCount) {
+          return {
+            text: `Боловсруулсан багш ........................... ${data.mainInfo.teacher.name}`,
+            style: 'footerCenter',
+          };
+        }
+        return {};
       },
       styles: {
         header: {
           fontSize: 14,
           bold: true,
-          margin: [0, 0, 0, 0] as [number, number, number, number], // ✅ Force it to be a tuple
+          margin: [0, 0, 0, 0] as [number, number, number, number],
         },
         tableYellow: {
           fontSize: 11,
@@ -291,49 +208,49 @@ export class PdfExamQuestionService {
           fontSize: 10,
           bold: false,
           fontStyle: 'Times New Roman',
-          margin: [0, 0, 0, 0] as [number, number, number, number], // ✅ Force it to be a tuple
+          margin: [0, 0, 0, 0] as [number, number, number, number],
         },
         bodyCenter: {
           fontSize: 12,
           bold: true,
           fontStyle: 'Times New Roman',
           alignment: 'center' as const,
-          margin: [0, 0, 0, 10] as [number, number, number, number], // ✅ Force it to be a tuple
+          margin: [0, 0, 0, 10] as [number, number, number, number],
         },
         footerCenter: {
           fontSize: 10,
           bold: true,
           fontStyle: 'Times New Roman',
           alignment: 'center' as const,
-          margin: [0, 0, 0, 10] as [number, number, number, number], // ✅ Force it to be a tuple
+          margin: [0, 0, 0, 10] as [number, number, number, number],
         },
         bodyMiddleCenter: {
           fontSize: 10,
           fontStyle: 'Times New Roman',
           alignment: 'center' as const,
-          margin: [0, 15, 0, 15] as [number, number, number, number], // ✅ Force it to be a tuple
+          margin: [0, 15, 0, 15] as [number, number, number, number],
         },
         bodyLeft: {
           fontSize: 10,
           fontStyle: 'Times New Roman',
           alignment: 'left' as const,
-          margin: [20, 0, 0, 1] as [number, number, number, number], // ✅ Force it to be a tuple
+          margin: [20, 0, 0, 1] as [number, number, number, number],
         },
         bodyRight: {
           fontSize: 10,
           fontStyle: 'Times New Roman',
           alignment: 'right' as const,
-          margin: [0, 0, 0, 10] as [number, number, number, number], // ✅ Force it to be a tuple
+          margin: [0, 0, 0, 10] as [number, number, number, number],
         },
         bodyRed: {
           fontSize: 11,
           fontStyle: 'Times New Roman',
           color: 'red',
-          margin: [0, 0, 0, 0] as [number, number, number, number], // ✅ Force it to be a tuple
+          margin: [0, 0, 0, 0] as [number, number, number, number],
         },
       },
     };
 
-    pdfMake.createPdf(documentDefinition).open(); // ✅ No more TypeScript errors!
+    pdfMake.createPdf(documentDefinition).open();
   }
 }

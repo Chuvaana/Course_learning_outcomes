@@ -543,7 +543,8 @@ export class ExamImportComponent {
                   if (this.lessonAllStudents.length > 0) {
                     this.lessonAllStudents.map((beforeData: any) => {
                       if (
-                        assessmentFormData.studentId === beforeData.studentId &&
+                        assessmentFormData.studentId.toLowerCase() ===
+                          beforeData.studentId.toLowerCase() &&
                         beforeData.examType === assessmentFormData.examType
                       ) {
                         id = beforeData._id;

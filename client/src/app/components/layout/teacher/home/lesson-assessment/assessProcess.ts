@@ -126,7 +126,8 @@ export class AssessProcessService {
 
               let pointEntry = sumPointArray.find(
                 (sp: any) =>
-                  sp.studentId === studentId && sp.subMethodId === subMethodId
+                  sp.studentId.toLowerCase() === studentId.toLowerCase() &&
+                  sp.subMethodId === subMethodId
               );
 
               if (pointEntry) {
@@ -476,7 +477,8 @@ export class AssessProcessService {
               const sumPointArray = groupedMap.get(mapKey);
 
               let pointEntry = sumPointArray.find(
-                (sp: any) => sp.studentId === studentId
+                (sp: any) =>
+                  sp.studentId.toLowerCase() === studentId.toLowerCase()
               );
 
               if (pointEntry) {
