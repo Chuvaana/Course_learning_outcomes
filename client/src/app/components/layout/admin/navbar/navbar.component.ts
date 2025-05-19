@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
-import { ActivatedRoute, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { MenuItem } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { SidebarModule } from 'primeng/sidebar';
@@ -25,7 +25,7 @@ export class NavbarComponent {
 
   items: MenuItem[] | undefined;
 
-  constructor(private route: ActivatedRoute) {}
+  constructor(private route: ActivatedRoute, private router: Router) {}
 
   ngOnInit(): void {
     this.lessonId = this.route.snapshot.paramMap.get('id') || '';
@@ -57,5 +57,9 @@ export class NavbarComponent {
   // Function to open sidebar
   toggleSidebar() {
     this.sidebarVisible = !this.sidebarVisible;
+  }
+  logout() {
+    localStorage.clear();
+    this.router.navigate(['/']);
   }
 }

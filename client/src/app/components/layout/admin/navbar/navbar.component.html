@@ -91,6 +91,36 @@
           </li>
         </ul>
       </div>
+      <div class="mt-auto">
+        <div>
+          <div
+            style="
+              display: flex;
+              height: 10%;
+              padding: 30px;
+              justify-content: center;
+              align-items: center;
+            "
+          >
+            <div style="padding-right: 20px">Гарах</div>
+            <i
+              class="pi pi-sign-out"
+              tooltipPosition="left"
+              (click)="logout()"
+            ></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+  <ng-template pTemplate="end">
+    <div class="flex align-items-center gap-2">
+      <i
+        class="pi pi-sign-out"
+        pTooltip="Гарах"
+        tooltipPosition="left"
+        (click)="logout()"
+      ></i>
     </div>
   </ng-template>
 </p-sidebar>

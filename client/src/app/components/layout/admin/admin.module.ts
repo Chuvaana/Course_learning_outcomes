@@ -19,34 +19,33 @@ const routes: Routes = [
     path: '',
     component: AdminComponent,
     children: [
-      {
-        path: 'student-import',
-        component: AdminStudentImportComponent,
-      },
-      {
-        path: 'exam-import',
-        component: ExamImportComponent,
-      },
-      {
-        path: 'pdf',
-        component: PdfComponent,
-      },
+      // {
+      //   path: 'student-import',
+      //   component: AdminStudentImportComponent,
+      // },
+      // {
+      //   path: 'exam-import',
+      //   component: ExamImportComponent,
+      // },
+      // {
+      //   path: 'pdf',
+      //   component: PdfComponent,
+      // },
       {
         path: 'config',
         component: ConfigComponent,
       },
-      {
-        path: 'plo',
-        component: PloComponent,
-      },
+      // {
+      //   path: 'plo',
+      //   component: PloComponent,
+      // },
       {
         path: 'verb',
         component: VerbComponent,
-      }
-    ]
+      },
+    ],
   },
-
-]
+];
 
 @NgModule({
   declarations: [],
@@ -58,8 +57,8 @@ const routes: Routes = [
     LessonListComponent,
     LessonComponent,
     TeacherComponent,
-    SharedComponent
+    SharedComponent,
   ],
-  exports: [RouterModule, FormsModule, ReactiveFormsModule]
+  exports: [RouterModule, FormsModule, ReactiveFormsModule],
 })
-export class AdminModule { }
+export class AdminModule {}
