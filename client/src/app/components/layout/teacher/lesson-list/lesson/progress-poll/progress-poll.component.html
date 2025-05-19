@@ -45,7 +45,7 @@
         <textarea
           class="no-resize-textarea"
           pSize="large"
-          rows="3"
+          rows="1"
           cols="62"
           pTextarea
           [(ngModel)]="question.groupName"
@@ -69,26 +69,24 @@
       </div>
       <div class="action-dropdown">
         <div class="rating-frame">
-          <p-floatlabel variant="on">
+          <p-floatlabel variant="on" class="w-full">
             <p-dropdown
               [(ngModel)]="answer.questionType"
               id="code"
               [options]="questionTypes"
               optionLabel="name"
-              (onChange)="onBranchChange($event.value)"
-              autocomplete="off"
-              [style]="{ width: '200px' }"
+              class="w-full"
             >
             </p-dropdown>
             <label for="school">Асуулгын төрөл</label>
           </p-floatlabel>
           <button
-            class="answer-button"
-            (click)="onRemove(i, qIndex)"
+            pButton
             type="button"
-          >
-            <i class="pi pi-times" style="color: green"></i>
-          </button>
+            icon="pi pi-times"
+            severity="danger"
+            (click)="onRemove(i, qIndex)"
+          ></button>
         </div>
       </div>
     </div>

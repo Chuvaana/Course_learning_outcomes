@@ -3,19 +3,19 @@ import { Component } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { MenuItem, MessageService } from 'primeng/api';
+import { ButtonModule } from 'primeng/button';
+import { CalendarModule } from 'primeng/calendar';
 import { CheckboxModule } from 'primeng/checkbox';
+import { DatePicker } from 'primeng/datepicker';
 import { DropdownModule } from 'primeng/dropdown';
+import { FloatLabelModule } from 'primeng/floatlabel';
 import { IftaLabelModule } from 'primeng/iftalabel';
 import { InputTextModule } from 'primeng/inputtext';
 import { TextareaModule } from 'primeng/textarea';
 import { TieredMenuModule } from 'primeng/tieredmenu';
 import { ToastModule } from 'primeng/toast';
-import { ProgressPollService } from '../../../../../../services/progressPollService';
-import { ButtonModule } from 'primeng/button';
-import { FloatLabelModule } from 'primeng/floatlabel';
 import { CLOService } from '../../../../../../services/cloService';
-import { DatePicker } from 'primeng/datepicker';
-import { CalendarModule } from 'primeng/calendar';
+import { ProgressPollService } from '../../../../../../services/progressPollService';
 
 interface Question {
   name: string;
@@ -33,12 +33,6 @@ interface Ques {
   questionTitle: string;
   questionType: string | Question;
   questionTypeName: string;
-}
-interface mainData {
-  lessonId: string;
-  startDate: Date;
-  endDate: Date;
-  questions: QuestionList[];
 }
 
 type QuestionItem = Ques | QueWithClo;
@@ -293,7 +287,7 @@ export class ProgressPollComponent {
         }
       });
     });
-    this.popQuestion;
+    // this.popQuestion;
   }
 
   load() {
@@ -332,7 +326,7 @@ export class ProgressPollComponent {
     if (!this.createActive) {
       this.cloService.getCloList(this.lessonId).subscribe((e: any) => {
         let answerData: QueWithClo[] = [];
-        e.map((cloData: any, index: any) => {
+        e.map((cloData: any) => {
           const answer: QueWithClo = {
             questionTitle: cloData.cloName,
             cloId: cloData.id,
@@ -346,6 +340,41 @@ export class ProgressPollComponent {
           groupName: 'Хичээлийн суралцахуйн үр дүнгийн үнэлгээ',
           groupType: 'CLO',
           questionList: answerData,
+        });
+
+        let answerData1: QueWithClo[] = [];
+        const answer: QueWithClo = {
+          questionTitle:
+            'Багшийн үйл ажиллагааг сайжруулах боломжид саналаа өгнө үү.',
+          cloId: '',
+          questionType: 'FEEDBACK',
+          questionTypeName: 'Хариулт бичих',
+        };
+        const answer1: QueWithClo = {
+          questionTitle:
+            'Сургалтын орчин, материаллаг баазыг сайжруулах санал байвал бичнэ үү.',
+          cloId: '',
+          questionType: 'FEEDBACK',
+          questionTypeName: 'Хариулт бичих',
+        };
+        answerData1.push(answer);
+        answerData1.push(answer1);
+        this.dataQuestions.push({
+          lessonId: this.lessonId,
+          groupName: 'Бусад',
+          groupType: 'OTHER',
+          questionList: answerData1,
+        });
+
+        this.dataQuestions.forEach((question: any) => {
+          question.questionList.forEach((answer: any) => {
+            const matchedType = this.questionTypes?.find(
+              (qt: any) => qt.code === answer.questionType
+            );
+            if (matchedType) {
+              answer.questionType = matchedType; // 🔁 Replace string with full object
+            }
+          });
         });
       });
     }
