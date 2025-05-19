@@ -23,3 +23,26 @@
   </p-table>
   <p-divider></p-divider>
 </div>
+<h3>{{ otherGroups.groupName }}</h3>
+<p-table [value]="otherGroups.answers">
+  <ng-template pTemplate="header">
+    <tr>
+      <th>#</th>
+      <th style="width: 40%">Асуулт</th>
+      <th>Хариултууд</th>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-question let-i="rowIndex">
+    <tr>
+      <td>{{ i + 1 }}</td>
+      <td>{{ question.questionTitle }}</td>
+      <td>
+        <ul>
+          <li *ngFor="let ans of question.answers">{{ ans }}</li>
+        </ul>
+      </td>
+    </tr>
+  </ng-template>
+</p-table>
+
+<p-divider></p-divider>

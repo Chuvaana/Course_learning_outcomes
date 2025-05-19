@@ -27,6 +27,8 @@ export class LessonPollAnalysisComponent {
     }[];
   }[] = [];
 
+  otherGroups: any;
+
   constructor(private service: ProgressPollService) {}
 
   ngOnInit() {
@@ -46,7 +48,7 @@ export class LessonPollAnalysisComponent {
     const groupMap = new Map<string, Map<string, number[]>>();
     for (const student of data) {
       for (const group of student.groupList) {
-        if (group.groupType !== 'CLO') {
+        if (group.groupType !== 'CLO' && group.groupType !== 'OTHER') {
           if (!groupMap.has(group.groupName)) {
             groupMap.set(group.groupName, new Map());
           }
@@ -61,6 +63,36 @@ export class LessonPollAnalysisComponent {
         }
       }
     }
+    let groupedAnswers = new Map<
+      string,
+      { questionTitle: string; answers: string[] }
+    >();
+    let groupName = '';
+
+    for (const student of data) {
+      for (const group of student.groupList) {
+        if (group.groupType === 'OTHER') {
+          groupName = group.groupName;
+          for (const question of group.questionList) {
+            if (!groupedAnswers.has(question.questionTitle)) {
+              groupedAnswers.set(question.questionTitle, {
+                questionTitle: question.questionTitle,
+                answers: [],
+              });
+            }
+            // Push student's answer for this question
+            groupedAnswers
+              .get(question.questionTitle)!
+              .answers.push(question.answerValue);
+          }
+        }
+      }
+    }
+
+    this.otherGroups = {
+      groupName: groupName,
+      answers: Array.from(groupedAnswers.values()),
+    };
 
     this.feedbackByGroups = Array.from(groupMap.entries()).map(
       ([groupName, questionMap]) => ({
