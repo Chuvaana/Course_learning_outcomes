@@ -55,16 +55,28 @@
         [style]="{ width: '100%' }"
       />
       <div class="submit-btn">
-        <p-button label="Submit" class="submit-button" (click)="submitButton()" />
+        <p-button
+          *ngIf="isRegister"
+          label="Бүртгүүлэх"
+          class="submit-button"
+          (click)="submitButton()"
+        />
+        <p-button
+          *ngIf="!isRegister"
+          label="Нэвтрэх"
+          class="submit-button"
+          (click)="submitButton()"
+        />
       </div>
     </form>
 
     <div class="bottom-btns">
       <a (click)="toggleForm()" class="toggle-link">{{
         isRegister ? "Бүртгэлтэй? Нэвтрэх" : "Бүртгэлгүй? Бүртгүүлэх"
-        }}</a>
+      }}</a>
       <a (click)="resetPass()" class="toggle-link" *ngIf="!isRegister">
-        Нууц үг сэргээх</a>
+        Нууц үг сэргээх</a
+      >
     </div>
   </p-card>
 </div>

@@ -114,12 +114,7 @@ export class LoginStudentComponent {
               summary: 'Амжилттай',
               detail: 'Амжилттай бүртгэгдлээ',
             });
-            if (data.message) {
-              alert(data.message);
-            }
-            if (data.Student) {
-              console.log('Student created:', data.Student);
-            }
+            this.isRegister = false;
             this.studentForm.reset(); // Reset form after successful registration
           },
           (error) => {
@@ -174,7 +169,7 @@ export class LoginStudentComponent {
     console.log(this.studentForm.value.email);
     let transData = null;
     if (this.studentForm.value.email) {
-      transData = this.studentForm.value.email
+      transData = this.studentForm.value.email;
     }
     const dialogRef = this.dialog.open(PasswordResetStudentComponent, {
       width: '40vw',
@@ -182,11 +177,10 @@ export class LoginStudentComponent {
       maxWidth: 'none',
       data: { email: transData },
     });
-    dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().subscribe((result) => {
       if (result) {
         // Handle result here, e.g., show a success message
       }
     });
   }
-
 }

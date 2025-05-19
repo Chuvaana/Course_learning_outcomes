@@ -55,15 +55,15 @@ export class LessonAdvDisadvComponent {
   ) {
     this.feedbackForm = this.fb.group({
       lessonId: ['', Validators.required],
-      strengths: ['', Validators.required],
-      weaknesses: ['', Validators.required],
+      strengths: [''],
+      weaknesses: [''],
       additional: [''],
     });
   }
 
   ngOnInit() {
     this.service.getFeedBack(this.lessonId).subscribe((res: any) => {
-      if (res) {
+      if (res.length != 0) {
         res = res[0];
         this.feedbackForm.patchValue({
           lessonId: res.lessonId,

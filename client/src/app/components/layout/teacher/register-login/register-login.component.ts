@@ -98,12 +98,7 @@ export class RegisterLoginComponent {
   }
 
   submitButton(): void {
-    console.log(
-      this.isRegister ? 'Teacher registering:' : 'Teacher logging in:'
-    );
-
     if (this.isRegister) {
-      // Registering a teacher
       if (this.teacherForm.valid) {
         this.service.registerTeacher(this.teacherForm.value).subscribe(
           (data: { message: string; teacher: any }) => {
@@ -112,7 +107,8 @@ export class RegisterLoginComponent {
               summary: 'Амжилттай',
               detail: 'Амжилттай бүртгэгдлээ',
             });
-            this.teacherForm.reset(); // Reset form after successful registration
+            this.isRegister = false;
+            this.teacherForm.reset();
           },
           (error) => {
             let errorMessage = 'Error registering teacher';
@@ -136,12 +132,10 @@ export class RegisterLoginComponent {
               severity: 'success',
               summary: 'Амжилттай',
               detail: 'Амжилттай нэвтэрлээ',
-            }),
-              // Store the token in localStorage
-              localStorage.setItem('authToken', response.token);
+            });
+            localStorage.setItem('authToken', response.token);
             localStorage.setItem('teacherId', response.teacher.id);
 
-            // Optionally, you can navigate the user to a protected route
             this.router.navigate(['/main/teacher/lessonList']);
           }
         },
@@ -166,10 +160,9 @@ export class RegisterLoginComponent {
     this.isRegister = !this.isRegister;
   }
   resetPass() {
-    console.log(this.teacherForm.value.email);
     let transData = null;
-    if(this.teacherForm.value.email){
-      transData = this.teacherForm.value.email
+    if (this.teacherForm.value.email) {
+      transData = this.teacherForm.value.email;
     }
     this.dialog.open(PasswordResetComponent, {
       width: '40vw',

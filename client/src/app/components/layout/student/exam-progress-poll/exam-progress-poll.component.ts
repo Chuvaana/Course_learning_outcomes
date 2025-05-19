@@ -115,7 +115,6 @@ export class ExamProgressPollComponent {
       this.lessonId = params.get('id')!;
     });
     this.studentCode = localStorage.getItem('studentCode') ?? '';
-    console.log(this.studentCode);
     if (this.lessonId) {
       this.refreshDetail();
     }
@@ -150,14 +149,6 @@ export class ExamProgressPollComponent {
         question.answers.splice(answerIndex, 1);
       }
     }
-  }
-
-  onTextInput(answerIndex: number, questionIndex: number) {
-    const changedAnswer = this.questions[questionIndex].answers[answerIndex];
-    console.log(
-      `Question ${questionIndex}, Answer ${answerIndex}:`,
-      changedAnswer
-    );
   }
 
   refreshDetail() {
@@ -239,16 +230,13 @@ export class ExamProgressPollComponent {
           groupType: i.groupType,
           questionList: [],
         };
-
-        console.log(i);
-
         this.groupList = [];
 
         i.questionList.map((quest: any) => {
           const questionItem: QuestionItem = {
             questionTitle: quest.questionTitle,
             questionId: quest._id ?? null,
-            answerValue: quest.answerValue?.toString(),
+            answerValue: quest.answerValue?.toString() || 0,
             cloId: quest.cloId ?? null,
             questionType: quest.questionType ?? '',
             questionTypeName: quest.questionTypeName ?? '',
