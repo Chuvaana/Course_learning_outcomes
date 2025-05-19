@@ -76,9 +76,9 @@ interface Info {
   selfStudyAssignment: number;
   selfStudyPractice: number;
   createdTeacherBy: string;
-  createdTeacherDatetime: string;
+  createdTeacherDatetime: Date;
   checkManagerBy: string;
-  checkManagerDatetime: string;
+  checkManagerDatetime: Date;
 }
 
 @Component({
@@ -127,6 +127,7 @@ export class LessonListComponent implements OnInit {
 
   yearIntervals: string[] = [];
   selectedInterval: string = '';
+  schoolYearInterval: string = '';
   season!: string;
   teacherId!: string;
 
@@ -155,13 +156,18 @@ export class LessonListComponent implements OnInit {
       season: this.service.getConfig('season'),
     }).subscribe(({ schoolYear, season }) => {
       if (schoolYear) {
+        this.schoolYearInterval = schoolYear.itemValue;
         this.selectedInterval = schoolYear.itemValue;
       }
       if (season) {
         this.selectedSeason = season.itemValue;
       }
 
-      this.readData(this.teacherId, this.selectedInterval, this.selectedSeason);
+      this.readData(
+        this.teacherId,
+        this.schoolYearInterval,
+        this.selectedSeason
+      );
     });
 
     this.generateYearIntervals(
@@ -239,7 +245,7 @@ export class LessonListComponent implements OnInit {
         school: mainInfo.school,
         department: mainInfo.department,
         prerequisite: mainInfo.prerequisite,
-        schoolYear: this.selectedInterval,
+        schoolYear: this.schoolYearInterval,
         assistantTeacherName: mainInfo.assistantTeacher?.name || '',
         assistantTeacherEmail: mainInfo.assistantTeacher?.email || '',
         assistantTeacherPhone: mainInfo.assistantTeacher?.phone || 0,
@@ -266,10 +272,10 @@ export class LessonListComponent implements OnInit {
         selfStudyLab: mainInfo.selfStudyHours?.lab || 0,
         selfStudyAssignment: mainInfo.selfStudyHours?.assignment || 0,
         selfStudyPractice: mainInfo.selfStudyHours?.practice || 0,
-        createdTeacherBy: '',
-        createdTeacherDatetime: '',
-        checkManagerBy: '',
-        checkManagerDatetime: '',
+        createdTeacherBy: mainInfo.createdTeacherBy || '',
+        createdTeacherDatetime: new Date(mainInfo.createdTeacherDatetime),
+        checkManagerBy: mainInfo.checkManagerBy || '',
+        checkManagerDatetime: new Date(mainInfo.checkManagerDatetime),
       };
 
       this.cirService.saveLesson(info).subscribe(

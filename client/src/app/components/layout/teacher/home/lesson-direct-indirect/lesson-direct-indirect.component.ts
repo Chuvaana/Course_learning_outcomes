@@ -282,7 +282,6 @@ export class LessonDirectIndirectComponent {
       const percentValues: { [key: string]: number } = {};
       const gradeValues: { [key: string]: string } = {};
 
-      console.log(this.averagePercentages);
       this.averagePercentages.forEach((item: any) => {
         percentValues[item.clo] = item.percentage;
         gradeValues[item.clo] = item.letter;

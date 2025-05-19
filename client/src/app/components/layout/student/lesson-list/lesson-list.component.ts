@@ -5,7 +5,6 @@ import { Router, RouterModule } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { DropdownModule } from 'primeng/dropdown';
-import { Image } from 'primeng/image';
 import { InputTextModule } from 'primeng/inputtext';
 import { RippleModule } from 'primeng/ripple';
 import { forkJoin, map, Observable } from 'rxjs';
@@ -23,7 +22,6 @@ interface Lesson {
   selector: 'app-lesson-list',
   standalone: true,
   imports: [
-    Image,
     CommonModule,
     ButtonModule,
     InputTextModule,
