@@ -1324,7 +1324,7 @@ export class PdfGeneratorService {
         {},
       ],
       ...data.cloList
-        .filter((row: { type: string }) => row.type === 'LEC_SEM')
+        .filter((row: { type: string }) => row.type === 'ALEC')
         .map(
           (
             row: {
@@ -1706,72 +1706,6 @@ export class PdfGeneratorService {
         {},
         {},
       ],
-      // ...data.pointPlan
-      //   .filter((row: { clo: { type: any } }) => row.clo.type === 'PARTI')
-      //   .map(
-      //     (
-      //       row: {
-      //         clo: { cloName: any };
-      //         attendance: boolean;
-      //         assignment: boolean;
-      //         quiz: boolean;
-      //         project: boolean;
-      //         lab: boolean;
-      //         exam: boolean;
-      //       },
-      //       index: number
-      //     ) => [
-      //       {
-      //         text: index + 1,
-      //         alignment: 'center',
-      //         style: 'tableData',
-      //       },
-      //       {
-      //         text: row.clo.cloName,
-      //         colSpan: 3,
-      //         alignment: 'center',
-      //         style: 'tableData',
-      //       },
-      //       {},
-      //       {},
-      //       {
-      //         image: row.attendance == true ? checked : unChecked,
-      //         alignment: 'center',
-      //         width: 12,
-      //         style: 'tableData',
-      //       },
-      //       {
-      //         image: row.assignment == true ? checked : unChecked,
-      //         alignment: 'center',
-      //         width: 12,
-      //         style: 'tableData',
-      //       },
-      //       {
-      //         image: row.quiz == true ? checked : unChecked,
-      //         alignment: 'center',
-      //         width: 12,
-      //         style: 'tableData',
-      //       },
-      //       {
-      //         image: row.project == true ? checked : unChecked,
-      //         alignment: 'center',
-      //         width: 12,
-      //         style: 'tableData',
-      //       },
-      //       {
-      //         image: row.lab == true ? checked : unChecked,
-      //         alignment: 'center',
-      //         width: 12,
-      //         style: 'tableData',
-      //       },
-      //       {
-      //         image: row.exam == true ? checked : unChecked,
-      //         alignment: 'center',
-      //         width: 12,
-      //         style: 'tableData',
-      //       },
-      //     ]
-      //   ),
       [
         {
           text: 'Лаборатори/практикийн хичээлийн суралцахуйн үр дүнгүүд:',
@@ -1789,72 +1723,6 @@ export class PdfGeneratorService {
         {},
         {},
       ],
-      // ...data.assessment
-      //   .filter((row: { clo: { type: any } }) => row.clo.type === 'CLAB')
-      //   .map(
-      //     (
-      //       row: {
-      //         clo: { cloName: any };
-      //         attendance: boolean;
-      //         assignment: boolean;
-      //         quiz: boolean;
-      //         project: boolean;
-      //         lab: boolean;
-      //         exam: boolean;
-      //       },
-      //       index: number
-      //     ) => [
-      //       {
-      //         text: index + 1,
-      //         alignment: 'center',
-      //         style: 'tableData',
-      //       },
-      //       {
-      //         text: row.clo.cloName,
-      //         colSpan: 3,
-      //         alignment: 'center',
-      //         style: 'tableData',
-      //       },
-      //       {},
-      //       {},
-      //       {
-      //         image: row.attendance == true ? checked : unChecked,
-      //         alignment: 'center',
-      //         width: 12,
-      //         style: 'tableData',
-      //       },
-      //       {
-      //         image: row.assignment == true ? checked : unChecked,
-      //         alignment: 'center',
-      //         width: 12,
-      //         style: 'tableData',
-      //       },
-      //       {
-      //         image: row.quiz == true ? checked : unChecked,
-      //         alignment: 'center',
-      //         width: 12,
-      //         style: 'tableData',
-      //       },
-      //       {
-      //         image: row.project == true ? checked : unChecked,
-      //         alignment: 'center',
-      //         width: 12,
-      //         style: 'tableData',
-      //       },
-      //       {
-      //         image: row.lab == true ? checked : unChecked,
-      //         alignment: 'center',
-      //         width: 12,
-      //         style: 'tableData',
-      //       },
-      //       {
-      //         image: row.exam == true ? checked : unChecked,
-      //         alignment: 'center',
-      //         width: 12,
-      //         style: 'tableData',
-      //       },
-      //     ]
-      //   ),
       [
         { text: ' ', colSpan: 10, alignment: 'left', style: 'tableData' },
         {},
@@ -1867,30 +1735,6 @@ export class PdfGeneratorService {
         {},
         {},
       ],
-      // [
-      //   { text: data.assessFooter.assessFooter[0].name, colSpan: 4, alignment: 'center', style: 'tableData' },
-      //   {},
-      //   {},
-      //   {},
-      //   { text: data.assessFooter.assessFooter[0].attendanceValue, alignment: 'center', style: 'tableData' },
-      //   { text: data.assessFooter.assessFooter[0].assignmentValue, alignment: 'center', style: 'tableData' },
-      //   { text: data.assessFooter.assessFooter[0].quizValue, alignment: 'center', style: 'tableData' },
-      //   { text: data.assessFooter.assessFooter[0].projectValue, alignment: 'center', style: 'tableData' },
-      //   { text: data.assessFooter.assessFooter[0].labValue, alignment: 'center', style: 'tableData' },
-      //   { text: data.assessFooter.assessFooter[0].examValue, alignment: 'center', style: 'tableData' }
-      // ],
-      // [
-      //   { text: data.assessFooter.assessFooter[1].name, colSpan: 4, alignment: 'center', style: 'tableData' },
-      //   {},
-      //   {},
-      //   {},
-      //   { text: data.assessFooter.assessFooter[1].attendanceValue, alignment: 'center', style: 'tableData' },
-      //   { text: data.assessFooter.assessFooter[1].assignmentValue, alignment: 'center', style: 'tableData' },
-      //   { text: data.assessFooter.assessFooter[1].quizValue, alignment: 'center', style: 'tableData' },
-      //   { text: data.assessFooter.assessFooter[1].projectValue, alignment: 'center', style: 'tableData' },
-      //   { text: data.assessFooter.assessFooter[1].labValue, alignment: 'center', style: 'tableData' },
-      //   { text: data.assessFooter.assessFooter[1].examValue, alignment: 'center', style: 'tableData' }
-      // ],
       [
         {
           text: 'ХИЧЭЭЛД ТАВИГДАХ НЭМЭЛТ ШААРДЛАГУУД:',

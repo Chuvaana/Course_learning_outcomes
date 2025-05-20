@@ -201,10 +201,12 @@ export class PdfLessonAssessmentService {
           },
         },
       ],
-      footer: {
-        text: `Боловсруулсан багш ........ ................... ${teacherName}`,
-        style: 'footerCenter',
-      },
+      footer: (currentPage: number, pageCount: number): Content => ({
+        text: pageCount === currentPage ? `Боловсруулсан багш: ........ ................... ${teacherName}\n\nХуудас ${currentPage} / ${pageCount}` : `Хуудас ${currentPage} / ${pageCount}`,
+        alignment: 'center',
+        fontSize: 9,
+        margin: [0, 0, 0, 0],
+      }),
       styles: {
         header: {
           fontSize: 14,

@@ -58,6 +58,7 @@ export class HomeComponent {
   averagePercentages: any;
   feedBack: any;
   feedBackTast: any;
+  cloDatas: any;
 
   ratingLevels = [
     { key: 'score5', label: 'Маш сайн (5)' },
@@ -397,6 +398,7 @@ export class HomeComponent {
     this.pdfSendData.push(this.feedBack);
     this.pdfSendData.push(this.season);
     this.pdfSendData.push(this.sentImage1);
+    this.pdfSendData.push(this.cloDatas);
     this.pdfMainService.generatePdfAll(this.pdfSendData);
   }
 
@@ -451,7 +453,13 @@ export class HomeComponent {
           .filter((qe: any) => qe.groupType === 'CLO')
           .flatMap((qe: any) => qe.questionList || [])
       );
-      const stats = this.calculateCloStatsChart(cloData);
+      // const stats = this.calculateCloStatsChart(cloData);
+      const stats = this.calculateCloStatsChart(cloData).map((s) => ({
+        ...s,
+        cloName: this.getCloName(s.clo)
+      }));
+
+      this.cloDatas = stats;
       this.prepareChartData();
       this.generateChartData(stats);
       // this.pdfTo();
