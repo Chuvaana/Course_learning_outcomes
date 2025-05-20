@@ -18,6 +18,86 @@ export class PdfGeneratorService {
   }
   generatePdfTest(data: any) {
     let lessonLevel = '';
+
+    let titleDataCheck: any[] = [];
+    let cloTitleDataCheck: any[] = [];
+
+    data.cloPoint.map((res: any, index: number) => {
+      titleDataCheck = [];
+      data.assessmentByLesson.plans.map((resAssess: any) => {
+        let checkPoint = false;
+        let subMethodId = false;
+
+        if (resAssess.methodType === 'EXAM') {
+          resAssess.subMethods.map((subMeAss: any) => {
+            res.examPoints.map((pointData: any) => {
+              if (pointData.subMethodId === subMeAss._id) {
+                if (pointData.point > 0) {
+                  subMethodId = pointData.subMethodId;
+                  checkPoint = true;
+                }
+              }
+            });
+          });
+        } else {
+          resAssess.subMethods.map((subMeAss: any) => {
+            res.procPoints.map((pointData: any) => {
+              if (pointData.subMethodId === subMeAss._id) {
+                if (pointData.point > 0) {
+                  subMethodId = pointData.subMethodId;
+                  checkPoint = true;
+                }
+              }
+            });
+          });
+        }
+        let sentData: any;
+        if (checkPoint) {
+          const dataSet = {
+            methodName: resAssess.methodName,
+            methodType: resAssess.methodType,
+            frequency: resAssess.frequency,
+            subMethodId: subMethodId,
+            point: 1,
+            check: true,
+            id: resAssess._id,
+          }
+          sentData = dataSet;
+        } else {
+          const dataSet = {
+            methodName: resAssess.methodName,
+            methodType: resAssess.methodType,
+            frequency: resAssess.frequency,
+            subMethodId: subMethodId,
+            point: 0,
+            check: false,
+            id: resAssess._id,
+          }
+          sentData = dataSet;
+        }
+        titleDataCheck.push(sentData);
+      });
+      const cloDataSet = {
+        cloId: res.cloId,
+        cloSubName: 'CLO ' + (index + 1),
+        cloType: res.cloType,
+        cloumnData: titleDataCheck,
+        order: index,
+      }
+      cloTitleDataCheck.push(cloDataSet);
+    });
+    cloTitleDataCheck = cloTitleDataCheck.map((res, index) => {
+      // cloId-оор тохирох name-ийг data.cloList-с хайх
+      const matchedClo = data.cloList.find((item: { id: any; }) => item.id === res.cloId);
+      const cloName = matchedClo ? matchedClo.cloName : '';
+
+      return {
+        ...res, // өмнөх бүх өгөгдлийг үлдээнэ
+        cloName: cloName, // name нэмэх
+      };
+    });
+    console.log(cloTitleDataCheck);
+
     if (data.mainInfo.lessonLevel === 'MAGISTER') {
       lessonLevel = 'Магистр';
     } else if (data.mainInfo.lessonLevel === 'BACHELOR') {
@@ -48,6 +128,62 @@ export class PdfGeneratorService {
       // sonar aldaa..
     }
     const mainInfo = data.mainInfo;
+
+    function aggerTo() {
+      let rows: any[] = [];
+      if (data.scheduleSems > 0) {
+        const headTitle = [
+          { text: '7 хоног', alignment: 'center', style: 'tableHeader' },
+          {
+            text: 'Семинарын сэдэв',
+            colSpan: 7,
+            alignment: 'center',
+            style: 'tableHeader',
+          },
+          {},
+          {},
+          {},
+          {},
+          {},
+          {},
+          { text: 'Цаг', colSpan: 2, alignment: 'center', style: 'tableHeader' },
+          {},
+        ];
+        const headData = data.scheduleSems.map(
+          (row: { week: any; title: any; time: any }, index: any) => [
+            {
+              text: row.week,
+              alignment: 'center',
+              style: 'tableData',
+            },
+            {
+              text: row.title,
+              alignment: 'left',
+              colSpan: 7,
+              style: 'tableData',
+            },
+            {},
+            {},
+            {},
+            {},
+            {},
+            {},
+            {
+              text: row.time,
+              colSpan: 2,
+              alignment: 'center',
+              style: 'tableData',
+            },
+            {},
+          ]
+        );
+        rows.push(headTitle, headData);
+      }
+      return rows;
+    }
+
+    const semRowData = aggerTo();
+
 
     const deliveryModes = [
       { label: 'Тонгоруу анги', value: 'CLASS' },
@@ -1040,68 +1176,7 @@ export class PdfGeneratorService {
           {},
         ]
       ),
-      [
-        {
-          text: 'Семинарын агуулга:',
-          colSpan: 10,
-          alignment: 'left',
-          style: 'tableHeader',
-        },
-        {},
-        {},
-        {},
-        {},
-        {},
-        {},
-        {},
-        {},
-        {},
-      ],
-      [
-        { text: '7 хоног', alignment: 'center', style: 'tableHeader' },
-        {
-          text: 'Семинарын сэдэв',
-          colSpan: 7,
-          alignment: 'center',
-          style: 'tableHeader',
-        },
-        {},
-        {},
-        {},
-        {},
-        {},
-        {},
-        { text: 'Цаг', colSpan: 2, alignment: 'center', style: 'tableHeader' },
-        {},
-      ],
-      ...data.scheduleSems.map(
-        (row: { week: any; title: any; time: any }, index: any) => [
-          {
-            text: row.week,
-            alignment: 'center',
-            style: 'tableData',
-          },
-          {
-            text: row.title,
-            alignment: 'left',
-            colSpan: 7,
-            style: 'tableData',
-          },
-          {},
-          {},
-          {},
-          {},
-          {},
-          {},
-          {
-            text: row.time,
-            colSpan: 2,
-            alignment: 'center',
-            style: 'tableData',
-          },
-          {},
-        ]
-      ),
+      ...semRowData,
       [
         {
           text: 'Лаборатори/практикийн хичээлийн агуулга:',
@@ -1218,36 +1293,36 @@ export class PdfGeneratorService {
           row: { week: any; title: any; adviceTime: any; time: any },
           index: any
         ) => [
-          {
-            text: row.week,
-            alignment: 'center',
-            style: 'tableData',
-          },
-          {
-            text: row.title,
-            alignment: 'left',
-            colSpan: 5,
-            style: 'tableData',
-          },
-          {},
-          {},
-          {},
-          {},
-          {
-            text: row.adviceTime,
-            colSpan: 2,
-            alignment: 'center',
-            style: 'tableData',
-          },
-          {},
-          {
-            text: row.time,
-            colSpan: 2,
-            alignment: 'center',
-            style: 'tableData',
-          },
-          {},
-        ]
+            {
+              text: row.week,
+              alignment: 'center',
+              style: 'tableData',
+            },
+            {
+              text: row.title,
+              alignment: 'left',
+              colSpan: 5,
+              style: 'tableData',
+            },
+            {},
+            {},
+            {},
+            {},
+            {
+              text: row.adviceTime,
+              colSpan: 2,
+              alignment: 'center',
+              style: 'tableData',
+            },
+            {},
+            {
+              text: row.time,
+              colSpan: 2,
+              alignment: 'center',
+              style: 'tableData',
+            },
+            {},
+          ]
       ),
       [
         {
@@ -1336,44 +1411,44 @@ export class PdfGeneratorService {
             },
             index: any
           ) => [
-            {
-              text: row.order,
-              alignment: 'center',
-              style: 'tableData',
-            },
-            {
-              text: row.cloName,
-              alignment: 'left',
-              colSpan: 3,
-              style: 'tableData',
-            },
-            {},
-            {},
-            {
-              image: row.knowledge == true ? checked : unChecked,
-              colSpan: 2,
-              width: 12,
-              alignment: 'center',
-              style: 'tableData',
-            },
-            {},
-            {
-              image: row.skill == true ? checked : unChecked,
-              colSpan: 2,
-              width: 12,
-              alignment: 'center',
-              style: 'tableData',
-            },
-            {},
-            {
-              image: row.attitude == true ? checked : unChecked,
-              colSpan: 2,
-              width: 12,
-              alignment: 'center',
-              style: 'tableData',
-            },
-            {},
-          ]
+              {
+                text: row.order,
+                alignment: 'center',
+                style: 'tableData',
+              },
+              {
+                text: row.cloName,
+                alignment: 'left',
+                colSpan: 3,
+                style: 'tableData',
+              },
+              {},
+              {},
+              {
+                image: row.knowledge == true ? checked : unChecked,
+                colSpan: 2,
+                width: 12,
+                alignment: 'center',
+                style: 'tableData',
+              },
+              {},
+              {
+                image: row.skill == true ? checked : unChecked,
+                colSpan: 2,
+                width: 12,
+                alignment: 'center',
+                style: 'tableData',
+              },
+              {},
+              {
+                image: row.attitude == true ? checked : unChecked,
+                colSpan: 2,
+                width: 12,
+                alignment: 'center',
+                style: 'tableData',
+              },
+              {},
+            ]
         ),
 
       [
@@ -1438,46 +1513,45 @@ export class PdfGeneratorService {
             },
             index: any
           ) => [
-            {
-              text: row.order,
-              alignment: 'center',
-              style: 'tableData',
-            },
-            {
-              text: row.cloName,
-              alignment: 'left',
-              colSpan: 3,
-              style: 'tableData',
-            },
-            {},
-            {},
-            {
-              image: row.knowledge == true ? checked : unChecked,
-              colSpan: 2,
-              width: 12,
-              alignment: 'center',
-              style: 'tableData',
-            },
-            {},
-            {
-              image: row.skill == true ? checked : unChecked,
-              colSpan: 2,
-              width: 12,
-              alignment: 'center',
-              style: 'tableData',
-            },
-            {},
-            {
-              image: row.attitude == true ? checked : unChecked,
-              colSpan: 2,
-              width: 12,
-              alignment: 'center',
-              style: 'tableData',
-            },
-            {},
-          ]
+              {
+                text: row.order,
+                alignment: 'center',
+                style: 'tableData',
+              },
+              {
+                text: row.cloName,
+                alignment: 'left',
+                colSpan: 3,
+                style: 'tableData',
+              },
+              {},
+              {},
+              {
+                image: row.knowledge == true ? checked : unChecked,
+                colSpan: 2,
+                width: 12,
+                alignment: 'center',
+                style: 'tableData',
+              },
+              {},
+              {
+                image: row.skill == true ? checked : unChecked,
+                colSpan: 2,
+                width: 12,
+                alignment: 'center',
+                style: 'tableData',
+              },
+              {},
+              {
+                image: row.attitude == true ? checked : unChecked,
+                colSpan: 2,
+                width: 12,
+                alignment: 'center',
+                style: 'tableData',
+              },
+              {},
+            ]
         ),
-      // -------------------- Zasvar ----------------------
       [
         {
           text: 'СУРГАХ, СУРАЛЦАХ АРГА ЗҮЙ (Teaching and Learning Method)',
@@ -1557,51 +1631,51 @@ export class PdfGeneratorService {
           },
           index: any
         ) => [
-          {
-            text:
-              pedagogyOptions.find((e) => e.value === row.pedagogy)?.label ||
-              '',
-            colSpan: 2,
-            alignment: 'center',
-            style: 'tableData',
-          },
-          {},
-          {
-            text:
-              deliveryModes.find((e) => e.value === row.deliveryMode)?.label ||
-              '',
-            colSpan: 3,
-            alignment: 'center',
-            style: 'tableData',
-          },
-          {},
-          {},
-          {
-            image: row.classroom == true ? checked : unChecked,
-            alignment: 'center',
-            width: 12,
-            style: 'tableData',
-          },
-          {
-            image: row.electronic == true ? checked : unChecked,
-            alignment: 'center',
-            width: 12,
-            style: 'tableData',
-          },
-          {
-            image: row.combined == true ? checked : unChecked,
-            alignment: 'center',
-            width: 12,
-            style: 'tableData',
-          },
-          {
-            text: row.cloRelevance.map((item: any) => item.cloName).join(', '),
-            colSpan: 2,
-            alignment: 'center',
-            style: 'tableData',
-          },
-          {},
-        ]
+            {
+              text:
+                pedagogyOptions.find((e) => e.value === row.pedagogy)?.label ||
+                '',
+              colSpan: 2,
+              alignment: 'center',
+              style: 'tableData',
+            },
+            {},
+            {
+              text:
+                deliveryModes.find((e) => e.value === row.deliveryMode)?.label ||
+                '',
+              colSpan: 3,
+              alignment: 'center',
+              style: 'tableData',
+            },
+            {},
+            {},
+            {
+              image: row.classroom == true ? checked : unChecked,
+              alignment: 'center',
+              width: 12,
+              style: 'tableData',
+            },
+            {
+              image: row.electronic == true ? checked : unChecked,
+              alignment: 'center',
+              width: 12,
+              style: 'tableData',
+            },
+            {
+              image: row.combined == true ? checked : unChecked,
+              alignment: 'center',
+              width: 12,
+              style: 'tableData',
+            },
+            {
+              text: row.cloRelevance.map((item: any) => item.cloName).join(', '),
+              colSpan: 2,
+              alignment: 'center',
+              style: 'tableData',
+            },
+            {},
+          ]
       ),
       [
         {
@@ -1659,11 +1733,11 @@ export class PdfGeneratorService {
           style: 'tableData',
         },
         {
-          text: 'Явцын\nшалгалт/\nСорил',
+          text: 'Явцын\nшалгалт/\nСорил 1',
           alignment: 'left',
           style: 'tableData',
         },
-        { text: 'Курсын\nажил/төсөл', alignment: 'left', style: 'tableData' },
+        { text: 'Явцын\nшалгалт/\nСорил 2', alignment: 'left', style: 'tableData' },
         { text: 'Лабораторийн\nажил', alignment: 'left', style: 'tableData' },
         {
           text: 'Улирлын шалгалт\n(30 оноо)',
@@ -1706,6 +1780,83 @@ export class PdfGeneratorService {
         {},
         {},
       ],
+      // -------------------- Zasvar ----------------------
+      ...cloTitleDataCheck
+        .filter((row: { cloType: string }) => row.cloType === 'ALEC')
+        .map(
+          (
+            row: {
+              order: any;
+              cloName: any;
+              cloumnData: any;
+              skill: any;
+              attitude: any;
+            },
+            index: any
+          ) => [
+              {
+                text: ++index,
+                alignment: 'center',
+                style: 'tableData',
+              },
+              {
+                text: row.cloName,
+                alignment: 'left',
+                colSpan: 3,
+                style: 'tableData',
+              },
+              {},
+              {},
+              {
+                image: (row.cloumnData.find((item: { methodType: any }) => item.methodType === 'PARTI')?.check === true)
+                  ? checked
+                  : unChecked,
+                width: 12,
+                alignment: 'center',
+                style: 'tableData',
+              },
+              {
+                image: (row.cloumnData.find((item: { methodType: any, methodName: any }) => item.methodType === 'PROC' && item.methodName === 'Даалгавар')?.check === true)
+                  ? checked
+                  : unChecked,
+                width: 12,
+                alignment: 'center',
+                style: 'tableData',
+              },
+              {
+                image: (row.cloumnData.find((item: { methodType: any }) => item.methodType === 'QUIZ1')?.check === true)
+                  ? checked
+                  : unChecked,
+                width: 12,
+                alignment: 'center',
+                style: 'tableData',
+              },
+              {
+                image: (row.cloumnData.find((item: { methodType: any }) => item.methodType === 'QUIZ2')?.check === true)
+                  ? checked
+                  : unChecked,
+                width: 12,
+                alignment: 'center',
+                style: 'tableData',
+              },
+              {
+                image: (row.cloumnData.find((item: { methodType: any, methodName: any }) => item.methodType === 'PROC' && item.methodName !== 'Даалгавар')?.check === true)
+                  ? checked
+                  : unChecked,
+                width: 12,
+                alignment: 'center',
+                style: 'tableData',
+              },
+              {
+                image: (row.cloumnData.find((item: { methodType: any }) => item.methodType === 'EXAM')?.check === true)
+                  ? checked
+                  : unChecked,
+                width: 12,
+                alignment: 'center',
+                style: 'tableData',
+              },
+            ]
+        ),
       [
         {
           text: 'Лаборатори/практикийн хичээлийн суралцахуйн үр дүнгүүд:',
@@ -1723,18 +1874,83 @@ export class PdfGeneratorService {
         {},
         {},
       ],
-      [
-        { text: ' ', colSpan: 10, alignment: 'left', style: 'tableData' },
-        {},
-        {},
-        {},
-        {},
-        {},
-        {},
-        {},
-        {},
-        {},
-      ],
+
+      ...cloTitleDataCheck
+        .filter((row: { cloType: string }) => row.cloType === 'CLAB')
+        .map(
+          (
+            row: {
+              order: any;
+              cloName: any;
+              cloumnData: any;
+              skill: any;
+              attitude: any;
+            },
+            index: any
+          ) => [
+              {
+                text: ++index,
+                alignment: 'center',
+                style: 'tableData',
+              },
+              {
+                text: row.cloName,
+                alignment: 'left',
+                colSpan: 3,
+                style: 'tableData',
+              },
+              {},
+              {},
+              {
+                image: (row.cloumnData.find((item: { methodType: any }) => item.methodType === 'PARTI')?.check === true)
+                  ? checked
+                  : unChecked,
+                width: 12,
+                alignment: 'center',
+                style: 'tableData',
+              },
+              {
+                image: (row.cloumnData.find((item: { methodType: any, methodName: any }) => item.methodType === 'PROC' && item.methodName === 'Даалгавар')?.check === true)
+                  ? checked
+                  : unChecked,
+                width: 12,
+                alignment: 'center',
+                style: 'tableData',
+              },
+              {
+                image: (row.cloumnData.find((item: { methodType: any }) => item.methodType === 'QUIZ1')?.check === true)
+                  ? checked
+                  : unChecked,
+                width: 12,
+                alignment: 'center',
+                style: 'tableData',
+              },
+              {
+                image: (row.cloumnData.find((item: { methodType: any }) => item.methodType === 'QUIZ2')?.check === true)
+                  ? checked
+                  : unChecked,
+                width: 12,
+                alignment: 'center',
+                style: 'tableData',
+              },
+              {
+                image: (row.cloumnData.find((item: { methodType: any, methodName: any }) => item.methodType === 'PROC' && item.methodName !== 'Даалгавар')?.check === true)
+                  ? checked
+                  : unChecked,
+                width: 12,
+                alignment: 'center',
+                style: 'tableData',
+              },
+              {
+                image: (row.cloumnData.find((item: { methodType: any }) => item.methodType === 'EXAM')?.check === true)
+                  ? checked
+                  : unChecked,
+                width: 12,
+                alignment: 'center',
+                style: 'tableData',
+              },
+            ]
+        ),
       [
         {
           text: 'ХИЧЭЭЛД ТАВИГДАХ НЭМЭЛТ ШААРДЛАГУУД:',
@@ -1789,7 +2005,7 @@ export class PdfGeneratorService {
       ],
       [
         {
-          text: 'Боловсруулсан багш:\n'+ mainInfo.createdTeacherBy,
+          text: 'Боловсруулсан багш:\n' + mainInfo.createdTeacherBy,
           colSpan: 3,
           alignment: 'left',
           style: 'tableData',
@@ -1849,7 +2065,7 @@ export class PdfGeneratorService {
         // { text: 'This is a sample PDF generated using pdfMake in Angular.', style: 'body' },
         {
           table: {
-            // headerRows: 1,
+            headerRows: 1,
             widths: [
               '10%',
               '10%',

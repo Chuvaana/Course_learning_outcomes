@@ -52,6 +52,9 @@ export class CurriculumComponent {
   scheduleBdsData: any;
   cloPlanData: any;
   assessFooter: any;
+  cloPoint: any;
+  cloList: any;
+  cloPlan: any;
 
   constructor(
     private route: ActivatedRoute,
@@ -78,10 +81,12 @@ export class CurriculumComponent {
       scheduleLabs: this.service.getScheduleLabs(this.lessonId),
       scheduleBds: this.service.getScheduleBds(this.lessonId),
       // assessFooter: this.service.getAssessFooter(this.lessonId),
-    }).subscribe((results) => {
+    }).subscribe((results : any) => {
       // 🎯 Энд бүх үр дүн хадгалагдсан байна
+      this.createRows();
       this.additionalData = results.additional;
-      this.cloListData = results.cloList;
+      this.cloList = results.cloList;
+      results.cloPoint = this.cloPoint;
       this.mainInfoData = results.mainInfo;
       this.materialsData = results.materials;
       this.methodData = results.method;
@@ -95,6 +100,38 @@ export class CurriculumComponent {
       console.log('Бүх өгөгдөл:', results);
       this.resultData = results;
       this.pdfService.generatePdfTest(this.resultData);
+    });
+  }
+
+  createRows() {
+    this.cloPoint = [];
+
+    this.cloList.map((item: any) => {
+      const procPointsArray: any[] = [];
+      const examPointsArray: any[] = [];
+
+      this.cloPlan.forEach((plan: any) => {
+        plan.subMethods.forEach((sub: any) => {
+          const pointGroup = {
+            subMethodId: sub._id,
+            point: [0],
+          };
+
+          if (plan.methodType === 'PROC') {
+            procPointsArray.push(pointGroup);
+          } else if (plan.methodType === 'EXAM') {
+            examPointsArray.push(pointGroup);
+          }
+        });
+      });
+
+      this.cloPoint.push({
+        lessonId: '',
+        cloId: item.id,
+        cloType: item.type,
+        procPoints: procPointsArray,
+        examPoints: examPointsArray,
+      });
     });
   }
 }

@@ -59,6 +59,10 @@ export class CurriculumComponent {
   cloPlanData: any;
   assessFooter: any;
   pointPlan: any;
+  cloPoint: any;
+  cloList: any;
+  cloPlan: any;
+  assessPlan: any;
 
   constructor(
     private route: ActivatedRoute,
@@ -68,7 +72,7 @@ export class CurriculumComponent {
     private service: AssessmentService,
     private assessService: AssessmentService,
     private cloPointPlanService: CloPointPlanService
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.route.parent?.paramMap.subscribe((params) => {
@@ -93,7 +97,16 @@ export class CurriculumComponent {
         this.lessonId
       ),
     }).subscribe(
-      (results) => {
+      (results: any) => {
+        this.cloList = results.cloList;
+        this.cloPlan = results.pointPlan;
+        this.assessPlan = results.assessmentByLesson;
+        if (Array.isArray(this.cloPlan) && this.cloPlan.length === 0) {
+          this.createRows();
+        } else {
+          this.populateCLOForm();
+        }
+        results.cloPoint = this.cloPoint;
         this.resultData = results;
         this.pdfService.generatePdfTest(this.resultData);
       },
@@ -107,6 +120,105 @@ export class CurriculumComponent {
         });
       }
     );
+  }
+
+  createRows() {
+    this.cloPoint = [];
+
+    this.cloList.map((item: any) => {
+      const procPointsArray: any[] = [];
+      const examPointsArray: any[] = [];
+
+      this.cloPlan.forEach((plan: any) => {
+        plan.subMethods.forEach((sub: any) => {
+          const pointGroup = {
+            subMethodId: sub._id,
+            point: [0],
+          };
+
+          if (plan.methodType === 'PROC') {
+            procPointsArray.push(pointGroup);
+          } else if (plan.methodType === 'EXAM') {
+            examPointsArray.push(pointGroup);
+          }
+        });
+      });
+
+      this.cloPoint.push({
+        lessonId: '',
+        cloId: item.id,
+        cloType: item.type,
+        procPoints: procPointsArray,
+        examPoints: examPointsArray,
+      });
+    });
+  }
+
+  populateCLOForm() {
+    const validSubMethodIds = this.assessPlan.plans
+      .flatMap((pl: any) => pl.subMethods)
+      .map((sub: any) => sub._id);
+
+    this.cloPlan.forEach((clo: any) => {
+      clo.procPoints = clo.procPoints.filter((p: any) =>
+        validSubMethodIds.includes(p.subMethodId)
+      );
+
+      clo.examPoints = clo.examPoints.filter((e: any) =>
+        validSubMethodIds.includes(e.subMethodId)
+      );
+    });
+
+    this.assessPlan.plans.forEach((pl: any) => {
+      pl.subMethods.forEach((sub: any) => {
+        this.cloPlan.forEach((clo: any) => {
+          pl.methodPoint = pl.subMethods.reduce(
+            (sum: number, sub: any) => sum + (sub.point || 0),
+            0
+          );
+          const inProc = clo.procPoints.some(
+            (p: any) => p.subMethodId === sub._id
+          );
+          const inExam = clo.examPoints.some(
+            (e: any) => e.subMethodId === sub._id
+          );
+
+          if (!inProc && pl.methodType === 'PROC') {
+            const insertIndex = clo.procPoints.findIndex(
+              (p: any) =>
+                validSubMethodIds.indexOf(sub._id) <
+                validSubMethodIds.indexOf(p.subMethodId)
+            );
+            if (insertIndex === -1) {
+              clo.procPoints.push({ subMethodId: sub._id, point: 0 });
+            } else {
+              clo.procPoints.splice(insertIndex, 0, {
+                subMethodId: sub._id,
+                point: 0,
+              });
+            }
+          }
+
+          if (!inExam && pl.methodType === 'EXAM') {
+            const insertIndex = clo.examPoints.findIndex(
+              (e: any) =>
+                validSubMethodIds.indexOf(sub._id) <
+                validSubMethodIds.indexOf(e.subMethodId)
+            );
+            if (insertIndex === -1) {
+              clo.examPoints.push({ subMethodId: sub._id, point: 0 });
+            } else {
+              clo.examPoints.splice(insertIndex, 0, {
+                subMethodId: sub._id,
+                point: 0,
+              });
+            }
+          }
+        });
+      });
+    });
+
+    this.cloPoint = this.cloPlan;
   }
 
   exportToExcel() {
