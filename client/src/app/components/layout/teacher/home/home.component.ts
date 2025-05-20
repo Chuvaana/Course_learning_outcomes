@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { TabsModule } from 'primeng/tabs';
@@ -23,6 +23,9 @@ import { PdfMainService } from '../../../../services/pdf-main.service';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { AssessProcessService } from './lesson-assessment/assessProcess';
 import { ConfigService } from '../../../../services/configService';
+import { ChartModule } from 'primeng/chart';
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
 
 @Component({
   selector: 'app-home',
@@ -40,6 +43,7 @@ import { ConfigService } from '../../../../services/configService';
     LessonDirectIndirectComponent,
     LessonPollAnalysisComponent,
     LessonAdvDisadvComponent,
+    ChartModule,
   ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
@@ -53,6 +57,13 @@ export class HomeComponent {
   feedBack: any;
   feedBackTast: any;
 
+  ratingLevels = [
+    { key: 'score5', label: 'Маш сайн (5)' },
+    { key: 'score4', label: 'Сайн (4)' },
+    { key: 'score3', label: 'Дунд (3)' },
+    { key: 'score2', label: 'Муу (2)' },
+    { key: 'score1', label: 'Маш муу (1)' },
+  ];
   // үндсэн мэдээлэл
   pdfSendData: any[] = [];
   mainInfo = [];
@@ -62,7 +73,7 @@ export class HomeComponent {
   clos = [];
 
   // төлөвлөгөө
-  cloList = [];
+  cloList: any[] = [];
   assessPlan: any;
   cloPlan = [];
   cloForm!: FormGroup;
@@ -75,7 +86,14 @@ export class HomeComponent {
   lesStudent: any;
   teacherName: any;
   summaryData: any;
+  countCheck = 0;
   season!: string;
+  chartData: any;
+  chartOptions: any;
+  chartDataAssess: any;
+  chartOptionAssess: any;
+  activeImage = false;
+  sentImage1: any[] = [];
 
   // clo дүн
   tabDatas!: [{ title: string; content: any; value: any }];
@@ -87,7 +105,10 @@ export class HomeComponent {
     { label: 'Лаборатори', value: 'CLAB' },
   ];
 
+  @ViewChild('chartWrapper') chartWrapper!: ElementRef;
+  @ViewChild('chartDataWrapper') chartDataWrapper!: ElementRef;
   constructor(
+    private cdr: ChangeDetectorRef,
     private assessProcess: AssessProcessService,
     private fb: FormBuilder,
     private route: ActivatedRoute,
@@ -99,7 +120,7 @@ export class HomeComponent {
     private assessService: AssessmentService,
     private pdfMainService: PdfMainService,
     private cloPointPlanService: CloPointPlanService
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.route.parent?.paramMap.subscribe((params) => {
@@ -157,6 +178,7 @@ export class HomeComponent {
       this.assessPlan = assessPlan;
       this.cloPlan = cloPlan;
       this.pollDatas = pollData;
+      this.pdfToConvert();
     });
   }
   createRows(cloList: any, cloPlan: any) {
@@ -250,6 +272,7 @@ export class HomeComponent {
           totalPoint: 0,
           value: index,
         }));
+        this.countCheck = 0;
         this.read();
 
         if (this.assessPlans.plans && this.tabs.length) {
@@ -369,6 +392,7 @@ export class HomeComponent {
     this.pdfSendData.push(this.feedBackTast);
     this.pdfSendData.push(this.feedBack);
     this.pdfSendData.push(this.season);
+    this.pdfSendData.push(this.sentImage1);
     this.pdfMainService.generatePdfAll(this.pdfSendData);
   }
 
@@ -416,6 +440,19 @@ export class HomeComponent {
     return name;
   }
 
+  activeBtn() {
+    if (this.countCheck === 4) {
+      let cloData = this.pollDatas.flatMap((item: any) =>
+        item.groupList
+          .filter((qe: any) => qe.groupType === 'CLO')
+          .flatMap((qe: any) => qe.questionList || [])
+      );
+      const stats = this.calculateCloStatsChart(cloData);
+      this.prepareChartData();
+      this.generateChartData(stats);
+      // this.pdfTo();
+    }
+  }
   read() {
     this.assessProcess.gradePoint(this.lessonId).subscribe((gradeData) => {
       this.tabs.forEach((item: any) => {
@@ -449,6 +486,8 @@ export class HomeComponent {
           }
         });
       });
+      this.countCheck = this.countCheck + 1;
+      this.activeBtn();
     });
 
     this.assessProcess
@@ -491,6 +530,8 @@ export class HomeComponent {
             studentRow.letterGrade = this.getLetterGrade(studentRow.percentage);
           });
         });
+        this.countCheck = this.countCheck + 1;
+        this.activeBtn();
       });
 
     this.assessProcess
@@ -527,6 +568,8 @@ export class HomeComponent {
             studentRow.letterGrade = this.getLetterGrade(studentRow.percentage);
           });
         });
+        this.countCheck = this.countCheck + 1;
+        this.activeBtn();
       });
 
     this.assessProcess
@@ -572,7 +615,8 @@ export class HomeComponent {
           });
         });
         // this.pdfSendData.push(this.tabs);
-        this.pdfTo();
+        this.countCheck = this.countCheck + 1;
+        this.activeBtn();
       });
   }
 
@@ -602,5 +646,193 @@ export class HomeComponent {
         letter: this.getLetterGrade(rounded),
       };
     });
+  }
+
+  prepareChartData() {
+    const labels = this.tabs.map((tab: any) => tab.title);
+    const totalStudents = this.tabs.map((tab: any) => this.getTotalStudents(tab));
+    const aboveCCount = this.tabs.map((tab: any) => this.getAboveCCount(tab));
+    const aboveCPercentage = this.tabs.map(
+      (tab: any) => +this.getAboveCPercentage(tab)
+    );
+
+    this.chartData = {
+      labels: labels,
+      datasets: [
+        {
+          label: 'Нийт үнэлэгдсэн оюутны тоо',
+          backgroundColor: '#42A5F5',
+          data: totalStudents,
+        },
+        {
+          label: 'C ба түүнээс дээш үнэлгээтэй оюутны тоо',
+          backgroundColor: '#66BB6A',
+          data: aboveCCount,
+        },
+      ],
+    };
+
+    this.chartOptions = {
+      responsive: true,
+      plugins: {
+        legend: {
+          position: 'top',
+        },
+        title: {
+          display: true,
+          text: 'Оюутны үнэлгээний харьцуулалт',
+        },
+      },
+    };
+  }
+
+  generateChartData(stats: any[]) {
+    const labels = stats.map((s) => this.getCloName(s.clo));
+    const datasets = this.ratingLevels.map((level: any) => ({
+      label: level.label,
+      backgroundColor: this.getColorByScore(level.key),
+      data: stats.map((s) => s.percentages[level.key]),
+    }));
+
+    this.chartDataAssess = {
+      labels,
+      datasets,
+    };
+
+    this.chartOptionAssess = {
+      responsive: true,
+      plugins: {
+        legend: {
+          position: 'top',
+        },
+        title: {
+          display: true,
+          text: 'CLO үнэлгээний түвшний тойм',
+        },
+      },
+    };
+  }
+
+  getColorByScore(scoreKey: string): string {
+    const colors: any = {
+      score5: '#4caf50',
+      score4: '#8bc34a',
+      score3: '#ffeb3b',
+      score2: '#ff9800',
+      score1: '#f44336',
+    };
+    return colors[scoreKey] || '#9e9e9e';
+  }
+
+  getCloName(cloId: string): string {
+    const clo = this.cloList.find((c: { id: string }) => c.id === cloId);
+    return clo ? clo.cloName : 'Unknown';
+  }
+
+  getAboveCCount(tab: any): number {
+    return tab.content.filter((s: any) =>
+      ['A', 'A-', 'B+', 'B', 'B-', 'C+', 'C'].includes(s.letterGrade)
+    ).length;
+  }
+
+  getGradeCount(tab: any, grades: string[]): number {
+    return tab.content.filter((s: any) => grades.includes(s.letterGrade))
+      .length;
+  }
+
+  getAboveCPercentage(tab: any): string {
+    const total = this.getTotalStudents(tab);
+    if (total === 0) return '0.00';
+    const aboveC = this.getAboveCCount(tab);
+    return ((aboveC / total) * 100).toFixed(2);
+  }
+
+  getTotalStudents(tab: any): number {
+    return tab.content.filter(
+      (s: any) => s.letterGrade && s.letterGrade !== '-'
+    ).length;
+  }
+
+  exportPDF() {
+    this.sentImage1 = [];
+    this.activeImage = true;
+
+    // UI-д өөрчлөлт оруулсны дараа хүчээр шинэчилнэ
+    this.cdr.detectChanges();
+
+    // p-chart бүрэн render болсны дараа canvas авна
+    setTimeout(() => {
+      html2canvas(this.chartWrapper.nativeElement).then((canvas) => {
+        const imgData = canvas.toDataURL('image/png');
+        const pdf = new jsPDF('p', 'mm', 'a4');
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+
+        pdf.addImage(imgData, 'PNG', 0, 10, pdfWidth, pdfHeight);
+        this.sentImage1.push(imgData);
+        // pdf.save('charts-summary.pdf');
+
+        // this.activeImage = false;
+        // this.cdr.detectChanges(); // график устгасныг тусгах
+        // this.pdfTo(); // таны дараагийн ажилбар
+
+        html2canvas(this.chartDataWrapper.nativeElement).then((canvas) => {
+          const imgData1 = canvas.toDataURL('image/png');
+          const pdf1 = new jsPDF('p', 'mm', 'a4');
+          const pdfWidth1 = pdf1.internal.pageSize.getWidth();
+          const pdfHeight1 = (canvas.height * pdfWidth1) / canvas.width;
+
+          pdf1.addImage(imgData1, 'PNG', 0, 10, pdfWidth1, pdfHeight1);
+          this.sentImage1.push(imgData1);
+          // pdf.save('charts-summary.pdf');
+
+          this.activeImage = false;
+          this.cdr.detectChanges(); // график устгасныг тусгах
+          this.pdfTo(); // таны дараагийн ажилбар
+        });
+      });
+    }, 1000); // 100ms хүлээх нь ихэнх тохиолдолд хангалттай
+  }
+  calculateCloStatsChart(data: any[]) {
+    const grouped: { [cloId: string]: any[] } = {};
+
+    // Group by cloId
+    data.forEach((entry) => {
+      if (!grouped[entry.cloId]) grouped[entry.cloId] = [];
+      grouped[entry.cloId].push(entry);
+    });
+
+    const result = Object.entries(grouped).map(([cloId, responses]) => {
+      const scores = { score5: 0, score4: 0, score3: 0, score2: 0, score1: 0 };
+      let highScoreCount = 0;
+
+      responses.forEach((entry: any) => {
+        const value = Number(entry.answerValue);
+        if (value >= 1 && value <= 5) {
+          scores[`score${value}` as keyof typeof scores]++;
+          if (value >= 4) highScoreCount++;
+        }
+      });
+
+      const total = responses.length;
+      const percentages = {
+        score5: Math.round((scores.score5 / total) * 100),
+        score4: Math.round((scores.score4 / total) * 100),
+        score3: Math.round((scores.score3 / total) * 100),
+        score2: Math.round((scores.score2 / total) * 100),
+        score1: Math.round((scores.score1 / total) * 100),
+      };
+
+      return {
+        clo: cloId,
+        responses: scores,
+        percentages,
+        total,
+        highScoreCount,
+        highScorePercent: Math.round((highScoreCount / total) * 100),
+      };
+    });
+
+    return result;
   }
 }

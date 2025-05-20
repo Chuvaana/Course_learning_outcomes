@@ -27,6 +27,8 @@ export class PdfMainService {
   async generatePdfAll(daty: any) {
     const contentArray: any[] = [];
 
+    let pageFrameCount = 4;
+    let imageCount = 1;
     let lessonLevel = '';
     let mainInfo = daty[4];
     let lessStudent = daty[5];
@@ -35,6 +37,9 @@ export class PdfMainService {
     let feedBackTastList = daty[8];
     let feedBackList = daty[9];
     let season = daty[10];
+    let imgData = daty[11];
+    console.log('imgData[0]:', imgData[0]);
+
 
     if (mainInfo.lessonLevel === 'MAGISTER') {
       lessonLevel = 'Магистр';
@@ -971,7 +976,7 @@ export class PdfMainService {
       // Append to contentAssessment
       contentAssessmentArray.push(
         {
-          text: `Хүснэгт ${dataIndex + 5}. ${data.title}`,
+          text: `Хүснэгт ${++pageFrameCount}. ${data.title}`,
           style: 'bodyRightInBold',
           margin: [20, 20, 20, 5] as [number, number, number, number],
         },
@@ -1985,7 +1990,7 @@ export class PdfMainService {
             {
               text: [
                 'Шууд үнэлгээний үр дүн зорилтот түвшинг хангаж байгаа эсэхийг дараах байдлаар  тодорхойлно.\n' +
-                  'Хичээлийн тухайн үр дүнгийн гүйцэтгэлд А, В, С+ ба С үнэлгээ авсан оюутны эзлэх хувь дараах зорилтот түвшинг хангаж байгаа эсэхэд үнэлэлт дүгнэлт өгнө. Үүнд:\n',
+                'Хичээлийн тухайн үр дүнгийн гүйцэтгэлд А, В, С+ ба С үнэлгээ авсан оюутны эзлэх хувь дараах зорилтот түвшинг хангаж байгаа эсэхэд үнэлэлт дүгнэлт өгнө. Үүнд:\n',
                 { text: '➢ 91-100%:              ', bold: true },
                 'Шаардлага бүрэн хангаж;\n',
                 { text: '➢ 81-90%:                ', bold: true },
@@ -2000,7 +2005,7 @@ export class PdfMainService {
             {
               text: [
                 'Шууд бус үнэлгээний үр дүн зорилтот түвшинг хангаж байгаа эсэхийг дараах байдлаар тодорхойлно.\n' +
-                  'Хичээлийн санал асуулга дахь CLO бүрийн гүйцэтгэлийг 1-5 түвшингээр үнэлэх ба 4 ба 5 оноо бүхий хариултын тоо 70%-аас доошгүй байна. Үр дүнг дараах байдлаар ангилан үнэлэлт, дүгнэлт гаргана.Үүнд:\n',
+                'Хичээлийн санал асуулга дахь CLO бүрийн гүйцэтгэлийг 1-5 түвшингээр үнэлэх ба 4 ба 5 оноо бүхий хариултын тоо 70%-аас доошгүй байна. Үр дүнг дараах байдлаар ангилан үнэлэлт, дүгнэлт гаргана.Үүнд:\n',
                 { text: '➢ 91-100%:              ', bold: true },
                 'Шаардлага бүрэн хангаж;\n',
                 { text: '➢ 81-90%:                ', bold: true },
@@ -2036,6 +2041,7 @@ export class PdfMainService {
           margin: [30, 0, 0, 0] as [number, number, number, number],
         },
         { text: '', pageBreak: 'before' as const },
+        { text: `Хүснэгт 1. Хичээлийн мэдээлэл`, style: 'bodyRight' },
         {
           table: {
             headerRows: 0,
@@ -2055,7 +2061,7 @@ export class PdfMainService {
           style: 'titleLeft',
           margin: [0, 20, 0, 0] as [number, number, number, number],
         },
-        { text: 'Хүснэгт 2. Хичээлийн мэдээлэл', style: 'bodyRight' },
+        { text: `Хүснэгт 2. Хичээлийн мэдээлэл`, style: 'bodyRight' },
         {
           table: {
             headerRows: 0,
@@ -2072,7 +2078,7 @@ export class PdfMainService {
           style: 'titleLeft',
           margin: [0, 20, 0, 10] as [number, number, number, number],
         },
-        { text: 'Хүснэгт 3. Хичээлийн суралцахуйн үр дүн', style: 'bodyRight' },
+        { text: `Хүснэгт 3. Хичээлийн суралцахуйн үр дүн`, style: 'bodyRight' },
         {
           table: {
             headerRows: 0,
@@ -2110,8 +2116,8 @@ export class PdfMainService {
         },
         { text: ' ', style: 'bodyCenter' },
         {
-          text: 'Хүснэгт 4. Хичээлийн суралцахуйн үр дүнгийн шууд үнэлгээний онооны хуваарилалт/төлөвлөлтөөр/',
-          style: 'bodyCenter',
+          text: `Хүснэгт 4. Хичээлийн суралцахуйн үр дүнгийн шууд үнэлгээний онооны хуваарилалт/төлөвлөлтөөр/`,
+          style: 'bodyRight',
         },
         {
           table: {
@@ -2154,7 +2160,7 @@ export class PdfMainService {
           margin: [40, 0, 20, 5] as [number, number, number, number],
         },
         {
-          text: 'Хүснэгт 7. Зургын боловсруулалт хичээлийн нийт суралцахуйн үр дүнд харгалзах\nоюутны гүйцэтгэлийн үнэлгээ/үсгэн үнэлгээгээр/',
+          text: `Хүснэгт ${++pageFrameCount}. Зургын боловсруулалт хичээлийн нийт суралцахуйн үр дүнд харгалзах\nоюутны гүйцэтгэлийн үнэлгээ/үсгэн үнэлгээгээр/`,
           style: 'bodyRightBol',
         },
         {
@@ -2164,6 +2170,16 @@ export class PdfMainService {
             widths: overallWidths,
             body: overallAssesmentInd,
           },
+        },
+        {
+          image: imgData[0],
+          width: 450,
+          alignment: 'center',
+          margin: [0, 10, 0, 10]
+        },
+        {
+          text: `Зураг ${imageCount}. Хичээлийн суралцахуйн үр дүн бүрд харгалзах С ба түүнээс дээш үнэлгээтэй оюутны эзлэх дундаж хувь`,
+          style: 'bodyCenterBold',
         },
         {
           text: '',
@@ -2187,7 +2203,7 @@ export class PdfMainService {
           margin: [40, 0, 20, 5] as [number, number, number, number],
         },
         {
-          text: 'Хүснэгт 8. Cуралцахуйн үр дүнгийн шууд бус үнэлгээний үр дүн',
+          text: `Хүснэгт ${++pageFrameCount}. Cуралцахуйн үр дүнгийн шууд бус үнэлгээний үр дүн`,
           style: 'bodyRightBol',
         },
         {
@@ -2209,6 +2225,22 @@ export class PdfMainService {
           },
         },
         {
+          text: '5.2.2.	CLOS-ИЙН САНАЛ АСУУЛГЫН ҮР ДҮНГИЙН ГРАФИК ҮЗҮҮЛЭЛТ ',
+          fontSize: 12,
+          bold: true,
+          margin: [40, 0, 20, 5] as [number, number, number, number],
+        },
+        {
+          image: imgData[1],
+          width: 450,
+          alignment: 'center',
+          margin: [0, 10, 0, 10]
+        },
+        {
+          text: `Зураг ${imageCount}. CLO бүрд харгалзах 4 ба 5 оноо бүхий хариултын эзлэх хувь`,
+          style: 'bodyCenterBold',
+        },
+        {
           text: '',
           pageBreak: 'before' as const,
           style: 'bodyCenter',
@@ -2220,11 +2252,11 @@ export class PdfMainService {
           margin: [20, 0, 20, 5] as [number, number, number, number],
         },
         {
-          text: 'Хүснэгт 9-д үзүүлснээр ногоон өнгөөр тэмдэглэсэн үр дүнгүүд шаардлага хангаж байгаа бөгөөд шаардлагатай гэж үзвэл сайжруулалт хийж болно. Харин шар өнгөөр тэмдэглэсэн үр дүнгүүдийн гүйцэтгэлийн дундаж хувийг дээшлүүлэхийн тулд заавал сайжруулалт хийх шаардлагатай.',
+          text: `Хүснэгт ${++pageFrameCount}-д үзүүлснээр ногоон өнгөөр тэмдэглэсэн үр дүнгүүд шаардлага хангаж байгаа бөгөөд шаардлагатай гэж үзвэл сайжруулалт хийж болно. Харин шар өнгөөр тэмдэглэсэн үр дүнгүүдийн гүйцэтгэлийн дундаж хувийг дээшлүүлэхийн тулд заавал сайжруулалт хийх шаардлагатай.`,
           style: 'bodyLeftNoBold',
         },
         {
-          text: 'Хүснэгт 9. СLOs-ийн шууд ба шууд бус үнэлгээний нэгдсэн дүн',
+          text: `Хүснэгт ${pageFrameCount}. СLOs-ийн шууд ба шууд бус үнэлгээний нэгдсэн дүн`,
           style: 'bodyRightBol',
         },
         {
@@ -2250,7 +2282,7 @@ export class PdfMainService {
           style: 'bodyLeftNoBold',
         },
         {
-          text: 'Хүснэгт 10. Санал асуулгын нэмэлт үр дүнгийн гүйцэтгэл',
+          text: `Хүснэгт ${++pageFrameCount}. Санал асуулгын нэмэлт үр дүнгийн гүйцэтгэл`,
           style: 'bodyRightBol',
         },
         {
@@ -2305,7 +2337,7 @@ export class PdfMainService {
           style: 'bodyLeftNoBold',
         },
         {
-          text: 'Хүснэгт 11. Хичээлийн суралцахуйн үр дүнгүүдийг сайжруулах чиглэлүүд',
+          text: `Хүснэгт ${++pageFrameCount}. Хичээлийн суралцахуйн үр дүнгүүдийг сайжруулах чиглэлүүд`,
           style: 'bodyRightBol',
         },
         {
@@ -2316,6 +2348,7 @@ export class PdfMainService {
             body: feedBackTable,
           },
         },
+
       ],
       footer: (currentPage: number, pageCount: number): Content => ({
         text: `Хуудас ${currentPage} / ${pageCount}`,
@@ -2373,6 +2406,12 @@ export class PdfMainService {
         bodyCenter: {
           fontSize: 10,
           bold: false,
+          fontStyle: 'Arial',
+          alignment: 'center' as const,
+        },
+        bodyCenterBold: {
+          fontSize: 11,
+          bold: true,
           fontStyle: 'Arial',
           alignment: 'center' as const,
         },

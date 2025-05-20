@@ -1,92 +1,63 @@
 <div class="home">
-  <p-button
-    severity="success"
-    icon="pi pi-file-pdf"
-    label="Тайлан хэвлэх"
-    (click)="pdfToConvert()"
-  />
+  <p-button severity="success" icon="pi pi-file-pdf" label="Тайлан хэвлэх" (click)="exportPDF()" />
   <p-tabs value="0" scrollable>
     <p-tablist>
       <p-tab value="0">ХИЧЭЭЛИЙН ЕРӨНХИЙ МЭДЭЭЛЭЛ</p-tab>
       <p-tab value="1">ХИЧЭЭЛЭЭР ЭЗЭМШИХ СУРАЛЦАХУЙН ҮР ДҮНГҮҮД</p-tab>
-      <p-tab value="2"
-        >ХИЧЭЭЛИЙН СУРАЛЦАХУЙН ҮР ДҮНГҮҮДИЙН ҮНЭЛГЭЭНИЙ ТӨЛӨВЛӨЛТ
+      <p-tab value="2">ХИЧЭЭЛИЙН СУРАЛЦАХУЙН ҮР ДҮНГҮҮДИЙН ҮНЭЛГЭЭНИЙ ТӨЛӨВЛӨЛТ
       </p-tab>
-      <p-tab value="3"
-        >ТУХАЙН CLO-Д ХАРГАЛЗАХ ОЮУТНЫ ГҮЙЦЭТГЭЛИЙН ҮНЭЛГЭЭ</p-tab
-      >
+      <p-tab value="3">ТУХАЙН CLO-Д ХАРГАЛЗАХ ОЮУТНЫ ГҮЙЦЭТГЭЛИЙН ҮНЭЛГЭЭ</p-tab>
       <p-tab value="4">
         ХИЧЭЭЛИЙН СУРАЛЦАХУЙН ҮР ДҮНГИЙН ҮНЭЛГЭЭНИЙ НЭГДСЭН ҮЗҮҮЛЭЛТ
       </p-tab>
-      <p-tab value="5"
-        >ХИЧЭЭЛИЙН СУРАЛЦАХУЙН ҮР ДҮНГИЙН ШУУД БУС ҮНЭЛГЭЭНИЙ ГҮЙЦЭТГЭЛ
+      <p-tab value="5">ХИЧЭЭЛИЙН СУРАЛЦАХУЙН ҮР ДҮНГИЙН ШУУД БУС ҮНЭЛГЭЭНИЙ ГҮЙЦЭТГЭЛ
       </p-tab>
       <p-tab value="6">ШУУД БА ШУУД БУС ҮНЭЛГЭЭНИЙ НЭГДСЭН ҮЗҮҮЛЭЛТ</p-tab>
-      <p-tab value="7"
-        >САНАЛ АСУУЛГЫН БУСАД ҮР ДҮНГҮҮДЭД ХИЙСЭН ДҮН ШИНЖИЛГЭЭ</p-tab
-      >
-      <p-tab value="8"
-        >СУРАЛЦАХУЙН ҮР ДҮНГИЙН ГҮЙЦЭТГЭЛИЙГ САЙЖРУУЛАХ ТӨЛӨВЛӨЛТ</p-tab
-      >
+      <p-tab value="7">САНАЛ АСУУЛГЫН БУСАД ҮР ДҮНГҮҮДЭД ХИЙСЭН ДҮН ШИНЖИЛГЭЭ</p-tab>
+      <p-tab value="8">СУРАЛЦАХУЙН ҮР ДҮНГИЙН ГҮЙЦЭТГЭЛИЙГ САЙЖРУУЛАХ ТӨЛӨВЛӨЛТ</p-tab>
     </p-tablist>
     <p-tabpanels>
       <p-tabpanel value="0">
-        <app-lesson-info
-          [data]="mainInfo"
-          [studentCount]="studentCount"
-        ></app-lesson-info>
+        <app-lesson-info [data]="mainInfo" [studentCount]="studentCount"></app-lesson-info>
       </p-tabpanel>
       <p-tabpanel value="1">
         <app-lesson-clo [data]="clos"></app-lesson-clo>
       </p-tabpanel>
       <p-tabpanel value="2">
-        <app-lesson-plan
-          [cloList]="cloList"
-          [assessPlan]="assessPlan"
-          [cloPlan]="cloPlan"
-        ></app-lesson-plan>
+        <app-lesson-plan [cloList]="cloList" [assessPlan]="assessPlan" [cloPlan]="cloPlan"></app-lesson-plan>
       </p-tabpanel>
       <p-tabpanel value="3">
-        <app-lesson-assessment
-          [cloList]="cloList"
-          [pointPlan]="assessPlan"
-          [cloPlan]="cloPlan"
-          [students]="students"
-          [lessonId]="lessonId"
-          [teacherName]="teacherName"
-        ></app-lesson-assessment>
+        <app-lesson-assessment [cloList]="cloList" [pointPlan]="assessPlan" [cloPlan]="cloPlan" [students]="students"
+          [lessonId]="lessonId" [teacherName]="teacherName"></app-lesson-assessment>
       </p-tabpanel>
       <p-tabpanel value="4">
-        <app-lesson-overall-assess
-          [cloList]="cloList"
-          [lessonId]="lessonId"
-          [pointPlan]="assessPlan"
-          [cloPlan]="cloPlan"
-          [students]="students"
-        ></app-lesson-overall-assess>
+        <app-lesson-overall-assess [cloList]="cloList" [lessonId]="lessonId" [pointPlan]="assessPlan"
+          [cloPlan]="cloPlan" [students]="students"></app-lesson-overall-assess>
       </p-tabpanel>
       <p-tabpanel value="5">
-        <app-lesson-indirect-assess
-          [lessonId]="lessonId"
-        ></app-lesson-indirect-assess>
+        <app-lesson-indirect-assess [lessonId]="lessonId"></app-lesson-indirect-assess>
       </p-tabpanel>
       <p-tabpanel value="6">
-        <app-lesson-direct-indirect
-          [cloList]="cloList"
-          [pointPlan]="assessPlan"
-          [cloPlan]="cloPlan"
-          [lessonId]="lessonId"
-          [students]="students"
-        ></app-lesson-direct-indirect>
+        <app-lesson-direct-indirect [cloList]="cloList" [pointPlan]="assessPlan" [cloPlan]="cloPlan"
+          [lessonId]="lessonId" [students]="students"></app-lesson-direct-indirect>
       </p-tabpanel>
       <p-tabpanel value="7">
-        <app-lesson-poll-analysis
-          [lessonId]="lessonId"
-        ></app-lesson-poll-analysis>
+        <app-lesson-poll-analysis [lessonId]="lessonId"></app-lesson-poll-analysis>
       </p-tabpanel>
       <p-tabpanel value="8">
         <app-lesson-adv-disadv [lessonId]="lessonId"></app-lesson-adv-disadv>
       </p-tabpanel>
     </p-tabpanels>
   </p-tabs>
+</div>
+
+<div *ngIf="activeImage" style="margin-top: 100000px;">
+  <div class="charts-wrapper" #chartWrapper>
+    <p-chart *ngIf="activeImage" type="bar" [data]="chartData" [options]="chartOptions"
+      styleClass="chart-style"></p-chart>
+  </div>
+  <div class="charts-wrapper" #chartDataWrapper>
+    <p-chart *ngIf="activeImage" type="bar" [data]="chartDataAssess" [options]="chartOptionAssess"
+      styleClass="chart-style"></p-chart>
+  </div>
 </div>
