@@ -1334,116 +1334,52 @@ export class PdfMainService {
       ],
     ];
 
-    function aggregateCloAssessment(indirectAssesment: any[]) {
-      // CLO үнэлгээ хадгалах Map
-      const cloStatsMap = new Map<
-        number,
-        {
-          excellent: number;
-          good: number;
-          average: number;
-          poor: number;
-          veryPoor: number;
-          total: number;
-        }
-      >();
-
-      indirectAssesment.forEach((cla: any) => {
-        cla.groupList.forEach((clo: any, index: number) => {
-          if (!cloStatsMap.has(index)) {
-            cloStatsMap.set(index, {
-              excellent: 0,
-              good: 0,
-              average: 0,
-              poor: 0,
-              veryPoor: 0,
-              total: 0,
-            });
-          }
-
-          const stats = cloStatsMap.get(index)!;
-
-          clo.questionList.forEach((q: any) => {
-            if (q.questionType === 'RATE') {
-              stats.total++;
-
-              switch (q.answerValue) {
-                case '5':
-                  stats.excellent++;
-                  break;
-                case '4':
-                  stats.good++;
-                  break;
-                case '3':
-                  stats.average++;
-                  break;
-                case '2':
-                  stats.poor++;
-                  break;
-                case '1':
-                  stats.veryPoor++;
-                  break;
-              }
-            }
-          });
-        });
-      });
-
-      // CLO aggregated rows үүсгэх
+    function aggregateCloAssessment(cloPointIndrec: any[]) {
       const rows: any[] = [];
 
-      cloStatsMap.forEach((stats, index) => {
+      cloPointIndrec.forEach((stats, index) => {
         const total45 = stats.excellent + stats.good;
         const percent45 =
           stats.total > 0 ? ((total45 / stats.total) * 100).toFixed(0) : '0';
+        const countStudent = stats.responses.score1 + stats.responses.score2 + stats.responses.score3 + stats.responses.score4 + stats.responses.score5;
 
         const countRow = [
-          { text: 'CLO ' + (index + 1), rowSpan: 2, alignment: 'center' },
-          { text: 'Хариултын тоо', alignment: 'center' },
-          { text: stats.excellent, alignment: 'center' },
-          { text: stats.good, alignment: 'center' },
-          { text: stats.average, alignment: 'center' },
-          { text: stats.poor, alignment: 'center' },
-          { text: stats.veryPoor, alignment: 'center' },
-          { text: stats.total, alignment: 'center' },
-          { text: total45, alignment: 'center' },
+          { text: 'CLO ' + (index + 1), rowSpan: 2, alignment: 'center', style: 'bodyCenterFoAssessment', },
+          { text: 'Хариултын тоо', alignment: 'center', style: 'bodyCenterFoAssessment' },
+          { text: stats.responses.score5, alignment: 'center', style: 'bodyCenterFoAssessment' },
+          { text: stats.responses.score4, alignment: 'center', style: 'bodyCenterFoAssessment' },
+          { text: stats.responses.score3, alignment: 'center', style: 'bodyCenterFoAssessment' },
+          { text: stats.responses.score2, alignment: 'center', style: 'bodyCenterFoAssessment' },
+          { text: stats.responses.score1, alignment: 'center', style: 'bodyCenterFoAssessment' },
+          { text: countStudent, alignment: 'center', style: 'bodyCenterFoAssessment' },
+          { text: stats.highScoreCount, alignment: 'center', style: 'bodyCenterFoAssessment' },
         ];
 
         const percentRow = [
           {}, // for rowSpan
-          { text: 'Эзлэх хувь(%)', alignment: 'center' },
+          { text: 'Эзлэх хувь(%)', alignment: 'center', style: 'bodyCenterFoAssessment' },
           {
-            text: stats.total
-              ? ((stats.excellent / stats.total) * 100).toFixed(0)
-              : '0',
-            alignment: 'center',
+            text: stats.percentages.score5,
+            alignment: 'center', style: 'bodyCenterFoAssessment',
           },
           {
-            text: stats.total
-              ? ((stats.good / stats.total) * 100).toFixed(0)
-              : '0',
-            alignment: 'center',
+            text: stats.percentages.score4,
+            alignment: 'center', style: 'bodyCenterFoAssessment',
           },
           {
-            text: stats.total
-              ? ((stats.average / stats.total) * 100).toFixed(0)
-              : '0',
-            alignment: 'center',
+            text: stats.percentages.score3,
+            alignment: 'center', style: 'bodyCenterFoAssessment',
           },
           {
-            text: stats.total
-              ? ((stats.poor / stats.total) * 100).toFixed(0)
-              : '0',
-            alignment: 'center',
+            text: stats.percentages.score2,
+            alignment: 'center', style: 'bodyCenterFoAssessment',
           },
           {
-            text: stats.total
-              ? ((stats.veryPoor / stats.total) * 100).toFixed(0)
-              : '0',
-            alignment: 'center',
+            text: stats.percentages.score1,
+            alignment: 'center', style: 'bodyCenterFoAssessment',
           },
-          { text: '100', alignment: 'center' },
-          { text: percent45, alignment: 'center' },
+          { text: '100', alignment: 'center', style: 'bodyCenterFoAssessment' },
+          { text: stats.highScorePercent, alignment: 'center', style: 'bodyCenterFoAssessment' },
         ];
 
         rows.push(countRow, percentRow);
@@ -1451,7 +1387,7 @@ export class PdfMainService {
 
       return rows;
     }
-    const cloAssessmentLevel = aggregateCloAssessment(indirectAssesment);
+    const cloAssessmentLevel = aggregateCloAssessment(cloPointIndrec);
 
     const indirectAssesmentTable = [
       [
@@ -1642,51 +1578,53 @@ export class PdfMainService {
       let thirdValue = 0;
 
       res.groupList.flatMap((clo: any, index: any) => {
-        clo.questionList.forEach((e: any, indexX: number) => {
-          let count = 0;
-          let quistionData = {
-            point: 0,
-            name: '',
-            total: 0,
-            percent: 0,
-            id: '',
-          };
-          if (e.questionType === 'RATE') {
-            switch (e.answerValue) {
-              case '5':
-                excellent++;
-                count++;
-                break;
-              case '4':
-                good++;
-                count++;
-                break;
-              case '3':
-                average++;
-                count++;
-                break;
-            }
-            if (reportList.length > 0) {
-              reportList[0].map((data: any, indexZ: number) => {
-                if (thirdValue === indexZ) {
-                  data.point = data.point + count;
-                  data.total = data.total + 1;
-                  data.percent = (data.point / data.total) * 100;
-                }
-              });
-            } else {
-              if (count > 0) {
-                quistionData.percent = 100;
+        if (clo.groupType !== 'CLO') {
+          clo.questionList.forEach((e: any, indexX: number) => {
+            let count = 0;
+            let quistionData = {
+              point: 0,
+              name: '',
+              total: 0,
+              percent: 0,
+              id: '',
+            };
+            if (e.questionType === 'RATE') {
+              switch (e.answerValue) {
+                case '5':
+                  excellent++;
+                  count++;
+                  break;
+                case '4':
+                  good++;
+                  count++;
+                  break;
+                case '3':
+                  average++;
+                  count++;
+                  break;
               }
-              quistionData.point = count;
-              quistionData.name = e.questionTitle;
-              quistionData.id = e._id;
-              quistionData.total = 1;
-              queistonList.push(quistionData);
+              if (reportList.length > 0) {
+                reportList[0].map((data: any, indexZ: number) => {
+                  if (thirdValue === indexZ) {
+                    data.point = data.point + count;
+                    data.total = data.total + 1;
+                    data.percent = (data.point / data.total) * 100;
+                  }
+                });
+              } else {
+                if (count > 0) {
+                  quistionData.percent = 100;
+                }
+                quistionData.point = count;
+                quistionData.name = e.questionTitle;
+                quistionData.id = e._id;
+                quistionData.total = 1;
+                queistonList.push(quistionData);
+              }
             }
-          }
-          thirdValue = thirdValue + 1;
-        });
+            thirdValue = thirdValue + 1;
+          });
+        }
       });
       reportList.push(queistonList);
     });
@@ -2114,6 +2052,11 @@ export class PdfMainService {
             ],
             body: indirectAssesmentTable,
           },
+        },
+        {
+          text: '',
+          pageBreak: 'before' as const,
+          style: 'bodyCenter',
         },
         {
           text: '5.2.2.	CLOS-ИЙН САНАЛ АСУУЛГЫН ҮР ДҮНГИЙН ГРАФИК ҮЗҮҮЛЭЛТ ',
