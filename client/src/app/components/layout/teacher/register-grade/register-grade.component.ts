@@ -178,9 +178,9 @@ export class RegisterGradeComponent {
       const res = await this.gradeService
         .getGrade(
           this.lessonId,
-          this.selectedWeekday,
+          this.selectedType === 'BD' ? 'Monday' : this.selectedWeekday,
           this.selectedType.toLowerCase(),
-          this.selectedTimes
+          this.selectedType === 'BD' ? 1 : this.selectedTimes
         )
         .toPromise();
       if (res?.length) {
