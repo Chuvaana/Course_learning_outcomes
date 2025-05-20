@@ -117,7 +117,7 @@ export class CloTreeComponent {
               (e) => e.value === plan.methodType
             );
             if (match) {
-              planGroup.patchValue({ methodType: match.value }); // ✅ correct usage
+              planGroup.patchValue({ methodType: match.value });
             }
           }
 

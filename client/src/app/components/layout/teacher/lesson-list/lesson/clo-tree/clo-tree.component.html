@@ -1,5 +1,30 @@
 <p-toast></p-toast>
 <form [formGroup]="planForm" (ngSubmit)="onSubmit()" class="p-fluid">
+  <div
+    style="
+      display: flex;
+      gap: 20px;
+      width: 100%;
+      justify-content: center;
+      margin-top: 20px;
+    "
+  >
+    <button
+      pButton
+      type="button"
+      label="Үнэлгээ нэмэх"
+      icon="pi pi-plus"
+      class="p-button-info"
+      (click)="addMethod()"
+    ></button>
+    <button
+      pButton
+      type="submit"
+      label="Хадгалах"
+      icon="pi pi-save"
+      class="p-button-success"
+    ></button>
+  </div>
   <div formArrayName="plans" class="plans">
     <div
       *ngFor="
@@ -11,16 +36,18 @@
       class="p-4 border-1 border-round surface-border shadow-1"
     >
       <div class="p-inputgroup mb-3">
-        <p-floatlabel variant="on">
+        <p-floatlabel variant="on" style="margin-bottom: 10px">
           <p-dropdown
             formControlName="methodType"
             [options]="methodTypes"
             optionLabel="label"
             optionValue="value"
             class="w-full"
+            placeholder="Төрөл"
             (onChange)="changedMethodType($event, planIndex)"
-          ></p-dropdown>
-          <label for="methodType">Төрөл</label>
+          >
+          </p-dropdown>
+          <!-- <label for="methodType">Төрөл</label> -->
         </p-floatlabel>
 
         <p-floatlabel
@@ -33,9 +60,10 @@
             [options]="secondMethodTypes"
             optionLabel="label"
             optionValue="value"
+            placeholder="Дэд төрөл"
             class="w-full"
           ></p-dropdown>
-          <label for="secondMethodType">Дэд төрөл</label>
+          <!-- <label for="secondMethodType">Дэд төрөл</label> -->
         </p-floatlabel>
 
         <div style="display: flex; gap: 10px">
@@ -110,23 +138,5 @@
         ></button>
       </div>
     </div>
-  </div>
-
-  <div class="add-question mb-3">
-    <button
-      pButton
-      type="button"
-      label="Үнэлгээ нэмэх"
-      icon="pi pi-plus"
-      class="p-button-info"
-      (click)="addMethod()"
-    ></button>
-    <button
-      pButton
-      type="submit"
-      label="Хадгалах"
-      icon="pi pi-save"
-      class="p-button-success"
-    ></button>
   </div>
 </form>
