@@ -26,11 +26,13 @@ import { ConfigService } from '../../../../services/configService';
 import { ChartModule } from 'primeng/chart';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
+import { ProgressSpinner } from 'primeng/progressspinner';
 
 @Component({
   selector: 'app-home',
   standalone: true,
   imports: [
+    ProgressSpinner,
     CommonModule,
     TabsModule,
     ButtonModule,
@@ -94,6 +96,8 @@ export class HomeComponent {
   chartOptionAssess: any;
   activeImage = false;
   sentImage1: any[] = [];
+  isLoading: boolean = false;
+
 
   // clo дүн
   tabDatas!: [{ title: string; content: any; value: any }];
@@ -587,7 +591,7 @@ export class HomeComponent {
                   const grade = grades.sumPoint.find(
                     (g: any) =>
                       g.studentId.toLowerCase() ===
-                        studentRow.studentCode.toLowerCase() &&
+                      studentRow.studentCode.toLowerCase() &&
                       g.subMethodId === pointItem.subMethodId
                   );
 
@@ -757,11 +761,10 @@ export class HomeComponent {
   exportPDF() {
     this.sentImage1 = [];
     this.activeImage = true;
+    this.isLoading = true; // Спиннерийг асаана
 
-    // UI-д өөрчлөлт оруулсны дараа хүчээр шинэчилнэ
     this.cdr.detectChanges();
 
-    // p-chart бүрэн render болсны дараа canvas авна
     setTimeout(() => {
       html2canvas(this.chartWrapper.nativeElement).then((canvas) => {
         const imgData = canvas.toDataURL('image/png');
@@ -771,11 +774,6 @@ export class HomeComponent {
 
         pdf.addImage(imgData, 'PNG', 0, 10, pdfWidth, pdfHeight);
         this.sentImage1.push(imgData);
-        // pdf.save('charts-summary.pdf');
-
-        // this.activeImage = false;
-        // this.cdr.detectChanges(); // график устгасныг тусгах
-        // this.pdfTo(); // таны дараагийн ажилбар
 
         html2canvas(this.chartDataWrapper.nativeElement).then((canvas) => {
           const imgData1 = canvas.toDataURL('image/png');
@@ -785,15 +783,16 @@ export class HomeComponent {
 
           pdf1.addImage(imgData1, 'PNG', 0, 10, pdfWidth1, pdfHeight1);
           this.sentImage1.push(imgData1);
-          // pdf.save('charts-summary.pdf');
 
           this.activeImage = false;
-          this.cdr.detectChanges(); // график устгасныг тусгах
-          this.pdfTo(); // таны дараагийн ажилбар
+          this.isLoading = false; // Спиннерийг унтраана
+          this.cdr.detectChanges();
+          this.pdfTo();
         });
       });
-    }, 1000); // 100ms хүлээх нь ихэнх тохиолдолд хангалттай
+    }, 1000);
   }
+
   calculateCloStatsChart(data: any[]) {
     const grouped: { [cloId: string]: any[] } = {};
 

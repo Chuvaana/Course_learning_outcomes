@@ -61,3 +61,9 @@
       styleClass="chart-style"></p-chart>
   </div>
 </div>
+
+<div class="spinner-overlay" *ngIf="isLoading">
+  <div class="spinner-backdrop">
+    <p-progress-spinner ariaLabel="loading"></p-progress-spinner>
+  </div>
+</div>
