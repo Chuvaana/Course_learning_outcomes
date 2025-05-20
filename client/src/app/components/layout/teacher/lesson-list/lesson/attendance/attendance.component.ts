@@ -14,6 +14,8 @@ import { StudentService } from '../../../../../../services/studentService';
 import { SharedDictService } from '../../../shared';
 import { MatDialog } from '@angular/material/dialog';
 import { AttendanceImportComponent } from './attendance-import/attendance-import.component';
+import * as XLSX from 'xlsx';
+import FileSaver from 'file-saver';
 
 interface AttendanceRecord {
   student: {
@@ -337,5 +339,42 @@ export class AttendanceComponent {
     dialogRef.afterClosed().subscribe(() => {
       this.onSelectionChange();
     });
+  }
+
+  exportToExcel(): void {
+    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(
+      this.attendanceRecords.map((record, index) => {
+        const row: any = {
+          '№': index + 1,
+          Оюутан: `${record.student.code} - ${record.student.name}`,
+        };
+
+        if (this.showPreviousWeeks) {
+          this.getAllWeeks().forEach((week) => {
+            row[week] = record.attendance[week] ? '✓' : '';
+          });
+        } else {
+          const currentWeek = this.getCurrentWeeks();
+          row[currentWeek] = record.attendance[currentWeek] ? '✓' : '';
+        }
+
+        row['Нийт'] = this.getAttendanceSum(record);
+        return row;
+      })
+    );
+
+    const workbook: XLSX.WorkBook = {
+      Sheets: { Attendance: worksheet },
+      SheetNames: ['Attendance'],
+    };
+
+    const excelBuffer: any = XLSX.write(workbook, {
+      bookType: 'xlsx',
+      type: 'array',
+    });
+    const EXCEL_TYPE =
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
+    const data: Blob = new Blob([excelBuffer], { type: EXCEL_TYPE });
+    FileSaver.saveAs(data, 'attendance.xlsx');
   }
 }

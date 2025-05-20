@@ -30,6 +30,14 @@
       <button
         pButton
         type="button"
+        icon="pi pi-file-excel"
+        severity="success"
+        label="Excel татах"
+        (click)="exportToExcel()"
+      ></button>
+      <button
+        pButton
+        type="button"
         severity="info"
         *ngIf="!showPreviousWeeks"
         label="Өмнөх долоо хоногуудыг харах"

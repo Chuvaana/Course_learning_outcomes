@@ -281,21 +281,25 @@ export class LessonAssessmentComponent {
     return name;
   }
   excelConvert(data: any): void {
-    let convertData: any[] = [];
-    data.content.map((e: any, index: any) => {
-      let excelData: any = {
-        order: index,
-        studentName: e.studentName,
-        studentCode: e.studentCode,
+    const convertData: any[] = [];
+    data.content.forEach((row: any, index: number) => {
+      const excelRow: any = {
+        '№': index + 1,
+        'Оюутны нэр': row.studentName,
       };
-      for (let i = 0; i < e.points.length; i++) {
-        excelData[`point${i + 1}`] = e.points[i].point;
-      }
-      excelData[`totalPoint`] = e.totalPoint;
-      excelData[`percentage`] = e.percentage;
-      excelData[`letterGrade`] = e.letterGrade;
 
-      convertData.push(excelData);
+      data.assessPlan.forEach((plan: any, i: number) => {
+        const point = row.points[i]?.point;
+        excelRow[plan.subMethodName] = point != null ? point.toFixed(2) : '-';
+      });
+
+      excelRow['Нийт оноо'] =
+        row.totalPoint != null ? row.totalPoint.toFixed(2) : '-';
+      excelRow['100%-д шилжүүлсэн оноо'] =
+        row.percentage != null ? row.percentage.toFixed(2) + '%' : '-';
+      excelRow['Үсгэн үнэлгээ'] = row.letterGrade;
+
+      convertData.push(excelRow);
     });
 
     const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(convertData);
