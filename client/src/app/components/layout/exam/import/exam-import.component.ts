@@ -589,13 +589,13 @@ export class ExamImportComponent {
               }
             });
             if (notInStudents.length > 0) {
-              const detailMessage =
-                `Оюутны нэрс алга!\n` + notInStudents.join('\n');
-              this.msgService.add({
-                severity: 'warn',
-                summary: 'Анхааруулга',
-                detail: `Оюутны нэрс алга!` + detailMessage,
-              });
+              // const detailMessage =
+              //   `Оюутны нэрс алга!\n` + notInStudents.join('\n');
+              // this.msgService.add({
+              //   severity: 'warn',
+              //   summary: 'Анхааруулга',
+              //   detail: `Оюутны нэрс алга!` + detailMessage,
+              // });
             }
             this.serviceAfterMsg(newStudent, allreadyInStudent);
           });

@@ -31,6 +31,8 @@ export class LessonIndirectAssessComponent {
   chartData45: any;
   chartOptions45: any;
 
+  done = false;
+
   constructor(
     private service: ProgressPollService,
     private cloService: CLOService
@@ -49,9 +51,13 @@ export class LessonIndirectAssessComponent {
       );
 
       const stats = this.calculateCloStats(this.cloData);
-      this.cloData = stats;
-      this.generateChartData(stats);
-      this.generateChartData4and5(stats);
+
+      setTimeout(() => {
+        this.cloData = stats;
+        this.generateChartData(stats);
+        this.generateChartData4and5(stats);
+        this.done = true;
+      }, 1000);
     });
   }
 

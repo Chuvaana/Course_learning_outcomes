@@ -255,7 +255,9 @@ export class AttendanceImportComponent {
         weekNumber: currentWeek,
         attendance: this.attendanceRecords.map((record) => ({
           studentId: record.student.studentId,
-          status: this.onlyEmail.includes(record.student.code), // бүх оюутныг явуулна
+          status: this.onlyEmail.includes(record.student.code)
+            ? true
+            : record.attendance[currentWeek], // бүх оюутныг явуулна
         })),
       };
 
