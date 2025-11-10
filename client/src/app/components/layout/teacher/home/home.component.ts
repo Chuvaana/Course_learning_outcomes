@@ -634,18 +634,18 @@ export class HomeComponent {
   }
 
   getLetterGrade(percent: number): string {
-    if (percent > 95) return 'A';
-    if (percent > 90) return 'A-';
-    if (percent > 87) return 'B+';
-    if (percent > 83) return 'B';
-    if (percent > 80) return 'B-';
-    if (percent > 77) return 'C+';
-    if (percent > 73) return 'C';
-    if (percent > 70) return 'C-';
-    if (percent > 67) return 'D+';
-    if (percent > 63) return 'D';
-    if (percent > 59) return 'D-';
-    if (percent < 60) return 'F';
+    if (percent > 95.99) return 'A';
+    if (percent > 90.99) return 'A-';
+    if (percent > 87.99) return 'B+';
+    if (percent > 83.99) return 'B';
+    if (percent > 80.99) return 'B-';
+    if (percent > 77.99) return 'C+';
+    if (percent > 73.99) return 'C';
+    if (percent > 70.99) return 'C-';
+    if (percent > 67.99) return 'D+';
+    if (percent > 63.99) return 'D';
+    if (percent > 59.99) return 'D-';
+    if (percent < 59.99) return 'F';
     return 'F';
   }
 
